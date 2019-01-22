@@ -10,7 +10,7 @@ else
     relativeCoordSelect = true;
 end
 %% Projection monitor properties
-[monitorSize,~] = TOOLS.changeProjectionMonitor(screenIndex);
+[monitorSize,~] = changeProjectionMonitor(screenIndex);
 horizontalHalfSize = ceil(monitorSize(1)/2);
 verticalHalfSize = ceil(monitorSize(2)/2);
 aspectRatio = monitorSize(1)/monitorSize(2);
