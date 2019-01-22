@@ -1,0 +1,2 @@
+f1,f2,f,D,wl,n,pix,pixSLM,pixN,levels,ratio,Zoom
+0.2,0.2,0.3,.008,532e-9,1,26.0e-6,3.6e-6,500,256,1,20

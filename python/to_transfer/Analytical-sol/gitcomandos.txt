@@ -1,0 +1,35 @@
+f:
+cd AREA54
+cd "GRUPO DE OPTICA"
+cd MAO
+cd "10 - CORONOGRAFO"
+cd Repositorio
+git clone https://github.com/elgaral/vortex-coronagraph.git
+git remote
+cd vortex-coronagraph
+git remote
+git remote origin
+git remote -v
+dir
+cd Analytical-sol
+dir
+git rm Resolucion.ipynb
+git statur
+git status
+git add Resolucion_v3.ipynb
+git commit -m "update"
+git status
+git push origin master
+dir
+atom int_bessel.png
+atom integral_bessel.py
+git statut
+git status
+git add integral_bessel.py
+git status
+git commit -m "cambio"
+git push origin master
+git status
+Command | clip
+command | clip
+doskey /history > gitcomandos.txt
