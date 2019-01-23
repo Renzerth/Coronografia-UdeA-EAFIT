@@ -111,15 +111,16 @@ plotMask = 3; % Allows to plot the final mask, as it can be a combination
               % 3: on the screen but surface-plot type
           
 %% Folder names
-scriptFldr = '1_Scripts'; % Folder name
-functFldr = '2_Functions'; % Folder name
-dataFlrd = '3_Data'; % Folder name             
+analysFldr = 'Analysis'; % Folder name: scripts
+dataFlrd = 'Data'; % Folder name: input data           
+outFlrd = 'Output'; % Folder name: output data
+toolsFldr = 'Tools'; % Folder name: functions
               
 %% Directories and add functions
-scriptDir = pwd; cd ..; % Store script directory
-cd(functFldr); functDir = pwd; cd ..; % Store function directory
+analysDir = pwd; cd ..; % Store script directory
+cd(toolsFldr); toolsDir = pwd; cd ..; % Store function directory
 cd(dataFlrd); dataDir = pwd;  cd ..; % Store data directory
-addpath(genpath(functDir)); cd(scriptDir); % Add all folders in functions
+addpath(genpath(toolsDir)); cd(analysDir); % Add all folders in functions
 % restore back default paths, type: restoredefaultpath
 
 %% Measurement
