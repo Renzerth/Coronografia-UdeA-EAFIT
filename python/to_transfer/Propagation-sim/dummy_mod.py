@@ -29,7 +29,7 @@ wl = 532.e-6 #wavelength in mm  (green)
 #---------------------------
 #SPP: CHARGE AND GRAY LEVELS
 #---------------------------
-Lvor = 10 # Topologic Charge
+Lvor = 2 # Topologic Charge
 NG = 256
 
 #---------
@@ -107,8 +107,8 @@ x=np.arange(-L/2,L/2,dx)
 y=np.arange(-L/2,L/2,dx)
 
 AS = np.zeros((M,M))
-lim1 = hM - (int(R2/dx)+10) #Number of pixels needed to reach R2 plus a 
-lim2 = hM + (int(R2/dx)+10) # little extra-range, centered in M/2 (This process is made to avoid big calculations with the whole MxM matrix)
+lim1 = hM - (int(R2/dx) + 10) #Number of pixels needed to reach R2 plus a 
+lim2 = hM + (int(R2/dx) + 10) # little extra-range, centered in M/2 (This process is made to avoid big calculations with the whole MxM matrix)
 AS[lim1:lim2,lim1:lim2] = fM.circ(x[lim1],x[lim2],dx,2*R2,0)    
 
                                      #2*R2: Function expects the diameter
@@ -138,7 +138,7 @@ E0 = (E0+E1)*AS # Truncated Input field
 
 dx2 = dx**2
 print("==================================================")
-print('Current field power:', dx2*np.sum(abs(E0)**2))
+print('Initial Field Power', dx2*np.sum(abs(E0)**2))
 
 #--------------------------
 #FIRST FOURIER PLANE (z=f1)
@@ -160,7 +160,7 @@ Ef2 = Ef2*dx*dx
 
 print("Incoming max Intensity = ",(abs(Ef2)**2).max()) #Pot/m**2. In a plane wave I=c*epsilon*E**2-->
                                                       # See Hector_Alzate Pag.128 Fisica de las ondas
-print("Current field power:", L**-2*np.sum(abs(Ef2)**2))         #Power=I*m**2 
+print("Field at Stop - Power:", L**-2*np.sum(abs(Ef2)**2))         #Power=I*m**2 
 
 #%%----------------------
 #INTRODUCING SPP (z=f1)
@@ -177,7 +177,7 @@ FaseC = CIL.phase(C)
 Ev = Ef2*C
 FaseEv=CIL.phase(Ev)
 
-print("Current field power:", L**-2*np.sum(abs(Ev)**2))
+print("Field at SLM Plane - Power:", L**-2*np.sum(abs(Ev)**2))
 
 #%%------------------
 #FIELD AT z=f1+2*f2
@@ -186,9 +186,9 @@ EvP = np.fft.fftshift(Ev)
 EvP = np.fft.fft2(EvP)
 EvP = np.fft.ifftshift(EvP)
 EvP = EvP*1./L**2#/M#*dx*dx
-EvP = EvP #/(1j*wl*f2)
+#EvP = EvP #/(1j*wl*f2)
 
-print("Current field power:", dx2*np.sum(abs(EvP)**2))#*1./L**2)
+print("Lyod's Plane Distribution - Power:", dx2*np.sum(abs(EvP)**2))#*1./L**2)
 
 #----------
 #FILTERING
@@ -201,7 +201,8 @@ lim2f = int(M/2 + (Rf/dx + 10)) # little extra-range, centered in M/2
 Aff[lim1f:lim2f,lim1f:lim2f] = fM.circ(x[lim1f],x[lim2f],dx,2*Rf,0)
 Ef = EvP*Aff
 
-print("Current field power:", dx2*np.sum(abs(Ef)**2))
+print("Lyot's Aperture Truncated Field - Power", dx2*np.sum(abs(Ef)**2))
+print("==================================================")
 
 #-----------
 #FINAL FIELD
@@ -215,96 +216,105 @@ Eff = Eff #*np.exp(1j*k*f3*wl*wl*(Fx2*Fx2+Fy2*Fy2))#/(1j*wl*f3)
 #%%---
 #PLOTS
 #-----
-
-# Input Plane
-ax=plt.axes()
-ax.set_title("$Initial$ $Field$ $phase$")
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow(Fase)
-cb=plt.colorbar()
-cb.set_label("$Phase$ $Value$")
-plt.show()
-
-# Truncated Input Plane at Stop
-ax=plt.axes()
-ax.set_title("$Telescope$ $Apperture,$ $z=0$",fontsize=14,position=(0.5,1.0))
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow((abs(E0)**2)[innerRangeA:outerRangeA,innerRangeA:outerRangeA],cmap='gray')
-plt.show()
-
-# First Fourier Plane
-ax=plt.axes()
-ax.set_title("$First$ $Fourier$ $Plane,$ $z=f_{2}$",fontsize=14,position=(0.5,1.0))
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow((abs(Ef2)**2)[innerRangeB:outerRangeB,innerRangeB:outerRangeB],cmap='gray')
-cb=plt.colorbar()
-cb.set_label(r"$Intensity$ $units$",fontsize=12)
-plt.show()
-
-# Helicoidal Filter Mask
-ax=plt.axes()
-ax.set_title("$SPP.$ $m=%d,$ $N=%d,$ $z=f_{1}$"%(Lvor,NG),fontsize=14,position=(0.5,1.0))
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow(FaseC,cmap='gray')
-cb=plt.colorbar()
-cb.set_label(r"$Phase$ $value$",fontsize=12)
-plt.show()
-
-# Signal with Filter at Modulating Plane
-fig=plt.figure(figsize=(14,8))
-
-ax0=plt.subplot(1,2,1)
-ax0.set_title("$Field$ $phase$ $after$ $SPP,$ $z=f_{1}$",fontsize=14,position=(0.5,1.0))
-ax0.set_xlabel("$N_{x}$",labelpad=8)
-ax0.set_ylabel("$N_{y}$") 
-map0=ax0.imshow(FaseEv[innerRangeC:outerRangeC,innerRangeC:outerRangeC],cmap='gray')
-cb=plt.colorbar(map0,orientation='horizontal')
-cb.set_label(r"$Phase$ $value$",fontsize=12)
-
-ax1=plt.subplot(1,2,2)
-ax1.set_title("$Intensity$ $field$ $after$ $SPP,$ $z=f_{1}$",fontsize=14,position=(0.5,1.0))
-ax1.set_xlabel("$N_{x}$",labelpad=8)
-ax1.set_ylabel("$N_{y}$") 
-map1=ax1.imshow((abs(Ev)**2)[innerRangeC:outerRangeC,innerRangeC:outerRangeC])
-cb=plt.colorbar(map1,orientation='horizontal')
-cb.set_label(r"$Intensity$ $units$",fontsize=12)
-plt.show()
-
-# Lyod Plane - Filtered Signal - Inverse Fourier Field
-ax=plt.axes()
-ax.set_title("$Field$ $at$ $z=f_{1}+2*f_{2}$",fontsize=14,position=(0.5,1.0))
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow((abs(EvP)**2)[innerRangeA:outerRangeA,innerRangeA:outerRangeA],cmap='gray')
-cb=plt.colorbar()
-cb.set_label(r"$Intensity$ $units$",fontsize=12)
-plt.show()
-
-# Lyod's Aperture - Signal truncation
-ax = plt.gca()
-ax.set_title("$Field$ $*$ $App.Stop,$ $z=f_{1}+2*f_{2}$",fontsize=14,position=(0.5,1.0))
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow((abs(Ef)**2)[innerRangeA:outerRangeA,innerRangeA:outerRangeA],cmap='gray')
-cb=plt.colorbar(orientation='vertical')
-cb.set_label(r"$Intensity$ $units$",fontsize=12)
-plt.show()
-
-# Focalized plane region - PSF
-
-ax = plt.gca()
-ax.set_title("$Intensity$ $field$ $at$ $camera,$ $z=f_{1}+2*f_{2}+2f_{3}$",fontsize=14,position=(0.5,1.0))
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow((abs(Eff)**2)[int(M/2.0-120):int(M/2.0+120),int(M/2.0-120):int(M/2.0+120)])#,cmap='gray')
-cb=plt.colorbar(orientation='vertical')
-cb.set_label(r"$Intensity$ $units$",fontsize=12)
-plt.show()
-
+if False:
+    plt.close()
+    
+    # Input Plane
+    plt.figure(1)
+    ax=plt.axes()
+    ax.set_title("$Initial$ $Field$ $phase$")
+    ax.set_xlabel("$N_{x}$",labelpad=8)
+    ax.set_ylabel("$N_{y}$")
+    plt.imshow(Fase)
+    cb=plt.colorbar()
+    cb.set_label("$Phase$ $Value$")
+    #plt.show()
+    
+    # Truncated Input Plane at Stop
+    plt.figure(2)
+    ax=plt.axes()
+    ax.set_title("$Telescope$ $Apperture,$ $z=0$",fontsize=14,position=(0.5,1.0))
+    ax.set_xlabel("$N_{x}$",labelpad=8)
+    ax.set_ylabel("$N_{y}$")
+    plt.imshow((abs(E0)**2)[innerRangeA:outerRangeA,innerRangeA:outerRangeA],cmap='gray')
+    #plt.show()
+    
+    # First Fourier Plane
+    plt.figure(3)
+    ax=plt.axes()
+    ax.set_title("$First$ $Fourier$ $Plane,$ $z=f_{2}$",fontsize=14,position=(0.5,1.0))
+    ax.set_xlabel("$N_{x}$",labelpad=8)
+    ax.set_ylabel("$N_{y}$")
+    plt.imshow((abs(Ef2)**2)[innerRangeB:outerRangeB,innerRangeB:outerRangeB],cmap='gray')
+    cb=plt.colorbar()
+    cb.set_label(r"$Intensity$ $units$",fontsize=12)
+    #plt.show()
+    
+    # Helicoidal Filter Mask
+    plt.figure(4)
+    ax=plt.axes()
+    ax.set_title("$SPP.$ $m=%d,$ $N=%d,$ $z=f_{1}$"%(Lvor,NG),fontsize=14,position=(0.5,1.0))
+    ax.set_xlabel("$N_{x}$",labelpad=8)
+    ax.set_ylabel("$N_{y}$")
+    plt.imshow(FaseC,cmap='gray')
+    cb=plt.colorbar()
+    cb.set_label(r"$Phase$ $value$",fontsize=12)
+    #plt.show()
+    
+    # Signal with Filter at Modulating Plane
+    fig=plt.figure(figsize=(14,8))
+    
+    ax0=plt.subplot(1,2,1)
+    ax0.set_title("$Field$ $phase$ $after$ $SPP,$ $z=f_{1}$",fontsize=14,position=(0.5,1.0))
+    ax0.set_xlabel("$N_{x}$",labelpad=8)
+    ax0.set_ylabel("$N_{y}$") 
+    map0=ax0.imshow(FaseEv[innerRangeC:outerRangeC,innerRangeC:outerRangeC],cmap='gray')
+    cb=plt.colorbar(map0,orientation='horizontal')
+    cb.set_label(r"$Phase$ $value$",fontsize=12)
+    
+    ax1=plt.subplot(1,2,2)
+    ax1.set_title("$Intensity$ $field$ $after$ $SPP,$ $z=f_{1}$",fontsize=14,position=(0.5,1.0))
+    ax1.set_xlabel("$N_{x}$",labelpad=8)
+    ax1.set_ylabel("$N_{y}$") 
+    map1=ax1.imshow((abs(Ev)**2)[innerRangeC:outerRangeC,innerRangeC:outerRangeC])
+    cb=plt.colorbar(map1,orientation='horizontal')
+    cb.set_label(r"$Intensity$ $units$",fontsize=12)
+    #plt.show()
+    
+    # Lyod Plane - Filtered Signal - Inverse Fourier Field
+    plt.figure(6)
+    ax=plt.axes()
+    ax.set_title("$Field$ $at$ $z=f_{1}+2*f_{2}$",fontsize=14,position=(0.5,1.0))
+    ax.set_xlabel("$N_{x}$",labelpad=8)
+    ax.set_ylabel("$N_{y}$") 
+    plt.imshow((abs(EvP)**2)[innerRangeA:outerRangeA,innerRangeA:outerRangeA],cmap='gray')
+    cb=plt.colorbar()
+    cb.set_label(r"$Intensity$ $units$",fontsize=12)
+    #plt.show()
+    
+    # Lyod's Aperture - Signal truncation
+    plt.figure(7)
+    ax = plt.axes()
+    ax.set_title("$Field$ $*$ $App.Stop,$ $z=f_{1}+2*f_{2}$",fontsize=14,position=(0.5,1.0))
+    ax.set_xlabel("$N_{x}$",labelpad=8)
+    ax.set_ylabel("$N_{y}$") 
+    plt.imshow((abs(Ef)**2)[innerRangeA:outerRangeA,innerRangeA:outerRangeA],cmap='gray')
+    cb=plt.colorbar(orientation='vertical')
+    cb.set_label(r"$Intensity$ $units$",fontsize=12)
+    #plt.show()
+    
+    # Focalized plane region - PSF
+    
+    plt.figure(8)
+    ax = plt.axes()
+    ax.set_title("$Intensity$ $field$ $at$ $camera,$ $z=f_{1}+2*f_{2}+2f_{3}$",fontsize=14,position=(0.5,1.0))
+    ax.set_xlabel("$N_{x}$",labelpad=8)
+    ax.set_ylabel("$N_{y}$") 
+    plt.imshow((abs(Eff)**2)[int(M/2.0-120):int(M/2.0+120),int(M/2.0-120):int(M/2.0+120)])#,cmap='gray')
+    cb=plt.colorbar(orientation='vertical')
+    cb.set_label(r"$Intensity$ $units$",fontsize=12)
+    
+    plt.show()
 
 print("==================================================")
 print("Final field power:", L**-2*np.sum(abs(Eff)**2))

@@ -18,7 +18,7 @@ def SPP(Lvor,NG,L,dx=26.e-3,B=False):
     N = M
     x = np.arange(-L/2, L/2, dx)
     xx, yy = np.meshgrid(x, x)
-    _,phi = cart2pol(xx, yy)
+    phi = cart2pol(xx, yy)[1]
 
     phi1 = phi + np.pi #Matrix with entries within [0:2pi-step]
     phaseVor = np.mod(Lvor * phi1, 2*np.pi) #256-levels discretization

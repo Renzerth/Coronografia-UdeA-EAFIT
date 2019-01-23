@@ -16,11 +16,11 @@ def field2D(Ex,Ey):
     return E
 
 def phase(E):
-    F = np.zeros(E.shape)
-    
-    for i in np.arange(0,E.shape[0]):
-        for j in np.arange(0,E.shape[1]):
-            F[i,j] = cm.phase(E[i,j])
+    #F = np.zeros(E.shape)
+    F = np.angle(E)
+#    for i in np.arange(0,E.shape[0]):
+#        for j in np.arange(0,E.shape[1]):
+#            F[i,j] = cm.phase(E[i,j])
 
     return F
     

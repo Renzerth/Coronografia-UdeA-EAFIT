@@ -40,40 +40,47 @@ def gaussian(a,b,dx,w,M=False):
     if M == False: return s
 
 def circ(a,b,dx,w,M=False):    
-    s,X,Y = [],[],[]
-    L = abs((b-a)/dx)  #shape de la matriz     
-    #if int(L)==L: L=int(L)
-    #if int(L)-L < 0.0 : 
-     #   L = L+1  #Para corregir el error en decimales y calcular bien el int(L) Ej.: L=40.99999997 (41.0), int(L)=40 
-    #else: L=int(L)
-    L = int(round(L)) #round() approximates to the nearest
-    i=0
-    j=0
-    for x in np.arange(a,b,dx):
-        if i==L: break #This is to prevent that the number of samples 
-                       # exceed its real number, this can happen
-                       #  due to the little numbers added by 
-                       #   natural wrongs of computer
-        X.append(x)
-        for y in np.arange(a,b,dx):
-            
-            if j==L: break
-            if x==a: Y.append(y) #Para que no haga L veces el append
-
-            if np.sqrt(x*x+y*y)/abs(w) < 0.5: s.append(1.)
-
-         #   elif np.sqrt(x*x+y*y)/abs(w) == 0.5: s.append(0.5)
-            
-            else: s.append(0.)
-            j+=1
-            
-        i+=1
-        j=0
+#    s,X,Y = [],[],[]
+#    L = int(np.fix(abs((b-a)/dx))) #shape de la matriz     
+#    #if int(L)==L: L=int(L)
+#    #if int(L)-L < 0.0 : 
+#     #   L = L+1  #Para corregir el error en decimales y calcular bien el int(L) Ej.: L=40.99999997 (41.0), int(L)=40 
+#    #else: L=int(L)
+##    L = int(round(L)) #round() approximates to the nearest
+#    i=0
+#    j=0
+#    for x in np.arange(a,b,dx):
+#        if i==L: break #This is to prevent that the number of samples 
+#                       # exceed its real number, this can happen
+#                       #  due to the little numbers added by 
+#                       #   natural wrongs of computer
+#        X.append(x)
+#        for y in np.arange(a,b,dx):
+#            
+#            if j==L: break
+#            if x==a: Y.append(y) #Para que no haga L veces el append
+#
+#            if np.sqrt(x*x+y*y)/abs(w) < 0.5: s.append(1.)
+#
+#         #   elif np.sqrt(x*x+y*y)/abs(w) == 0.5: s.append(0.5)
+#            
+#            else: s.append(0.)
+#            j+=1
+#            
+#        i+=1
+#        j=0
+#    
+#    s = np.array(s).reshape(L,L)  #Vuelve el array s una matriz cuadrada
+#    
+#    if M == True: return X,Y,s
+#    if M == False: return s
     
-    s = np.array(s).reshape(L,L)  #Vuelve el array s una matriz cuadrada
-    
-    if M == True: return X,Y,s
-    if M == False: return s
+#    x = np.linspace(a,b,L)
+    x = np.arange(a,b-dx,dx); # Substract dx in order to obtain L instead of L+1
+    X,Y = np.meshgrid(x,x)
+    rho = np.sqrt(X**2 + Y**2)
+    circMask = rho/abs(w) <= 0.5 # Bool circular shape descrption
+    return circMask
 
     """
     #Another option to do it...  
