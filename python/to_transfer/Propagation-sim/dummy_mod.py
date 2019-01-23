@@ -130,29 +130,11 @@ E0 = E0*np.exp(1j*k*(z*np.cos(alpha)*np.cos(phi)+X*np.sin(alpha)+
 
 Fase = CIL.phase(E0)
 
-#See matplotlib.rcParams for general plotting parameters
-
-ax=plt.axes()
-ax.set_title("$Initial$ $Field$ $phase$")
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow(Fase)
-cb=plt.colorbar()
-cb.set_label("$Phase$ $Value$")
-plt.show()
-
 #%%-------------------------------
 #FIELD AFTER THE FIRST APPERTURE
 #-------------------------------
 E1 = 0 # No binary body is available
 E0 = (E0+E1)*AS # Truncated Input field
-
-ax=plt.axes()
-ax.set_title("$Telescope$ $Apperture,$ $z=0$",fontsize=14,position=(0.5,1.0))
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow((abs(E0)**2)[innerRangeA:outerRangeA,innerRangeA:outerRangeA],cmap='gray')
-plt.show()
 
 dx2 = dx**2
 print("==================================================")
@@ -176,15 +158,6 @@ Ef2 = Ef2*dx*dx
 #  just against the lens (d = 0) and not at d = -f1; see GOODMAN_ed2 eq 5.16)
 # Ef2 = Ef2* np.exp(1j*k*f1*wl*wl*(Fx2*Fx2+Fy2*Fy2))#/(1j*wl*f1)
 
-ax=plt.axes()
-ax.set_title("$First$ $Fourier$ $Plane,$ $z=f_{2}$",fontsize=14,position=(0.5,1.0))
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow((abs(Ef2)**2)[innerRangeB:outerRangeB,innerRangeB:outerRangeB],cmap='gray')
-cb=plt.colorbar()
-cb.set_label(r"$Intensity$ $units$",fontsize=12)
-plt.show()
-
 print("Incoming max Intensity = ",(abs(Ef2)**2).max()) #Pot/m**2. In a plane wave I=c*epsilon*E**2-->
                                                       # See Hector_Alzate Pag.128 Fisica de las ondas
 print("Current field power:", L**-2*np.sum(abs(Ef2)**2))         #Power=I*m**2 
@@ -198,6 +171,80 @@ C = vGEN.SPP(Lvor,NG,L,dx)
 
 FaseC = CIL.phase(C)
 
+#%%---------------------
+#FIELD PASSES BY C
+#---------------------
+Ev = Ef2*C
+FaseEv=CIL.phase(Ev)
+
+print("Current field power:", L**-2*np.sum(abs(Ev)**2))
+
+#%%------------------
+#FIELD AT z=f1+2*f2
+#------------------
+EvP = np.fft.fftshift(Ev)
+EvP = np.fft.fft2(EvP)
+EvP = np.fft.ifftshift(EvP)
+EvP = EvP*1./L**2#/M#*dx*dx
+EvP = EvP #/(1j*wl*f2)
+
+print("Current field power:", dx2*np.sum(abs(EvP)**2))#*1./L**2)
+
+#----------
+#FILTERING
+#----------
+Rf = R2
+Aff = np.zeros((M,M))
+lim1f = int(M/2 - (Rf/dx + 10)) #Number of pixels needed to reach Rf plus a                                                                                                               
+lim2f = int(M/2 + (Rf/dx + 10)) # little extra-range, centered in M/2      
+                                                                                                               
+Aff[lim1f:lim2f,lim1f:lim2f] = fM.circ(x[lim1f],x[lim2f],dx,2*Rf,0)
+Ef = EvP*Aff
+
+print("Current field power:", dx2*np.sum(abs(Ef)**2))
+
+#-----------
+#FINAL FIELD
+#-----------
+Eff  = np.fft.fftshift(Ef)
+Eff = np.fft.fft2(Eff)
+Eff = np.fft.ifftshift(Eff)
+Eff = Eff*dx*dx
+Eff = Eff #*np.exp(1j*k*f3*wl*wl*(Fx2*Fx2+Fy2*Fy2))#/(1j*wl*f3)
+
+#%%---
+#PLOTS
+#-----
+
+# Input Plane
+ax=plt.axes()
+ax.set_title("$Initial$ $Field$ $phase$")
+ax.set_xlabel("$N_{x}$",labelpad=8)
+ax.set_ylabel("$N_{y}$") 
+plt.imshow(Fase)
+cb=plt.colorbar()
+cb.set_label("$Phase$ $Value$")
+plt.show()
+
+# Truncated Input Plane at Stop
+ax=plt.axes()
+ax.set_title("$Telescope$ $Apperture,$ $z=0$",fontsize=14,position=(0.5,1.0))
+ax.set_xlabel("$N_{x}$",labelpad=8)
+ax.set_ylabel("$N_{y}$") 
+plt.imshow((abs(E0)**2)[innerRangeA:outerRangeA,innerRangeA:outerRangeA],cmap='gray')
+plt.show()
+
+# First Fourier Plane
+ax=plt.axes()
+ax.set_title("$First$ $Fourier$ $Plane,$ $z=f_{2}$",fontsize=14,position=(0.5,1.0))
+ax.set_xlabel("$N_{x}$",labelpad=8)
+ax.set_ylabel("$N_{y}$") 
+plt.imshow((abs(Ef2)**2)[innerRangeB:outerRangeB,innerRangeB:outerRangeB],cmap='gray')
+cb=plt.colorbar()
+cb.set_label(r"$Intensity$ $units$",fontsize=12)
+plt.show()
+
+# Helicoidal Filter Mask
 ax=plt.axes()
 ax.set_title("$SPP.$ $m=%d,$ $N=%d,$ $z=f_{1}$"%(Lvor,NG),fontsize=14,position=(0.5,1.0))
 ax.set_xlabel("$N_{x}$",labelpad=8)
@@ -207,12 +254,7 @@ cb=plt.colorbar()
 cb.set_label(r"$Phase$ $value$",fontsize=12)
 plt.show()
 
-#%%---------------------
-#FIELD PASSES BY C
-#---------------------
-Ev = Ef2*C
-FaseEv=CIL.phase(Ev)
-
+# Signal with Filter at Modulating Plane
 fig=plt.figure(figsize=(14,8))
 
 ax0=plt.subplot(1,2,1)
@@ -230,20 +272,9 @@ ax1.set_ylabel("$N_{y}$")
 map1=ax1.imshow((abs(Ev)**2)[innerRangeC:outerRangeC,innerRangeC:outerRangeC])
 cb=plt.colorbar(map1,orientation='horizontal')
 cb.set_label(r"$Intensity$ $units$",fontsize=12)
-
 plt.show()
 
-print("Current field power:", L**-2*np.sum(abs(Ev)**2))
-
-#%%------------------
-#FIELD AT z=f1+2*f2
-#------------------
-EvP = np.fft.fftshift(Ev)
-EvP = np.fft.fft2(EvP)
-EvP = np.fft.ifftshift(EvP)
-EvP = EvP*1./L**2#/M#*dx*dx
-EvP = EvP #/(1j*wl*f2)
-
+# Lyod Plane - Filtered Signal - Inverse Fourier Field
 ax=plt.axes()
 ax.set_title("$Field$ $at$ $z=f_{1}+2*f_{2}$",fontsize=14,position=(0.5,1.0))
 ax.set_xlabel("$N_{x}$",labelpad=8)
@@ -253,19 +284,7 @@ cb=plt.colorbar()
 cb.set_label(r"$Intensity$ $units$",fontsize=12)
 plt.show()
 
-print("Current field power:", dx2*np.sum(abs(EvP)**2))#*1./L**2)
-
-#----------
-#FILTERING
-#----------
-Rf = R2
-Aff = np.zeros((M,M))
-lim1f = int(M/2 - (Rf/dx + 10)) #Number of pixels needed to reach Rf plus a                                                                                                               
-lim2f = int(M/2 + (Rf/dx + 10)) # little extra-range, centered in M/2      
-                                                                                                               
-Aff[lim1f:lim2f,lim1f:lim2f] = fM.circ(x[lim1f],x[lim2f],dx,2*Rf,0)
-Ef = EvP*Aff
-
+# Lyod's Aperture - Signal truncation
 ax = plt.gca()
 ax.set_title("$Field$ $*$ $App.Stop,$ $z=f_{1}+2*f_{2}$",fontsize=14,position=(0.5,1.0))
 ax.set_xlabel("$N_{x}$",labelpad=8)
@@ -275,16 +294,7 @@ cb=plt.colorbar(orientation='vertical')
 cb.set_label(r"$Intensity$ $units$",fontsize=12)
 plt.show()
 
-print("Current field power:", dx2*np.sum(abs(Ef)**2))
-
-#-----------
-#FINAL FIELD
-#-----------
-Eff  = np.fft.fftshift(Ef)
-Eff = np.fft.fft2(Eff)
-Eff = np.fft.ifftshift(Eff)
-Eff = Eff*dx*dx
-Eff = Eff #*np.exp(1j*k*f3*wl*wl*(Fx2*Fx2+Fy2*Fy2))#/(1j*wl*f3)
+# Focalized plane region - PSF
 
 ax = plt.gca()
 ax.set_title("$Intensity$ $field$ $at$ $camera,$ $z=f_{1}+2*f_{2}+2f_{3}$",fontsize=14,position=(0.5,1.0))
@@ -294,6 +304,7 @@ plt.imshow((abs(Eff)**2)[int(M/2.0-120):int(M/2.0+120),int(M/2.0-120):int(M/2.0+
 cb=plt.colorbar(orientation='vertical')
 cb.set_label(r"$Intensity$ $units$",fontsize=12)
 plt.show()
+
 
 print("==================================================")
 print("Final field power:", L**-2*np.sum(abs(Eff)**2))
