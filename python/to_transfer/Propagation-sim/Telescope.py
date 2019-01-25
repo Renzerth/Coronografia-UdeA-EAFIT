@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 """
 Created on 28-07-2016
 by AFIC
@@ -8,6 +11,9 @@ This code emulates the propagation of an incoming plane wave
 throughout a Keplerian telescope. A generalized inclination might be 
 included on the plane wave in order to simulate astronomical objects 
 shifted with respect to the main axis of the optical system.
+
+Modded by Grupo de Optica Aplicada - EAFIT
+Juan José Cadavid Muñoz - 23-01-2019
 """
 
 import numpy as np
@@ -15,7 +21,12 @@ import funcionesMOD as fM
 import coherImagLIB as CIL
 import matplotlib.pyplot as plt
 import vortexGEN as vGEN #Many levels
-from matplotlib import gridspec
+#from matplotlib import gridspec
+
+#%%-------------------------
+#PROGRAM SETTINGS
+#-------------------------
+plotsEnabled = False
 
 #%%-------------------------
 #OPTICAL PARAMETERS (in mm)
@@ -29,7 +40,7 @@ wl = 532.e-6 #wavelength in mm  (green)
 #---------------------------
 #SPP: CHARGE AND GRAY LEVELS
 #---------------------------
-Lvor = 10 # Topologic Charge
+Lvor = 2 # Topologic Charge
 NG = 256
 
 #---------
@@ -43,14 +54,6 @@ L = M*dx #100. #plane size in mm
 #Data Slicing
 #------------
 hM = int(M/2.0)
-innerRangeA = hM - 800
-outerRangeA = hM + 800
-
-innerRangeB = hM - 148
-outerRangeB = hM + 148
-
-innerRangeC = hM - 120
-outerRangeC = hM + 120
 
 #------------------
 #OPTICAL PARAMETERS
@@ -107,8 +110,8 @@ x=np.arange(-L/2,L/2,dx)
 y=np.arange(-L/2,L/2,dx)
 
 AS = np.zeros((M,M))
-lim1 = hM - (int(R2/dx)+10) #Number of pixels needed to reach R2 plus a 
-lim2 = hM + (int(R2/dx)+10) # little extra-range, centered in M/2 (This process is made to avoid big calculations with the whole MxM matrix)
+lim1 = hM - (int(R2/dx) + 10) #Number of pixels needed to reach R2 plus a 
+lim2 = hM + (int(R2/dx) + 10) # little extra-range, centered in M/2 (This process is made to avoid big calculations with the whole MxM matrix)
 AS[lim1:lim2,lim1:lim2] = fM.circ(x[lim1],x[lim2],dx,2*R2,0)    
 
                                      #2*R2: Function expects the diameter
@@ -130,33 +133,15 @@ E0 = E0*np.exp(1j*k*(z*np.cos(alpha)*np.cos(phi)+X*np.sin(alpha)+
 
 Fase = CIL.phase(E0)
 
-#See matplotlib.rcParams for general plotting parameters
-
-ax=plt.axes()
-ax.set_title("$Initial$ $Field$ $phase$")
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow(Fase)
-cb=plt.colorbar()
-cb.set_label("$Phase$ $Value$")
-plt.show()
-
 #%%-------------------------------
 #FIELD AFTER THE FIRST APPERTURE
 #-------------------------------
 E1 = 0 # No binary body is available
 E0 = (E0+E1)*AS # Truncated Input field
 
-ax=plt.axes()
-ax.set_title("$Telescope$ $Apperture,$ $z=0$",fontsize=14,position=(0.5,1.0))
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow((abs(E0)**2)[innerRangeA:outerRangeA,innerRangeA:outerRangeA],cmap='gray')
-plt.show()
-
 dx2 = dx**2
 print("==================================================")
-print('Current field power:', dx2*np.sum(abs(E0)**2))
+print('Initial Field Power', dx2*np.sum(abs(E0)**2))
 
 #--------------------------
 #FIRST FOURIER PLANE (z=f1)
@@ -176,18 +161,9 @@ Ef2 = Ef2*dx*dx
 #  just against the lens (d = 0) and not at d = -f1; see GOODMAN_ed2 eq 5.16)
 # Ef2 = Ef2* np.exp(1j*k*f1*wl*wl*(Fx2*Fx2+Fy2*Fy2))#/(1j*wl*f1)
 
-ax=plt.axes()
-ax.set_title("$First$ $Fourier$ $Plane,$ $z=f_{2}$",fontsize=14,position=(0.5,1.0))
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow((abs(Ef2)**2)[innerRangeB:outerRangeB,innerRangeB:outerRangeB],cmap='gray')
-cb=plt.colorbar()
-cb.set_label(r"$Intensity$ $units$",fontsize=12)
-plt.show()
-
 print("Incoming max Intensity = ",(abs(Ef2)**2).max()) #Pot/m**2. In a plane wave I=c*epsilon*E**2-->
                                                       # See Hector_Alzate Pag.128 Fisica de las ondas
-print("Current field power:", L**-2*np.sum(abs(Ef2)**2))         #Power=I*m**2 
+print("Field at Stop - Power:", L**-2*np.sum(abs(Ef2)**2))         #Power=I*m**2 
 
 #%%----------------------
 #INTRODUCING SPP (z=f1)
@@ -198,42 +174,13 @@ C = vGEN.SPP(Lvor,NG,L,dx)
 
 FaseC = CIL.phase(C)
 
-ax=plt.axes()
-ax.set_title("$SPP.$ $m=%d,$ $N=%d,$ $z=f_{1}$"%(Lvor,NG),fontsize=14,position=(0.5,1.0))
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow(FaseC,cmap='gray')
-cb=plt.colorbar()
-cb.set_label(r"$Phase$ $value$",fontsize=12)
-plt.show()
-
 #%%---------------------
 #FIELD PASSES BY C
 #---------------------
 Ev = Ef2*C
 FaseEv=CIL.phase(Ev)
 
-fig=plt.figure(figsize=(14,8))
-
-ax0=plt.subplot(1,2,1)
-ax0.set_title("$Field$ $phase$ $after$ $SPP,$ $z=f_{1}$",fontsize=14,position=(0.5,1.0))
-ax0.set_xlabel("$N_{x}$",labelpad=8)
-ax0.set_ylabel("$N_{y}$") 
-map0=ax0.imshow(FaseEv[innerRangeC:outerRangeC,innerRangeC:outerRangeC],cmap='gray')
-cb=plt.colorbar(map0,orientation='horizontal')
-cb.set_label(r"$Phase$ $value$",fontsize=12)
-
-ax1=plt.subplot(1,2,2)
-ax1.set_title("$Intensity$ $field$ $after$ $SPP,$ $z=f_{1}$",fontsize=14,position=(0.5,1.0))
-ax1.set_xlabel("$N_{x}$",labelpad=8)
-ax1.set_ylabel("$N_{y}$") 
-map1=ax1.imshow((abs(Ev)**2)[innerRangeC:outerRangeC,innerRangeC:outerRangeC])
-cb=plt.colorbar(map1,orientation='horizontal')
-cb.set_label(r"$Intensity$ $units$",fontsize=12)
-
-plt.show()
-
-print("Current field power:", L**-2*np.sum(abs(Ev)**2))
+print("Field at SLM Plane - Power:", L**-2*np.sum(abs(Ev)**2))
 
 #%%------------------
 #FIELD AT z=f1+2*f2
@@ -242,18 +189,9 @@ EvP = np.fft.fftshift(Ev)
 EvP = np.fft.fft2(EvP)
 EvP = np.fft.ifftshift(EvP)
 EvP = EvP*1./L**2#/M#*dx*dx
-EvP = EvP #/(1j*wl*f2)
+#EvP = EvP #/(1j*wl*f2)
 
-ax=plt.axes()
-ax.set_title("$Field$ $at$ $z=f_{1}+2*f_{2}$",fontsize=14,position=(0.5,1.0))
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow((abs(EvP)**2)[innerRangeA:outerRangeA,innerRangeA:outerRangeA],cmap='gray')
-cb=plt.colorbar()
-cb.set_label(r"$Intensity$ $units$",fontsize=12)
-plt.show()
-
-print("Current field power:", dx2*np.sum(abs(EvP)**2))#*1./L**2)
+print("Lyot's Plane Distribution - Power:", dx2*np.sum(abs(EvP)**2))#*1./L**2)
 
 #----------
 #FILTERING
@@ -266,16 +204,8 @@ lim2f = int(M/2 + (Rf/dx + 10)) # little extra-range, centered in M/2
 Aff[lim1f:lim2f,lim1f:lim2f] = fM.circ(x[lim1f],x[lim2f],dx,2*Rf,0)
 Ef = EvP*Aff
 
-ax = plt.gca()
-ax.set_title("$Field$ $*$ $App.Stop,$ $z=f_{1}+2*f_{2}$",fontsize=14,position=(0.5,1.0))
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow((abs(Ef)**2)[innerRangeA:outerRangeA,innerRangeA:outerRangeA],cmap='gray')
-cb=plt.colorbar(orientation='vertical')
-cb.set_label(r"$Intensity$ $units$",fontsize=12)
-plt.show()
-
-print("Current field power:", dx2*np.sum(abs(Ef)**2))
+print("Lyot's Aperture Truncated Field - Power", dx2*np.sum(abs(Ef)**2))
+print("==================================================")
 
 #-----------
 #FINAL FIELD
@@ -286,14 +216,118 @@ Eff = np.fft.ifftshift(Eff)
 Eff = Eff*dx*dx
 Eff = Eff #*np.exp(1j*k*f3*wl*wl*(Fx2*Fx2+Fy2*Fy2))#/(1j*wl*f3)
 
-ax = plt.gca()
-ax.set_title("$Intensity$ $field$ $at$ $camera,$ $z=f_{1}+2*f_{2}+2f_{3}$",fontsize=14,position=(0.5,1.0))
-ax.set_xlabel("$N_{x}$",labelpad=8)
-ax.set_ylabel("$N_{y}$") 
-plt.imshow((abs(Eff)**2)[int(M/2.0-120):int(M/2.0+120),int(M/2.0-120):int(M/2.0+120)])#,cmap='gray')
-cb=plt.colorbar(orientation='vertical')
-cb.set_label(r"$Intensity$ $units$",fontsize=12)
-plt.show()
+#%%---
+#PLOTS
+#-----
+if plotsEnabled:
+    plt.close()
+    
+    # Visualization Ranges
+    viewRangeNA = hM - 800
+    viewRangeMA = hM + 800
+    
+    viewRangeNB = hM - 148
+    viewRangeMB = hM + 148
+    
+    viewRangeNC = hM - 120
+    viewRangeMC = hM + 120
+    
+    # Input Plane
+    plt.figure(1)
+    ax=plt.axes()
+    ax.set_title("$Initial$ $Field$ $phase$")
+    ax.set_xlabel("$N_{x}$",labelpad=8)
+    ax.set_ylabel("$N_{y}$")
+    plt.imshow(Fase)
+    cb=plt.colorbar()
+    cb.set_label("$Phase$ $Value$")
+    #plt.show()
+    
+    # Truncated Input Plane at Stop
+    plt.figure(2)
+    ax=plt.axes()
+    ax.set_title("$Telescope$ $Apperture,$ $z=0$",fontsize=14,position=(0.5,1.0))
+    ax.set_xlabel("$N_{x}$",labelpad=8)
+    ax.set_ylabel("$N_{y}$")
+    plt.imshow((abs(E0)**2)[viewRangeNA:viewRangeMA,viewRangeNA:viewRangeMA],cmap='gray')
+    #plt.show()
+    
+    # First Fourier Plane
+    plt.figure(3)
+    ax=plt.axes()
+    ax.set_title("$First$ $Fourier$ $Plane,$ $z=f_{2}$",fontsize=14,position=(0.5,1.0))
+    ax.set_xlabel("$N_{x}$",labelpad=8)
+    ax.set_ylabel("$N_{y}$")
+    plt.imshow((abs(Ef2)**2)[viewRangeNB:viewRangeMB,viewRangeNB:viewRangeMB],cmap='gray')
+    cb=plt.colorbar()
+    cb.set_label(r"$Intensity$ $units$",fontsize=12)
+    #plt.show()
+    
+    # Helicoidal Filter Mask
+    plt.figure(4)
+    ax=plt.axes()
+    ax.set_title("$SPP.$ $m=%d,$ $N=%d,$ $z=f_{1}$"%(Lvor,NG),fontsize=14,position=(0.5,1.0))
+    ax.set_xlabel("$N_{x}$",labelpad=8)
+    ax.set_ylabel("$N_{y}$")
+    plt.imshow(FaseC,cmap='gray')
+    cb=plt.colorbar()
+    cb.set_label(r"$Phase$ $value$",fontsize=12)
+    #plt.show()
+    
+    # Signal with Filter at Modulating Plane
+    fig=plt.figure(figsize=(14,8))
+    
+    ax0=plt.subplot(1,2,1)
+    ax0.set_title("$Field$ $phase$ $after$ $SPP,$ $z=f_{1}$",fontsize=14,position=(0.5,1.0))
+    ax0.set_xlabel("$N_{x}$",labelpad=8)
+    ax0.set_ylabel("$N_{y}$") 
+    map0=ax0.imshow(FaseEv[viewRangeNC:viewRangeMC,viewRangeNC:viewRangeMC],cmap='gray')
+    cb=plt.colorbar(map0,orientation='horizontal')
+    cb.set_label(r"$Phase$ $value$",fontsize=12)
+    
+    ax1=plt.subplot(1,2,2)
+    ax1.set_title("$Intensity$ $field$ $after$ $SPP,$ $z=f_{1}$",fontsize=14,position=(0.5,1.0))
+    ax1.set_xlabel("$N_{x}$",labelpad=8)
+    ax1.set_ylabel("$N_{y}$") 
+    map1=ax1.imshow((abs(Ev)**2)[viewRangeNC:viewRangeMC,viewRangeNC:viewRangeMC])
+    cb=plt.colorbar(map1,orientation='horizontal')
+    cb.set_label(r"$Intensity$ $units$",fontsize=12)
+    #plt.show()
+    
+    # Lyot Plane - Filtered Signal - Inverse Fourier Field
+    plt.figure(6)
+    ax=plt.axes()
+    ax.set_title("$Field$ $at$ $z=f_{1}+2*f_{2}$",fontsize=14,position=(0.5,1.0))
+    ax.set_xlabel("$N_{x}$",labelpad=8)
+    ax.set_ylabel("$N_{y}$") 
+    plt.imshow((abs(EvP)**2)[viewRangeNA:viewRangeMA,viewRangeNA:viewRangeMA],cmap='gray')
+    cb=plt.colorbar()
+    cb.set_label(r"$Intensity$ $units$",fontsize=12)
+    #plt.show()
+    
+    # Lyod's Aperture - Signal truncation
+    plt.figure(7)
+    ax = plt.axes()
+    ax.set_title("$Field$ $*$ $App.Stop,$ $z=f_{1}+2*f_{2}$",fontsize=14,position=(0.5,1.0))
+    ax.set_xlabel("$N_{x}$",labelpad=8)
+    ax.set_ylabel("$N_{y}$") 
+    plt.imshow((abs(Ef)**2)[viewRangeNA:viewRangeMA,viewRangeNA:viewRangeMA],cmap='gray')
+    cb=plt.colorbar(orientation='vertical')
+    cb.set_label(r"$Intensity$ $units$",fontsize=12)
+    #plt.show()
+    
+    # Focalized plane region - PSF
+    
+    plt.figure(8)
+    ax = plt.axes()
+    ax.set_title("$Intensity$ $field$ $at$ $camera,$ $z=f_{1}+2*f_{2}+2f_{3}$",fontsize=14,position=(0.5,1.0))
+    ax.set_xlabel("$N_{x}$",labelpad=8)
+    ax.set_ylabel("$N_{y}$") 
+    plt.imshow((abs(Eff)**2)[viewRangeNC:viewRangeMC,viewRangeNC:viewRangeMC])#,cmap='gray')
+    cb=plt.colorbar(orientation='vertical')
+    cb.set_label(r"$Intensity$ $units$",fontsize=12)
+    
+    plt.show()
 
 print("==================================================")
 print("Final field power:", L**-2*np.sum(abs(Eff)**2))
