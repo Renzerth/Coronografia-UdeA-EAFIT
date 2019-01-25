@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 """Some useful functions
 
 function(InfLim,SupLim,step,Total_Width,M)
