@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 """
 Created on 29-07-2015
 by AFIC
@@ -14,8 +17,8 @@ def cart2pol(x, y):
 #SLModulator GOF, pixel size: 26 micrometers, 26e-3 mm
 def SPP(Lvor,NG,L,dx=26.e-3,B=False):
     
-    M = L/dx
-    N = M
+#    M = L/dx
+#    N = M
     x = np.arange(-L/2, L/2, dx)
     xx, yy = np.meshgrid(x, x)
     phi = cart2pol(xx, yy)[1]
@@ -25,6 +28,6 @@ def SPP(Lvor,NG,L,dx=26.e-3,B=False):
     
     phi2 = np.floor(phaseVor/(2*np.pi/NG)) #Matrix with whole-numbers between 0 and NG-1 
     phi3 = phi2/NG #phi3 is phi2 but normalized
-    phi4 = np.round(256 * phi3) #256 fractions in each region
+#    phi4 = np.round(256 * phi3) #256 fractions in each region
     
     return np.exp(1j*(2*np.pi*phi3 - np.pi))
