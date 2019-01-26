@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 class vortexProfiler:
     
-    def __init__(self, dx = 26.e-3, p=12, radius=8.0):
+    def __init__(self, dx = 26.0e-3, p=12, radius=8.0):
         self.X = []
         self.Y = []
         self.x = []
@@ -30,7 +30,7 @@ class vortexProfiler:
         self.spatialStep = dx #Modulator's pixel size in mm
         self.samplingPower = p
         
-        self.computeSpace()
+        self.computeSpace() # Initialize space properties
     
     def computeSpace(self):
         self.spaceSamples = 2**self.samplingPower #2**12=4096 #number of samples
@@ -41,8 +41,7 @@ class vortexProfiler:
         
         self.x = np.arange(-self.halfSize,self.halfSize,self.spatialStep)
         self.X, self.Y = np.meshgrid(self.x,self.x) # Squared space is asumed
-        self.apertureCenter = (apertureRadius/self.spatialStep)
-        
+        self.apertureCenter = int(apertureRadius/self.spatialStep)
         return self
             
     def createCircMask(self,a,b,step,w):
@@ -54,62 +53,43 @@ class vortexProfiler:
         return circMask
     
     def placeAperture(self, centerPoint, windowCenter):
-        
         window = np.zeros((self.spaceSamples, self.spaceSamples ))
-        limM = int(centerPoint - windowCenter + 10) #Number of pixels needed to reach R2 plus a 
-        limN = int(centerPoint + windowCenter + 10) # little extra-range, centered in M/2 (This process is made to avoid big calculations with the whole MxM matrix)
+        limM = centerPoint - (windowCenter + 10) #Number of pixels needed to reach R2 plus a 
+        limN = centerPoint + (windowCenter + 10) # little extra-range, centered in M/2 (This process is made to avoid big calculations with the whole MxM matrix)
         window[limM:limN,limM:limN] = self.createCircMask(self.x[limM],self.x[limN],self.spatialStep,2*apertureRadius)
         
         return window
     
     def analyzeSpectrum(self,field):
-        Ef = np.fft.fftshift(field)
-        Ef = np.fft.fft2(Ef)
-        Ef = np.fft.ifftshift(Ef)
+        Ef = np.fft.fft2(field)
         Ef = Ef*self.spatialStep**2
-        
         return Ef
         
     def synthetizeSpectrum(self, field):
-        Ei = np.fft.fftshift(field)
-        Ei = np.fft.fft2(Ei)
-        Ei = np.fft.ifftshift(Ei)
+        Ei = np.fft.ifft2(field)
         Ei = Ei*1.0/self.spaceSize**2
-        
         return Ei
-    
-    def cart2pol(self,x, y):
-        rho = np.sqrt(x**2 + y**2)
-        phi = np.arctan2(y, x)
-        
-        return(rho, phi)
 
     def SPP(self,Lvor,NG):
+        phi = np.arctan2(self.Y, self.X)
+        phi = Lvor*(phi + np.pi) #Matrix with entries within [0:2pi-step]
+        phaseVor = np.mod(phi, 2*np.pi) #256-levels discretization
         
-        x = np.arange(-self.halfSize, self.halfSize, self.spatialStep)
-        xx, yy = np.meshgrid(x, x)
-        phi = self.cart2pol(xx, yy)[1]
-    
-        phi1 = phi + np.pi #Matrix with entries within [0:2pi-step]
-        phaseVor = np.mod(Lvor * phi1, 2*np.pi) #256-levels discretization
-        
-        phi2 = np.floor(phaseVor/(2*np.pi/NG)) #Matrix with whole-numbers between 0 and NG-1 
-        phi3 = phi2/NG #phi3 is phi2 but normalized
-        
-        return np.exp(1j*(2*np.pi*phi3 - np.pi))
+        phi = np.floor(phaseVor/(2*np.pi/NG)) #Matrix with whole-numbers between 0 and NG-1 
+        phi = phi/NG #phi3 is phi2 but normalized
+        return np.exp(1j*(2*np.pi*phi - np.pi))
 
 #%%-------------------------
 #PROGRAM SETTINGS
 #-------------------------
 plotsEnabled = False
-
 #%%---------------
 #System Parameters
 #-----------------
         
 Lvor = 2 # Topologic Charge
-NG = 10
-spatialSampling = 26.e-3 # SLM Pixel Pitch (mm)
+NG = 255
+spatialSampling = 26.0e-3 # SLM Pixel Pitch (mm)
 apertureRadius = 8.0 # Telescope - Lyot plane (mm)
 #%%-------------------
 #Vortex Analyzer Tools
@@ -120,8 +100,8 @@ vortexTools = vortexProfiler(dx=spatialSampling,radius=apertureRadius)
 #Compute Field Properties
 #------------------------
 
-aperture = vortexTools.placeAperture(vortexTools.halfSamples,vortexTools.apertureCenter)
-SLMfilterMask = vortexTools.SPP(Lvor,NG)
+aperture = np.fft.fftshift(vortexTools.placeAperture(vortexTools.halfSamples,vortexTools.apertureCenter))
+SLMfilterMask = np.fft.fftshift(vortexTools.SPP(Lvor,NG))
 #%%--------------
 #Propagate Fields
 #----------------
@@ -152,7 +132,7 @@ if plotsEnabled:
     ax.set_title("$Telescope$ $Apperture,$ $z=0$",fontsize=14,position=(0.5,1.0))
     ax.set_xlabel("$N_{x}$",labelpad=8)
     ax.set_ylabel("$N_{y}$")
-    plt.imshow((abs(aperture)**2)[viewRangeNA:viewRangeMA,viewRangeNA:viewRangeMA],cmap='gray')
+    plt.imshow((abs(np.fft.ifftshift(aperture))**2)[viewRangeNA:viewRangeMA,viewRangeNA:viewRangeMA],cmap='gray')
     #plt.show()
     
     # First Fourier Plane
@@ -161,7 +141,7 @@ if plotsEnabled:
     ax.set_title("$First$ $Fourier$ $Plane,$ $z=f_{2}$",fontsize=14,position=(0.5,1.0))
     ax.set_xlabel("$N_{x}$",labelpad=8)
     ax.set_ylabel("$N_{y}$")
-    plt.imshow((abs(SLMInput)**2)[viewRangeNB:viewRangeMB,viewRangeNB:viewRangeMB],cmap='gray')
+    plt.imshow((abs(np.fft.ifftshift(SLMInput))**2)[viewRangeNB:viewRangeMB,viewRangeNB:viewRangeMB],cmap='gray')
     cb=plt.colorbar()
     cb.set_label(r"$Intensity$ $units$",fontsize=12)
     #plt.show()
@@ -172,7 +152,7 @@ if plotsEnabled:
     ax.set_title("$SPP.$ $m=%d,$ $N=%d,$ $z=f_{1}$"%(Lvor,NG),fontsize=14,position=(0.5,1.0))
     ax.set_xlabel("$N_{x}$",labelpad=8)
     ax.set_ylabel("$N_{y}$")
-    plt.imshow(np.angle(SLMfilterMask),cmap='gray')
+    plt.imshow(np.angle(np.fft.ifftshift(SLMfilterMask)),cmap='gray')
     cb=plt.colorbar()
     cb.set_label(r"$Phase$ $value$",fontsize=12)
     #plt.show()
@@ -184,7 +164,7 @@ if plotsEnabled:
     ax0.set_title("$Field$ $phase$ $after$ $SPP,$ $z=f_{1}$",fontsize=14,position=(0.5,1.0))
     ax0.set_xlabel("$N_{x}$",labelpad=8)
     ax0.set_ylabel("$N_{y}$") 
-    map0=ax0.imshow(np.angle(SLMPlane)[viewRangeNC:viewRangeMC,viewRangeNC:viewRangeMC],cmap='gray')
+    map0=ax0.imshow(np.angle(np.fft.ifftshift(SLMPlane))[viewRangeNC:viewRangeMC,viewRangeNC:viewRangeMC],cmap='gray')
     cb=plt.colorbar(map0,orientation='horizontal')
     cb.set_label(r"$Phase$ $value$",fontsize=12)
     
@@ -192,7 +172,7 @@ if plotsEnabled:
     ax1.set_title("$Intensity$ $field$ $after$ $SPP,$ $z=f_{1}$",fontsize=14,position=(0.5,1.0))
     ax1.set_xlabel("$N_{x}$",labelpad=8)
     ax1.set_ylabel("$N_{y}$") 
-    map1=ax1.imshow((abs(SLMPlane)**2)[viewRangeNC:viewRangeMC,viewRangeNC:viewRangeMC])
+    map1=ax1.imshow((abs(np.fft.fftshift(SLMPlane))**2)[viewRangeNC:viewRangeMC,viewRangeNC:viewRangeMC])
     cb=plt.colorbar(map1,orientation='horizontal')
     cb.set_label(r"$Intensity$ $units$",fontsize=12)
     #plt.show()
@@ -203,7 +183,7 @@ if plotsEnabled:
     ax.set_title("$Field$ $at$ $z=f_{1}+2*f_{2}$",fontsize=14,position=(0.5,1.0))
     ax.set_xlabel("$N_{x}$",labelpad=8)
     ax.set_ylabel("$N_{y}$") 
-    plt.imshow((abs(lyotPlane)**2)[viewRangeNA:viewRangeMA,viewRangeNA:viewRangeMA],cmap='gray')
+    plt.imshow((abs(np.fft.ifftshift(lyotPlane))**2)[viewRangeNA:viewRangeMA,viewRangeNA:viewRangeMA],cmap='gray')
     cb=plt.colorbar()
     cb.set_label(r"$Intensity$ $units$",fontsize=12)
     #plt.show()
@@ -214,7 +194,7 @@ if plotsEnabled:
     ax.set_title("$Field$ $*$ $App.Stop,$ $z=f_{1}+2*f_{2}$",fontsize=14,position=(0.5,1.0))
     ax.set_xlabel("$N_{x}$",labelpad=8)
     ax.set_ylabel("$N_{y}$") 
-    plt.imshow((abs(lyotAperturePlane)**2)[viewRangeNA:viewRangeMA,viewRangeNA:viewRangeMA],cmap='gray')
+    plt.imshow((abs(np.fft.ifftshift(lyotAperturePlane))**2)[viewRangeNA:viewRangeMA,viewRangeNA:viewRangeMA],cmap='gray')
     cb=plt.colorbar(orientation='vertical')
     cb.set_label(r"$Intensity$ $units$",fontsize=12)
     #plt.show()
@@ -226,7 +206,7 @@ if plotsEnabled:
     ax.set_title("$Intensity$ $field$ $at$ $camera,$ $z=f_{1}+2*f_{2}+2f_{3}$",fontsize=14,position=(0.5,1.0))
     ax.set_xlabel("$N_{x}$",labelpad=8)
     ax.set_ylabel("$N_{y}$") 
-    plt.imshow((abs(outputField)**2)[viewRangeNC:viewRangeMC,viewRangeNC:viewRangeMC])#,cmap='gray')
+    plt.imshow((abs(np.fft.ifftshift(outputField))**2)[viewRangeNC:viewRangeMC,viewRangeNC:viewRangeMC])#,cmap='gray')
     cb=plt.colorbar(orientation='vertical')
     cb.set_label(r"$Intensity$ $units$",fontsize=12)
 

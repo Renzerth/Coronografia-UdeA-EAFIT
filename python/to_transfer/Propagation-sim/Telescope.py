@@ -26,7 +26,7 @@ import vortexGEN as vGEN #Many levels
 #%%-------------------------
 #PROGRAM SETTINGS
 #-------------------------
-plotsEnabled = False
+plotsEnabled = True
 
 #%%-------------------------
 #OPTICAL PARAMETERS (in mm)
