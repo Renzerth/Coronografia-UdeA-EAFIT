@@ -13,7 +13,7 @@
 %  All wrappped phases are shown on [-pi,pi] 
 %  Always execute the program whenver you are exactly inside its folder
 %
-% Samuel Plazas Escudero - Juan Jos� Cadavid - 2018 - Advanced Project 1
+% Samuel Plazas Escudero - Juan Jose Cadavid - 2018/2019 - PA1/PA2/TG
 
 %%%%%%%%%%%%%%%%%%%% PHASE MASK GENERATION ON THE SLM's %%%%%%%%%%%%%%%%%%%
 
@@ -66,7 +66,8 @@ HardwareInit; % Turns the camera on and create all the needed vars
 %% Automated measurement
 % AutomatMeasure
 %addpath(PhaseMaskSel);
-cd(dataDir); % Go to data Directory
+cd(dataDir); % Go to data Directory: input for the program is the acquired 
+             % images of the vortices
 showM = 0; % Don't show each time the mask is shown
 wait = 2; % Waits 2 second between each mask being shown
 for i = 1:length(tcvect)
