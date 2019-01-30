@@ -46,7 +46,7 @@ NG = 256
 #---------
 #SAMPLING
 #---------
-M = 2**12 #2**12=4096 #number of samples
+M = 2**11 #2**12=4096 #number of samples
 dx = 26.e-3 #Modulator's pixel size in mm
 L = M*dx #100. #plane size in mm
 
