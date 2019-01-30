@@ -27,7 +27,7 @@ maskSel = 4; % Phase mask selection:
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
 abs_ang = 2; % Magnitude (1) or phase (2) plot
 gl = 256; % Number of grey levels (normally 256)
-tc = 1; % Topological charge (integer bigger or equal to one)
+tc = 0; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
 s = -1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
@@ -92,8 +92,9 @@ Aalpha = pi; % Amplitude of the phase modulation. Ref: pi
 
 %%% Phase jump transition
 Angalp = 0; % Diffraction angle of horizontal direction (x) [radians]
-Angbet = pi/4; % Diffraction angle of vertical direction (y) [radians]
+Angbet = pi/2; % Diffraction angle of vertical direction (y) [radians]
 % Here, more than pi/2 seems not to work very well
+% Range: [-pi/2,pi/2]
 % The "*" in the 'Smooth transition' case also apply here
 
 %% SLM positionining calibration

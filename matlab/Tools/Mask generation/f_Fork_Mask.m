@@ -51,6 +51,9 @@ switch frkTyp
         
         %% Fork Mask
         mask = exp(1i*(maskFork+maskSPP));
+       
+        % Test of the unwrapped fork
+        % figure, imagesc(maskFork);
         
 end
 
