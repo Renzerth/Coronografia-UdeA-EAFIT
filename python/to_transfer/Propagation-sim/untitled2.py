@@ -11,7 +11,7 @@ version into Object-Oriented Programming structure.
 
 import numpy as np
 import pyfftw
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from multiprocessing import cpu_count
 
 #%% Class definition
@@ -74,7 +74,7 @@ class vortexProfiler:
         return np.fft.fftshift(np.exp(1j*(2*np.pi*phi - np.pi)))
     
     def prepareFFTW(self,volumeSize):
-        pyfftw.interfaces.cache.enable()
+        pyfftw.interfaces.cache.disable()
 
         fastLenghtT = pyfftw.next_fast_len(self.spaceSamples)
         fastLenghtV = pyfftw.next_fast_len(volumeSize)
@@ -110,7 +110,7 @@ vortexTools = vortexProfiler(dx=spatialSampling,radius=apertureRadius)
 #-----------------
 
 TCRanges = np.arange(1,Lvor+1,1)
-GLRanges = np.arange(2,NG,20)
+GLRanges = np.arange(2,NG,40)
 TCSize = len(TCRanges)
 GLSize = len(GLRanges)
 volumeSize = (TCSize)*(GLSize)
@@ -131,5 +131,28 @@ for grayIndex in range(0,GLSize):
 #Propagate Fields
 #----------------
 allocatedMatrixSLM[:] = SLMPlanes
-allocatedMatrixOPT[:] = pyfftw.interfaces.numpy_fft.fftn(allocatedMatrixSLM, axes=(1, 2)) 
-outputField = pyfftw.interfaces.numpy_fft.ifftn(allocatedMatrixOPT, axes=(1, 2))
+allocatedMatrixOPT[:] = pyfftw.interfaces.numpy_fft.ifftn(allocatedMatrixSLM,axes=(0,1))*vortexTools.spatialStep**2
+outputField = pyfftw.interfaces.numpy_fft.fftn(allocatedMatrixOPT,axes=(0,1))*1.0/vortexTools.spaceSize**2
+#%%---
+#Plots
+#-----
+
+scaleRange = 0.25
+pixelShift = 1-(vortexTools.spaceSamples % 2) # Center graph if even matrix size is used
+viewRangeN = int((1 - scaleRange)*vortexTools.halfSamples) + pixelShift
+viewRangeM = int((1 + scaleRange)*vortexTools.halfSamples) + pixelShift
+
+f, axes = plt.subplots(GLSize, TCSize, sharex=True, sharey=True)
+
+for ax, index in zip(axes.flat, np.arange(0,volumeSize)):
+    
+    TCIndex = int(index % TCSize)
+    grayIndex = int((index - TCIndex)/TCSize % GLSize)
+    
+    ax.set_title('TC: %1.1f::GL: %1d' % (TCRanges[TCIndex],GLRanges[grayIndex]),fontsize=14,position=(0.5,1.0))
+#    ax.set_xlabel("$N_{x}$",labelpad=8)
+#    ax.set_ylabel("$N_{y}$")  
+    ax.imshow((abs(np.fft.fftshift(allocatedMatrixOPT[:,:,index])[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2),cmap='gray')
+    
+#f.tight_layout()
+plt.show()
