@@ -71,9 +71,10 @@ class vortexProfiler:
         phi = phi/NG #phi3 is phi2 but normalized
         return np.exp(1j*(2*np.pi*phi - np.pi))
 
-#%%-------------------------
+#%%--------------
 #PROGRAM SETTINGS
-#-------------------------
+#----------------
+        
 plotsEnabled = True
 #%%---------------
 #System Parameters

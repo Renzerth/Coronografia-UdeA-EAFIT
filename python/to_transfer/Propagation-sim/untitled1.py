@@ -40,3 +40,9 @@ tas = time.time()
 fftf=scipy.fftpack.fftn(f)
 tas = time.time()-tas
 print("3D FFT, scipy/fftpack:", tas)
+
+# https://stackoverflow.com/questions/25812255/row-and-column-headers-in-matplotlibs-subplots
+#TCIndex = int(index % TCSize)
+#grayIndex = int((index - TCIndex)/TCSize % GLSize)
+#ax.set_title('TC: %1.1f::GL: %1d' % (TCRanges[TCIndex],GLRanges[grayIndex]),fontsize=14,position=(0.5,1.0))
+#https://stackoverflow.com/questions/40777772/python-integer-division-operator-vs-math-floor
