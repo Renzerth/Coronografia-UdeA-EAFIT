@@ -48,7 +48,7 @@ class vortexProfiler:
         return self
             
     def createCircMask(self, w, relSize):
-        circMask = self.rho/abs(w) <= relSize # Bool circular shape descrption
+        circMask = self.rho/np.abs(w) <= relSize # Bool circular shape descrption
         return circMask
     
     def placeAperture(self):
@@ -83,21 +83,51 @@ class vortexProfiler:
         pyfftw.config.PLANNER_EFFORT = 'FFTW_ESTIMATE'
         
         dataSize = (fastLenghtT,fastLenghtT,fastLenghtV)
-        
         outputMatrixA = pyfftw.empty_aligned(dataSize, dtype='complex128', n=16)
         outputMatrixB = pyfftw.empty_aligned(dataSize, dtype='complex128', n=16)
         
         return outputMatrixA,outputMatrixB
-#%%-------------------------
+    
+    def plotData(self, viewRange, colHeader, rowHeader, dataSet, plotType, pad = 5):
+        
+        f, axes = plt.subplots(GLSize, TCSize, sharex=True, sharey=True)
+        
+        for ax, col in zip(axes[0], colHeader):
+            ax.annotate(col, xy=(0.5, 1), xytext=(0, pad),
+                        xycoords='axes fraction', textcoords='offset points',
+                        size='large', ha='center', va='baseline')
+        
+        for ax, row in zip(axes[:,0], rowHeader):
+            ax.annotate(row, xy=(0, 0.5), xytext=(-ax.yaxis.labelpad - pad, 0),
+                        xycoords=ax.yaxis.label, textcoords='offset points',
+                        size='large', ha='right', va='center')
+        
+        if plotType in 'angle':
+            for ax, index in zip(axes.flat, np.arange(0,volumeSize)):
+                ax.imshow((np.angle(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])),cmap='gray')
+                
+        elif plotType in 'intensity':
+            for ax, index in zip(axes.flat, np.arange(0,volumeSize)):
+                ax.imshow((np.abs(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])**2),cmap='gray')
+        
+        f.tight_layout()
+        f.subplots_adjust(left=0.15, top=0.95)
+        plt.show()
+        
+#%%--------------
 #PROGRAM SETTINGS
-#-------------------------
+#----------------
+        
 plotsEnabled = True
 #%%---------------
 #System Parameters
 #-----------------
         
-Lvor = 3 # Topologic Charge
-NG = 256
+Lvor = 6 # Topologic Charge
+TCStep = 1
+NG = 10
+NGStep = 2
+
 spatialSampling = 60.1e-3 # SLM Pixel Pitch (mm)
 apertureRadius = 4.0 # Telescope - Lyot plane (mm)
 #%%-------------------
@@ -109,8 +139,8 @@ vortexTools = vortexProfiler(dx=spatialSampling,radius=apertureRadius)
 #Evaluation Ranges
 #-----------------
 
-TCRanges = np.arange(1,Lvor+1,1)
-GLRanges = np.arange(2,NG,40)
+TCRanges = np.arange(1,Lvor+1,TCStep)
+GLRanges = np.arange(2,NG,2)
 TCSize = len(TCRanges)
 GLSize = len(GLRanges)
 volumeSize = (TCSize)*(GLSize)
@@ -130,6 +160,7 @@ for grayIndex in range(0,GLSize):
 #%%--------------
 #Propagate Fields
 #----------------
+        
 allocatedMatrixSLM[:] = SLMPlanes
 allocatedMatrixOPT[:] = pyfftw.interfaces.numpy_fft.ifftn(allocatedMatrixSLM,axes=(0,1))*vortexTools.spatialStep**2
 outputField = pyfftw.interfaces.numpy_fft.fftn(allocatedMatrixOPT,axes=(0,1))*1.0/vortexTools.spaceSize**2
@@ -137,22 +168,13 @@ outputField = pyfftw.interfaces.numpy_fft.fftn(allocatedMatrixOPT,axes=(0,1))*1.
 #Plots
 #-----
 
-scaleRange = 0.25
-pixelShift = 1-(vortexTools.spaceSamples % 2) # Center graph if even matrix size is used
-viewRangeN = int((1 - scaleRange)*vortexTools.halfSamples) + pixelShift
-viewRangeM = int((1 + scaleRange)*vortexTools.halfSamples) + pixelShift
-
-f, axes = plt.subplots(GLSize, TCSize, sharex=True, sharey=True)
-
-for ax, index in zip(axes.flat, np.arange(0,volumeSize)):
+if plotsEnabled:
+    scaleRange = 0.25
+    pixelShift = 1-(vortexTools.spaceSamples % 2) # Center graph if even matrix size is used
+    viewRangeN = int((1 - scaleRange)*vortexTools.halfSamples) + pixelShift
+    viewRangeM = int((1 + scaleRange)*vortexTools.halfSamples) + pixelShift
     
-    TCIndex = int(index % TCSize)
-    grayIndex = int((index - TCIndex)/TCSize % GLSize)
+    cols = ['TC: {}'.format(col) for col in TCRanges]
+    rows = ['NG: {}'.format(row) for row in GLRanges]
     
-    ax.set_title('TC: %1.1f::GL: %1d' % (TCRanges[TCIndex],GLRanges[grayIndex]),fontsize=14,position=(0.5,1.0))
-#    ax.set_xlabel("$N_{x}$",labelpad=8)
-#    ax.set_ylabel("$N_{y}$")  
-    ax.imshow((abs(np.fft.fftshift(allocatedMatrixOPT[:,:,index])[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2),cmap='gray')
-    
-#f.tight_layout()
-plt.show()
+    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixOPT, 'intensity')
