@@ -1,8 +1,8 @@
-function [vid,src] = selectCamera(camera,exposure,format)
+function [vid,src] = f_selectCamera(camera,exposure,format)
 %% Select camera for predefined settings
 try
 switch camera
-  case 'DMK42BUC03'
+  case 'DMK42BUC03' % CMOS camera used for the transmission SLM
     vid = videoinput('tisimaq_r2013', 1, format);
     src = getselectedsource(vid);
     src.Brightness = 0;
@@ -17,7 +17,7 @@ switch camera
     src.Exposure = exposure;
     src.GainAuto = 'Off';
     
-  case 'DMK23U445'
+  case 'DMK23U445' % CCD camera used for the reflection SLM
     vid = videoinput('tisimaq_r2013', 1, format);
     src = getselectedsource(vid);
     src.Exposure = exposure;

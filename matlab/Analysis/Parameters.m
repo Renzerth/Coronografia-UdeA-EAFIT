@@ -119,6 +119,11 @@ analysFldr = 'Analysis'; % Folder name: scripts
 dataFlrd = 'Data'; % Folder name: input data           
 outFlrd = 'Output'; % Folder name: output data
 toolsFldr = 'Tools'; % Folder name: functions
+
+%% Camera selection
+camera = 'DMK42BUC03'; % 'DMK42BUC03' or 'DMK41BU02.H' or 'DMK23U445'
+exposure = 1; %
+format = 1; %
               
 %% Measurement
 % Temporal: Add measurement vectors: one of tc, ng and a new independent 

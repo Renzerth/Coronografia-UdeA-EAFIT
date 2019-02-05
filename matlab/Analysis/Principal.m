@@ -4,17 +4,24 @@
 %
 % Outputs:
 %  Plots on the PC or on the SLMs
-%  Processed vortex images
+%  Processed vortex images (or plots)
 %
 % Notes:
 %  Units: a.u (arbitrary units) and cm for lengths, radians for angles and
 %  um for wavelengths
-%  Spiral phase masks are inside Laguerre-Gauss
+%  Helicoidal phase masks are inside the Laguerre-Gauss beams category
 %  The variable mask is complex and is wrappped: mask = exp(i*mask)
 %  All wrappped phases are shown on [-pi,pi] 
 %  Always execute the program whenver you are exactly inside its folder
 %
-% Samuel Plazas Escudero - Juan Jose Cadavid - 2018/2019 - PA1/PA2/TG
+% Folders:
+%  Analysis: principal scripts
+%  Data: the inputs of the algorithm are the acquired vortex images
+%  Data -> Datalogdir: specific measurement folder 
+%  Output: processed images or plots
+%  Tools: functions used in the program
+%
+% Samuel Plazas (PA1/PA2/TG) - Juan Jose Cadavid(Master thesis) - 2018/2019
 
 %%%%%%%%%%%%%%%%%%%% PHASE MASK GENERATION ON THE SLM's %%%%%%%%%%%%%%%%%%%
 
@@ -50,7 +57,7 @@ f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang,binMask,plotMask);
 
 %%%%%%%%%%%%%%%%% Automated Measurements varying parameters%%%%%%%%%%%%%%%%
 if meas == 1
-%% Folder creation
+%% Measurement folder creation (Datalog)
 ltcvect = length(tcvect); % Length of the tc vector
 lglvect = length(glvect); % Length of the gl vector
 strDate = date; % Today's date is retrieved from the local machine
@@ -61,11 +68,15 @@ ax = exist(Datalogfldr, 'dir'); % 7 if folder exists, 0 if not
 if ax ~= 7 % Create a folder if it doesn't exist
     mkdir(Datalogfldr);
 end
+Datalogdir = [dataDir '\' Datalogfldr]; % Specific measurement folder
 cd(analysDir);
 
 %% Hardware initialization
-HardwareInit; % Turns the camera on and create all the needed vars
+% HardwareInit; % Turns the camera on and create all the needed vars
               % Remember to leave the preview open
+%[vid,src] = f_selectCamera(camera,exposure,format);
+%f_GetFrame(vid);
+
 
 %% Measurement debugging
 % f_CameraShot(); % Takes a photo, shows a figure and saves it as shot.png
@@ -75,10 +86,7 @@ HardwareInit; % Turns the camera on and create all the needed vars
 % tc = 0 beam or a high tc beam (long radius)
 
 %% Automated measurement
-% AutomatMeasure
-%addpath(PhaseMaskSel);
-cd(dataDir); % Go to data Directory: input for the program is the acquired 
-             % images of the vortices
+% AutomatMeasure; % Future script
 showM = 0; % Don't show a fig in "PhaseMaskSel"
 wait = 2; % Waits 2 second between each mask to be shown
 
@@ -91,9 +99,8 @@ for i = 1:length(tcvect)
     f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang,binMask,plotMask);
     pause(wait); % Displays the mask for "wait" seconds   
     MeasInfoEach = ['tc_' num2str(tcvect(i)) '_gl_' num2str(glvect(j))];
-    cd(dataDir); cd(Datalogfldr); % Goes to the data directory and
-                                  % enters to the specific measurement
-                                  % folder
+    cd(Datalogdir); % Goes to the data log directory (specific measurement
+                    % folder)
     saveas(gcf,[MeasInfoEach '.png']); % Saves the last shown figure
                                     % plotMask should be different from 0
     
