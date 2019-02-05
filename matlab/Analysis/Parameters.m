@@ -123,10 +123,17 @@ toolsFldr = 'Tools'; % Folder name: functions
 
 %% Camera selection
 camera = 'DMK42BUC03'; % 'DMK42BUC03' or 'DMK41BU02.H' or 'DMK23U445'
-exposure = 1; % PH50um: 0.0030 -- Y0.0256 || PH25um: 0.0083 -- Y0.0556 ||
-              % PH15um: --Y0.1429 || 0.0227 || PH10um: 0.0435 -- Y0.200 || 
-              % PH5um: 0.363 -- Y3.099
+exposure = 1; 
+% For 'DMK42BUC03':
+% Default: 0.0556
+% PH50um: 0.0030 -- Y0.0256 || PH25um: 0.0083 -- Y0.0556 ||
+% PH15um: --Y0.1429 || 0.0227 || PH10um: 0.0435 -- Y0.200 || 
+% PH5um: 0.363 -- Y3.099
+
 format = 1; % 'RGB24 (1024x768)'
+
+%% Image capture
+filename = 'test';
               
 %% Measurement
 % Temporal: Add measurement vectors: one of tc, ng and a new independent 
@@ -135,7 +142,7 @@ format = 1; % 'RGB24 (1024x768)'
 % tcvect = [1 2 4]; 
 % glvect = [5 50 128 256]; 
 tcvect = [1 2]; 
-glvect = [5 100];
+glvect = [5];
 
 
 

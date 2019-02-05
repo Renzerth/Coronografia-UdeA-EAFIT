@@ -79,7 +79,9 @@ cd(analysDir);
 
 
 %% Measurement debugging
-%f_GetFrame(vid);
+% f_ImageCapture(vid,dataDir,filename);
+% Frame = f_GetFrame(vid);
+
 % f_CameraShot(); % Future script % Takes a photo, shows a figure and saves it as shot.png
 % Usefull for aligning the vortex and adjusting exposure parameters
 
@@ -102,7 +104,8 @@ for i = 1:length(tcvect)
     MeasInfoEach = ['tc_' num2str(tcvect(i)) '_gl_' num2str(glvect(j))];
     cd(Datalogdir); % Goes to the data log directory (specific measurement
                     % folder)
-    saveas(gcf,[MeasInfoEach '.png']); % Saves the last shown figure
+    snap = getsnapshot(vid);                
+    imwrite(snap,[MeasInfoEach '.png']); % Saves the last shown figure
                                     % plotMask should be different from 0
     
     % Right now, the masks are being saved, but later the images should
