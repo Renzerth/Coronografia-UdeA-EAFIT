@@ -72,14 +72,15 @@ Datalogdir = [dataDir '\' Datalogfldr]; % Specific measurement folder
 cd(analysDir);
 
 %% Hardware initialization
-% HardwareInit; % Turns the camera on and create all the needed vars
-              % Remember to leave the preview open
+% HardwareInit; % Future script % Turns the camera on and create all the needed vars
+                % Remember to leave the preview open
 %[vid,src] = f_selectCamera(camera,exposure,format);
-%f_GetFrame(vid);
+% Use vid.FramesPerTrigger = 1; ??
 
 
 %% Measurement debugging
-% f_CameraShot(); % Takes a photo, shows a figure and saves it as shot.png
+%f_GetFrame(vid);
+% f_CameraShot(); % Future script % Takes a photo, shows a figure and saves it as shot.png
 % Usefull for aligning the vortex and adjusting exposure parameters
 
 %% Reference measurement
@@ -120,14 +121,16 @@ cd(analysDir); % Go to script Directory
 % the experimental design on PA2
 
 %% Post-processing of the data
-% DataProcessing
+% DataProcessing; % Future script
 
 
 %% Save data
-% SaveData
+% SaveData; % Future script
 
 %% Termination
-% Terminate_settings; % Clears variables and closes all; deactivates camera
+% Terminate_settings; % Future script % Clears variables and closes all; deactivates camera
+% delete(vid); % Clean up the camera
+
 end
 
 

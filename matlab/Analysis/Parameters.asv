@@ -63,9 +63,8 @@ pixSize = 8; % SLM pixel's size in um
 
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
-f_FR = maxNumPix*pixSize^2/L; % Criterium to determine the MINIMUM f_FR
-% From: 2_edgar_2015_Generation_Optical_Vortices_Binary_Vortex_Lenses.pdf
-
+% Criterium: 2_edgar_2015_Generation_Optical_Vortices_Binary_Vortex_Lenses
+f_FR = maxNumPix*pixSize^2/L; % Criterium to determine f_FR
 
 %% Parameters: Elliptic Gaussian Vortex
 bcst = 0.1; % Ellipticity. cy/cx = 1/alpha. Ref: .1, .2, .4, .6, .8 and 1
@@ -124,8 +123,7 @@ toolsFldr = 'Tools'; % Folder name: functions
 %% Camera selection
 camera = 'DMK42BUC03'; % 'DMK42BUC03' or 'DMK41BU02.H' or 'DMK23U445'
 exposure = 1; % PH50um: 0.0030 -- Y0.0256 || PH25um: 0.0083 -- Y0.0556 ||
-              % PH15um: --Y0.1429 || 0.0227 || PH10um: 0.0435 -- Y0.200 || 
-              % PH5um: 0.363 -- Y3.099
+               % PH15um --Y0.1429 : : 0.0227 :: PH10um : 0.0435 -- Y0.200 PH5um : 0.363 -- Y3.099
 format = 1; % 'RGB24 (1024x768)'
               
 %% Measurement
