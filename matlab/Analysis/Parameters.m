@@ -107,7 +107,7 @@ m = 4.1; % y-pos; ref: 1
 n = 0.58; % x-pos; ref: 0.5
 a = 0.5;  %#ok<*NASGU> % x-scale; ref: 1 
 b = 1; % y-scale; ref: 1
-plotMask = 0; % Allows to plot the final mask, as it can be a combination 
+plotMask = 1; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen

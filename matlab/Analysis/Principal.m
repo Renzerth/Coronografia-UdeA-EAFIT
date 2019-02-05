@@ -79,7 +79,7 @@ HardwareInit; % Turns the camera on and create all the needed vars
 %addpath(PhaseMaskSel);
 cd(dataDir); % Go to data Directory: input for the program is the acquired 
              % images of the vortices
-showM = 0; % Don't show each time the mask is shown
+showM = 0; % Don't show a fig in "PhaseMaskSel"
 wait = 2; % Waits 2 second between each mask to be shown
 
 for i = 1:length(tcvect)
@@ -94,11 +94,13 @@ for i = 1:length(tcvect)
     cd(dataDir); cd(Datalogfldr); % Goes to the data directory and
                                   % enters to the specific measurement
                                   % folder
-    saveas(gcf,[MeasInfoEach  '.png']); % Saves the last shown figure
+    saveas(gcf,[MeasInfoEach '.png']); % Saves the last shown figure
+                                    % plotMask should be different from 0
+    
     % Right now, the masks are being saved, but later the images should
     % be saved as an input of the algorithm to be processed
     % f_CameraShot();
-        
+     a=1;   
   end
 end
 
