@@ -125,12 +125,12 @@ toolsFldr = 'Tools'; % Folder name: functions
 camera = 'DMK42BUC03'; % 'DMK42BUC03' or 'DMK41BU02.H' or 'DMK23U445'
 exposure = 1; 
 % For 'DMK42BUC03':
-% Default: 0.0556
+% Default: 0.0556 or 1.282
 % PH50um: 0.0030 -- Y0.0256 || PH25um: 0.0083 -- Y0.0556 ||
 % PH15um: --Y0.1429 || 0.0227 || PH10um: 0.0435 -- Y0.200 || 
 % PH5um: 0.363 -- Y3.099
+format = 1; % 'RGB24 (1024x768)' or 'Y800 (1280x960)'
 
-format = 1; % 'RGB24 (1024x768)'
 
 %% Image capture
 filename = 'test';

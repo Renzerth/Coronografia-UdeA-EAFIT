@@ -91,27 +91,36 @@ cd(analysDir);
 %% Automated measurement
 % AutomatMeasure; % Future script
 showM = 0; % Don't show a fig in "PhaseMaskSel"
-wait = 2; % Waits 2 second between each mask to be shown
+recordingDelay = 2; % Waits 2 second between each mask to be shown
+totalImgs = ltcvect*lglvect; % Number of images to be taken
+expImgs = cell(1,totalImgs); % Cell with the experimental images
+MeasInfo = expImgs; % Same initialization as expImgs
+idxgral = 1; % General index that will be on [1,totalImgs]
+fileFormat = '.png';
+idxtc = 1; idxgl = gl;
 
-for i = 1:length(tcvect)
-  for j = 1: length(glvect)
-    tc = tcvect(i); % Specific tc for this iteration
-    gl = glvect(j); % Specific gl for this iteration
+while idxtc <= ltcvect % idxtc in [1,ltcvect]
+  while idxgl <= lglvect % idxtc in [1,lglvect]
+    tc = tcvect(idxtc); % Specific tc for this iteration
+    gl = glvect(idxgl); % Specific gl for this iteration
     cd(analysDir); % Moves to the Analysis directory
     PhaseMaskSel; % Selects a phase mask to display
     f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang,binMask,plotMask);
-    pause(wait); % Displays the mask for "wait" seconds   
-    MeasInfoEach = ['tc_' num2str(tcvect(i)) '_gl_' num2str(glvect(j))];
+    pause(recordingDelay); % Displays the mask for "recordingDelay" seconds   
+    tcstr = ['tc_' num2str(tcvect(idxtc))]; 
+    glstr = ['_gl_' num2str(glvect(idxgl))];
+    MeasInfo{idxgral} = [tcstr glstr]; % Dataname for each experimental data
     cd(Datalogdir); % Goes to the data log directory (specific measurement
                     % folder)
-    snap = getsnapshot(vid);                
-    imwrite(snap,[MeasInfoEach '.png']); % Saves the last shown figure
-                                    % plotMask should be different from 0
-    
+    % snap = getsnapshot(vid); % Real measurements
+    wrappedMask = f_circularPupil_maskAngle(r,mask,binMask); 
+    snap = wrappedMask; % "Simulated" measurements (the mask is saved)
+    expImgs{idxgral} = snap;
+    imwrite(MeasInfo{idxgral},[MeasInfo{idxgral} fileFormat]); % Saves the last shown figure
     % Right now, the masks are being saved, but later the images should
     % be saved as an input of the algorithm to be processed
     % f_CameraShot();
-     a=1;   
+    idxgral = idxgral + 1; % The general index increases   
   end
 end
 
