@@ -40,35 +40,33 @@ spaceVector = -SpatialSupport:2*SpatialSupport/(sSize-1):SpatialSupport; % Symme
 x = spaceVector; % Cartesian x-vector
 y = x; % Cartesian y-vector
 
-%% Plot one mask for tests: phase mask selection
-PhaseMaskSel; % Selects the type of phase mask.
-              % The variables "mask" and "maskName" are outputs here
+%% Phase mask selection
+PhaseMaskSel; % Selects the type of phase mask and mask, maskName are outpt
 
-%% Phase mask plot on the screen or on the SLM
+%% Phase mask plot on the screen or on the SKM
 %%% Plot phase mask on the Fourier plane of the vortex coronagraph
 f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang,binMask,plotMask);
+
 
 %%%%%%%%%%%%%%%%% Automated Measurements varying parameters%%%%%%%%%%%%%%%%
 if meas == 1
 %% Folder creation
-ltcvect = length(tcvect); % Length of the tc vector
-lglvect = length(glvect); % Length of the gl vector
 strDate = date; % Today's date is retrieved from the local machine
-MeasSize = [maskName '_mask_tcs_' num2str(ltcvect) '_gls_' num2str(lglvect)]; % Datalog with the number of measurements for tc's and gl's
-Datalogfldr = [date '_' MeasSize]; % Folder name
+MeasSize = [maskName '_mask_tcs_' num2str(ltcvect) '_gls_' num2str(lglvect)];
+Datalog = [date '_' MeasSize]; % Folder name
 cd(dataDir);
-ax = exist(Datalogfldr, 'dir'); % 7 if folder exists, 0 if not
+ax = exist(Datalog, 'dir'); % 7 if folder exists, 0 if not
 if ax ~= 7 % Create a folder if it doesn't exist
-    mkdir(Datalogfldr);
+    mkdir(Datalog);
 end
-cd(analysDir);
+cd(scriptDir);
 
 %% Hardware initialization
 HardwareInit; % Turns the camera on and create all the needed vars
               % Remember to leave the preview open
 
 %% Measurement debugging
-% f_CameraShot(); % Takes a photo, shows a figure and saves it as shot.png
+%f_CameraShot(); % Takes a photo, shows a figure and saves it as shot.png
 % Usefull for aligning the vortex and adjusting exposure parameters
 
 %% Reference measurement
@@ -81,28 +79,28 @@ cd(dataDir); % Go to data Directory: input for the program is the acquired
              % images of the vortices
 showM = 0; % Don't show each time the mask is shown
 wait = 2; % Waits 2 second between each mask to be shown
+ltcvect = length(tcvect); % Length of the tc vector
+lglvect = length(glvect); % Length of the gl vector
 
 for i = 1:length(tcvect)
-  for j = 1: length(glvect)
-    tc = tcvect(i); % Specific tc for this iteration
-    gl = glvect(j); % Specific gl for this iteration
-    cd(analysDir); % Moves to the Analysis directory
-    PhaseMaskSel; % Selects a phase mask to display
-    f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang,binMask,plotMask);
-    pause(wait); % Displays the mask for "wait" seconds   
-    MeasInfoEach = ['tc_' num2str(tcvect(i)) '_gl_' num2str(glvect(j))];
-    cd(dataDir); cd(Datalogfldr); % Goes to the data directory and
-                                  % enters to the specific measurement
-                                  % folder
-    saveas(gcf,[MeasInfoEach  '.png']); % Saves the last shown figure
-    % Right now, the masks are being saved, but later the images should
-    % be saved as an input of the algorithm to be processed
-    % f_CameraShot();
+    for j = 1: length(glvect)
+        tci = tcvect(i);
+        gl = glvect(j);
+        cd(scriptDir); 
+        PhaseMaskSel;
+        f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang,binMask,plotMask);
+        pause(wait);   
+        MeasInfoEach = ['tc_' num2str(tcvect(i)) '_gl_' num2str(glvect(j))];
+        cd(dataDir); cd(Datalog);
+        saveas(gcf,[MeasInfoEach  '.png']); % Saves the last shown figure
+        % Right now, the masks are being saved, but later the images should
+        % be saved as an input of the algorithm to be processed
+        % f_CameraShot();
         
-  end
+    end
 end
 
-cd(analysDir); % Go to script Directory
+cd(scriptDir); % Go to script Directory
 
 % Maybes:
 % Calculate the energy of the images

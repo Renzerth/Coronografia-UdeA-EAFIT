@@ -1,13 +1,14 @@
 %% Algorithm sections
 sim = 0; % Simulate: yes (1) or no (0)
-meas = 0; % Measure: yes (1) or no (0)
+% DELETE: testplot = 0; % Plot one mask for tests: yes (1) or no (0)
+meas = 1; % Measure: yes (1) or no (0)
 
 %% General algorithm parameters
 k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
         % Default: 10
 precision = 3; % Precision of displayed results: significative digits (3)
-showM = 1; % Plot the individual mask: no(0); yes(1); analog to plot 
-          % variable on the SLM Position section
+showM = 0; % Plot the individual mask: no(0); yes(1); analog to plot 
+           % variable on the SLM Position section
 maskSel = 4; % Phase mask selection:
 % 0: Helicoidal mask: SPP or DSPP depending on gl
 % 1: Laguerre-Gauss beams: amplitude or phase
@@ -51,12 +52,14 @@ norm = 0; % Normalize magnitude and phase (to unity). yes(1); no(0)
 % SpatialSupport = 1; % Unitary space: spaceVector = -1:2/(Ssize-1):1;
 SpatialSupport = min([0.864 1.536]); % Size of the SLM window in cm:
                                      % 1.536cm x 0.864cm
-maxNumPix = max([1920 1080]); % Maximum number of pixels on the SLM (either horizontal 
-                  % or vertical); SLM's resolution in pixels: 1920 x 1080 
+maxNumPix = max([1920 1080]); % Maximum number of pixels on the SLM (either 
+                  % horizontal or vertical); SLM's resolution in
+                  % pixels: 1920 x 1080 
 pixSize = 8; % SLM pixel's size in um
 
 %% SLM parameters (transmision)
-
+% Add a boolean to choose one of the SLMs
+% MISSING
 
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
@@ -104,7 +107,7 @@ m = 4.1; % y-pos; ref: 1
 n = 0.58; % x-pos; ref: 0.5
 a = 0.5;  %#ok<*NASGU> % x-scale; ref: 1 
 b = 1; % y-scale; ref: 1
-plotMask = 3; % Allows to plot the final mask, as it can be a combination 
+plotMask = 0; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -117,22 +120,15 @@ dataFlrd = 'Data'; % Folder name: input data
 outFlrd = 'Output'; % Folder name: output data
 toolsFldr = 'Tools'; % Folder name: functions
               
-%% Directories and add functions
-analysDir = pwd; cd ..; % Store script directory
-cd(toolsFldr); toolsDir = pwd; cd ..; % Store function directory
-cd(dataFlrd); dataDir = pwd;  cd ..; % Store data directory
-addpath(genpath(toolsDir)); cd(analysDir); % Add all folders in functions
-% restore back default paths, type: restoredefaultpath
-
 %% Measurement
 % Temporal: Add measurement vectors: one of tc, ng and a new independent 
 % program to store meanwhile the same generated masks, just to generalize
 % any experiment size.
-tcvect = [1 2 4]; ltcvect = length(tcvect);
-glvect = [5 50 128 256]; lglvect = length(glvect);
+% tcvect = [1 2 4]; 
+% glvect = [5 50 128 256]; 
+tcvect = [1 2]; 
+glvect = [5 100];
 
-%% Save data
-strDate = date; % Today's date is retrieved from the local machine
 
 
 
