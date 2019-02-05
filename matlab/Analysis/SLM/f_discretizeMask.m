@@ -6,12 +6,12 @@ function discreteMask = f_discretizeMask(mask,levels)
 discreteMask = mask;
 [n, m] = size(discreteMask);
 
-for i = 1:n,
-    for j = 1:m,
+for i = 1:n
+    for j = 1:m
         found = 1;
         z = 1;
-        while found ~= 0,
-            if mask(i, j) <= levels(z+1);
+        while found ~= 0
+            if mask(i, j) <= levels(z+1)
                 discreteMask(i,j) = levels(z);
                 found = 0;
             else

@@ -1,6 +1,10 @@
 function [X,scaledY,R,monitorSize] = f_makeScreenCoordinates(screenIndex,varargin)
+% Inputs:
+% screenIndex: number of screens
+% varargin: function activated (1) or not (0)
+
 %% Input Verification
-if nargin == 2
+if nargin == 2 % number of inputs
     if isa(varargin{1},'logical')
         relativeCoordSelect = varargin{1};
     else
@@ -9,11 +13,13 @@ if nargin == 2
 else
     relativeCoordSelect = true;
 end
+
 %% Projection monitor properties
 [monitorSize,~] = f_changeProjectionMonitor(screenIndex);
 horizontalHalfSize = ceil(monitorSize(1)/2);
 verticalHalfSize = ceil(monitorSize(2)/2);
 aspectRatio = monitorSize(1)/monitorSize(2);
+
 %% Space definition
 if relativeCoordSelect
     horSpaceArray = -1:2/(monitorSize(1)-1):1;

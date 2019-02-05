@@ -1,4 +1,4 @@
-function [targetResolution,monitorsInformation] = changeProjectionMonitor(varargin)
+function [targetResolution,monitorsInformation] = f_changeProjectionMonitor(varargin)
 %% Input checking
 if nargin == 1 && ~isnumeric(varargin{1})
     if ismember(varargin{1},{'Restore','restore','R','r'})
