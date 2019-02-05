@@ -28,7 +28,7 @@ else
     targetFolder = sprintf('ILPC_REF_Interf_PH%i',experimentValues(1));
 end
 [folderPath] = TOOLS.makeParentFolder(0,targetFolder);
-fileFormat = '.bmp';
+fileFormat = '.png';
 %% Image Tag
 [imageName] = TOOLS.makeImageTag('PCSVortexInterferograms');
 %% Capture and displacement

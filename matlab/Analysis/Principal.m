@@ -86,7 +86,7 @@ cd(analysDir);
 % Usefull for aligning the vortex and adjusting exposure parameters
 
 %% Reference measurement
-% tc = 0 beam or a high tc beam (long radius)
+% Null tc beam or a high tc beam (long radius)
 
 %% Automated measurement
 % AutomatMeasure; % Future script
@@ -96,8 +96,7 @@ totalImgs = ltcvect*lglvect; % Number of images to be taken
 expImgs = cell(1,totalImgs); % Cell with the experimental images
 MeasInfo = expImgs; % Same initialization as expImgs
 idxgral = 1; % General index that will be on [1,totalImgs]
-fileFormat = '.png';
-idxtc = 1; idxgl = gl;
+fileFormat = '.bmp';
 
 for idxtc = 1:ltcvect 
   for idxgl = 1:lglvect
@@ -142,6 +141,14 @@ cd(analysDir); % Go to script Directory
 %% Termination
 % Terminate_settings; % Future script % Clears variables and closes all; deactivates camera
 % delete(vid); % Clean up the camera
+
+%% End notification
+if beepSound == 1
+    for beepTimes = 1:3
+        beep();
+        pause(0.2);
+    end
+end
 
 end
 

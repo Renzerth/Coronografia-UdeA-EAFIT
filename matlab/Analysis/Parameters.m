@@ -2,6 +2,8 @@
 sim = 0; % Simulate: yes (1) or no (0)
 % DELETE: testplot = 0; % Plot one mask for tests: yes (1) or no (0)
 meas = 1; % Measure: yes (1) or no (0)
+beepSound = 1; % Beep sound when measurement finishes. Only works when 
+               % meas = 1
 
 %% General algorithm parameters
 k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
@@ -142,7 +144,7 @@ filename = 'test';
 % tcvect = [1 2 4]; 
 % glvect = [5 50 128 256]; 
 tcvect = [1 2]; 
-glvect = [5];
+glvect = [5 10];
 
 
 
