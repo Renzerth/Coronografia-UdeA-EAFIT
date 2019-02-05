@@ -99,8 +99,8 @@ idxgral = 1; % General index that will be on [1,totalImgs]
 fileFormat = '.png';
 idxtc = 1; idxgl = gl;
 
-while idxtc <= ltcvect % idxtc in [1,ltcvect]
-  while idxgl <= lglvect % idxtc in [1,lglvect]
+for idxtc = 1:ltcvect 
+  for idxgl = 1:lglvect
     tc = tcvect(idxtc); % Specific tc for this iteration
     gl = glvect(idxgl); % Specific gl for this iteration
     cd(analysDir); % Moves to the Analysis directory
@@ -116,7 +116,7 @@ while idxtc <= ltcvect % idxtc in [1,ltcvect]
     wrappedMask = f_circularPupil_maskAngle(r,mask,binMask); 
     snap = wrappedMask; % "Simulated" measurements (the mask is saved)
     expImgs{idxgral} = snap;
-    imwrite(MeasInfo{idxgral},[MeasInfo{idxgral} fileFormat]); % Saves the last shown figure
+    imwrite(expImgs{idxgral},[MeasInfo{idxgral} fileFormat]); % Saves the last shown figure
     % Right now, the masks are being saved, but later the images should
     % be saved as an input of the algorithm to be processed
     % f_CameraShot();
