@@ -30,55 +30,7 @@ maskSel = 4; % Phase mask selection:
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%% PART 2: HARDWARE
-%% SLM positionining calibration
-% Calibrated with: s = +1; ph0 = 0, tc = 1; 
-% (m,n) = (y,x); sign convention: as cartesian coordinates
-m = 4.1; % y-pos; ref: 1
-n = 0.58; % x-pos; ref: 0.5
-a = 0.5;  %#ok<*NASGU> % x-scale; ref: 1 
-b = 1; % y-scale; ref: 1
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
-              % of the previous ones
-              % 0: no plot;
-              % 1: on the screen
-              % 2: on the SLM
-              % 3: on the screen but surface-plot type
-
-if slmselect  == 1
-    %% SLM parameters (reflection)
-    % SpatialSupport = 1; % Unitary space: spaceVector = -1:2/(Ssize-1):1;
-    SpatialSupport = min([0.864 1.536]); % Size of the SLM window in cm:
-                                         % 1.536cm x 0.864cm
-    maxNumPix = max([1920 1080]); % Maximum number of pixels on the SLM 
-                                  % (either horizontal or vertical); SLM's 
-                                  % resolution in pixels: 1920 x 1080 
-    pixSize = 8; % SLM pixel's size in um
-
-else
-    %% SLM parameters (transmision)
-    SpatialSupport = min([2.66 2.00]); % Same as the reflection SLM
-    maxNumPix = max([800 600]); % Same as the reflection SLM
-    pixSize = 32; % Same as the reflection SLM
-end 
-              
-%% Camera selection
-camera = 'DMK42BUC03'; % 'DMK42BUC03' or 'DMK41BU02.H' or 'DMK23U445'
-exposure = 1; % Analog parameter
-% For 'DMK42BUC03':
-% Default: 0.0556 or 1.282
-% PH50um: 0.0030 -- Y0.0256 || PH25um: 0.0083 -- Y0.0556 ||
-% PH15um: --Y0.1429 || 0.0227 || PH10um: 0.0435 -- Y0.200 || 
-% PH5um: 0.363 -- Y3.099
-format = 1; % 'RGB24 (1024x768)' or 'Y800 (1280x960)'
-
-%% Image capture
-filename = 'test'; % Name of the capture one wants to take
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS
+%%%%%%%%%%%%%%%%%%%%%%% PART 2: PHASE MASKS
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
 abs_ang = 2; % Magnitude (1) or phase (2) plot
@@ -146,14 +98,63 @@ Angbet = pi/2; % Diffraction angle of vertical direction (y) [radians]
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%% PART 3: HARDWARE
+%% SLM positionining calibration
+% Calibrated with: s = +1; ph0 = 0, tc = 1; 
+% (m,n) = (y,x); sign convention: as cartesian coordinates
+m = 4.1; % y-pos; ref: 1
+n = 0.58; % x-pos; ref: 0.5
+a = 0.5;  %#ok<*NASGU> % x-scale; ref: 1 
+b = 1; % y-scale; ref: 1
+plotMask = 1; % Allows to plot the final mask, as it can be a combination 
+              % of the previous ones
+              % 0: no plot;
+              % 1: on the screen
+              % 2: on the SLM
+              % 3: on the screen but surface-plot type
+
+if slmselect  == 1
+    %% SLM parameters (reflection)
+    % SpatialSupport = 1; % Unitary space: spaceVector = -1:2/(Ssize-1):1;
+    SpatialSupport = min([0.864 1.536]); % Size of the SLM window in cm:
+                                         % 1.536cm x 0.864cm
+    maxNumPix = max([1920 1080]); % Maximum number of pixels on the SLM 
+                                  % (either horizontal or vertical); SLM's 
+                                  % resolution in pixels: 1920 x 1080 
+    pixSize = 8; % SLM pixel's size in um
+
+else
+    %% SLM parameters (transmision)
+    SpatialSupport = min([2.66 2.00]); % Same as the reflection SLM
+    maxNumPix = max([800 600]); % Same as the reflection SLM
+    pixSize = 32; % Same as the reflection SLM
+end 
+              
+%% Camera selection
+camera = 'DMK42BUC03'; % 'DMK42BUC03' or 'DMK41BU02.H' or 'DMK23U445'
+exposure = 1; 
+% For 'DMK42BUC03':
+% Default: 0.0556 or 1.282
+% PH50um: 0.0030 -- Y0.0256 || PH25um: 0.0083 -- Y0.0556 ||
+% PH15um: --Y0.1429 || 0.0227 || PH10um: 0.0435 -- Y0.200 || 
+% PH5um: 0.363 -- Y3.099
+format = 1; % 'RGB24 (1024x768)' or 'Y800 (1280x960)'
+
+%% Image capture
+filename = 'test'; % Name of the capture one wants to take
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%% PART 4: MEASUREMENT ADJUSTMENT
 %% Measurement
-% tcvect = [1 2 3 4 5 6 7 8 9 10]; % Dados por Juan José
-% glvect = [1 16 24 28 36 56 128 256]; % Dados por Juan José
-% glvect = [3, 127, 203, 59, 167] % Andrés F. Izquierdo: ng de mejor
-                                  % respuesta en fase del sistema. 
-tcvect = [1 2]; % Topological charges to be measured
-glvect = [5 10]; % Gray level to be measured
+% Temporal: Add measurement vectors: one of tc, ng and a new independent 
+% program to store meanwhile the same generated masks, just to generalize
+% any experiment size.
+% tcvect = [1 2 4]; 
+% glvect = [5 50 128 256]; 
+tcvect = [1 2]; % Topologal charges to be measured
+glvect = [5 10];
 
 %% Folder names
 analysFldr = 'Analysis'; % Folder name: scripts
@@ -167,7 +168,7 @@ toolsFldr = 'Tools'; % Folder name: functions
 %%%%%%%%%%%%%%%%%%%%%%% PART 5: ACADEMIC PURPOSES: Zernike, simulation
 %% Parameters: Zernike
 % L and gl are used here
-z_coeff = [1, 0.1]; % Zernike coeffient vector (see f_Zernike_Mask.m)
+z_coeff = [1, 0.1];
 a = 60; % Arbitrary constant; the bigger, the more intense; ref: a=20
 frac = 0.125; % To adjust the wrapped phase; ref: 0.125
 pupil = 1; % Pupil relative size: [0,1]; like a percentage
