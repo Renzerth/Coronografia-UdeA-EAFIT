@@ -63,7 +63,7 @@ else
 end 
               
 %% Camera selection
-camera = 'DMK42BUC03'; % 'DMK42BUC03' or 'DMK41BU02.H' or 'DMK23U445'
+camera = 'DMK42BUC03'; % 'DMK42BUC03' or 'DMK23U445' or 'DMK41BU02.H'
 exposure = 1; % Analog parameter
 % For 'DMK42BUC03':
 % Default: 0.0556 or 1.282

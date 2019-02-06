@@ -130,12 +130,6 @@ end
 
 cd(analysDir); % Go to script Directory
 
-% Maybes:
-% Calculate the energy of the images
-% Generalize the way the fors are executed
-% Randomize the order of the tcvect and glvect, commenting the premises of
-% the experimental design on PA2
-
 %% Post-processing of the data
 % DataProcessing; % Future script
 
