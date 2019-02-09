@@ -3,7 +3,7 @@
 #Utility: coherent imaging library.
 # See an example at ...AFIC/Fourier_comp/PROPYTHON
 
-import funcionesMOD as fM
+from tools import funcionesMOD as fM
 import numpy as np
 #import cmath as cm
 

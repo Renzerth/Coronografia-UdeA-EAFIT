@@ -12,64 +12,9 @@ version into Object-Oriented Programming structure.
 import numpy as np
 import matplotlib.pyplot as plt
 
-#%% Class definition
-
-class vortexProfiler:
-    
-    def __init__(self, dx = 26.0e-3, p=10, radius=8.0):
-        self.X = []
-        self.Y = []
-        self.x = []
-        self.rho = []
-        self.phi = []
-        self.apertureRadius = radius #Apperture and Lyot stop radius
-        self.spaceSamples = []
-        self.halfSamples = []
-        self.spaceSize = []
-        self.halfSize = []
-        self.spatialStep = dx #Modulator's pixel size in mm
-        self.samplingPower = p
-        
-        self.computeSpace() # Initialize space properties
-    
-    def computeSpace(self):
-        self.spaceSamples = 2**self.samplingPower #2**12=4096 #number of samples
-        self.spaceSize = self.spaceSamples*self.spatialStep #100. #plane size in mm
-        self.halfSamples = int(np.fix(self.spaceSamples/2))
-        self.halfSize = (self.spaceSize/2)
-        
-        self.x = np.arange(-self.halfSize,self.halfSize,self.spatialStep)
-        self.X, self.Y = np.meshgrid(self.x,self.x) # Squared space is asumed
-        self.rho = np.sqrt(self.X**2 + self.Y**2)
-        self.phi = np.arctan2(self.Y, self.X)
-        
-        return self
-            
-    def createCircMask(self, w, relSize):
-        circMask = self.rho/abs(w) <= relSize # Bool circular shape descrption
-        return circMask
-    
-    def placeAperture(self):
-        window = self.createCircMask(2*self.apertureRadius,0.5)
-        return window
-    
-    def analyzeSpectrum(self,field):
-        Ef = np.fft.fft2(field)
-        Ef = Ef*self.spatialStep**2
-        return Ef
-        
-    def synthetizeSpectrum(self, field):
-        Ei = np.fft.ifft2(field)
-        Ei = Ei*1.0/self.spaceSize**2
-        return Ei
-
-    def SPP(self,Lvor,NG):
-        phi = Lvor*(self.phi + np.pi) #Matrix with entries within [0:2pi-step]
-        phaseVor = np.mod(phi, 2*np.pi) #256-levels discretization
-        
-        phi = np.floor(phaseVor/(2*np.pi/NG)) #Matrix with whole-numbers between 0 and NG-1 
-        phi = phi/NG #phi3 is phi2 but normalized
-        return np.exp(1j*(2*np.pi*phi - np.pi))
+import sys, os; 
+sys.path.insert(0, os.path.abspath('..'))
+from tools.vortexTools import vortexProfiler
 
 #%%--------------
 #PROGRAM SETTINGS
@@ -80,8 +25,8 @@ plotsEnabled = True
 #System Parameters
 #-----------------
         
-Lvor = 1 # Topologic Charge
-NG = 10
+Lvor = 2 # Topologic Charge
+NG = 256
 spatialSampling = 60.1e-3 # SLM Pixel Pitch (mm)
 apertureRadius = 2.0 # Telescope - Lyot plane (mm)
 #%%-------------------

@@ -16,13 +16,15 @@ Modded by Grupo de Optica Aplicada - EAFIT
 Juan José Cadavid Muñoz - 23-01-2019
 """
 
+import sys, os; 
 import numpy as np
-import funcionesMOD as fM
-import coherImagLIB as CIL
-import matplotlib.pyplot as plt
-import vortexGEN as vGEN #Many levels
-#from matplotlib import gridspec
+sys.path.insert(0, os.path.abspath('..'))
 
+import tools.funcionesMOD as fM
+import tools.coherImagLIB as CIL
+import tools.vortexGEN as vGEN #Many levels
+import matplotlib.pyplot as plt
+#from matplotlib import gridspec
 #%%-------------------------
 #PROGRAM SETTINGS
 #-------------------------
