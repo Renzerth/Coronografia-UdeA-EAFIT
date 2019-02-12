@@ -1,0 +1,19 @@
+**El sistema usado consiste en 
+
+    1) lente de entrada (esférico): r=1.5cm f=30cm
+
+    -propagación en f-
+
+    2) SPP con N=256 y m={1,1.05,...,2.95,3}
+
+    3) lente cilíndrica: r = 1.5cm f=30cm eje:y
+
+    -propagación en f-
+
+    4) lente final (esférica): r=1.5cm f=30cm
+    
+    -propagación en f-
+
+    *todo dentro de un tubo de 1.5cm de radio*
+    
+**El campo de entrada es un campo gaussiano f = np.exp(-500000*(X**2+Y**2)) limitado por el tubo, de longitud de onda lambda_ = 0.633e-6.
