@@ -73,7 +73,7 @@ ax = exist(Datalogfldr, 'dir'); % 7 if folder exists, 0 if not
 if ax ~= 7 % Create a folder if it doesn't exist
     mkdir(Datalogfldr);
 end
-Datalogdir = [dataDir '\' Datalogfldr]; % Specific measurement folder
+Datalogdir = [dataDir '/' Datalogfldr]; % Specific measurement folder
 cd(analysDir);
 
 %% Hardware initialization
@@ -101,7 +101,7 @@ totalImgs = ltcvect*lglvect; % Number of images to be taken
 expImgs = cell(1,totalImgs); % Cell with the experimental images
 MeasInfo = expImgs; % Same initialization as expImgs
 idxgral = 1; % General index that will be on [1,totalImgs]
-fileFormat = '.bmp';
+% fileFormat = '.bmp'; % OLD: save each image
 
 for idxtc = 1:ltcvect 
   for idxgl = 1:lglvect
@@ -115,13 +115,15 @@ for idxtc = 1:ltcvect
     glstr = ['_gl_' num2str(glvect(idxgl))];
     MeasInfo{idxgral} = [tcstr glstr]; % Dataname for each experimental data
     cd(Datalogdir); % Goes to the data log directory (specific measurement
-                    % folder)
+                             % folder)
     % snap = getsnapshot(vid); % Real measurements
     wrappedMask = f_circularPupil_maskAngle(r,mask,binMask); 
     snap = wrappedMask; % "Simulated" measurements (the mask is saved)
     expImgs{idxgral} = snap;
+    
+    %save(filename,variables,'-append')
     imwrite(expImgs{idxgral},[MeasInfo{idxgral} fileFormat]); % Saves the last shown figure
-    % Right now, the masks are being saved, but later the images should
+    % Here, the masks are saved, but later the images should
     % be saved as an input of the algorithm to be processed
     % f_CameraShot();
     idxgral = idxgral + 1; % The general index increases   
@@ -155,13 +157,30 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%% ACADEMIC PURPOSES: Zernike, simulation
-% abs(mask) should always be 1, meaning that is normalized; try by yourself
+% abs(mask) should always be 1, meaning that it is normalized; try by yourself
 
 %% Optional FT
 if FTmask == 1
     FFT2D = @(s) ifftshift((fft2(fftshift(s)))); % 2D Fourier Transform
-    mask = FFT2D(mask);
-    f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang,binMask,plotMask);
+    mask = FFT2D(mask); % FT of the mask (not wrapped)
+    mask = abs(mask); % Magnitude of the FT
+    mask = 20*log(mask.^2); % Magnitude squared of the FT in log scale
+    abs_ang_FT = 1; % Magnitude is always plotted
+    f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang_FT,binMask,plotMask);
+    
+    [maxX, maxY] = size(mask);
+    midX = ceil((maxX+1)/2);
+    midY = ceil((maxY+1)/2);  
+    
+    figure;
+    f = improfile(mask,[1,1023],[512,512]);
+    plot(x,f); 
+    title('Horizontal profile of abs squared FFT');
+    
+    figure;
+    g = improfile(mask,[512,512],[1,1023]);
+    plot(x,g); 
+    title('Vertical profile of abs squared FFT');
 end
 
 %% Reconstruction of the mask with Zernike polynomials
