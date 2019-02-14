@@ -121,14 +121,18 @@ for idxtc = 1:ltcvect
     snap = wrappedMask; % "Simulated" measurements (the mask is saved)
     expImgs{idxgral} = snap;
     
-    %save(filename,variables,'-append')
-    imwrite(expImgs{idxgral},[MeasInfo{idxgral} fileFormat]); % Saves the last shown figure
+    % save(filename,variables,'-append')
+    A=expImgs{idxgral};
+    save(MeasInfo{idxgral},'A');
+    % imwrite(expImgs{idxgral},[MeasInfo{idxgral} fileFormat]); % OLD: save each image % Saves the last shown figure
     % Here, the masks are saved, but later the images should
     % be saved as an input of the algorithm to be processed
     % f_CameraShot();
     idxgral = idxgral + 1; % The general index increases   
   end
 end
+
+%save(MeasInfo{idxgral},'expImgs')
 
 cd(analysDir); % Go to script Directory
 
