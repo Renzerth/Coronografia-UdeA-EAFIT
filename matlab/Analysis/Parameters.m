@@ -1,17 +1,17 @@
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS
 %% Algorithm sections
-sim = 0; % Simulate: yes (1) or no (0)
 measDebug = 0; % Debugging before actually measuring. Displays the default 
                % phase mask and shots a photo with the camera
-meas = 1; % Measure: yes (1) or no (0)
-beepSound = 1; % Beep sound when measurement finishes. Only works when 
+meas = 0; % Measure: yes (1) or no (0)
+beepSound = 0; % Beep sound when measurement finishes. Only works when 
                % meas = 1
-slmselect = 1; % 1: Pluto (reflection); 2: LC2002 (transmission)
+slmselect = 2; % 1: Pluto (reflection); 2: LC2002 (transmission)
 windows = 10; % 7 or 10 (used for the / and \ respectively in directories)
+sim = 0; % Simulate: yes (1) or no (0)
 
 %% General algorithm parameters
 k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
-        % Default: 10
+        % Default: 10        
 precision = 3; % Precision of displayed results: significative digits (3)
 showM = 0; % Plot the individual mask: no(0); yes(1); analog to plot 
            % variable on the SLM Position section
@@ -34,20 +34,6 @@ maskSel = 0; % Phase mask selection:
 
 
 %%%%%%%%%%%%%%%%%%%%%%% PART 2: HARDWARE
-%% SLM positionining calibration
-% Calibrated with: s = +1; ph0 = 0, tc = 1; 
-% (m,n) = (y,x); sign convention: as cartesian coordinates
-m = 4.1; % y-pos; ref: 1
-n = 0.58; % x-pos; ref: 0.5
-a = 0.5;  %#ok<*NASGU> % x-scale; ref: 1 
-b = 1; % y-scale; ref: 1
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
-              % of the previous ones
-              % 0: no plot;
-              % 1: on the screen
-              % 2: on the SLM
-              % 3: on the screen but surface-plot type
-
 if slmselect  == 1
     %% SLM parameters (reflection)
     % SpatialSupport = 1; % Unitary space: spaceVector = -1:2/(Ssize-1):1;
@@ -64,6 +50,29 @@ else
     maxNumPix = max([800 600]); % Same as the reflection SLM
     pixSize = 32; % Same as the reflection SLM
 end 
+
+%% SLM positionining calibration
+screenIndex = 1; % Number of screens connected to the pc
+shiftBool = 0; % Shift activated (1) or deactivated (0)
+% shiftCart = [yshift,xshift]
+shiftCart = [-25,0]; % Percentages of movement of the total size of the
+                     % mask (cartesian coordinates convention)
+
+%%% OLD
+% Calibrated with: s = +1; ph0 = 0, tc = 1; 
+% (m,n) = (y,x); sign convention: as cartesian coordinates
+m = 4.1; % y-pos; ref: 1
+n = 0.58; % x-pos; ref: 0.5
+a = 1;  %#ok<*NASGU> % x-scale; ref: 1 
+b = 1; % y-scale; ref: 1
+%%% OLD
+
+plotMask = 1; % Allows to plot the final mask, as it can be a combination 
+              % of the previous ones
+              % 0: no plot;
+              % 1: on the screen
+              % 2: on the SLM
+              % 3: on the screen but surface-plot type
               
 %% Camera selection
 camera = 'DMK42BUC03'; % 'DMK42BUC03' or 'DMK23U445' or 'DMK41BU02.H'
@@ -89,8 +98,8 @@ gl = 256; % Number of grey levels (normally 256)
 tc = 1; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
-s = -1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
-ph0 = pi/2; % Initial phase of the angle [radians]; reference +pi from
+s = 1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
+ph0 = 0; % Initial phase of the angle [radians]; reference +pi from
          % normal zero of trig circle and same rotation convention.
          % This corresponds to a normal rotation of the mask for stethic
          % reasons and shouldn't affect the results. Only affects if the
