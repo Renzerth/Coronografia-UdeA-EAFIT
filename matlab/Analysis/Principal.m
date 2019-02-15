@@ -41,22 +41,12 @@ Parameters; % Adds to the algorithm all the needed parameters
 % open Parameters; % Keep open always
 
 %% Directories and add functions
-analysDir = pwd; cd ..; % Store script directory
-cd(toolsFldr); toolsDir = pwd; cd ..; % Store function directory
-cd(dataFlrd); dataDir = pwd;  cd ..; % Store data directory
-cd(outFlrd); outDir = pwd; cd ..; % Store output directory
-addpath(genpath(toolsDir)); cd(analysDir); % Add all folders in functions
-% restore back default paths, type: restoredefaultpath
+addpath('sub_scripts'); % Adds all the sub programs of the algorithm
+addDirectories; % Adds all the directories to use in the algorithm
 
 %% Spatial definitions
-sSize = 2^k-1; % Number of samples; odd number so that vortex gets
-               % centered (spatial size); Spatial size. ref: 2^k-1
-SpatialSupport = SpatialSupport/2; % Half support of the SLM window in cm
-spaceVector = -SpatialSupport:2*SpatialSupport/(sSize-1):SpatialSupport; % Symmetric space
-[X,Y] = meshgrid(spaceVector); % A symmetric grid: 2D Cartesian coordinates
-[phi,r] = cart2pol(X,Y); % Polar coordinates
-x = spaceVector; % Cartesian x-vector
-y = x; % Cartesian y-vector
+spatialDefinitions; % Defines the cartesian/polar coordinates and its 
+                    % sampling
 
 %% Plot one mask for tests: phase mask selection
 PhaseMaskSel; % Selects the type of phase mask.
@@ -77,16 +67,18 @@ FoldersRegistersCreation;
 %% Hardware initialization
 % HardwareInit; % Future script % Turns the camera on and create all the needed vars
                 % Remember to leave the preview open
-%[vid,src] = f_selectCamera(camera,exposure,format);
+[vid,src] = f_selectCamera(camera,exposure,format);
 % Use vid.FramesPerTrigger = 1; ??
 
 
 %% Measurement debugging
-% f_ImageCapture(vid,dataDir,filename);
-% Frame = f_GetFrame(vid);
-
-% f_CameraShot(); % Future script % Takes a photo, shows a figure and saves it as shot.png
 % Usefull for aligning the vortex and adjusting exposure parameters
+if measDebug == 1
+    f_ImageCapture(vid,dataDir,filename); % Takes a camera shot, shows a 
+                                          % figure and saves it
+    Frame = f_GetFrame(vid); % Stores Frame as what one sees in the preview
+    
+end
 
 %% Reference measurement
 % Null tc beam or a high tc beam (long radius)

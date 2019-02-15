@@ -1,6 +1,8 @@
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS
 %% Algorithm sections
 sim = 0; % Simulate: yes (1) or no (0)
+measDebug = 0; % Debugging before actually measuring. Displays the default 
+               % phase mask and shots a photo with the camera
 meas = 1; % Measure: yes (1) or no (0)
 beepSound = 1; % Beep sound when measurement finishes. Only works when 
                % meas = 1
@@ -79,7 +81,7 @@ filename = 'test'; % Name of the capture one wants to take
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS
+%%%%%%%%%%%%%%%%%%%%%%% PART 3: DEFAULT PHASE MASKS
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
 abs_ang = 2; % Magnitude (1) or phase (2) plot
