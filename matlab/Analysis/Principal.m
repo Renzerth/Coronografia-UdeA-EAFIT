@@ -65,7 +65,8 @@ if meas == 1
 FoldersRegistersCreation;
 
 %% Hardware initialization
-% HardwareInit; % Future script % Turns the camera on and create all the needed vars
+% HardwareInit; % Future script 
+                % Turns the camera on and create all the needed variables
                 % Remember to leave the preview open
 [vid,src] = f_selectCamera(camera,exposure,format);
 % Use vid.FramesPerTrigger = 1; ??
@@ -81,7 +82,7 @@ if measDebug == 1
 end
 
 %% Reference measurement
-% Null tc beam or a high tc beam (long radius)
+% Still not sure if needed: null tc beam or a high tc beam (long radius)
 
 %% Automated measurement
 AutomatMeasure; % Future script
@@ -98,13 +99,12 @@ DataProcessing; % Metric of the degree of extintion applied
 
 %% End notification
 if beepSound == 1
-    for beepTimes = 1:3
+    for beepTimes = 1:3 % Numbe of beeps
         beep();
-        pause(0.2);
+        pause(0.2); % Time between the beeps
     end
 end
-
-end
+end % End of measurements
 
 
 
