@@ -1,4 +1,5 @@
-%% Phase Mask SLMs Display and Free-Space Simulation of two stars
+%%  Phase mask SLMs display for the digital vortex coronagraphy and 
+%%% free-space simulation of two stars
 % Inputs:
 % See "Paramters.m"
 %
@@ -17,14 +18,21 @@
 % Folders:
 %  Analysis: principal scripts
 %  Data: the inputs of the algorithm are the acquired vortex images
-%  Data -> Datalogdir: specific measurement folder 
+%  Data -> DatalogDir: specific measurement folder 
 %  Output: processed images or plots
+%  Output -> ProcessedDir: specific processed images folder
 %  Tools: functions used in the program
 %
 % Bugs:
-%  So far no
+%  When the ticks of -pi, ..., pi are shown, sometimes the may move
+%  slightly from the real value
+%  The algorithm shall only be executed inside the analysis folder
+%  Not tested yet in Linux
+%  Simulations are not fully accurate with the calculations
+%  Zernike polynomials are not fully wrapped and the "a" constant has not
+%  been fully understood
 %
-% Samuel Plazas (PA1/PA2/TG) - Juan Jose Cadavid(Master thesis) - 2018/2019
+% Samuel Plazas(PA1/PA2/TG) - Juan Jose Cadavid(Master thesis) - 2018/2019
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% PHASE MASK GENERATION ON THE SLM's 
 %% Parameters and initialization
@@ -36,6 +44,7 @@ Parameters; % Adds to the algorithm all the needed parameters
 analysDir = pwd; cd ..; % Store script directory
 cd(toolsFldr); toolsDir = pwd; cd ..; % Store function directory
 cd(dataFlrd); dataDir = pwd;  cd ..; % Store data directory
+cd(outFlrd); outDir = pwd; cd ..; % Store output directory
 addpath(genpath(toolsDir)); cd(analysDir); % Add all folders in functions
 % restore back default paths, type: restoredefaultpath
 
@@ -62,19 +71,8 @@ f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang,binMask,plotMask);
 
 %%%%%%%%%%%%%%%%%%%%%%% MEASUREMENTS BY AN AUTOMATED PARAMETER VARIATION
 if meas == 1
-%% Measurement folder creation (Datalog)
-ltcvect = length(tcvect); % Length of the tc vector
-lglvect = length(glvect); % Length of the gl vector
-strDate = date; % Today's date is retrieved from the local machine
-MeasSize = [maskName '_mask_tcs_' num2str(ltcvect) '_gls_' num2str(lglvect)]; % Datalog with the number of measurements for tc's and gl's
-Datalogfldr = [date '_' MeasSize]; % Folder name
-cd(dataDir);
-ax = exist(Datalogfldr, 'dir'); % 7 if folder exists, 0 if not
-if ax ~= 7 % Create a folder if it doesn't exist
-    mkdir(Datalogfldr);
-end
-Datalogdir = [dataDir '/' Datalogfldr]; % Specific measurement folder
-cd(analysDir);
+%% Folders and register creations on Data and Output    
+FoldersRegistersCreation;
 
 %% Hardware initialization
 % HardwareInit; % Future script % Turns the camera on and create all the needed vars
@@ -94,51 +92,10 @@ cd(analysDir);
 % Null tc beam or a high tc beam (long radius)
 
 %% Automated measurement
-% AutomatMeasure; % Future script
-showM = 0; % Don't show a fig in "PhaseMaskSel"
-recordingDelay = 2; % Waits 2 second between each mask to be shown
-totalImgs = ltcvect*lglvect; % Number of images to be taken
-expImgs = cell(1,totalImgs); % Cell with the experimental images
-MeasInfo = expImgs; % Same initialization as expImgs
-idxgral = 1; % General index that will be on [1,totalImgs]
-% fileFormat = '.bmp'; % OLD: save each image
-
-for idxtc = 1:ltcvect 
-  for idxgl = 1:lglvect
-    tc = tcvect(idxtc); % Specific tc for this iteration
-    gl = glvect(idxgl); % Specific gl for this iteration
-    cd(analysDir); % Moves to the Analysis directory
-    PhaseMaskSel; % Selects a phase mask to display
-    f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang,binMask,plotMask);
-    pause(recordingDelay); % Displays the mask for "recordingDelay" seconds   
-    tcstr = ['tc_' num2str(tcvect(idxtc))]; 
-    glstr = ['_gl_' num2str(glvect(idxgl))];
-    MeasInfo{idxgral} = [tcstr glstr]; % Dataname for each experimental data
-    cd(Datalogdir); % Goes to the data log directory (specific measurement
-                             % folder)
-    % snap = getsnapshot(vid); % Real measurements
-    wrappedMask = f_circularPupil_maskAngle(r,mask,binMask); 
-    snap = wrappedMask; % "Simulated" measurements (the mask is saved)
-    expImgs{idxgral} = snap;
-    
-    % save(filename,variables,'-append')
-    A=expImgs{idxgral};
-    save(MeasInfo{idxgral},'A');
-    % imwrite(expImgs{idxgral},[MeasInfo{idxgral} fileFormat]); % OLD: save each image % Saves the last shown figure
-    % Here, the masks are saved, but later the images should
-    % be saved as an input of the algorithm to be processed
-    % f_CameraShot();
-    idxgral = idxgral + 1; % The general index increases   
-  end
-end
-
-%save(MeasInfo{idxgral},'expImgs')
-
-cd(analysDir); % Go to script Directory
+AutomatMeasure; % Future script
 
 %% Post-processing of the data
-% DataProcessing; % Future script
-
+DataProcessing; % Metric of the degree of extintion applied
 
 %% Save data
 % SaveData; % Future script
@@ -165,26 +122,7 @@ end
 
 %% Optional FT
 if FTmask == 1
-    FFT2D = @(s) ifftshift((fft2(fftshift(s)))); % 2D Fourier Transform
-    mask = FFT2D(mask); % FT of the mask (not wrapped)
-    mask = abs(mask); % Magnitude of the FT
-    mask = 20*log(mask.^2); % Magnitude squared of the FT in log scale
-    abs_ang_FT = 1; % Magnitude is always plotted
-    f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang_FT,binMask,plotMask);
-    
-    [maxX, maxY] = size(mask);
-    midX = ceil((maxX+1)/2);
-    midY = ceil((maxY+1)/2);  
-    
-    figure;
-    f = improfile(mask,[1,1023],[512,512]);
-    plot(x,f); 
-    title('Horizontal profile of abs squared FFT');
-    
-    figure;
-    g = improfile(mask,[512,512],[1,1023]);
-    plot(x,g); 
-    title('Vertical profile of abs squared FFT');
+    maskFT; % Performs the FFT of the mask and shows x and y profiles
 end
 
 %% Reconstruction of the mask with Zernike polynomials

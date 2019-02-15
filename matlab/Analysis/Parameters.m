@@ -5,6 +5,7 @@ meas = 1; % Measure: yes (1) or no (0)
 beepSound = 1; % Beep sound when measurement finishes. Only works when 
                % meas = 1
 slmselect = 1; % 1: Pluto (reflection); 2: LC2002 (transmission)
+windows = 10; % 7 or 10 (used for the / and \ respectively in directories)
 
 %% General algorithm parameters
 k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
@@ -12,7 +13,7 @@ k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
 precision = 3; % Precision of displayed results: significative digits (3)
 showM = 0; % Plot the individual mask: no(0); yes(1); analog to plot 
            % variable on the SLM Position section
-maskSel = 4; % Phase mask selection:
+maskSel = 0; % Phase mask selection:
 % 0: Helicoidal mask: SPP or DSPP depending on gl
 % 1: Laguerre-Gauss beams: amplitude or phase
 % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -83,7 +84,7 @@ filename = 'test'; % Name of the capture one wants to take
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
 abs_ang = 2; % Magnitude (1) or phase (2) plot
 gl = 256; % Number of grey levels (normally 256)
-tc = 0; % Topological charge (integer bigger or equal to one)
+tc = 1; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
 s = -1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
@@ -148,12 +149,13 @@ Angbet = pi/2; % Diffraction angle of vertical direction (y) [radians]
 
 %%%%%%%%%%%%%%%%%%%%%%% PART 4: MEASUREMENT ADJUSTMENT
 %% Measurement
-% tcvect = [1 2 3 4 5 6 7 8 9 10]; % Dados por Juan José
-% glvect = [1 16 24 28 36 56 128 256]; % Dados por Juan José
-% glvect = [3, 127, 203, 59, 167] % Andrés F. Izquierdo: ng de mejor
-                                  % respuesta en fase del sistema. 
+% tcvect = [1 2 3 4 5 6 7 8 9 10]; % Dados por Juan Josï¿½
+% glvect = [1 16 24 28 36 56 128 256]; % Dados por Juan Josï¿½
+% glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
+                                  % with a good system phase response
 tcvect = [1 2]; % Topological charges to be measured
 glvect = [5 10]; % Gray level to be measured
+recordingDelay = 2; % Waits 2 second between each mask to be shown
 
 %% Folder names
 analysFldr = 'Analysis'; % Folder name: scripts
@@ -175,7 +177,7 @@ disp_wrap = 0; % (0): Original; (1): wrapped mask on [-pi,pi]
 plot_z = 0; % plot with Zernike builder: yes (1); no (0)
 
 %% Optional plots and procedures
-FTmask = 0; % Finds the FFT of the mask and plots it
+FTmask = 0; % Finds the FFT of the mask and plots it: yes (1); no (0)
 maskZernReconstr = 0; % Reconstructs the mask with Zernike polynomials and
                       % plots the error
 
