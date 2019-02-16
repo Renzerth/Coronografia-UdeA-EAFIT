@@ -54,7 +54,7 @@ PhaseMaskSel; % Selects the type of phase mask.
 
 %% Phase mask plot on the screen or on the SLM
 %%% Plot phase mask on the Fourier plane of the vortex coronagraph
-f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang,binMask,plotMask);
+f_fig_maskSLM(x,y,r,mask,gl,abs_ang,binMask,plotMask);
 
 
 

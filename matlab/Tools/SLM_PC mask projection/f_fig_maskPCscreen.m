@@ -19,8 +19,8 @@ if showM == 1
   
   % Next, pi ticks are added to the colorbar if the phase value extreme
   % points are near -pi and pi; otherwise the default colorbar is shown
-  upTol = abs(max(wrappedMask(:))-pi);
-  lowTol = abs(abs(min(wrappedMask(:)))-pi);
+  upTol = abs(max(wrappedMask(:))-pi); % upper tolerance
+  lowTol = abs(abs(min(wrappedMask(:)))-pi); % lower tolerance
   Tol = 0.3; % Tolerance
   a = 0.15; % Colorbar custom tick adjustment
   if upTol < Tol && lowTol < Tol

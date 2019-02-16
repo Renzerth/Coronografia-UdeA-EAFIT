@@ -21,7 +21,7 @@ function[] = f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang,binMask,plotMask)
 
 %% Wrapping and Circular pupil Application
 if abs_ang == 2
-    wrappedMask = f_circularPupil_maskAngle(r,mask,binMask);
+    wrappedMask = f_mask_circ_angle_gl(r,mask,binMask);
     tit = 'Phase Mask';
     str = 'Value of phase';
 else % abs_ang == 1

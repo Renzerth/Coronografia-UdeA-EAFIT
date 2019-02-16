@@ -1,4 +1,4 @@
-function wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,gl,glphi,mingl,maxgl)
+function wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft)
 % Multiplies the phase mask by the maximum circle size with its outer
 % borders containing the minimum value of the phase (normally -pi)
 % Wraps the phase with the function "angle"
@@ -35,7 +35,9 @@ wrappedMask(r > rSize) = minMask; % Outside the circular pupil = minMask
 
 %% Discretized phase mask
 wrappedMask = f_discretizeMask(wrappedMask,glphi); % Mask discretization
-wrappedMask = f_scaleMatrix(wrappedMask,mingl,maxgl) + levelShift; 
-% Scaling to uint8 values                                                   
+wrappedMask = f_scaleMatrix(wrappedMask,mingl,maxgl) + levShft; % Scaling
+                                                                % to uint8 
+                                                                % values 
+     
 end
 

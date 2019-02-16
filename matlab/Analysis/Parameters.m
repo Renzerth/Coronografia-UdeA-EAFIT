@@ -13,8 +13,8 @@ sim = 0; % Simulate: yes (1) or no (0)
 k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
         % Default: 10        
 precision = 3; % Precision of displayed results: significative digits (3)
-showM = 0; % Plot the individual mask: no(0); yes(1); analog to plot 
-           % variable on the SLM Position section
+showM = 1; % Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
+           % analog to "plotMask" on the SLM Position section
 maskSel = 0; % Phase mask selection:
 % 0: Helicoidal mask: SPP or DSPP depending on gl
 % 1: Laguerre-Gauss beams: amplitude or phase
@@ -36,8 +36,8 @@ maskSel = 0; % Phase mask selection:
 %%%%%%%%%%%%%%%%%%%%%%% PART 2: HARDWARE
 if slmselect  == 1
     %% SLM parameters (reflection)
-    % SpatialSupport = 1; % Unitary space: spaceVector = -1:2/(Ssize-1):1;
-    SpatialSupport = min([0.864 1.536]); % Size of the SLM window in cm:
+    % spaceSupport = 1; % Unitary space: spaceVector = -1:2/(Ssize-1):1;
+    spaceSupport = min([0.864 1.536]); % Size of the SLM window in cm:
                                          % 1.536cm x 0.864cm
     maxNumPix = max([1920 1080]); % Maximum number of pixels on the SLM 
                                   % (either horizontal or vertical); SLM's 
@@ -46,7 +46,7 @@ if slmselect  == 1
 
 else
     %% SLM parameters (transmision)
-    SpatialSupport = min([2.66 2.00]); % Same as the reflection SLM
+    spaceSupport = min([2.66 2.00]); % Same as the reflection SLM
     maxNumPix = max([800 600]); % Same as the reflection SLM
     pixSize = 32; % Same as the reflection SLM
 end 
@@ -58,13 +58,13 @@ shiftBool = 0; % Shift activated (1) or deactivated (0)
 shiftCart = [-25,0]; % Percentages of movement of the total size of the
                      % mask (cartesian coordinates convention)
 
-%%% OLD
+%%% OLD: delete after the shiftCart works pretty well
 % Calibrated with: s = +1; ph0 = 0, tc = 1; 
 % (m,n) = (y,x); sign convention: as cartesian coordinates
-m = 4.1; % y-pos; ref: 1
-n = 0.58; % x-pos; ref: 0.5
-a = 1;  %#ok<*NASGU> % x-scale; ref: 1 
-b = 1; % y-scale; ref: 1
+% m = 4.1; % y-pos; ref: 1
+% n = 0.58; % x-pos; ref: 0.5
+% a = 1; % x-scale; ref: 1 
+% b = 1; % y-scale; ref: 1
 %%% OLD
 
 plotMask = 1; % Allows to plot the final mask, as it can be a combination 
@@ -107,8 +107,8 @@ binMask = 0; % Binarizes the mask w.r.t the max/min of the phase (boolean)
        
 %% Gray levels (discretization levels of the mask)
 % Dynamic range = maxGrayDepth - minGrayDepth
-minGrayDepth = 0; % Minimum gray level depth. Ref: 0
-maxGrayDepth = 100; % Maximum gray level depth. Ref: 255
+mingl = 0; % Minimum gray level depth. Ref: 0
+maxgl = 100; % Maximum gray level depth. Ref: 255
 levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
              % Corresponds to the brightness or constant shift of the gl's
 gl = 256; % Number of grey levels (normally 256). Must be smaller than 

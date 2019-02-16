@@ -1,7 +1,7 @@
 switch maskSel 
     
  case 0 % Spiral phase mask or mapa de fase espiral or máscara espiral de fase
-  mask = f_Spiral_Mask(x,y,r,phi,gl,glphi,mingl,maxgl,tc,s,ph0,binMask,showM);
+  mask = f_Spiral_Mask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,binMask,showM);
   maskName = 'Spiral';
    
  case 1 % Laguerre-Gauss (LG) beams
