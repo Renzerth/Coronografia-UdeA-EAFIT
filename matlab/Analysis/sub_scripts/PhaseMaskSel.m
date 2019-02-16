@@ -5,15 +5,15 @@ switch maskSel
   maskName = 'Spiral';
    
  case 1 % Laguerre-Gauss (LG) beams
-  mask = f_LG_Mask(x,y,r,phi,gl,tc,s,ph0,p,W,binv,norm,abs_ang,binMask,showM);
+  mask = f_LG_Mask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p,W,binv,norm,abs_ang,binMask,monitorSize,showM);
   maskName = 'LG';
   
  case 2 % Vortex Producing Lens (VPL) = Helicoidal + Fresnel lens
-  mask = f_VPL_Mask(x,y,r,phi,gl,tc,s,ph0,L,f_FR,binMask,showM);   
+  mask = f_VPL_Mask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,L,f_FR,binMask,showM);
   maskName = 'VPL';
   
  case 3 % Elliptic Gaussian Vortex (EGV) mask or Vórtice elíptico-gaussiano
-  mask = f_EGV_Mask(x,y,X,Y,r,gl,tc,s,ph0,bcst,binMask,showM);   
+  mask = f_EGV_Mask(x,y,X,Y,r,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,bcst,binMask,showM);
   maskName = 'EGV';
   
  case 4 % Threefold dislocation hologram or double pitch fork hologram or

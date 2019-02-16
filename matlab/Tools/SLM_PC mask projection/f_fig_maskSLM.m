@@ -5,8 +5,12 @@ function[] = f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMa
 %  r: polar coordinate (in cm)
 %  mask: function to be plotted. It is wrapped on [-pi,pi] if abs-ang = 2
 %  gl: number of grey levels (normally 256)
+%  glphi: discretized phi vector on [-pi,pi].
+%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
+%  levShft: corresponds to the brightness or constant shift of the gl's
 %  abs_ang: Magnitude (1); Phase (2)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
+%  monitorSize: size of the selected screen 
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
 %             plotMask = show; for 0 and 1.
@@ -40,7 +44,7 @@ switch plotMask
     
   case 2  % Plot on the SLM
     close(gcf);
-    offsetPixel = [0,0];
+    offsetPixel = [300,0];
     hFigure = figure('Visible','off','MenuBar','none','Toolbar','none');
     hFigure.Units = 'Pixels'; % 'color','black',
     set(gca,'Units','Pixels');

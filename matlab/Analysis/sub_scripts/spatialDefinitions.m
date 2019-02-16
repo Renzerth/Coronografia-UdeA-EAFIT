@@ -22,12 +22,12 @@ x = spaceVector; % Cartesian x-vector
 y = x; % Cartesian y-vector: square grid
 
 %% Gray-level discretized azimuthal angle
-glphi = -pi:2*pi/gl:pi; % The sampling interval consists on dividing the 
-                          % range over the gray levels
-                          % Similar to the VPL Edgar's discretization
-                          % formula in the page number 1 of
-                          % 1_edgar_2013_High-quality optical vortex-beam                    
-                          % generation_E-Rueda_OL
+glphi = -pi:2*pi/gl:pi; % Discretized phi vector on [-pi,pi]. The sampling
+                        % interval consists on dividing the  range over the
+                        % gray levels. Similar to the VPL Edgar's 
+                        % discretization formula in the page number 1 of
+                        % 1_edgar_2013_High-quality optical vortex-beam                    
+                        % generation_E-Rueda_OL
                          
 %% Screen coordinates
 [~,~,~,monitorSize] = f_makeScreenCoordinates(scrnIdx); % Calculates the 

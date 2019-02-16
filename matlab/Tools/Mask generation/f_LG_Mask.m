@@ -1,10 +1,13 @@
 %% Laguerre Gauss phase masks
 
-function mask = f_LG_Mask(x,y,r,phi,gl,tc,s,ph0,p,W,binv,norm,abs_ang,binMask,showM)
+function mask = f_LG_Mask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p,W,binv,norm,abs_ang,binMask,monitorSize,showM)
 % Inputs: 
 %  x,y: cartesian coordinates
 %  r,phi: polar coordinates (r in cm)
 %  gl: number of grey levels (normally 256)
+%  glphi: discretized phi vector on [-pi,pi].
+%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
+%  levShft: corresponds to the brightness or constant shift of the gl's
 %  tc: topological charge = m (azimuthal index)
 %  s: sign of mask (+1 or -1)
 %  ph0: initial phase of the azimuthal part (and of the spiral phase mask)
@@ -18,6 +21,7 @@ function mask = f_LG_Mask(x,y,r,phi,gl,tc,s,ph0,p,W,binv,norm,abs_ang,binMask,sh
 %  norm: normalize magnitude and phase. yes(1); no(0)
 %  abs_ang: Magnitude (1); Phase (2)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
+%  monitorSize: size of the selected screen 
 %  showM: show the mask. yes(1); no(0)
 %
 % Output:
@@ -43,8 +47,7 @@ if binv == 1 && tc == 0 % Only applies binary inversion when tc = 0
 end
 
 %% Normalization constants (amplitude and phase)
-wrappedMask = f_circularPupil_maskAngle(r,mask,binMask);
-
+wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
 if norm == 1
     norm_ang = max(max(wrappedMask)); % Max value
     wrappedMask = wrappedMask/norm_ang; % Normalization
@@ -60,12 +63,11 @@ if showM == 1
     f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM);
   else % abs_ang == 1
     plotMask = showM; % plotMask = show; for 0 and 1.
-    f_fig_maskSLM(x,y,r,mag,0,0,0,0,gl,abs_ang,binMask,plotMask); 
+    f_fig_maskSLM(x,y,r,mag,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask,monitorSize,plotMask)
     title('Amplitude of LG');
     cbh = colorbar; cbh.Label.String = 'Value';
   end
 end
-% f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang,binMask,plotMask)
 
 %%% OLD
 % if abs_ang == 2

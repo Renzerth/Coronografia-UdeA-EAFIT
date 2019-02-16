@@ -3,13 +3,16 @@
 % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf
 % Equation 3, page 2
 
-function mask = f_VPL_Mask(x,y,r,phi,gl,tc,s,ph0,L,f_FR,binMask,showM)
+function mask = f_VPL_Mask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,L,f_FR,binMask,showM)
 % Generates and plots a VPL mask:  helicoidal mask + fresnel lens
 %
 % Inputs: 
 %  x,y: cartesian coordinates vector
 %  r,phi: polar coordinates (r in cm)
 %  gl: number of grey levels (normally 256)
+%  glphi: discretized phi vector on [-pi,pi].
+%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
+%  levShft: corresponds to the brightness or constant shift of the gl's
 %  tc: Topological charge
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask
@@ -37,7 +40,7 @@ function mask = f_VPL_Mask(x,y,r,phi,gl,tc,s,ph0,L,f_FR,binMask,showM)
 
 %% Plot (with axes)
 if showM == 1
-  wrappedMask = f_circularPupil_maskAngle(r,mask,binMask);
+  wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
   tit = ['VPL with topological charge ' ...
          num2str(tc) ' and ' num2str(gl) ' gray levels'];  
   f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM);

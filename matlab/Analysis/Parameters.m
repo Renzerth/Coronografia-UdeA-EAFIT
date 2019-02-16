@@ -15,7 +15,7 @@ k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
 precision = 3; % Precision of displayed results: significative digits (3)
 showM = 1; % Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
            % analog to "plotMask" on the SLM Position section
-maskSel = 0; % Phase mask selection:
+maskSel = 3; % Phase mask selection:
 % 0: Helicoidal mask: SPP or DSPP depending on gl
 % 1: Laguerre-Gauss beams: amplitude or phase
 % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
