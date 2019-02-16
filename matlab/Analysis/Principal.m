@@ -119,7 +119,15 @@ end
 
 %% Gradient of the mask
 % Shows the singularity clearly
-%  [xg,yg] = gradient(mask);
+if gradMask == 1
+    [xg,yg] = gradient(angle(mask));
+    figure; contour(x,y,angle(mask)); hold on;
+    quiver(x,y,xg,yg); title('Gradient of the mask'); hold off
+    figure; imagesc(x,y,xg); 
+    colormap(hot); title('X-profile gradient of the mask');
+    figure; imagesc(x,y,yg); 
+    colormap(hot); title('Y-profile gradient of the mask');
+end
 
 %% Reconstruction of the mask with Zernike polynomials
 if maskZernReconstr == 1

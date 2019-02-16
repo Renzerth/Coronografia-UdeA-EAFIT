@@ -15,7 +15,7 @@ k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
 precision = 3; % Precision of displayed results: significative digits (3)
 showM = 1; % Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
            % analog to "plotMask" on the SLM Position section
-maskSel = 6; % Phase mask selection:
+maskSel = 0; % Phase mask selection:
 % 0: Helicoidal mask: SPP or DSPP depending on gl
 % 1: Laguerre-Gauss beams: amplitude or phase
 % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -184,12 +184,14 @@ a = 60; % Arbitrary constant; the bigger, the more intense; ref: a=20
 frac = 0.125; % To adjust the wrapped phase; ref: 0.125
 pupil = 1; % Pupil relative size: [0,1]; like a percentage
 disp_wrap = 0; % (0): Original; (1): wrapped mask on [-pi,pi] 
-plot_z = 0; % plot with Zernike builder: yes (1); no (0)
+plot_z = 0; % plot with Zernike builder: yes(1); no(0)
 
 %% Optional plots and procedures
-FTmask = 0; % Finds the FFT of the mask and plots it: yes (1); no (0)
+FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
+gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)
 maskZernReconstr = 0; % Reconstructs the mask with Zernike polynomials and
                       % plots the error
+                      
 
 %% Simulation parameters
 starAmplitude = 1; % ref: 1
