@@ -25,7 +25,7 @@ plotsEnabled = True
 #System Parameters
 #-----------------
         
-Lvor = 2 # Topologic Charge
+Lvor = 3 # Topologic Charge
 NG = 256
 spatialSampling = 60.1e-3 # SLM Pixel Pitch (mm)
 apertureRadius = 2.0 # Telescope - Lyot plane (mm)
@@ -87,7 +87,7 @@ if plotsEnabled:
     ax.set_title("$SPP.$ $m=%d,$ $N=%d,$ $z=f_{1}$"%(Lvor,NG),fontsize=14,position=(0.5,1.0))
     ax.set_xlabel("$N_{x}$",labelpad=8)
     ax.set_ylabel("$N_{y}$")
-    plt.imshow(np.angle(np.fft.ifftshift(SLMfilterMask)),cmap='gray')
+    plt.imshow(np.angle(SLMfilterMask),cmap='gray')
     cb=plt.colorbar()
     cb.set_label(r"$Phase$ $value$",fontsize=12)
     #plt.show()
@@ -141,7 +141,7 @@ if plotsEnabled:
     ax.set_title("$Intensity$ $field$ $at$ $camera,$ $z=f_{1}+2*f_{2}+2f_{3}$",fontsize=14,position=(0.5,1.0))
     ax.set_xlabel("$N_{x}$",labelpad=8)
     ax.set_ylabel("$N_{y}$") 
-    plt.imshow((abs(np.fft.ifftshift(outputField)[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2))#,cmap='gray')
+    plt.imshow((abs(20*np.log10(np.fft.ifftshift(outputField))[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2))#,cmap='gray')
     cb=plt.colorbar(orientation='vertical')
     cb.set_label(r"$Intensity$ $units$",fontsize=12)
 
