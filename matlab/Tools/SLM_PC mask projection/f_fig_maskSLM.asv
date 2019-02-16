@@ -1,5 +1,5 @@
 %% Plot Phase Mask 
-function[] = f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask,monitorSize,plotMask)
+function[] = f_fig_maskSLM(x,y,r,mask,gl,abs_ang,binMask,monitorSize,plotMask)
 % Inputs:
 %  x,y: cartesian coordinates vector
 %  r: polar coordinate (in cm)
@@ -20,7 +20,6 @@ if abs_ang == 2
     wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
     tit = 'Phase Mask';
     str = 'Value of phase';
-    
 else % abs_ang == 1
     wrappedMask = abs(mask); % Actually, this is an amplitude filter
     tit = 'Amplitude Mask';
@@ -39,20 +38,14 @@ switch plotMask
     pax = gca; pax.FontSize = 16; % Font size   
     
   case 2  % Plot on the SLM
-    close(gcf);
     offsetPixel = [0,0];
-    hFigure = figure('Visible','off','MenuBar','none','Toolbar','none');
-    hFigure.Units = 'Pixels'; % 'color','black',
-    set(gca,'Units','Pixels');
+    hFigure = figure('color','black','units','pixels');
     set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
-    %set(gca,'xtick',[]); set(gca,'ytick',[]) % No axis values
-    %set(hFigure, 'MenuBar', 'none'); % Hide Menu bar
-    %set(hFigure, 'ToolBar', 'none'); % Hide Tool bar
-    image(wrappedMask); colormap(gray(gl)); % Plots in SLM screen 
-    axis off;
-    % axis fill;
-    hFigure.Visible = 'on';
-    [~] = f_changeProjectionMonitor('Restore'); % Restore default figure
+    set(gca,'xtick',[]); set(gca,'ytick',[]) % No axis values
+    set(hFigure, 'MenuBar', 'none'); % Hide Menu bar
+    set(hFigure, 'ToolBar', 'none'); % Hide Tool bar
+    imagesc(x,y,wrappedMask); axis fill; colormap(gray(gl)); % Plots in SLM screen
+    set(gca,'xtick',[]); set(gca,'ytick',[]) % no axis values
     
   case 3 % Screen: surface plot
       figure('color','white','units','normalized','position',...
