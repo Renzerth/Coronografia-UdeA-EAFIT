@@ -1,7 +1,8 @@
 %% Elliptic Gaussian Vortex (EGV)pi
 % Taken from: 2015_Vortex_CGH_Adjustable-SPP_Jain
 
-function mask = f_Fork_Mask(x,y,X,Y,r,phi,gl,tc,s,ph0,L,period,T0,frkTyp,Aalpha,Angalp,Angbet,binMask,showM)
+function mask = f_Fork_Mask(x,y,X,Y,r,phi,gl,glphi,mingl,maxgl,levShft, ...
+            tc,s,ph0,L,period,T0,frkTyp,Aalpha,Angalp,Angbet,binMask,showM)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
@@ -10,6 +11,9 @@ function mask = f_Fork_Mask(x,y,X,Y,r,phi,gl,tc,s,ph0,L,period,T0,frkTyp,Aalpha,
 %  X,Y: A symmetric grid of the spatial vector: 2D Cartesian coordiantes
 %  phi,r: polar coordinates (r in cm)
 %  gl: number of grey levels (normally 256)
+%  glphi: discretized phi vector on [-pi,pi].
+%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
+%  levShft: corresponds to the brightness or constant shift of the gl's
 %  tc: Topological charge
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask
@@ -59,7 +63,7 @@ end
 
 %% Plot (with axes)
 if showM == 1
-  wrappedMask = f_circularPupil_maskAngle(r,mask,binMask);
+  wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
   tit = ['Fork mask with topological charge ' num2str(tc) ...
          ' and period = ' num2str(period)];
   f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM);

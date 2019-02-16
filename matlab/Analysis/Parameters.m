@@ -15,7 +15,7 @@ k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
 precision = 3; % Precision of displayed results: significative digits (3)
 showM = 1; % Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
            % analog to "plotMask" on the SLM Position section
-maskSel = 3; % Phase mask selection:
+maskSel = 6; % Phase mask selection:
 % 0: Helicoidal mask: SPP or DSPP depending on gl
 % 1: Laguerre-Gauss beams: amplitude or phase
 % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -53,20 +53,11 @@ else
 end 
 
 %% SLM positionining calibration
-shiftBool = 0; % Shift activated (1) or deactivated (0)
-% shiftCart = [yshift,xshift]
+shiftBool = 0; % Shift activated (1)[SLM displaying] or deactivated (0)
+               % [exporting masks]. shiftCart = [yshift,xshift]
 shiftCart = [-25,0]; % Percentages of movement of the total size of the
                      % mask (cartesian coordinates convention)
-
-%%% OLD: delete after the shiftCart works pretty well
-% Calibrated with: s = +1; ph0 = 0, tc = 1; 
-% (m,n) = (y,x); sign convention: as cartesian coordinates
-% m = 4.1; % y-pos; ref: 1
-% n = 0.58; % x-pos; ref: 0.5
-% a = 1; % x-scale; ref: 1 
-% b = 1; % y-scale; ref: 1
-%%% OLD
-
+                     % Calibrated with: s = +1; ph0 = 0, tc = 1; 
 plotMask = 1; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;

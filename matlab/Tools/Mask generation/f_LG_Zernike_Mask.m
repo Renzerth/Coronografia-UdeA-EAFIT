@@ -1,14 +1,19 @@
 %% Laguerre Gauss Binary masks + Zernike Phases
 
-function mask = f_LG_Zernike_Mask(x,y,r,phi,gl,tc,s,ph0,p,W,binv,norm,...
-                                  abs_ang,z_coeff,a,frac,L,pupil,sSize,...
-                                  disp_wrap,plot_z,binMask,showM)
+function mask = f_LG_Zernike_Mask(x,y,r,phi,gl,glphi,mingl,maxgl, ...
+                                  levShft,tc,s,ph0,p,W,binv,norm, ...
+                                  abs_ang,z_coeff,a,frac,L,pupil,sSize, ...
+                                  disp_wrap,plot_z,binMask,monitorSize, ...
+                                  showM)
 % Generates and plots a Laguerre Gauss + Zernike mask
 %
 % Inputs: 
 %  x,y: cartesian coordinates vector
 %  r,phi: polar coordinates (r in cm)
 %  gl: number of grey levels (normally 256)
+%  glphi: discretized phi vector on [-pi,pi].
+%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
+%  levShft: corresponds to the brightness or constant shift of the gl's
 %  tc: Topological charge
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask
@@ -41,20 +46,21 @@ function mask = f_LG_Zernike_Mask(x,y,r,phi,gl,tc,s,ph0,p,W,binv,norm,...
 %  disp_wrap: original (0) or wrapped mask (1)
 %  plot_z: plot (1); no plot (0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
+%  monitorSize: size of the selected screen 
 %  showM: show the mask. yes(1); no(0)
 %
 % Outputs:
 % mask: VPL phase mask
 
-  maskZ = f_Zernike_Mask(x,y,r,z_coeff,a,frac,L,gl,pupil,sSize,...
-                         disp_wrap,plot_z,binMask,showM);
-  maskLG = f_LG_Mask(x,y,r,phi,gl,tc,s,ph0,p,W,binv,norm,abs_ang, ...
-                     binMask,showM);
+  maskZ = f_Zernike_Mask(x,y,r,z_coeff,a,frac,L,gl,glphi,mingl,maxgl, ...
+           levShft,pupil,sSize,disp_wrap,plot_z,binMask,monitorSize,showM);
+  maskLG = f_LG_Mask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p, ...
+                     W,binv,norm,abs_ang,binMask,monitorSize,showM);
   mask = maskZ.*maskLG; % Combined mask. It is recommended to use binary
                         % masks on LG
   
   %% Plot the combined LG + Z mask                      
-  wrappedMask = f_circularPupil_maskAngle(r,mask,binMask);
+  wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
   tit = ['LG phase mask with topological charge ' ...
          num2str(tc) ' and radial node ' num2str(p) ' + Zernike mask'];
   f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM);  

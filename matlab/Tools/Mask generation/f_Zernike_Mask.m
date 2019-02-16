@@ -1,6 +1,6 @@
 %% Generate a Zernike phase mask (wavefront)
-function mask = f_Zernike_Mask(x,y,r,z_coeff,a,frac,L,gl,pupil,sSize,...
-                               disp_wrap,plot_z,binMask,showM)
+function mask = f_Zernike_Mask(x,y,r,z_coeff,a,frac,L,gl,glphi,mingl, ...
+                  maxgl,levShft,pupil,sSize,disp_wrap,plot_z,binMask,monitorSize,showM)
 % Characterizes the aberrations of the system
 % Inputs:
 %  x,y: cartesian coordinates vector
@@ -22,14 +22,18 @@ function mask = f_Zernike_Mask(x,y,r,z_coeff,a,frac,L,gl,pupil,sSize,...
 %  L: laser wavelength [um]
 %  pupil
 %  gl: gray levels of Zernike. Normally 256
+%  glphi: discretized phi vector on [-pi,pi].
+%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
+%  levShft: corresponds to the brightness or constant shift of the gl's
 %  pupil: defines pupil relative size (w.r.t. sSize), like a percentage
 %  sSize: Size of cartesian coordinates. Space Size
 %  disp_wrap: original (0) or wrapped mask (1)
 %  plot_z: plot (1); no plot (0)
-%  -Not used directly here (but needed as an input of an inner function):
+%  *-Not used directly here (but needed as an input of an inner function):
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  abs_ang: Magnitude (1); Phase (2) 
-%  -
+%  *-
+%  monitorSize: size of the selected screen 
 %  showM: show the mask. yes(1); no(0)
 %
 % Outputs:
@@ -69,10 +73,11 @@ mask = exp(1i*n_mask); % Wrapped mask
 if disp_wrap == 1 && showM == 1
   figure; imagesc(x,y,angle(mask)), title('Wrapped phase mask');
   colormap(gray(gl)); cbh = colorbar; cbh.Label.String = 'Value of phase';
-elseif showM == 1
+elseif showM == 1 % disp_wrap = 0
     abs_ang = 1; % "Magnitude" in order to not wrap the phase
     plotMask = showM; % plotMask = show; for 0 and 1.
-    f_fig_maskSLM(x,y,r,n_mask,0,0,0,0,gl,abs_ang,binMask,plotMask);
+    f_fig_maskSLM(x,y,r,n_mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
+                  binMask,monitorSize,plotMask);
     title('Unwrapped phase mask'); % The amplitude title is replaced
 end
 

@@ -1,6 +1,7 @@
 %% Laguerre Gauss phase masks
 
-function mask = f_LG_Mask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p,W,binv,norm,abs_ang,binMask,monitorSize,showM)
+function mask = f_LG_Mask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s, ...
+                       ph0,p,W,binv,norm,abs_ang,binMask,monitorSize,showM)
 % Inputs: 
 %  x,y: cartesian coordinates
 %  r,phi: polar coordinates (r in cm)
