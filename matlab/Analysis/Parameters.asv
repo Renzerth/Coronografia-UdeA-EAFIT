@@ -52,7 +52,7 @@ else
 end 
 
 %% SLM positionining calibration
-screenIndex = 1; % Screen number selector
+screenIndex = 1; % Number of screens connected to the pc
 shiftBool = 0; % Shift activated (1) or deactivated (0)
 % shiftCart = [yshift,xshift]
 shiftCart = [-25,0]; % Percentages of movement of the total size of the
@@ -107,12 +107,18 @@ binMask = 0; % Binarizes the mask w.r.t the max/min of the phase (boolean)
        
 %% Gray levels (discretization levels of the mask)
 % Dynamic range = maxGrayDepth - minGrayDepth
-minGrayDepth = 0; % Minimum gray level depth. Ref: 0
-maxGrayDepth = 100; % Maximum gray level depth. Ref: 255
-levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
-             % Corresponds to the brightness or constant shift of the gl's
-gl = 256; % Number of grey levels (normally 256). Must be smaller than 
-          % the dynamic range = maxGrayDepth-minGrayDepth
+minGrayDepth = 0; % Ref: 0
+maxGrayDepth = 100; % Ref: 255
+levelShift = 0; % Ref: 0. Seems to be non-linear or better not to use it
+                % Corresponds to the brightness
+gl = 256; % Number of grey levels (normally 256)
+
+grayLevels = -pi:2*pi/(gl):pi; % The sampling interval consists on dividing 
+                               % the range over the gray levels
+                               % Similar to the VPL Edgar's discretization
+                               % formula in the page number 1 of
+                               % 1_edgar_2013_High-quality optical vortex-
+                               % beam generation_E-Rueda_OL
 
 %% Parameters: Laguerre-Gauss
 p = 5; % Number of radial nodes. If p=0, normal helicoid masks are obtained

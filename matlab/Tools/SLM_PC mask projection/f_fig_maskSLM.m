@@ -1,9 +1,3 @@
-%% Worked
-% f_fig_vortex(0.8,0,0.3,0.3,1,1)
-% f_fig_vortex(0.89,4,0.4,0.4,1,1)
-% f_fig_vortex(-0.6,1.74,0.6,0.8,1,1)
-% Working: f_fig_vortex(-0.66,1.69,0.6,0.8,1) with [1.3+m/10 0+n/10 a b]); % Maximized figure
-
 %% Plot Phase Mask 
 function[] = f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang,binMask,plotMask)
 % Inputs:

@@ -1,4 +1,7 @@
 function [targetResolution,monitorsInformation] = f_changeProjectionMonitor(varargin)
+% Inputs:
+% screenIndex: screen number selector
+
 %% Input checking
 if nargin == 1 && ~isnumeric(varargin{1}) % Restore original position
     if ismember(varargin{1},{'Restore','restore','R','r'}) 

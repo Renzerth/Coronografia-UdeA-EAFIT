@@ -1,4 +1,4 @@
-function wrappedMask = f_circularPupil_maskAngle(r,mask,binMask)
+function wrappedMask = f_mask_circ_angle_gl(r,mask,binMask)
 % Multiplies the phase mask by the maximum circle size with its outer
 % borders containing the minimum value of the phase (normally -pi)
 % Inputs:
