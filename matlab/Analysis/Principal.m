@@ -69,14 +69,18 @@ FoldersRegistersCreation;
                 % Turns the camera on and create all the needed variables
                 % Remember to leave the preview open
 [vid,src] = f_selectCamera(camera,exposure,format);
-% Use vid.FramesPerTrigger = 1; ??
-
+% USE: ???
+% - vid.FramesPerTrigger = 1; % Default frames to capture per trigger
+% - bootstrap 
 
 %% Measurement debugging
 % Usefull for aligning the vortex and adjusting exposure parameters
 if measDebug == 1
     f_ImageCapture(vid,dataDir,filename); % Takes a camera shot, shows a 
                                           % figure and saves it
+                                          
+    % Use ?
+%set(0,'DefaultFigureVisible','on'); % Stop displaying figures: 'off' or 'on'
     Frame = f_GetFrame(vid); % Stores Frame as what one sees in the preview
     
 end

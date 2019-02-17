@@ -159,13 +159,17 @@ Angbet = pi/2; % Diffraction angle of vertical direction (y) [radians]
 
 %%%%%%%%%%%%%%%%%%%%%%% PART 4: MEASUREMENT ADJUSTMENT
 %% Measurement
-% tcvect = [1 2 3 4 5 6 7 8 9 10]; % Dados por Juan Jos�
-% glvect = [1 16 24 28 36 56 128 256]; % Dados por Juan Jos�
+% tcvect = [1 2 3 4 5 6 7 8 9 10]; % Dados por Juan Jose
+% glvect = [1 16 24 28 36 56 128 256]; % Dados por Juan Jose
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
                                   % with a good system phase response
 tcvect = [1 2]; % Topological charges to be measured
 glvect = [5 10]; % Gray level to be measured
-recordingDelay = 2; % Waits 2 second between each mask to be shown
+wait = 10; % 10 seconds before measuring as a safety measurement
+recordingDelay = 1; % Waits 5 seconds between each mask to be shown
+                    % This time is also important so that the camera
+                    % bus doesn't overload. Ref: 5
+                    % RIGHT NOW 1 FOR DEBUGGING
 
 %% Folder names
 analysFldr = 'Analysis'; % Folder name: scripts
