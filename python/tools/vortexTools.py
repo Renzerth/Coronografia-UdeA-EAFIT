@@ -24,19 +24,19 @@ class vortexProfiler:
         self.x = []
         self.rho = []
         self.phi = []
-        self.apertureRadius = radius #Apperture and Lyot stop radius
+        self.apertureRadius = radius # Apperture and Lyot stop radius
         self.spaceSamples = []
         self.halfSamples = []
         self.spaceSize = []
         self.halfSize = []
-        self.spatialStep = dx #Modulator's pixel size in mm
+        self.spatialStep = dx # Modulator's pixel size in mm
         self.samplingPower = p
         
         self.computeSpace() # Initialize space properties
     
     def computeSpace(self):
         self.spaceSamples = 2**self.samplingPower #2**12=4096 #number of samples
-        self.spaceSize = self.spaceSamples*self.spatialStep #100. #plane size in mm
+        self.spaceSize = self.spaceSamples*self.spatialStep #100. # Plane size in mm
         self.halfSamples = int(np.fix(self.spaceSamples/2))
         self.halfSize = (self.spaceSize/2)
         
@@ -66,10 +66,10 @@ class vortexProfiler:
         return Ei
 
     def SPP(self,Lvor,NG):
-        phi = Lvor*(self.phi + np.pi) #Matrix with entries within [0:2pi-step]
-        phaseVor = np.mod(phi, 2*np.pi) #256-levels discretization
+        phi = Lvor*(self.phi + np.pi) # Matrix with entries within [0:2pi-step]
+        phaseVor = np.mod(phi, 2*np.pi) # 256-levels discretization
         
-        phi = np.floor(phaseVor/(2*np.pi/NG)) #Matrix with whole-numbers between 0 and NG-1 
+        phi = np.floor(phaseVor/(2*np.pi/NG)) # Matrix with whole-numbers between 0 and NG-1 
         phi = phi/NG #phi3 is phi2 but normalized
         return np.fft.fftshift(np.exp(1j*(2*np.pi*phi - np.pi)))
     

@@ -3,7 +3,9 @@ Author: Juan Pablo Carvajal.
 Last update in 29-01-2019.
 For GOF - UdeA.
 
-Programm description: Basically, simulates the propagation of a Gaussian beam through a simple coronograph. Small variations have been done to simulate different situations. The actual version was used animate the evolution of the results while changing the topological charge.
+Programm description: Basically, simulates the propagation of a Gaussian beam through a simple coronograph. 
+Small variations have been done to simulate different situations. 
+The current version was used to animate the evolution of the results while changing the topological charge (fractionary and integer).
 """
 
 
