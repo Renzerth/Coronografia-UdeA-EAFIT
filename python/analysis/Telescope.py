@@ -33,29 +33,29 @@ plotsEnabled = True
 #%%-------------------------
 #OPTICAL PARAMETERS (in mm)
 #-------------------------
-f1 = 200. 
-f2 = 200.
+f1 = 200. # Objective lens focal length
+f2 = 200. # Ocular lens focal length
 R2 = 8. # Apperture and Lyot stop radius
-f3 = 300.
+f3 = 300. 
 wl = 532.e-6 # wavelength in mm  (green)
 
 #---------------------------
 #SPP: CHARGE AND GRAY LEVELS
 #---------------------------
-Lvor = 2 # Topologic Charge
-NG = 256
+Lvor = 2 # Topological Charge
+NG = 256 # Number of gray levels
 
 #---------
 #SAMPLING
 #---------
-M = 2**12 #2**12=4096 #number of samples
-dx = 26.e-3 #Modulator's pixel size in mm
-L = M*dx #100. #plane size in mm
+M = 2**12 #2**12=4096 # Number of samples
+dx = 26.e-3 # Modulator's pixel size in mm
+L = M*dx #100. # Plane size in mm
 
 #------------
 #Data Slicing
 #------------
-hM = int(M/2.0)
+hM = int(M/2.0) # Half M
 
 #------------------
 #OPTICAL PARAMETERS
