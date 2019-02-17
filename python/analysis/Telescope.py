@@ -35,9 +35,9 @@ plotsEnabled = True
 #-------------------------
 f1 = 200. 
 f2 = 200.
-R2 = 8. #Apperture and Lyot stop radius
+R2 = 8. # Apperture and Lyot stop radius
 f3 = 300.
-wl = 532.e-6 #wavelength in mm  (green)
+wl = 532.e-6 # wavelength in mm  (green)
 
 #---------------------------
 #SPP: CHARGE AND GRAY LEVELS
