@@ -1,6 +1,6 @@
 function [X,scaledY,R,monitorSize] = f_makeScreenCoordinates(screenIndex,varargin)
 % Inputs:
-% screenIndex: screen number selector
+% screenIndex: screen number selector. In [1,N] with N the # of screens
 % varargin: function activated (1) or not (0)
 
 %% Input Verification

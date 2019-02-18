@@ -5,15 +5,14 @@ measDebug = 0; % Debugging before actually measuring. Displays the default
 meas = 0; % Measure: yes (1) or no (0)
 beepSound = 0; % Beep sound when measurement finishes. Only works when 
                % meas = 1
-slmselect = 2; % 1: Pluto (reflection); 2: LC2002 (transmission)
-windows = 10; % 7 or 10 (used for the / and \ respectively in directories)
+slmselect = 1; % 1: Pluto (reflection); 2: LC2002 (transmission)
 sim = 0; % Simulate: yes (1) or no (0)
 
 %% General algorithm parameters
 k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
         % Default: 10        
 precision = 3; % Precision of displayed results: significative digits (3)
-showM = 1; % Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
+showM = 0; % Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
            % analog to "plotMask" on the SLM Position section
 maskSel = 0; % Phase mask selection:
 % 0: Helicoidal mask: SPP or DSPP depending on gl
@@ -34,6 +33,7 @@ maskSel = 0; % Phase mask selection:
 
 
 %%%%%%%%%%%%%%%%%%%%%%% PART 2: HARDWARE
+% screenIndex: screen number selector. In [0,N-1] with N the # of screens
 if slmselect  == 1
     %% SLM parameters (reflection)
     % spaceSupport = 1; % Unitary space: spaceVector = -1:2/(Ssize-1):1;
@@ -43,22 +43,22 @@ if slmselect  == 1
                                   % (either horizontal or vertical); SLM's 
                                   % resolution in pixels: 1920 x 1080 
     pixSize = 8; % SLM pixel's size in um
-    scrnIdx = 1; % Screen number selector
+    scrnIdx = 3; % Screen number selector
 else
     %% SLM parameters (transmision)
     spaceSupport = min([2.66 2.00]); % Same as the reflection SLM
     maxNumPix = max([800 600]); % Same as the reflection SLM
     pixSize = 32; % Same as the reflection SLM
-    scrnIdx = 1; % Screen number selector
+    scrnIdx = 2; % Screen number selector
 end 
 
 %% SLM positionining calibration
 shiftBool = 0; % Shift activated (1)[SLM displaying] or deactivated (0)
                % [exporting masks]. shiftCart = [yshift,xshift]
-shiftCart = [-25,0]; % Percentages of movement of the total size of the
-                     % mask (cartesian coordinates convention)
-                     % Calibrated with: s = +1; ph0 = 0, tc = 1; 
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
+shiftCart = [0,0]; % Percentages of movement of the total size of the
+                   % mask (cartesian coordinates convention)
+                   % Calibrated with: s = +1; ph0 = 0, tc = 1; 
+plotMask = 2; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -66,14 +66,16 @@ plotMask = 1; % Allows to plot the final mask, as it can be a combination
               % 3: on the screen but surface-plot type
               
 %% Camera selection
-camera = 'DMK42BUC03'; % 'DMK42BUC03' or 'DMK23U445' or 'DMK41BU02.H'
-exposure = 1; % Analog parameter
+camera = 'DMK23U445'; % 'DMK42BUC03' or 'DMK23U445' or 'DMK41BU02.H'
+% 'DMK23U445' : Plano de la PSF
+% 'DMK42BUC03' : Plano de Lyot. exposure: [1/1e4,1]
+exposure = 1/1e3; % Analog parameter. 
 % For 'DMK42BUC03':
 % Default: 0.0556 or 1.282
 % PH50um: 0.0030 -- Y0.0256 || PH25um: 0.0083 -- Y0.0556 ||
 % PH15um: --Y0.1429 || 0.0227 || PH10um: 0.0435 -- Y0.200 || 
 % PH5um: 0.363 -- Y3.099
-format = 1; % 'RGB24 (1024x768)' or 'Y800 (1280x960)'
+format = 'Y800 (1280x960)'; % Best: 'Y800 (1280x960)'. 'RGB24 (1024x768)'
 
 %% Image capture
 filename = 'test'; % Name of the capture one wants to take
@@ -163,9 +165,9 @@ Angbet = pi/2; % Diffraction angle of vertical direction (y) [radians]
 % glvect = [1 16 24 28 36 56 128 256]; % Dados por Juan Jose
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
                                   % with a good system phase response
-tcvect = [1 2]; % Topological charges to be measured
-glvect = [5 10]; % Gray level to be measured
-wait = 10; % 10 seconds before measuring as a safety measurement
+tcvect = [1]; % Topological charges to be measured
+glvect = [255]; % Gray level to be measured
+wait = 0; % 10 seconds before measuring as a safety measurement
 recordingDelay = 1; % Waits 5 seconds between each mask to be shown
                     % This time is also important so that the camera
                     % bus doesn't overload. Ref: 5

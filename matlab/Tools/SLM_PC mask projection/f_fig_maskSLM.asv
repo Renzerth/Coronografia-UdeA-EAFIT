@@ -44,19 +44,19 @@ switch plotMask
     
   case 2  % Plot on the SLM
     close(gcf);
-    offsetPixel = [1,1]; % Mandatory: pixels have this origin [0,0] doesn't
-                         % exist
-    hFigure = figure('Visible','off','MenuBar','none','Toolbar','none','NumberTitle','off');
-    % Hide Menu bar and Tool bar
+    offsetPixel = [1,1]; % Mandatory: 
+    hFigure = figure('Visible','off','MenuBar','none','Toolbar','none');
     hFigure.Units = 'Pixels'; % 'color','black',
     set(gca,'Units','Pixels');
     set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
     %set(gca,'xtick',[]); set(gca,'ytick',[]) % No axis values
-    image(wrappedMask);  % Plots in SLM screen 
-    axis off; colormap(gray(gl));
+    %set(hFigure, 'MenuBar', 'none'); % Hide Menu bar
+    %set(hFigure, 'ToolBar', 'none'); % Hide Tool bar
+    image(wrappedMask); colormap(gray(gl)); % Plots in SLM screen 
+    axis off;
     % axis fill;
     hFigure.Visible = 'on';
-    %[~] = f_changeProjectionMonitor('Restore'); % Restore default figure
+    [~] = f_changeProjectionMonitor('Restore'); % Restore default figure
     
   case 3 % Screen: surface plot
       figure('color','white','units','normalized','position',...

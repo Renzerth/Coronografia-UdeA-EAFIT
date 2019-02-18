@@ -30,7 +30,8 @@ for idxtc = 1:ltcvect
 %     colorbar; title(['LOG camera image: ' filename])
     
     % OR:
-    f_fig_maskSLM(x,y,r,mask,m,n,a,b,gl,abs_ang,binMask,plotMask);
+    f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask,monitorSize,plotMask);
+
     
     
     
@@ -42,12 +43,13 @@ for idxtc = 1:ltcvect
     MeasInfo{idxgral} = [tcstr glstr]; % Dataname for each experimental data
     cd(DatalogDir); % Goes to the data log directory (specific measurement
                     % folder)
-    wrappedMask = f_circularPupil_maskAngle(r,mask,binMask); 
-    snap = wrappedMask; % "Simulated" measurements (the mask is saved)
-    % snap = getsnapshot(vid); % Real measurements
+    wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
+    % snap = wrappedMask; % "Simulated" measurements (the mask is saved)
+    snap = getsnapshot(vid); % Real measurements
     expImgs{idxgral} = snap;
     A = expImgs{idxgral};
     save(MeasInfo{idxgral},'A'); % save(filename,variables,'-append')
+    imwrite(expImgs{idxgral},[MeasInfo{idxgral} '.bmp']); 
     
     % OLD: save each image % Saves the last shown figure
     % imwrite(expImgs{idxgral},[MeasInfo{idxgral} fileFormat]); 

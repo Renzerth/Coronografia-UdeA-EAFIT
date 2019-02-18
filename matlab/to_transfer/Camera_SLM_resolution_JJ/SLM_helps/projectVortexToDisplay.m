@@ -3,8 +3,8 @@ minGrayDepth = 0;
 maxGrayDepth = 10;
 levelShift = 0;
 %% Screen Coordinates
-screenIndex = 2;
-[X,Y,~,monitorSize] = TOOLS.makeScreenCoordinates(screenIndex);
+screenIndex = 3;
+[X,Y,~,monitorSize] = makeScreenCoordinates(screenIndex);
 %% Get Center position
 % [~,relativeCoord] = TOOLS.computeCenterFromImageMin();
 % shiftCorr = [0.113,0.018];
@@ -20,9 +20,9 @@ maxGrayLevel = 255;
 [spiralPhase,~] = cart2pol(X-shiftX,Y-shiftY);
 projectionMask = angle(exp(1i*spiralPhase*TC));
 grayLevels = -pi:2*pi/(maxGrayLevel):pi;
-projectionMask = TOOLS.discretizeMask(projectionMask,grayLevels);
+projectionMask = discretizeMask(projectionMask,grayLevels);
 %% To uint 8 Values Scaling
-projectionMask = TOOLS.scaleMatrix(projectionMask,minGrayDepth,maxGrayDepth) + levelShift;
+projectionMask = scaleMatrix(projectionMask,minGrayDepth,maxGrayDepth) + levelShift;
 %% Figure-Screen properties
 close(gcf);
 offsetPixel = [1,1];
@@ -34,4 +34,4 @@ set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
 image(projectionMask); axis off; colormap(gray(maxGrayDepth));
 figureHandlerA.Visible = 'on';
 %% Restore default figure
-[~] = TOOLS.changeProjectionMonitor('Restore');
+[~] = changeProjectionMonitor('Restore');

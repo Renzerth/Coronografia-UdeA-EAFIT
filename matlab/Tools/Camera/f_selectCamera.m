@@ -9,7 +9,7 @@ switch camera
     src.Contrast = 0;
     src.Exposure = exposure; %PH50um : 0.0030 -- Y0.0256 :: PH25um : 0.0083 -- Y0.0556  :: PH15um --Y0.1429 : : 0.0227 :: PH10um : 0.0435 -- Y0.200 PH5um : 0.363 -- Y3.099
     src.GainAuto = 'Off';
-    src.Gain = 34;
+%     src.Gain = 0; % In: [0,30]
     
   case 'DMK41BU02.H'
     vid = videoinput('tisimaq_r2013', 1, format);
