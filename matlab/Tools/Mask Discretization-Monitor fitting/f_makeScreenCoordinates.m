@@ -29,6 +29,7 @@ else
     verSpaceArray = -verticalHalfSize:verticalHalfSize-1;
 end
 [X,Y] = meshgrid(horSpaceArray,verSpaceArray);
-scaledY = Y/aspectRatio;
+X = X*aspectRatio;
+scaledY = Y;
 R = sqrt(X.^2 + scaledY.^2);
 end

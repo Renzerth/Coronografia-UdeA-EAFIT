@@ -9,10 +9,11 @@ slmselect = 1; % 1: Pluto (reflection); 2: LC2002 (transmission)
 sim = 0; % Simulate: yes (1) or no (0)
 
 %% General algorithm parameters
-k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
+coordType = 2; % 
+  k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
         % Default: 10        
 precision = 3; % Precision of displayed results: significative digits (3)
-showM = 0; % Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
+showM = 1; % Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
            % analog to "plotMask" on the SLM Position section
 maskSel = 0; % Phase mask selection:
 % 0: Helicoidal mask: SPP or DSPP depending on gl
@@ -43,12 +44,12 @@ if slmselect  == 1
                                   % (either horizontal or vertical); SLM's 
                                   % resolution in pixels: 1920 x 1080 
     pixSize = 8; % SLM pixel's size in um
-    scrnIdx = 3; % Screen number selector
+    scrnIdx = 1; % Screen number selector
 else
     %% SLM parameters (transmision)
     spaceSupport = min([2.66 2.00]); % Same as the reflection SLM
     maxNumPix = max([800 600]); % Same as the reflection SLM
-    pixSize = 32; % Same as the reflection SLM
+    pixSize = 32; % Same as the reflection SLM in um
     scrnIdx = 2; % Screen number selector
 end 
 
@@ -58,7 +59,7 @@ shiftBool = 0; % Shift activated (1)[SLM displaying] or deactivated (0)
 shiftCart = [0,0]; % Percentages of movement of the total size of the
                    % mask (cartesian coordinates convention)
                    % Calibrated with: s = +1; ph0 = 0, tc = 1; 
-plotMask = 2; % Allows to plot the final mask, as it can be a combination 
+plotMask = 1; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen

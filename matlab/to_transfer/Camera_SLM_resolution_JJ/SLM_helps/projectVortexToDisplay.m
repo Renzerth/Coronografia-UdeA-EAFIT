@@ -16,7 +16,7 @@ shiftY = 0;
 %% Vortex Phase
 TC = 10;
 maxGrayLevel = 255;
-[X,Y] = meshgrid(-1:2/255:1);
+% [X,Y] = meshgrid(-1:2/255:1); % Is not scaled
 [spiralPhase,~] = cart2pol(X-shiftX,Y-shiftY);
 projectionMask = angle(exp(1i*spiralPhase*TC));
 grayLevels = -pi:2*pi/(maxGrayLevel):pi;

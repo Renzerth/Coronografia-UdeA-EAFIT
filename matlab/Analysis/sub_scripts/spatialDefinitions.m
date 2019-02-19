@@ -1,10 +1,25 @@
-%% Spatial definitions
-sSize = 2^k-1; % Number of samples; odd number so that vortex gets
-               % centered (spatial size); Spatial size. ref: 2^k-1
-spaceSupport = spaceSupport/2; % Half support of the SLM window in cm
-spaceVector = -spaceSupport:2*spaceSupport/(sSize-1):spaceSupport; 
-% Symmetric space
-[X,Y] = meshgrid(spaceVector); % A symmetric grid: 2D Cartesian coordinates
+switch coordType
+  case 1
+    %% Spatial definitions
+    sSize = 2^k-1; % Number of samples; odd number so that vortex gets
+                   % centered (spatial size); Spatial size. ref: 2^k-1
+    spaceSupport = spaceSupport/2; % Half support of the SLM window in cm
+    spaceVector = -spaceSupport:2*spaceSupport/(sSize-1):spaceSupport; 
+    % Symmetric space
+    [X,Y] = meshgrid(spaceVector); % A symmetric grid: 2D Cartesian coordinates
+    x = spaceVector; % Cartesian x-vector
+    y = x; % Cartesian y-vector: square grid
+
+  case 2                        
+    %% Screen coordinates
+    [X,Y,~,monitorSize] = f_makeScreenCoordinates(scrnIdx); % Calculates the 
+                                                            % monitor size
+    scaleFactor = 1e-3; % um to mm
+    halfSizeX = monitorSize(1)*pixSize*scaleFactor/2;
+    halfSizeY = monitorSize(2)*pixSize*scaleFactor/2;
+    x = linspace(-halfSizeX,halfSizeX,monitorSize(1)); % x vector of SLM physical size                                      % [X,scaledY,R,monitorSize]
+    y = linspace(-halfSizeY,halfSizeY,monitorSize(2)); % y vector of SLM physical size  
+end
 
 %% Polar coordinates with a shift of the mask
 if shiftBool == 1
@@ -18,18 +33,13 @@ end
                                        % shift. The signs compensate the 
                                        % normal cartesian convention for 
                                        % displacing the phase mask
-x = spaceVector; % Cartesian x-vector
-y = x; % Cartesian y-vector: square grid
 
-%% Gray-level discretized azimuthal angle
+
+%% Gray-level discretized azimuthal angle vector
 glphi = -pi:2*pi/gl:pi; % Discretized phi vector on [-pi,pi]. The sampling
                         % interval consists on dividing the  range over the
                         % gray levels. Similar to the VPL Edgar's 
                         % discretization formula in the page number 1 of
                         % 1_edgar_2013_High-quality optical vortex-beam                    
                         % generation_E-Rueda_OL
-                         
-%% Screen coordinates
-[~,~,~,monitorSize] = f_makeScreenCoordinates(scrnIdx); % Calculates the 
-                                                        % monitor size
-% [X,scaledY,R,monitorSize]
+                        
