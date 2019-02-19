@@ -71,7 +71,7 @@ FoldersRegistersCreation;
 [vid,src] = f_selectCamera(camera,exposure,format);
 % USE: ???
 % - vid.FramesPerTrigger = 1; % Default frames to capture per trigger
-% - bootstrap 
+% - 
 
 %% Measurement debugging
 % Usefull for aligning the vortex and adjusting exposure parameters
@@ -80,22 +80,20 @@ if measDebug == 1
                                                     % shows a figure and 
                                                     % saves it
                                           
-%set(0,'DefaultFigureVisible','on'); % Stop displaying figures: 'off' or 'on'
-    Frame = f_GetFrame(vid); % Stores Frame as what one sees in the preview
-    % Take out
+    Frame = f_GetFrame(vid); 
+else
+    %% Reference measurement
+    % Still not sure if needed: null tc beam or a high tc beam(long radius)
+
+    %% Automated measurement
+    AutomatMeasure; % Future script
+
+    %% Post-processing of the data
+    DataProcessing; % Metric of the degree of extintion applied
+
+    %% Save data
+    % SaveData; % Future script
 end
-
-%% Reference measurement
-% Still not sure if needed: null tc beam or a high tc beam (long radius)
-
-%% Automated measurement
-AutomatMeasure; % Future script
-
-%% Post-processing of the data
-DataProcessing; % Metric of the degree of extintion applied
-
-%% Save data
-% SaveData; % Future script
 
 %% Termination
 % Terminate_settings; % Future script % Clears variables and closes all; deactivates camera

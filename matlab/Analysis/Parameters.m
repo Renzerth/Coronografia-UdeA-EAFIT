@@ -34,7 +34,7 @@ maskSel = 0; % Phase mask selection:
 
 
 %%%%%%%%%%%%%%%%%%%%%%% PART 2: HARDWARE
-% screenIndex: screen number selector. In [0,N-1] with N the # of screens
+% scrnIdx: screen number selector. In [1,N] with N the # of screens
 if slmselect  == 1
     %% SLM parameters (reflection)
     % spaceSupport = 1; % Unitary space: spaceVector = -1:2/(Ssize-1):1;
@@ -44,8 +44,8 @@ if slmselect  == 1
                                   % (either horizontal or vertical); SLM's 
                                   % resolution in pixels: 1920 x 1080 
     pixSize = 8; % SLM pixel's size in um
-    scrnIdx = 2; % Screen number selector
-else
+    scrnIdx = 1; % Screen number selector
+else % slmselect  = 2
     %% SLM parameters (transmision)
     spaceSupport = min([2.66 2.00]); % Same as the reflection SLM
     maxNumPix = max([800 600]); % Same as the reflection SLM
@@ -93,7 +93,7 @@ abs_ang = 2; % Magnitude (1) or phase (2) plot
 tc = 2; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
-s = 1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
+s = +1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
 ph0 = 0; % Initial phase of the angle [radians]; reference +pi from
          % normal zero of trig circle and same rotation convention.
          % This corresponds to a normal rotation of the mask for stethic
