@@ -25,8 +25,8 @@ plotsEnabled = True
 #System Parameters
 #-----------------
         
-Lvor = 3 # Topological Charge
-NG = 256 # Number of gray levels
+Lvor = 2 # Topological Charge
+NG = 2 # Number of gray levels
 spatialSampling = 60.1e-3 # SLM Pixel Pitch (mm)
 apertureRadius = 2.0 # Telescope - Lyot plane (mm)
 #%%-------------------
