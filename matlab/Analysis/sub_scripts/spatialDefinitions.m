@@ -12,12 +12,14 @@ switch coordType
 
   case 2                        
     %% Screen coordinates
-    [X,Y,~,monitorSize] = f_makeScreenCoordinates(scrnIdx); % Calculates the 
-                                                            % monitor size
+    enablechange = true; % Won't change default figure display monitor
+    % This is changed if one wants to display in the SLMs when plotMask = 2
+    [X,Y,aspectRatio,monitorSize] = f_makeScreenCoordinates(scrnIdx,enablechange);
+    % Calculates the monitor size
     scaleFactor = 1e-3; % um to mm
     halfSizeX = monitorSize(1)*pixSize*scaleFactor/2;
     halfSizeY = monitorSize(2)*pixSize*scaleFactor/2;
-    x = linspace(-halfSizeX,halfSizeX,monitorSize(1)); % x vector of SLM physical size                                      % [X,scaledY,R,monitorSize]
+    x = linspace(-halfSizeX,halfSizeX,monitorSize(1)); % x vector of SLM physical size                                      
     y = linspace(-halfSizeY,halfSizeY,monitorSize(2)); % y vector of SLM physical size  
 end
 
@@ -29,7 +31,7 @@ if shiftBool == 1
 else
  shiftX = 0; shiftY = 0; % Shift deactivated   
 end
-[phi,r] = cart2pol(X-shiftX,Y+shiftY); % Polar coordinates with an added
+[phi,r] = cart2pol(X-shiftX,(Y+shiftY)); % Polar coordinates with an added
                                        % shift. The signs compensate the 
                                        % normal cartesian convention for 
                                        % displacing the phase mask
@@ -41,10 +43,4 @@ glphi = -pi:2*pi/gl:pi; % Discretized phi vector on [-pi,pi]. The sampling
                         % gray levels. Similar to the VPL Edgar's 
                         % discretization formula in the page number 1 of
                         % 1_edgar_2013_High-quality optical vortex-beam                    
-                        % generation_E-Rueda_OL
-                        
-%% Discretized phase mask
-discretPhi = f_discretizeMask(phi,glphi); % Mask discretization
-phi = f_scaleMatrix(discretPhi,mingl,maxgl) + levShft; 
-% Scaling to uint8 values
-
+                        % generation_E-Rueda_OL                      

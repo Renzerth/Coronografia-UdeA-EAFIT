@@ -10,6 +10,7 @@ function[] = f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM)
 %
 % Notes:
 %  Image is shown with gl gray levels
+
 if showM == 1
   figure('color','white','Name','Phase Mask'); 
   % imagesc(x,y,wrappedMask); axis square; colormap(hot(gl)); % Hot

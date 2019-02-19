@@ -44,7 +44,7 @@ if slmselect  == 1
                                   % (either horizontal or vertical); SLM's 
                                   % resolution in pixels: 1920 x 1080 
     pixSize = 8; % SLM pixel's size in um
-    scrnIdx = 1; % Screen number selector
+    scrnIdx = 2; % Screen number selector
 else
     %% SLM parameters (transmision)
     spaceSupport = min([2.66 2.00]); % Same as the reflection SLM
@@ -59,7 +59,7 @@ shiftBool = 0; % Shift activated (1)[SLM displaying] or deactivated (0)
 shiftCart = [0,0]; % Percentages of movement of the total size of the
                    % mask (cartesian coordinates convention)
                    % Calibrated with: s = +1; ph0 = 0, tc = 1; 
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
+plotMask = 2; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -90,7 +90,7 @@ imgformat = '.png'; % Format with period. mat, bmp, png, jpg
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
 abs_ang = 2; % Magnitude (1) or phase (2) plot
-tc = 1; % Topological charge (integer bigger or equal to one)
+tc = 2; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
 s = 1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
@@ -107,7 +107,7 @@ mingl = 0; % Minimum gray level depth. Ref: 0
 maxgl = 255; % Maximum gray level depth. Ref: 255
 levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
              % Corresponds to the brightness or constant shift of the gl's
-gl = 10; % Number of grey levels (normally 256). Must be smaller than 
+gl = 2; % Number of grey levels (normally 256). Must be smaller than 5
           % the dynamic range = maxGrayDepth-minGrayDepth
 
 %% Parameters: Laguerre-Gauss

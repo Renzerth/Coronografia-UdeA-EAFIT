@@ -1,10 +1,10 @@
-function [X,scaledY,R,monitorSize] = f_makeScreenCoordinates(screenIndex,varargin)
+function [X,Y,aspectRatio,monitorSize] = f_makeScreenCoordinates(screenIndex,enablechange,varargin)
 % Inputs:
 % screenIndex: screen number selector. In [1,N] with N the # of screens
 % varargin: function activated (1) or not (0)
 
 %% Input Verification
-if nargin == 2 % number of inputs
+if nargin == 3 % number of inputs
     if isa(varargin{1},'logical')
         relativeCoordSelect = varargin{1};
     else
@@ -15,7 +15,7 @@ else
 end
 
 %% Projection monitor properties
-[monitorSize,~] = f_changeProjectionMonitor(screenIndex);
+[monitorSize,~] = f_changeProjectionMonitor(screenIndex,enablechange);
 horizontalHalfSize = ceil(monitorSize(1)/2);
 verticalHalfSize = ceil(monitorSize(2)/2);
 aspectRatio = monitorSize(1)/monitorSize(2);
@@ -29,7 +29,4 @@ else
     verSpaceArray = -verticalHalfSize:verticalHalfSize-1;
 end
 [X,Y] = meshgrid(horSpaceArray,verSpaceArray);
-X = X*aspectRatio;
-scaledY = Y;
-R = sqrt(X.^2 + scaledY.^2);
 end

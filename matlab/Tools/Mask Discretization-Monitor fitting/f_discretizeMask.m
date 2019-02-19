@@ -6,6 +6,7 @@ function discreteMask = f_discretizeMask(mask,levels)
 discreteMask = mask;
 [n, m] = size(discreteMask);
 
+try
 for i = 1:n
     for j = 1:m
         found = 1;
@@ -20,5 +21,8 @@ for i = 1:n
         end
     end
 end
+catch
+  sprintf('Failed at index %1.2f and %1.2f at phase val: %1.2f',n,m,z)
+  return 
 
 end

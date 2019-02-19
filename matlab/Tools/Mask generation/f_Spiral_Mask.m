@@ -30,7 +30,7 @@ mask = m*(phi + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
 % discretPhi = f_discretizeMask(mask,glphi); % Mask discretization
 % mask = f_scaleMatrix(discretPhi,mingl,maxgl) + levShft; 
 
-mask = exp(1i*mask); % Wrapped mask
+mask = exp(1i*mask); % Wrapped mask and complex
 % mask = angle(mask); % OLD
 
 % OLD:

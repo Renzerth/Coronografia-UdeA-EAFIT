@@ -6,7 +6,7 @@ function wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,lev
 %
 % Inputs:
 %  r: polar coordinate (in cm)
-%  mask: complex phase mask, i.e., mask = exp(1i*unwrapped mask)
+%  mask: complex phase mask, i.e., mask = exp(1i*unwrapped mask) [wrapped]
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  glphi: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
@@ -16,8 +16,14 @@ function wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,lev
 %  wrappedMask: real-valued mask (angle), wrapped on [-pi,pi]
 
 %% Mask wrapping
-wrappedMask = angle(mask); % Phase of the mask on [-pi, pi]
+wrappedMask = angle(mask); % Phase of the mask on [-pi, pi]. Real-valued
 minMask = min(wrappedMask(:)); % Just a definition that isn't used
+
+%% Discretized phase mask
+wrappedMask = f_discretizeMask(wrappedMask,glphi); % Mask discretization
+wrappedMask = f_scaleMatrix(wrappedMask,mingl,maxgl) + levShft; 
+% Scaling to uint8 values
+
 
 %% Mask Binarization
 % binarizes the mask w.r.t the max and min of the phase (boolean)
@@ -29,8 +35,8 @@ if binMask == 1
 end
 
 %% Phase mask times a pupil aperture
-rmax = max(r(:));  % the maximum value of r (diagonal of the square)
-%rSize = rmax/sqrt(2); % Equals this since twice rSize^2 equals
+rmax = 1;  % the maximum value of r (diagonal of the square)
+% rSize = rmax/sqrt(2); % Equals this since twice rSize^2 equals
                        % rmax^2 (Pythagorean theorem)
 
 rSize = rmax; % Test
@@ -38,7 +44,7 @@ rSize = rmax; % Test
 
 binCirc = double(r <= rSize); % Binary mask.
 wrappedMask = wrappedMask.*binCirc; % Binary mask. Range: [minMask,maxMask]
-wrappedMask(r > rSize) = minMask; % Outside the circular pupil = minMask
+% wrappedMask(r > rSize) = minMask; % Outside the circular pupil = minMask
 
 wrappedMask(r > rSize) = nan; % Test
 
