@@ -76,13 +76,13 @@ FoldersRegistersCreation;
 %% Measurement debugging
 % Usefull for aligning the vortex and adjusting exposure parameters
 if measDebug == 1
-    f_ImageCapture(vid,dataDir,filename); % Takes a camera shot, shows a 
-                                          % figure and saves it
+    f_ImageCapture(vid,dataDir,filename,imgformat); % Takes a camera shot,
+                                                    % shows a figure and 
+                                                    % saves it
                                           
-    % Use ?
 %set(0,'DefaultFigureVisible','on'); % Stop displaying figures: 'off' or 'on'
     Frame = f_GetFrame(vid); % Stores Frame as what one sees in the preview
-    
+    % Take out
 end
 
 %% Reference measurement

@@ -47,3 +47,4 @@ glphi = -pi:2*pi/gl:pi; % Discretized phi vector on [-pi,pi]. The sampling
 discretPhi = f_discretizeMask(phi,glphi); % Mask discretization
 phi = f_scaleMatrix(discretPhi,mingl,maxgl) + levShft; 
 % Scaling to uint8 values
+

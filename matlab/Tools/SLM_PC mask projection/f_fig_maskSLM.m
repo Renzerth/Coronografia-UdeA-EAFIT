@@ -56,7 +56,7 @@ switch plotMask
     axis off; colormap(gray(gl));
     % axis fill;
     hFigure.Visible = 'on';
-    %[~] = f_changeProjectionMonitor('Restore'); % Restore default figure
+    [~] = f_changeProjectionMonitor('Restore'); % Restore default figure
     
   case 3 % Screen: surface plot
       figure('color','white','units','normalized','position',...

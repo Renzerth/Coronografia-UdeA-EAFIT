@@ -27,8 +27,8 @@ mask = m*(phi + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
 
 %% Discretized phase mask
 % glPHI = meshgrid(glphi);
-% discretPhi = f_discretizeMask(mask,glphi); % Mask discretization
-% mask = f_scaleMatrix(discretPhi,mingl,maxgl) + levShft; 
+discretPhi = f_discretizeMask(mask,glphi); % Mask discretization
+mask = f_scaleMatrix(discretPhi,mingl,maxgl) + levShft; 
 
 mask = exp(1i*mask); % Wrapped mask
 % mask = angle(mask); % OLD

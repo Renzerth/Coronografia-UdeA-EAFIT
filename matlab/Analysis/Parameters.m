@@ -82,7 +82,7 @@ format = 'Y800 (1280x960)'; % Best: 'Y800 (1280x960)'
 
 %% Image capture
 filename = 'test'; % Name of the capture one wants to take
-
+imgformat = '.png'; % Format with period. mat, bmp, png, jpg
 
 
 
@@ -90,7 +90,7 @@ filename = 'test'; % Name of the capture one wants to take
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
 abs_ang = 2; % Magnitude (1) or phase (2) plot
-tc = 3; % Topological charge (integer bigger or equal to one)
+tc = 1; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
 s = 1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
@@ -107,7 +107,7 @@ mingl = 0; % Minimum gray level depth. Ref: 0
 maxgl = 255; % Maximum gray level depth. Ref: 255
 levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
              % Corresponds to the brightness or constant shift of the gl's
-gl = 256; % Number of grey levels (normally 256). Must be smaller than 
+gl = 10; % Number of grey levels (normally 256). Must be smaller than 
           % the dynamic range = maxGrayDepth-minGrayDepth
 
 %% Parameters: Laguerre-Gauss
