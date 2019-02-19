@@ -43,3 +43,7 @@ glphi = -pi:2*pi/gl:pi; % Discretized phi vector on [-pi,pi]. The sampling
                         % 1_edgar_2013_High-quality optical vortex-beam                    
                         % generation_E-Rueda_OL
                         
+%% Discretized phase mask
+discretPhi = f_discretizeMask(phi,glphi); % Mask discretization
+phi = f_scaleMatrix(discretPhi,mingl,maxgl) + levShft; 
+% Scaling to uint8 values

@@ -31,12 +31,16 @@ end
 %% Phase mask times a pupil aperture
 rmax = max(r(:));  % the maximum value of r (diagonal of the square)
 %rSize = rmax/sqrt(2); % Equals this since twice rSize^2 equals
-                                 % rmax^2 (Pythagorean theorem)
+                       % rmax^2 (Pythagorean theorem)
 
-rSize = rmax;                             
-                                 binCirc = double(r <= rSize); % Binary mask.
+rSize = rmax; % Test
+
+
+binCirc = double(r <= rSize); % Binary mask.
 wrappedMask = wrappedMask.*binCirc; % Binary mask. Range: [minMask,maxMask]
-wrappedMask(r > rSize) = nan; % Outside the circular pupil = minMask
+wrappedMask(r > rSize) = minMask; % Outside the circular pupil = minMask
+
+wrappedMask(r > rSize) = nan; % Test
 
 end
 
