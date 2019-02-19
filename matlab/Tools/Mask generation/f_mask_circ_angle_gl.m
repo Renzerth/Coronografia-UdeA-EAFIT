@@ -30,17 +30,13 @@ end
 
 %% Phase mask times a pupil aperture
 rmax = max(r(:));  % the maximum value of r (diagonal of the square)
-rSize = rmax/sqrt(2); % Equals this since twice rSize^2 equals
+%rSize = rmax/sqrt(2); % Equals this since twice rSize^2 equals
                                  % rmax^2 (Pythagorean theorem)
-binCirc = double(r <= rSize); % Binary mask.
-wrappedMask = wrappedMask.*binCirc; % Binary mask. Range: [minMask,maxMask]
-wrappedMask(r > rSize) = minMask; % Outside the circular pupil = minMask
 
-%% Discretized phase mask
-wrappedMask = f_discretizeMask(wrappedMask,glphi); % Mask discretization
-wrappedMask = f_scaleMatrix(wrappedMask,mingl,maxgl) + levShft; % Scaling
-                                                                % to uint8 
-                                                                % values 
+rSize = rmax;                             
+                                 binCirc = double(r <= rSize); % Binary mask.
+wrappedMask = wrappedMask.*binCirc; % Binary mask. Range: [minMask,maxMask]
+wrappedMask(r > rSize) = nan; % Outside the circular pupil = minMask
 
 end
 
