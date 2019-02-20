@@ -53,7 +53,7 @@ for idxtc = 1:ltcvect
     if savetype == 1  % .mat format
         imgfullpath = [imgpath MeasInfo{idxgral}];
         % save(directory+filename,variables) % ,'-append'
-        save(imgfullpath,'A'); % Save as .mat
+        save(imgfullpath,'A'); % Save as .matd
     else % savetype = 2. dataformat is used
         imgfullpath = [imgpath MeasInfo{idxgral} dataformat];
         % imwrite(variables,directory+filename+extension)
