@@ -82,14 +82,17 @@ switch camera
   case 'DMK23U445' % PSF plane
     exposure = 1/1e3; % Range: [,]
     format = 'Y800 (1280x960)'; 
-                            
+    cameraPlane =  'PSF';
+    
   case 'DMK42BUC03' % Lyot plane
     exposure = 1/1e3; % Range: [1/1e4,1]
     format = 'Y800 (1280x960)';
-                            
+    cameraPlane =  'Lyot';
+    
   case 'DMK41BU02.H' % not used here
     exposure = 1/1e3; % Range: [,]
-    format = 'Y800 (1280x960)';                      
+    format = 'Y800 (1280x960)';    
+    cameraPlane = 'notusedhere';
 end
 
 

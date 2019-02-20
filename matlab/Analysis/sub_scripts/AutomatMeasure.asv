@@ -15,7 +15,11 @@ pause(wait) % Seconds before measuring as a safety measurement
 t1_dt = datetime; % store time
 disp('Measurement started'); disp(t1_dt)
 tit = 'Displayed phase mask';
-imgfullpath = [DatalogDir pathSep]; % More information will be concatenated
+imgpath = [DatalogDir pathSep camera '_']; % More information will be
+                                               % concatenated for a full
+                                               % path of the measured 
+                                               % images inside the next
+                                               % "for" 
 
 %% Measurements
 for idxtc = 1:ltcvect 
@@ -43,7 +47,7 @@ for idxtc = 1:ltcvect
 
     %% Saving the measurement
     tcstr = ['tc_' num2str(tcvect(idxtc))]; 
-    glstr = ['_gl_' num2str(glvect(idxgl))];
+    glstr = ['gl_' num2str(glvect(idxgl))];
     MeasInfo{idxgral} = [tcstr '_' glstr]; % Dataname for each experimental
                                            % data
     if savetype == 1  % .mat format
@@ -78,7 +82,8 @@ for idxtc = 1:ltcvect
     close(pcfig); close(fig); close(slmhfig); % Close the displayed figures
   end
 end
-disp(newline); % Aeasthetic reasons
+% MATLAB 2018b: disp(newline); MATLAB 2016: disp(char(10)) 
+% Aeasthetic reasons: Not needed in MATLAB 2016
 
 %% End of the measurements
 % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium

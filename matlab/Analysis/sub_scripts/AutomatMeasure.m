@@ -1,4 +1,4 @@
-% [imgfullpath] = f_AutomatMeasure(savetype,pathSep,dataformat)
+% [imgfullpath] = f_AutomatMeasure(savetype,pathSep,dataformat,cameraPlane)
 
 %% Automated measurements
 showM = 0; % Don't show a fig in "PhaseMaskSel": this should always be 0.
@@ -15,8 +15,11 @@ pause(wait) % Seconds before measuring as a safety measurement
 t1_dt = datetime; % store time
 disp('Measurement started'); disp(t1_dt)
 tit = 'Displayed phase mask';
-imgpath = [DatalogDir pathSep]; % More information will be concatenated
-                                % for a full path of the measured images
+imgpath = [DatalogDir pathSep cameraPlane '_']; % More information will be
+                                                % concatenated for a full
+                                                % path of the measured 
+                                                % images inside the next
+                                                % "for" loops
 
 %% Measurements
 for idxtc = 1:ltcvect 
@@ -79,7 +82,8 @@ for idxtc = 1:ltcvect
     close(pcfig); close(fig); close(slmhfig); % Close the displayed figures
   end
 end
-disp(newline); % Aeasthetic reasons
+% MATLAB 2018b: disp(newline); MATLAB 2016: disp(char(10)) 
+% Aeasthetic reasons: Not needed in MATLAB 2016
 
 %% End of the measurements
 % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium
@@ -87,6 +91,6 @@ disp(newline); % Aeasthetic reasons
 t2_dt = datetime;
 disp('Measurement finished'); disp(t2_dt)
 time = t2_dt - t1_dt;
-disp('Measurement took: '); % datestr(time,'SS') ' seconds'])
+disp('Measurement took:'); % datestr(time,'SS') ' seconds'])
 disp(time)
 % end
