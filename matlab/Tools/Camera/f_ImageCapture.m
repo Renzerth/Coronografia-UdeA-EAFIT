@@ -1,4 +1,4 @@
-function f_ImageCapture(vid,dataDir,filename,imgformat)
+function SingleFrame = f_ImageCapture(vid,dataDir,filename,imgformat)
 
 %% Target directory
 cd(dataDir); % Move to the data directory

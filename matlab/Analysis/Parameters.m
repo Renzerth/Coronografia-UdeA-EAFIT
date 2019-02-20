@@ -105,6 +105,7 @@ end
 %% Image capture
 filename = 'test'; % Name of the capture one wants to take
 imgformat = '.png'; % Format with period. mat, bmp, png, jpg
+                    % This format doesn't apply for the measurements
 
 
 
