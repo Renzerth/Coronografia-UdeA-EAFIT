@@ -64,23 +64,22 @@ if meas == 1
 %% Folders and register creations on Data and Output    
 FoldersRegistersCreation;
 
-%% Hardware initialization
-% HardwareInit; % Future script 
-                % Turns the camera on and create all the needed variables
-                % Remember to leave the preview open
-[vid,src] = f_selectCamera(camera,exposure,format);
-% USE: ???
-% - vid.FramesPerTrigger = 1; % Default frames to capture per trigger
-% - 
+if measSimulated == 0
+    %% Hardware initialization
+    % HardwareInit; % Future script 
+                    % Turns the camera on and create all the needed 
+                    % variables. Remember to leave the preview open
+    [vid,src] = f_selectCamera(camera,exposure,format);
+    % USE: ???
+    % - vid.FramesPerTrigger = 1; % Default frames to capture per trigger
+end
 
 %% Measurement debugging
 % Usefull for aligning the vortex and adjusting exposure parameters
 if measDebug == 1
     f_ImageCapture(vid,dataDir,filename,imgformat); % Takes a camera shot,
                                                     % shows a figure and 
-                                                    % saves it
-                                          
-    Frame = f_GetFrame(vid); 
+                                                    % saves it                                     
 else
     %% Reference measurement
     % Still not sure if needed: null tc beam or a high tc beam(long radius)

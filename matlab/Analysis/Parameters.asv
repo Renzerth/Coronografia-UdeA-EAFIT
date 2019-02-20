@@ -3,8 +3,6 @@
 measDebug = 0; % Debugging before actually measuring. Displays the default 
                % phase mask and shots a photo with the camera
 meas = 1; % Measure: yes (1) or no (0)
-measSimulated = 1; % Saves the mask and does not involve the cameras: 
-                   % yes (1) or no (0)
 beepSound = 0; % Beep sound when measurement finishes. Only works when 
                % meas = 1
 slmselect = 1; % 1: Pluto (reflection); 2: LC2002 (transmission)
@@ -166,9 +164,8 @@ Angbet = pi/2; % Diffraction angle of vertical direction (y) [radians]
 
 %%%%%%%%%%%%%%%%%%%%%%% PART 4: MEASUREMENT ADJUSTMENT
 %% Measurement
-savetype = 1; % 1: as a .mat files or 
-              % 2: as dataformat files
-dataformat = '.bmp'; % Applies only for savetype = 2
+savetype = 1; % 1: 
+dataformat = '.bmp';
 % tcvect = [1 2 3 4 5 6 7 8 9 10]; % Dados por Juan Jose
 % glvect = [1 16 24 28 36 56 128 256]; % Dados por Juan Jose
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
@@ -176,7 +173,6 @@ dataformat = '.bmp'; % Applies only for savetype = 2
 tcvect = [1]; % Topological charges to be measured
 glvect = [255]; % Gray level to be measured
 wait = 0; % 10 seconds before measuring as a safety measurement
-          % RIGHT NOW 0 FOR DEBUGGING
 recordingDelay = 1; % Waits 5 seconds between each mask to be shown
                     % This time is also important so that the camera
                     % bus doesn't overload. Ref: 5

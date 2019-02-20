@@ -4,7 +4,6 @@ lglvect = length(glvect); % Length of the gl vector
 strDate = date; % Today's date is retrieved from the local machine
 MeasSize = [maskName '_mask_tcs_' num2str(ltcvect) '_gls_' num2str(lglvect)];
 % Datalog with the number of measurements for tc's and gl's
-pathSep = '\'; % Works for windows 7 and 10
 
 %% Measurement folder creation (Datalog)
 Datalogfldr = [date '_' MeasSize]; % Folder name

@@ -28,10 +28,12 @@ for idxtc = 1:ltcvect
 %     figure('Position',[1000 100 700 500] ); imagesc(log(SingleFrame)); 
 %     colorbar; title(['LOG camera image: ' filename])
     
-    % Display on the SLM
+    % OR:
     f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask,monitorSize,plotMask);
 
     
+    
+   
     pause(recordingDelay); % Displays the mask for "recordingDelay" seconds   
                            % This time is also important so that the camera
                            % bus doesn't overload
@@ -39,21 +41,15 @@ for idxtc = 1:ltcvect
     glstr = ['_gl_' num2str(glvect(idxgl))];
     MeasInfo{idxgral} = [tcstr glstr]; % Dataname for each experimental data
     wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
-    if measSimulated == 0
-        % snap = getsnapshot(vid); % Real measurements
-    else % measSimulated = 1
-        snap = wrappedMask; % "Simulated" measurements (the mask is saved)
-    end
+    snap = wrappedMask; % "Simulated" measurements (the mask is saved)
+    % snap = getsnapshot(vid); % Real measurements
     expImgs{idxgral} = snap;
     A = expImgs{idxgral};
-    if savetype == 1  
-        % save(directory+filename,variables,'-append')
-        save([DatalogDir pathSep MeasInfo{idxgral}],'A'); % Save as .mat
-    else % savetype = 2
-        % imwrite(variables,directory+filename+extension)
-        imgfullpath = [DatalogDir pathSep MeasInfo{idxgral} dataformat];
-        imwrite(expImgs{idxgral}, imgfullpath); 
-    end
+    % save(directory+filename,variables,'-append')
+    save([DatalogDir pathSep MeasInfo{idxgral}],'A'); % Save as .mat
+    % imwrite(variables,directory+filename+extension)
+    imwrite(expImgs{idxgral},[DatalogDir pathSep MeasInfo{idxgral} ]); 
+    
     % OLD: save each image % Saves the last shown figure
     % imwrite(expImgs{idxgral},[MeasInfo{idxgral} fileFormat]); 
     % Here, the masks are saved, but later the images should
@@ -67,7 +63,7 @@ end
 
 %% End of the measurements
 % Copyright PhD student Jens de Pelsmaeker VUB B-PHOT 2018,Brussels,Belgium
-% set(0,'DefaultFigureVisible','on'); 
+set(0,'DefaultFigureVisible','on'); 
 % MATLAB built in:
 t2_dt = datetime;
 disp('stop '); disp(t2_dt)
