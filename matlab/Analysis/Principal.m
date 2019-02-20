@@ -70,7 +70,7 @@ if meas == 1
 %% Folders and register creations on Data and Output    
 FoldersRegistersCreation;
 
-if measSimulated == 0
+if measSimulated == 0 % When a real measurement will be performed,
     %% Hardware initialization
     % HardwareInit; % Future script 
                     % Turns the camera on and create all the needed 

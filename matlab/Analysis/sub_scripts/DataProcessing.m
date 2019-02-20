@@ -29,7 +29,7 @@ for idxgral = 1:totalImgs
 end
 
 %% End of the processing
-% Copyright PhD student Jens de Pelsmaeker VUB B-PHOT 2018,Brussels,Belgium
+% Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium
 % MATLAB built in:
 t2_dt = datetime;
 disp('Processing finished:'); disp(t2_dt)

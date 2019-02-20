@@ -1,5 +1,5 @@
 %% Plot Phase Mask 
-function[] = f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask,monitorSize,plotMask)
+function slmhfig = f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask,monitorSize,plotMask)
 % Inputs:
 %  x,y: cartesian coordinates vector
 %  r: polar coordinate (in cm)
@@ -15,26 +15,29 @@ function[] = f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMa
 %             a surface (3)
 %             plotMask = show; for 0 and 1.
 %
+% Output:
+%  slmhfig: figure handler if needed outside the function
+%
 % Notes:
 %  Image is shown with gl gray levels
 %  m,n,a,b only work for plot = 1
 
 %% Wrapping and Circular pupil Application
 if abs_ang == 2
-    wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
-    tit = 'Phase Mask';
-    str = 'Value of phase';
-    
+ wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
+ tit = 'Phase Mask';
+ str = 'Value of phase';  
+ 
 else % abs_ang == 1
-    wrappedMask = abs(mask); % Actually, this is an amplitude filter
-    tit = 'Amplitude Mask';
-    str = 'Value of amplitude';
+ wrappedMask = abs(mask); % Actually, this is an amplitude filter
+ tit = 'Amplitude Mask';
+ str = 'Value of amplitude';
 end
 
 %% Plot
 switch plotMask
   case 1 % Screen: normal plot
-    figure('color','white','units','normalized','position',...
+    slmhfig = figure('color','white','units','normalized','position',...
            [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',tit);
     imagesc(x,y,wrappedMask); axis square; colormap(gray(gl));
     title(tit);
@@ -46,26 +49,28 @@ switch plotMask
     close(gcf);
     offsetPixel = [1,1]; % Mandatory: pixels have this origin [0,0] doesn't
                          % exist
-    hFigure = figure('Visible','off','MenuBar','none','Toolbar','none','NumberTitle','off');
+    slmhfig = figure('Visible','off','MenuBar','none','Toolbar','none', ...
+                     'NumberTitle','off');
     % Hide Menu bar and Tool bar
-    hFigure.Units = 'Pixels'; % 'color','black',
+    slmhfig.Units = 'Pixels'; % 'color','black',
     set(gca,'Units','Pixels');
     set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
     %set(gca,'xtick',[]); set(gca,'ytick',[]) % No axis values
     image(wrappedMask);  % Plots in SLM screen 
     axis off; colormap(gray(gl));
     % axis fill;
-    hFigure.Visible = 'on';
+    slmhfig.Visible = 'on';
     [~] = f_changeProjectionMonitor('Restore'); % Restore default figure
     
   case 3 % Screen: surface plot
-      figure('color','white','units','normalized','position',...
-           [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',tit);
-      surf(x,y,wrappedMask), colormap(gray(gl)), shading interp; % 3D Surface
-      axis square; title(tit);
-      cbh = colorbar; cbh.Label.String = str;
-      set(gca,'xtick',[]); set(gca,'ytick',[]);  set(gca,'ztick',[]) % No axis values
-      axis off
+    slmhfig = figure('color','white','units','normalized','position',...
+                     [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',tit);
+    surf(x,y,wrappedMask), colormap(gray(gl)), shading interp; % 3D Surface
+    axis square; title(tit);
+    cbh = colorbar; cbh.Label.String = str;
+    % No axis values:
+    set(gca,'xtick',[]); set(gca,'ytick',[]);  set(gca,'ztick',[]) 
+    axis off
   case 0 % Won't plot at all
     
 end

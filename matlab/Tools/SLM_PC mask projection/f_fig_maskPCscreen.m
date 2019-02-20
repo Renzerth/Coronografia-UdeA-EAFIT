@@ -1,5 +1,5 @@
 %% Plot Phase Msk on the screen, not the SLM
-function[] = f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM)
+function pcfig = f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM)
 % Inputs:
 %  x,y: cartesian coordinates vector
 %  WrappedMask: function to be plotted. The mask should already be wrapped
@@ -8,11 +8,14 @@ function[] = f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM)
 %  gl: number of grey levels (normally 256)
 %  showM:  no (0); on the screen (1); on the SLM (2)
 %
+% Output:
+%  pcfig: figure handler if needed outside the function
+%
 % Notes:
 %  Image is shown with gl gray levels
 
 if showM == 1
-  figure('color','white','Name','Phase Mask'); 
+  pcfig = figure('color','white','Name','Phase Mask'); 
   % imagesc(x,y,wrappedMask); axis square; colormap(hot(gl)); % Hot
   imagesc(x,y,wrappedMask); axis square; colormap(gray(gl));% Gray
   title(tit);

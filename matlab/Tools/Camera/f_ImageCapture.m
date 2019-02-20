@@ -24,9 +24,15 @@ else
 end
 
 %% Show frame
-% Copyright PhD student Jens de Pelsmaeker VUB B-PHOT 2018,Brussels,Belgium
-figure('Position',[250 100 700 500]); imagesc(SingleFrame); % normalized
+% Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium
+
+% The numbers after 'position' were empirically obtained
+figure('units','normalized','position',[1/10 1/10 1/3 1/2]);
+imagesc(SingleFrame); % normalized
 colorbar; title(['Camera image: ' filename]);
-figure('Position',[1000 100 700 500]); imagesc(log(im2double(SingleFrame))); 
+
+% The numbers after 'position' were empirically obtained
+figure('units','normalized','position',[5/10 1/10 1/3 1/2]);
+imagesc(log(im2double(SingleFrame))); 
 colorbar; title(['LOG camera image: ' filename])
 end

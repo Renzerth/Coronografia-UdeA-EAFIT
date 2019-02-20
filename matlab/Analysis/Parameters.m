@@ -173,11 +173,11 @@ dataformat = '.bmp'; % Applies only for savetype = 2
 % glvect = [1 16 24 28 36 56 128 256]; % Dados por Juan Jose
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
                                   % with a good system phase response
-tcvect = [1]; % Topological charges to be measured
-glvect = [255]; % Gray level to be measured
+tcvect = [1,2,3]; % Topological charges to be measured
+glvect = [255,100]; % Gray level to be measured
 wait = 0; % 10 seconds before measuring as a safety measurement
           % RIGHT NOW 0 FOR DEBUGGING
-recordingDelay = 1; % Waits 5 seconds between each mask to be shown
+recordingDelay = 2; % Waits 5 seconds between each mask to be shown
                     % This time is also important so that the camera
                     % bus doesn't overload. Ref: 5
                     % RIGHT NOW 1 FOR DEBUGGING
