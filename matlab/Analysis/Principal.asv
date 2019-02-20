@@ -88,10 +88,10 @@ if measDebug == 1
                                                     % saves it                                     
     % Get some hardware/software/tools info:
     % get(vid); % Displays the general parameters of the camera
-    % imaqhwinfo(vid); %  Displays the connection with MATLAB
-    % disp(vid); %
+    % imaqhwinfo(vid); % Displays the driver connection with MATLAB
+    % disp(vid); % Displays acquisition information
     % imaqtool; % toolbox for the camera
-    %
+    % imaqhwinfo
 else
     %% Reference measurement
     % Still not sure if needed: null tc beam or a high tc beam(long radius)

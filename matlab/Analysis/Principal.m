@@ -83,12 +83,15 @@ end
 %% Measurement debugging
 % Usefull for aligning the vortex and adjusting exposure parameters
 if measDebug == 1
- SingleFrame = f_ImageCapture(vid,dataDir,filename,imgformat); 
- % Takes a camera shot, shows a figure and saves it   
+ SingleFrame = f_ImageCapture(vid,dataDir,filename,imgformat,pathSep,snapsfldr); 
+ % Takes a camera shot,shows a figure and saves it   
  figure; imhist(SingleFrame); % Shows a histogram of the snapshot
+ 
  % Get some hardware/software/tools info:
  % get(vid); % Displays the general parameters of the camera
+ % src = getselectedsource(vid); % A existing variable. Similar to get(vid)
  % imaqhwinfo(vid); % Displays the driver connection with MATLAB
+ % imaqhwinfo % All the installed adaptors in the Image Acquisition Toolbox
  % disp(vid); % Displays acquisition information
  % imaqtool; % toolbox for the camera
  % imaqreset: refresh image acquisition hardware by restoring the settings

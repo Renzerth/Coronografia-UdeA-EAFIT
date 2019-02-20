@@ -206,7 +206,8 @@ recordingDelay = 2; % Waits 5 seconds between each mask to be shown
 %% Folder names
 pathSep = '\'; % Works for windows 7 and 10
 analysFldr = 'Analysis'; % Folder name: scripts
-dataFlrd = 'Data'; % Folder name: input data           
+dataFlrd = 'Data'; % Folder name: input data  
+snapsfldr = 'TestSnapshots'; % Snapshot tests folder (inside dataFlrd)
 outFlrd = 'Output'; % Folder name: output data
 toolsFldr = 'Tools'; % Folder name: functions
 
