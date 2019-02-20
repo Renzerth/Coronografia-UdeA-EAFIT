@@ -1,4 +1,4 @@
-% [] = f_DataProcessing(imgfullpath,savetype,pathSep,dataformat)
+% [] = f_DataProcessing(imgfullpath,savetype,pathSep,dataformat,cameraPlane)
 %% Post-processing of the data (application of the metric of the degree of
 %%% extintion)
 
@@ -7,6 +7,7 @@
 pause(wait) % Seconds before measuring as a safety measurement
 t1_dt = datetime; % store time
 disp('Processing started:'); disp(t1_dt)
+processedImgname = [ProcessedDir pathSep 'processed_' cameraPlane '_'];
 
 for idxgral = 1:totalImgs
  %% Loading   
@@ -17,8 +18,7 @@ for idxgral = 1:totalImgs
  A = A'; % Processing of the image. So far nothing, just an example
  
  %% Saving
- processedImgname = ['processed_' MeasInfo{idxgral}];
- processedImgfullpath = [ProcessedDir pathSep processedImgname];
+ processedImgfullpath = [processedImgname MeasInfo{idxgral}];
  if savetype == 1 % .mat format   
   % save(directory+filename,variables)
   save(processedImgfullpath,'A'); % .mat
