@@ -1,3 +1,5 @@
+% [imgfullpath] = f_AutomatMeasure(savetype,pathSep,dataformat)
+
 %% Automated measurements
 showM = 0; % Don't show a fig in "PhaseMaskSel": this should always be 0.
 totalImgs = ltcvect*lglvect; % Number of images to be taken
@@ -11,7 +13,7 @@ idxgral = 1; % Initialization of the general index that runs
 % Copyright PhD student Jens de Pelsmaeker VUB B-PHOT 2018,Brussels,Belgium
 pause(wait) % Seconds before measuring as a safety measurement
 t1_dt = datetime; % store time
-disp('start '); disp(t1_dt)
+disp('Measurement started'); disp(t1_dt)
 
 %% Measurements
 for idxtc = 1:ltcvect 
@@ -22,14 +24,15 @@ for idxtc = 1:ltcvect
     
     
     %% Show frame
-    % Copyright PhD student Jens de Pelsmaeker VUB B-PHOT 2018,Brussels,Belgium
+% Copyright PhD student Jens de Pelsmaeker VUB B-PHOT 2018,Brussels,Belgium
 %     figure('Position',[250 100 700 500] ); imagesc(SingleFrame); 
 %     colorbar; title(['Camera image: ' filename]);
 %     figure('Position',[1000 100 700 500] ); imagesc(log(SingleFrame)); 
 %     colorbar; title(['LOG camera image: ' filename])
     
     % Display on the SLM
-    f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask,monitorSize,plotMask);
+    f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ... 
+                  binMask,monitorSize,plotMask);
 
     
     pause(recordingDelay); % Displays the mask for "recordingDelay" seconds   
@@ -37,8 +40,10 @@ for idxtc = 1:ltcvect
                            % bus doesn't overload
     tcstr = ['tc_' num2str(tcvect(idxtc))]; 
     glstr = ['_gl_' num2str(glvect(idxgl))];
-    MeasInfo{idxgral} = [tcstr glstr]; % Dataname for each experimental data
-    wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
+    MeasInfo{idxgral} = [tcstr '_' glstr]; % Dataname for each experimental
+                                           % data
+    wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl, ...
+                                       maxgl,levShft);
     if measSimulated == 0
         % snap = getsnapshot(vid); % Real measurements
     else % measSimulated = 1
@@ -46,12 +51,13 @@ for idxtc = 1:ltcvect
     end
     expImgs{idxgral} = snap;
     A = expImgs{idxgral};
-    if savetype == 1  
-        % save(directory+filename,variables,'-append')
-        save([DatalogDir pathSep MeasInfo{idxgral}],'A'); % Save as .mat
-    else % savetype = 2
-        % imwrite(variables,directory+filename+extension)
+    if savetype == 1  % .mat format
+        imgfullpath = [DatalogDir pathSep MeasInfo{idxgral}];
+        % save(directory+filename,variables) % ,'-append'
+        save(imgfullpath,'A'); % Save as .mat
+    else % savetype = 2. dataformat is used
         imgfullpath = [DatalogDir pathSep MeasInfo{idxgral} dataformat];
+        % imwrite(variables,directory+filename+extension)
         imwrite(expImgs{idxgral}, imgfullpath); 
     end
     % OLD: save each image % Saves the last shown figure
@@ -64,13 +70,14 @@ for idxtc = 1:ltcvect
     idxgral = idxgral + 1; % The general index increases   
   end
 end
+disp(newline); % Aeasthetic reasons
 
 %% End of the measurements
 % Copyright PhD student Jens de Pelsmaeker VUB B-PHOT 2018,Brussels,Belgium
-% set(0,'DefaultFigureVisible','on'); 
 % MATLAB built in:
 t2_dt = datetime;
-disp('stop '); disp(t2_dt)
+disp('Measurement finished'); disp(t2_dt)
 time = t2_dt - t1_dt;
-disp('It took '); % datestr(time,'SS') ' seconds'])
+disp('Measurement took: '); % datestr(time,'SS') ' seconds'])
 disp(time)
+% end

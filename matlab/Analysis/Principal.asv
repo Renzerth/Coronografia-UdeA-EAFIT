@@ -24,18 +24,13 @@
 %  Tools: functions used in the program
 %
 % Bugs:
-%  -When the ticks of -pi, ..., pi are shown, sometimes the may move
+%  When the ticks of -pi, ..., pi are shown, sometimes the may move
 %  slightly from the real value
-%  -The algorithm shall only be executed inside the analysis folder
-%  - Algorithm not tested yet in Linux but in Windows 7 and 10
-%  -Simulations are not fully accurate with the calculations
-%  -Zernike polynomials are not fully wrapped and the "a" constant has not
+%  The algorithm shall only be executed inside the analysis folder
+%  Not tested yet in Linux
+%  Simulations are not fully accurate with the calculations
+%  Zernike polynomials are not fully wrapped and the "a" constant has not
 %  been fully understood
-%  -If a camera is not recognized or even the screen index are not acting
-%  coherently, restart MATLAB
-%  -For high resolution monitors, sometimes the figure bar may appear but
-%  this presents no problem for the masks projection
-%  
 %
 % Samuel Plazas(PA1/PA2/TG) - Juan Jose Cadavid(Master thesis) - 2018/2019
 
@@ -59,8 +54,7 @@ PhaseMaskSel; % Selects the type of phase mask.
 
 %% Phase mask plot on the screen or on the SLM
 %%% Plot phase mask on the Fourier plane of the vortex coronagraph
-f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask, ...
-              monitorSize,plotMask);
+f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask,monitorSize,plotMask);
 
 
 

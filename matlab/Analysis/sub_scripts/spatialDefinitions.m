@@ -1,26 +1,33 @@
 switch coordType
-  case 1
-    %% Spatial definitions
-    sSize = 2^k-1; % Number of samples; odd number so that vortex gets
-                   % centered (spatial size); Spatial size. ref: 2^k-1
-    spaceSupport = spaceSupport/2; % Half support of the SLM window in cm
-    spaceVector = -spaceSupport:2*spaceSupport/(sSize-1):spaceSupport; 
-    % Symmetric space
-    [X,Y] = meshgrid(spaceVector); % A symmetric grid: 2D Cartesian coordinates
-    x = spaceVector; % Cartesian x-vector
-    y = x; % Cartesian y-vector: square grid
+ case 1
+  %% Spatial definitions
+  sSize = 2^k-1; % Number of samples; odd number so that vortex gets
+                 % centered (spatial size); Spatial size. ref: 2^k-1
+  spaceSupport = spaceSupport/2; % Half support of the SLM window in cm
+  spaceVector = -spaceSupport:2*spaceSupport/(sSize-1):spaceSupport; 
+  % Symmetric space
+  [X,Y] = meshgrid(spaceVector); % A symmetric grid: 2D Cartesian 
+                                 % coordinates
+  x = spaceVector; % Cartesian x-vector
+  y = x; % Cartesian y-vector: square grid
 
-  case 2                        
-    %% Screen coordinates
-    enablechange = true; % Won't change default figure display monitor
-    % This is changed if one wants to display in the SLMs when plotMask = 2
-    [X,Y,aspectRatio,monitorSize] = f_makeScreenCoordinates(scrnIdx,enablechange);
-    % Calculates the monitor size
-    scaleFactor = 1e-3; % um to mm
-    halfSizeX = monitorSize(1)*pixSize*scaleFactor/2;
-    halfSizeY = monitorSize(2)*pixSize*scaleFactor/2;
-    x = linspace(-halfSizeX,halfSizeX,monitorSize(1)); % x vector of SLM physical size                                      
-    y = linspace(-halfSizeY,halfSizeY,monitorSize(2)); % y vector of SLM physical size  
+ case 2                        
+  %% Screen coordinates
+  enablechange = 0; % 0: won't change default figure display monitor. Leave 
+                    % this value as zero always as the figure display
+                    % monitor will be changed later on
+  % This is changed if one wants to display in the SLMs when plotMask = 2
+  [X,Y,aspectRatio,monitorSize] = ...
+                             f_makeScreenCoordinates(scrnIdx,enablechange);
+  % Calculates the monitor size
+  scaleFactor = 1e-3; % um to mm
+  % halfSizeX,Y: half physical size of the SLM's active area. Taken with 
+  % the datasheet parameters
+  halfSizeX = monitorSize(1)*pixSize*scaleFactor/2;
+  halfSizeY = monitorSize(2)*pixSize*scaleFactor/2;
+  % x,y: vectors of SLM's physical size  
+  x = linspace(-halfSizeX,halfSizeX,monitorSize(1));                                     
+  y = linspace(-halfSizeY,halfSizeY,monitorSize(2)); 
 end
 
 %% Polar coordinates with a shift of the mask
