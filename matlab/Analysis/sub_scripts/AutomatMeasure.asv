@@ -15,8 +15,7 @@ pause(wait) % Seconds before measuring as a safety measurement
 t1_dt = datetime; % store time
 disp('Measurement started'); disp(t1_dt)
 tit = 'Displayed phase mask';
-imgpath = [DatalogDir pathSep]; % More information will be concatenated
-                                % for a full path of the measured images
+imgfullpath = [DatalogDir pathSep]; % More information will be concatenated
 
 %% Measurements
 for idxtc = 1:ltcvect 
@@ -44,7 +43,7 @@ for idxtc = 1:ltcvect
 
     %% Saving the measurement
     tcstr = ['tc_' num2str(tcvect(idxtc))]; 
-    glstr = ['gl_' num2str(glvect(idxgl))];
+    glstr = ['_gl_' num2str(glvect(idxgl))];
     MeasInfo{idxgral} = [tcstr '_' glstr]; % Dataname for each experimental
                                            % data
     if savetype == 1  % .mat format

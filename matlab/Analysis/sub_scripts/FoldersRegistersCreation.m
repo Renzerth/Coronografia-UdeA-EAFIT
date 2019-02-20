@@ -6,7 +6,7 @@ MeasSize = [maskName '_mask_tcs_' num2str(ltcvect) '_gls_' num2str(lglvect)];
 % Datalog with the number of measurements for tc's and gl's
 
 %% Measurement folder creation (Datalog)
-Datalogfldr = [date '_' MeasSize]; % Folder name
+Datalogfldr = [date '_' slm '_' MeasSize]; % Folder name
 cd(dataDir);
 ax = exist(Datalogfldr, 'dir'); % 7 if folder exists, 0 if not
 if ax ~= 7 % Create a folder if it doesn't exist

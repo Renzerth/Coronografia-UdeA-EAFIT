@@ -76,28 +76,35 @@ plotMask = 2; % Allows to plot the final mask, as it can be a combination
 %% Camera selection and parameters
 camera = 'DMK23U445';
 % Exposure: analog parameter
-% Format: 'Y800 (1280x960)' [best]; 'RGB24 (1024x768)' [another option]
+% F
+% 'DMK42BUC03' : . 
+% 'DMK41BU02.H' : not used here.
 
 switch camera
   case 'DMK23U445' % PSF plane
-    exposure = 1/1e3; % Range: [,]
-    format = 'Y800 (1280x960)'; 
+    exposure = 1/1e3; % Analog parameter
+    format = 'Y800 (1280x960)'; % Best: 'Y800 (1280x960)'
+                            % Another option: 'RGB24 (1024x768)'
                             
   case 'DMK42BUC03' % Lyot plane
-    exposure = 1/1e3; % Range: [1/1e4,1]
-    format = 'Y800 (1280x960)';
+    exposure = 1/1e3; % Analog parameter. Range: [1/1e4,1]
+    format = 'Y800 (1280x960)'; % Best: 'Y800 (1280x960)'
+                            % Another option: 'RGB24 (1024x768)'
                             
-  case 'DMK41BU02.H' % not used here
-    exposure = 1/1e3; % Range: [,]
-    format = 'Y800 (1280x960)';                      
+  case 'DMK41BU02.H'
+    exposure = 1/1e3; % Analog parameter
+    format = 'Y800 (1280x960)'; % Best: 'Y800 (1280x960)'
+                            % Another option: 'RGB24 (1024x768)'
+                            
 end
 
 
-% For 'DMK42BUC03' [Delete]:
+% For 'DMK42BUC03':
 % -Default: 0.0556 or 1.282
 % -PH50um: 0.0030 -- Y0.0256 || PH25um: 0.0083 -- Y0.0556 ||
 % -PH15um: --Y0.1429 || 0.0227 || PH10um: 0.0435 -- Y0.200 || 
 % -PH5um: 0.363 -- Y3.099
+
 
 %% Image capture
 filename = 'test'; % Name of the capture one wants to take
