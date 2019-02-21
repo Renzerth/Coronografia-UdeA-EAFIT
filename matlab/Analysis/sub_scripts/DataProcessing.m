@@ -7,7 +7,8 @@
 pause(wait) % Seconds before measuring as a safety measurement
 t1_dt = datetime; % store time
 disp('Processing started:'); disp(t1_dt)
-processedImgname = [ProcessedDir pathSep 'processed_' cameraPlane '_'];
+processedImgname = strcat(ProcessedDir,pathSep,'processed_', ...
+                          cameraPlane,'_');
 
 for idxgral = 1:totalImgs
  %% Loading   
@@ -18,13 +19,13 @@ for idxgral = 1:totalImgs
  A = A'; % Processing of the image. So far nothing, just an example
  
  %% Saving
- processedImgfullpath = [processedImgname MeasInfo{idxgral}];
+ processedImgfullpath = strcat(processedImgname,MeasInfo{idxgral});
  if savetype == 1 % .mat format   
   % save(directory+filename,variables)
   save(processedImgfullpath,'A'); % .mat
  else % savetype = 2. dataformat is used
   % imwrite(variables,directory+filename+extension)
-  imwrite(expImgs{idxgral}, [processedImgfullpath dataformat]); 
+  imwrite(expImgs{idxgral}, strcat(processedImgfullpath,dataformat)); 
  end   
 end
 

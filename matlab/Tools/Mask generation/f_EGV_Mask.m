@@ -41,8 +41,8 @@ mask = exp(1i*mask); % Wrapped mask
 %% Plot (with axes)
 if showM == 1
   wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
-  tit = ['EGV with topological charge ' num2str(tc) ...
-         ' and beta = ' num2str(bcst)];
+  tit = strcat('EGV with topological charge ',num2str(tc), ...
+         ' and beta = ',num2str(bcst));
   f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM);
 end
 

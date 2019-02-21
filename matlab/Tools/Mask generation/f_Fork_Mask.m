@@ -64,8 +64,8 @@ end
 %% Plot (with axes)
 if showM == 1
   wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
-  tit = ['Fork mask with topological charge ' num2str(tc) ...
-         ' and period = ' num2str(period)];
+  tit = strcat('Fork mask with topological charge ',num2str(tc), ...
+         ' and period = ',num2str(period));
   f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM);
 end
 

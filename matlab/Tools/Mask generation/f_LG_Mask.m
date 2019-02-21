@@ -59,12 +59,13 @@ end
 %% Plot binary mask
 if showM == 1
   if abs_ang == 2
-    tit = ['LG phase mask with topological charge ' num2str(tc) ...
-           ' and radial node ' num2str(p)];   
+    tit = strcat('LG phase mask with topological charge ',num2str(tc), ...
+           ' and radial node ',num2str(p));   
     f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM);
   else % abs_ang == 1
     plotMask = showM; % plotMask = show; for 0 and 1.
-    f_fig_maskSLM(x,y,r,mag,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask,monitorSize,plotMask)
+    f_fig_maskSLM(x,y,r,mag,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
+                  binMask,monitorSize,plotMask)
     title('Amplitude of LG');
     cbh = colorbar; cbh.Label.String = 'Value';
   end

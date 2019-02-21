@@ -76,8 +76,6 @@ if measSimulated == 0 % When a real measurement will be performed,
                     % Turns the camera on and create all the needed 
                     % variables. Remember to leave the preview open
     [vid,src] = f_selectCamera(camera,exposure,format);
-    % USE: ???
-    % - vid.FramesPerTrigger = 1; % Default frames to capture per trigger
 end
 
 %% Measurement debugging

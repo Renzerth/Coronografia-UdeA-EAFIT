@@ -41,8 +41,8 @@ function mask = f_VPL_Mask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,L,f_F
 %% Plot (with axes)
 if showM == 1
   wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
-  tit = ['VPL with topological charge ' ...
-         num2str(tc) ' and ' num2str(gl) ' gray levels'];  
+  tit = strcat('VPL with topological charge ',num2str(tc),' and ', ...
+               num2str(gl),' gray levels');  
   f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM);
 end
 

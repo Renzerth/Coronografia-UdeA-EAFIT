@@ -43,7 +43,6 @@ end
                                        % normal cartesian convention for 
                                        % displacing the phase mask
 
-
 %% Gray-level discretized azimuthal angle vector
 glphi = -pi:2*pi/gl:pi; % Discretized phi vector on [-pi,pi]. The sampling
                         % interval consists on dividing the  range over the

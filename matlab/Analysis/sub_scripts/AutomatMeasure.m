@@ -15,11 +15,9 @@ pause(wait) % Seconds before measuring as a safety measurement
 t1_dt = datetime; % store time
 disp('Measurement started'); disp(t1_dt)
 tit = 'Displayed phase mask';
-imgpath = [DatalogDir pathSep cameraPlane '_']; % More information will be
-                                                % concatenated for a full
-                                                % path of the measured 
-                                                % images inside the next
-                                                % "for" loops
+imgpath = strcat(DatalogDir,pathSep,cameraPlane,'_'); % More information 
+% will be concatenated for a full path of the measured images inside the
+% next "for" loops
 
 %% Measurements
 for idxtc = 1:ltcvect 
@@ -46,8 +44,8 @@ for idxtc = 1:ltcvect
     A = expImgs{idxgral}; % A variable for the save function
 
     %% Saving the measurement
-    tcstr = ['tc_' num2str(tcvect(idxtc))]; 
-    glstr = ['gl_' num2str(glvect(idxgl))];
+    tcstr = strcat('tc_',num2str(tcvect(idxtc))); 
+    glstr = strcat('gl_' num2str(glvect(idxgl)));
     MeasInfo{idxgral} = [tcstr '_' glstr]; % Dataname for each experimental
                                            % data
     if savetype == 1  % .mat format
@@ -65,7 +63,7 @@ for idxtc = 1:ltcvect
     % The numbers after 'position' were empirically obtained
     fig = figure('units','normalized','position',[1/10 1/10 1/3 1/2]);
     imagesc(snap); % normalized
-    colorbar; title(['Camera image: ' filename]);
+    colorbar; title(strcat('Camera image: ',filename));
 
     % The numbers after 'position' were empirically obtained
     showmask = 1;
@@ -74,7 +72,7 @@ for idxtc = 1:ltcvect
      
     %% Preparation for a new measurement iteration          
     stridxgral = num2str(idxgral); strtotalImgs = num2str(totalImgs);
-    disp([stridxgral ' out of ' strtotalImgs ' images recorded']);
+    disp(strcat(stridxgral,' out of ',strtotalImgs,' images recorded'));
     idxgral = idxgral + 1; % The general index increases   
     pause(recordingDelay); % Displays the mask for "recordingDelay" seconds   
                            % This time is also important so that the camera

@@ -43,7 +43,7 @@ mask = exp(1i*mask); % Wrapped mask and complex
 wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
 
 %% Plot (with axes)
-tit = ['Spiral phase mask with topological charge ' num2str(tc)];
+tit = strcat('Spiral phase mask with topological charge ',num2str(tc));
 f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM);
 
 end
