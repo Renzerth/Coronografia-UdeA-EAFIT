@@ -5,6 +5,7 @@
 %
 % Outputs:
 %  Plots on the PC or on the SLMs
+%  Camera captures
 %  Processed vortex images (or plots)
 %
 % Notes:
@@ -46,7 +47,7 @@ Parameters; % Adds to the algorithm all the needed parameters
 % open Parameters; % Keep open always
 
 %% Directories and add functions
-addpath('sub_scripts'); % Adds all the sub programs of the algorithm
+
 addDirectories; % Adds all the directories to use in the algorithm
 
 %% Spatial definitions
@@ -60,7 +61,7 @@ PhaseMaskSel; % Selects the type of phase mask.
 %% Phase mask plot on the screen or on the SLM
 %%% Plot phase mask on the Fourier plane of the vortex coronagraph
 f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask, ...
-              monitorSize,plotMask);
+              monitorSize,scrnIdx,plotMask);
 
 
 

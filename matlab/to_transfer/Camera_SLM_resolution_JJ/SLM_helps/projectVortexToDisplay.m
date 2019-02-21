@@ -25,7 +25,8 @@ projectionMask = discretizeMask(projectionMask,grayLevels);
 projectionMask = scaleMatrix(projectionMask,minGrayDepth,maxGrayDepth) + levelShift;
 %% Figure-Screen properties
 close(gcf);
-offsetPixel = [1,1];
+offsetPixel = [1,1]; % Mandatory: pixels have this origin [0,0] doesn't
+                     % exist
 figureHandlerA = figure('Visible','off','MenuBar','none','Toolbar','none');
 figureHandlerA.Units = 'Pixels';
 set(gca,'Units','Pixels');

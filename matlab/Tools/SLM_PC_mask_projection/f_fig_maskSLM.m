@@ -1,5 +1,5 @@
 %% Plot Phase Mask 
-function slmhfig = f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask,monitorSize,plotMask)
+function slmhfig = f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask,monitorSize,scrnIdx,plotMask)
 % Inputs:
 %  x,y: cartesian coordinates vector
 %  r: polar coordinate (in cm)
@@ -11,6 +11,7 @@ function slmhfig = f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang
 %  abs_ang: Magnitude (1); Phase (2)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  monitorSize: size of the selected screen 
+%  screenIndex: screen number selector. In [1,N] with N the # of screen
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
 %             plotMask = show; for 0 and 1.
@@ -46,7 +47,8 @@ switch plotMask
     pax = gca; pax.FontSize = 16; % Font size   
     
   case 2  % Plot on the SLM
-    close(gcf);
+    enablechange = true; % SLM figure display monitor activated
+    f_changeProjectionMonitor(scrnIdx,enablechange);
     offsetPixel = [1,1]; % Mandatory: pixels have this origin [0,0] doesn't
                          % exist
     slmhfig = figure('Visible','off','MenuBar','none','Toolbar','none', ...

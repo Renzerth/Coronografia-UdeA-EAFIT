@@ -13,11 +13,10 @@ switch coordType
 
  case 2 % Size defined by the resolution of the selected screen                 
   %% Screen coordinates
-  enablechange = 0; % 0: won't change default figure display monitor. Leave 
-                    % this value as zero always as the figure display
-                    % monitor will be changed later on
-                    % This is changed if one wants to display in the SLMs 
-                    % when plotMask = 2
+  enablechange = true; 
+  % false: won't change default figure display monitor. Leave this value as
+  % zero always as the figure display monitor will be changed later on.
+  % This is changed if one wants to display in the SLMs when plotMask = 2
   [X,Y,aspectRatio,monitorSize] = ...
                              f_makeScreenCoordinates(scrnIdx,enablechange);
   % Calculates the monitor size
@@ -33,7 +32,8 @@ end
 
 %% Polar coordinates with a shift of the mask
 if shiftBool == 1
- shiftCart = spaceSupport*shiftCart/100; % Percentage w.r.t the half size 
+ shiftCart = shiftCart/100; % Percentage w.r.t the half size 
+ % old shift in cm shiftCart = spaceSupport*shiftCart/100
  shiftX = shiftCart(2); % Cartesian shift in x
  shiftY = shiftCart(1); % Cartesian shift in y
 else
@@ -43,11 +43,3 @@ end
                                          % shift. The signs compensate the 
                                          % normal cartesian convention for 
                                          % displacing the phase mask
-
-%% Gray-level discretized azimuthal angle vector
-glphi = -pi:2*pi/gl:pi; % Discretized phi vector on [-pi,pi]. The sampling
-                        % interval consists on dividing the  range over the
-                        % gray levels. Similar to the VPL Edgar's 
-                        % discretization formula in the page number 1 of
-                        % 1_edgar_2013_High-quality optical vortex-beam                    
-                        % generation_E-Rueda_OL                      

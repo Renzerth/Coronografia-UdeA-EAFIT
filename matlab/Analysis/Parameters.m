@@ -47,24 +47,28 @@ plotMask = 2; % Allows to plot the final mask, as it can be a combination
               
 %%%%%%%%%%%%%%%%%%%%%%% PART 2: HARDWARE
 % scrnIdx: screen number selector. In [1,N] with N the # of screens
+% Windows 7 PC used in 2019 (according to):
+%  -Principal screen: Windows(2); MATLAB scrnIdx(1); AnyDesk(2)
+%  -Pluto screen: Windows(1); MATLAB scrnIdx(3); Anydesk(1)
+%  -LC2002 screen: Windows(3); MATLAB scrnIdx(2); Anydesk(0)
 switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
     % spaceSupport = 1; % Unitary space: spaceVector = -1:2/(Ssize-1):1;
     spaceSupport = min([0.864 1.536]); % Size of the SLM window in cm:
-                                         % 1.536cm x 0.864cm
+                                       % 1.536cm x 0.864cm
     maxNumPix = max([1920 1080]); % Maximum number of pixels on the SLM 
                                   % (either horizontal or vertical); SLM's 
                                   % resolution in pixels: 1920 x 1080 
     pixSize = 8; % SLM pixel's size in um
-    scrnIdx = 3; % Screen number selector
+    scrnIdx = 3; % Screen number selector. Default: 3
     
   case 'LC2002'
     %% SLM parameters (transmision)
     spaceSupport = min([2.66 2.00]); % Same as the reflection SLM
     maxNumPix = max([800 600]); % Same as the reflection SLM
     pixSize = 32; % Same as the reflection SLM in um
-    scrnIdx = 2; % Screen number selector
+    scrnIdx = 2; % Screen number selector. Default: 2
     
   otherwise
     warning('Please select an SLM');
@@ -73,9 +77,10 @@ end
 %% SLM positionining calibration
 shiftBool = 0; % Shift activated (1)[SLM displaying] or deactivated (0)
                % [exporting masks]. shiftCart = [yshift,xshift]
-shiftCart = [0,0]; % Percentages of movement of the total size of the
+shiftCart = [90,0]; % Percentages of movement of the total size of the
                    % mask (cartesian coordinates convention)
                    % Calibrated with: s = +1; ph0 = 0, tc = 1; 
+                   % Ranges: [0,100]
               
 %% Camera selection and parameters
 camera = 'DMK23U445';
@@ -135,8 +140,22 @@ mingl = 0; % Minimum gray level depth. Ref: 0
 maxgl = 255; % Maximum gray level depth. Ref: 255
 levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
              % Corresponds to the brightness or constant shift of the gl's
-gl = 100; % Number of grey levels (normally 256). Must be smaller than 5
-          % the dynamic range = maxGrayDepth-minGrayDepth
+discretization = 2; % variable for the next switch
+
+  gl = 100; % Number of grey levels (normally 256). Must be smaller than 5
+            % the dynamic range = maxGrayDepth-minGrayDepth
+switch discretization % Gray-level discretized azimuthal angle vector
+  case 1 % 1: Evenly-spaced gl phase values
+  % gl MUST BE HERE
+  glphi = linspace(-pi,pi,gl); % Discretized phi vector on [-pi,pi]. The sampling
+                        % interval consists on dividing the  range over the
+                        % gray levels. Similar to the VPL Edgar's 
+                        % discretization formula in the page number 1 of
+                        % 1_edgar_2013_High-quality optical vortex-beam                    
+                        % generation_E-Rueda_OL     
+  case 2 % 2: user-defined gl values
+    glphi = [1 10 100 201 255];
+end
 
 %% Parameters: Laguerre-Gauss
 p = 5; % Number of radial nodes. If p=0, normal helicoid masks are obtained
@@ -215,7 +234,9 @@ dataFlrd = 'Data'; % Folder name: input data
 snapsfldr = 'TestSnapshots'; % Snapshot tests folder (inside dataFlrd)
 outFlrd = 'Output'; % Folder name: output data
 toolsFldr = 'Tools'; % Folder name: functions
-
+filemanag = 'File_managing'; % Folder with the function f_makeParentFolder,
+                             % the 1st function that is used in the program
+subscripts = 'sub_scripts'; % Folder with the sub-sripts
 
 
               
