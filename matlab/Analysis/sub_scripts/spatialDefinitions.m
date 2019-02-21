@@ -1,5 +1,5 @@
 switch coordType
- case 1
+ case 1 % Size defined by the user, space support defined by the SLM to use
   %% Spatial definitions
   sSize = 2^k-1; % Number of samples; odd number so that vortex gets
                  % centered (spatial size); Spatial size. ref: 2^k-1
@@ -11,16 +11,17 @@ switch coordType
   x = spaceVector; % Cartesian x-vector
   y = x; % Cartesian y-vector: square grid
 
- case 2                        
+ case 2 % Size defined by the resolution of the selected screen                 
   %% Screen coordinates
   enablechange = 0; % 0: won't change default figure display monitor. Leave 
                     % this value as zero always as the figure display
                     % monitor will be changed later on
-  % This is changed if one wants to display in the SLMs when plotMask = 2
+                    % This is changed if one wants to display in the SLMs 
+                    % when plotMask = 2
   [X,Y,aspectRatio,monitorSize] = ...
                              f_makeScreenCoordinates(scrnIdx,enablechange);
   % Calculates the monitor size
-  scaleFactor = 1e-3; % um to mm
+  scaleFactor = 1e-3; % um to mm. Constant factor
   % halfSizeX,Y: half physical size of the SLM's active area. Taken with 
   % the datasheet parameters
   halfSizeX = monitorSize(1)*pixSize*scaleFactor/2;
@@ -39,9 +40,9 @@ else
  shiftX = 0; shiftY = 0; % Shift deactivated   
 end
 [phi,r] = cart2pol(X-shiftX,(Y+shiftY)); % Polar coordinates with an added
-                                       % shift. The signs compensate the 
-                                       % normal cartesian convention for 
-                                       % displacing the phase mask
+                                         % shift. The signs compensate the 
+                                         % normal cartesian convention for 
+                                         % displacing the phase mask
 
 %% Gray-level discretized azimuthal angle vector
 glphi = -pi:2*pi/gl:pi; % Discretized phi vector on [-pi,pi]. The sampling

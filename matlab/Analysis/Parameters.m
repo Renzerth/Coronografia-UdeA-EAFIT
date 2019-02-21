@@ -2,7 +2,7 @@
 %% Algorithm sections
 measDebug = 0; % Debugging before actually measuring. Displays the default 
                % phase mask and shots a photo with the camera
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 measSimulated = 1; % Saves the mask and does not involve the cameras: 
                    % yes (1) or no (0)
 beepSound = 0; % Beep sound when measurement finishes. Only works when 
@@ -11,30 +11,40 @@ slm = 'Pluto'; % 'Pluto' (reflection); 'LC2002' (transmission)
 sim = 0; % Simulate: yes (1) or no (0)
 
 %% General algorithm parameters
-coordType = 2; % 
+coordType = 2;  % Type of calculation of the spatial coordinates. def: 2 
+% 1: size defined by the user, space support defined by the SLM to use
+% 2: size defined by the resolution of the selected screen    
+if coordType == 1
   k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
-        % Default: 10        
+          % Default: 10      
+end
 precision = 3; % Precision of displayed results: significative digits (3)
 showM = 1; % Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
            % analog to "plotMask" on the SLM Position section
 maskSel = 0; % Phase mask selection:
-% 0: Helicoidal mask: SPP or DSPP depending on gl
-% 1: Laguerre-Gauss beams: amplitude or phase
-% 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
-% 3: Elliptic Gaussian beam phase mask
-% 4: Fork phase masks
-% ---- NOT USED:
-% 5: Zernike (aberrations)
-% 6: Laguerre-Gauss + Zernike
-% 7: Hermite-Gauss beams NOT DONE
-% 8: Mutliple vortices NOT DONE
-% 9: Sum of spiral phase masks NOT DONE
-% 10: Gerchberg-Saxton NOT DONE
-% otherwise: Unitary
+             % 0: Helicoidal mask: SPP or DSPP depending on gl
+             % 1: Laguerre-Gauss beams: amplitude or phase
+             % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
+             % 3: Elliptic Gaussian beam phase mask
+             % 4: Fork phase masks
+             % ---- NOT USED:
+             % 5: Zernike (aberrations)
+             % 6: Laguerre-Gauss + Zernike
+             % 7: Hermite-Gauss beams NOT DONE
+             % 8: Mutliple vortices NOT DONE
+             % 9: Sum of spiral phase masks NOT DONE
+             % 10: Gerchberg-Saxton NOT DONE
+             % otherwise: Unitary
+plotMask = 2; % Allows to plot the final mask, as it can be a combination 
+              % of the previous ones
+              % 0: no plot;
+              % 1: on the screen
+              % 2: on the SLM
+              % 3: on the screen but surface-plot type
 
 
-
-
+              
+              
 %%%%%%%%%%%%%%%%%%%%%%% PART 2: HARDWARE
 % scrnIdx: screen number selector. In [1,N] with N the # of screens
 switch slm
@@ -47,7 +57,7 @@ switch slm
                                   % (either horizontal or vertical); SLM's 
                                   % resolution in pixels: 1920 x 1080 
     pixSize = 8; % SLM pixel's size in um
-    scrnIdx = 1; % Screen number selector
+    scrnIdx = 3; % Screen number selector
     
   case 'LC2002'
     %% SLM parameters (transmision)
@@ -66,12 +76,6 @@ shiftBool = 0; % Shift activated (1)[SLM displaying] or deactivated (0)
 shiftCart = [0,0]; % Percentages of movement of the total size of the
                    % mask (cartesian coordinates convention)
                    % Calibrated with: s = +1; ph0 = 0, tc = 1; 
-plotMask = 2; % Allows to plot the final mask, as it can be a combination 
-              % of the previous ones
-              % 0: no plot;
-              % 1: on the screen
-              % 2: on the SLM
-              % 3: on the screen but surface-plot type
               
 %% Camera selection and parameters
 camera = 'DMK23U445';
@@ -106,10 +110,11 @@ end
 filename = 'test'; % Name of the capture one wants to take
 imgformat = '.png'; % Format with period. mat, bmp, png, jpg
                     % This format doesn't apply for the measurements
-
-
-
-%%%/%%%%%%%%%%%%%%%%% PART 3: DEFAULT PHASE MASKS
+                    
+                    
+                    
+                    
+%%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS PARAMETERS
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
 abs_ang = 2; % Magnitude (1) or phase (2) plot
@@ -130,7 +135,7 @@ mingl = 0; % Minimum gray level depth. Ref: 0
 maxgl = 255; % Maximum gray level depth. Ref: 255
 levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
              % Corresponds to the brightness or constant shift of the gl's
-gl = 2; % Number of grey levels (normally 256). Must be smaller than 5
+gl = 100; % Number of grey levels (normally 256). Must be smaller than 5
           % the dynamic range = maxGrayDepth-minGrayDepth
 
 %% Parameters: Laguerre-Gauss
@@ -230,7 +235,7 @@ gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)
 maskZernReconstr = 0; % Reconstructs the mask with Zernike polynomials and
                       % plots the error
                       
-
+if sim == 1
 %% Simulation parameters
 starAmplitude = 1; % ref: 1
 planetAmplitude = 0.8; % ref: 0.1
@@ -248,4 +253,4 @@ showFPphas = 1; % Show Fourier plane phase
 showPhasout = 1; % Show output phase
 showMagout = 1; % Show output magnitude
 showIout = 1; % Show output intensity
-
+end

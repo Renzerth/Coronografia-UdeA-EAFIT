@@ -45,7 +45,7 @@ for idxtc = 1:ltcvect
 
     %% Saving the measurement
     tcstr = strcat('tc_',num2str(tcvect(idxtc))); 
-    glstr = strcat('gl_' num2str(glvect(idxgl)));
+    glstr = strcat('gl_',num2str(glvect(idxgl)));
     MeasInfo{idxgral} = [tcstr '_' glstr]; % Dataname for each experimental
                                            % data
     if savetype == 1  % .mat format
@@ -72,7 +72,8 @@ for idxtc = 1:ltcvect
      
     %% Preparation for a new measurement iteration          
     stridxgral = num2str(idxgral); strtotalImgs = num2str(totalImgs);
-    disp(strcat(stridxgral,' out of ',strtotalImgs,' images recorded'));
+    disp(strcat(stridxgral,' out of ',{' '},strtotalImgs, ...
+         ' images recorded'));
     idxgral = idxgral + 1; % The general index increases   
     pause(recordingDelay); % Displays the mask for "recordingDelay" seconds   
                            % This time is also important so that the camera
@@ -88,7 +89,7 @@ end
 % MATLAB built in:
 t2_dt = datetime;
 disp('Measurement finished'); disp(t2_dt)
-time = t2_dt - t1_dt;
+time = t2_dt - t1_dt; % Relative difference between start and stop
 disp('Measurement took:'); % datestr(time,'SS') ' seconds'])
 disp(time)
 % end
