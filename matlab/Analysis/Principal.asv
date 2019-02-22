@@ -16,6 +16,15 @@
 %  All wrappped phases are shown on [-pi,pi] 
 %  Always execute the program whenver you are exactly inside its folder
 %
+% Folders:
+%  Analysis: principal scripts
+%  Data: the inputs of the algorithm are the acquired vortex images
+%  Data -> DatalogDir: specific measurement folder 
+%  Output: processed images or plots
+%  Output -> ProcessedDir: specific processed images folder
+%  Tools: functions used in the program
+%  Tools ->
+%
 % Bugs:
 %  -When the ticks of -pi, ..., pi are shown, sometimes the may move
 %  slightly from the real value
@@ -63,7 +72,7 @@ if meas == 1
 %% Folders and register creations on Data and Output    
 FoldersRegistersCreation;
 
-if measSimulated == 0 % When a real measurement will be performed
+if measSimulated == 0 % When a real measurement will be performed,
     %% Hardware initialization
     % HardwareInit; % Future script 
                     % Turns the camera on and create all the needed 
@@ -87,17 +96,17 @@ if measDebug == 1
  % imaqtool; % toolbox for the camera
  % imaqreset: refresh image acquisition hardware by restoring the settings
 else
- %% Reference measurement
- % Still not sure if needed: null tc beam or a high tc beam(long radius)
+    %% Reference measurement
+    % Still not sure if needed: null tc beam or a high tc beam(long radius)
 
- %% Automated measurement
- AutomatMeasure; % Future script
+    %% Automated measurement
+    AutomatMeasure; % Future script
 
- %% Post-processing of the data
- DataProcessing; % Metric of the degree of extintion applied
+    %% Post-processing of the data
+    DataProcessing; % Metric of the degree of extintion applied
 
- %% Save data
- % SaveData; % Or maybe save plot(s) of the applied metrics
+    %% Save data
+    % SaveData; % Or maybe save plot(s) of the applied metrics
 end
 
 %% Termination

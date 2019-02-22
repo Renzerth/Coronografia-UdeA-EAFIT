@@ -154,9 +154,10 @@ switch discretization % Gray-level discretized azimuthal angle vector
   glphi = linspace(-pi,pi,gl); % Discretized phi vector on [-pi,pi]. The 
                                % sampling interval consists on dividing the
                                % range over the gray levels. Similar to the
-                               % VPL Edgar's discretization formula on the
-                               % first page of:
-  % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf     
+                               % VPL Edgar's discretization formula in the
+                               page number 1 of
+                        % 1_edgar_2013_High-quality optical vortex-beam                    
+                        % generation_E-Rueda_OL     
  case 2 % 2: user-defined gl values
   glphi = [1 10 100 201 255]; % Custom gl vector: the mask will only have 
                               % these levels

@@ -48,8 +48,8 @@ switch plotMask
     
   case 2  % Plot on the SLM
     enablechange = true; % SLM figure display monitor activated
-    f_changeProjectionMonitor(scrnIdx,enablechange); % Allow screen-size 
-                                                     % figures
+    f_changeProjectionMonitor(scrnIdx,enablechange); % Allow full-screen 
+                                                     % size figures
     offsetPixel = [1,1]; % Mandatory: pixels have this origin [0,0] doesn't
                          % exist
     slmhfig = figure('Visible','off','MenuBar','none','Toolbar','none', ...
