@@ -13,7 +13,7 @@ switch coordType
 
  case 2 % Size defined by the resolution of the selected screen                 
   %% Screen coordinates
-  enablechange = true; 
+  enablechange = false; 
   % false: won't change default figure display monitor. Leave this value as
   % zero always as the figure display monitor will be changed later on.
   % This is changed if one wants to display in the SLMs when plotMask = 2

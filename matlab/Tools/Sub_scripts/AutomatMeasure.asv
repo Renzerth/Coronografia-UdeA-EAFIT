@@ -19,7 +19,7 @@ imgpath = strcat(DatalogDir,pathSep,cameraPlane,'_'); % More information
 % will be concatenated for a full path of the measured images inside the
 % next "for" loops
 if plotMask == 0
-  error('plotMask should not be 0 when meas equals 1.');
+  error('plotMask should not be 0 ')
 end
 
 %% Measurements

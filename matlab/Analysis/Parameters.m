@@ -2,7 +2,7 @@
 %% Algorithm sections
 measDebug = 0; % Debugging before actually measuring. Displays the default 
                % phase mask and shots a photo with the camera
-meas = 0; % Measure: yes (1) or no (0)
+meas = 1; % Measure: yes (1) or no (0)
 measSimulated = 1; % Saves the mask and does not involve the cameras: 
                    % yes (1) or no (0)
 beepSound = 0; % Beep sound when measurement finishes. Only works when 
@@ -149,7 +149,7 @@ levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
 discretization = 1; % Variable for the next switch
 switch discretization % Gray-level discretized azimuthal angle vector
  case 1 % 1: Evenly-spaced gl phase values
-  gl = 100; % Number of gray levels (normally 256). Must be smaller than
+  gl = 2; % Number of gray levels (normally 256). Must be smaller than
             % the dynamic range = maxGrayDepth-minGrayDepth
   glphi = linspace(-pi,pi,gl); % Discretized phi vector on [-pi,pi]. The 
                                % sampling interval consists on dividing the
