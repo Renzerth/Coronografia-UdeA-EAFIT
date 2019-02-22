@@ -14,7 +14,6 @@ function mask = f_Spiral_Mask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,bi
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
-%  monitorSize: size of the selected screen 
 %  showM: show the mask. yes(1); no(0)
 %
 % Outputs:
