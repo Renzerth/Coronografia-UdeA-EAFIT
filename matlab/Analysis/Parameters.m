@@ -149,7 +149,7 @@ levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
 discretization = 2; % Variable for the next switch
 switch discretization % Gray-level discretized azimuthal angle vector
  case 1 % 1: Evenly-spaced gl phase values
-  gl = 100; % Number of grey levels (normally 256). Must be smaller than 5
+  gl = 100; % Number of gray levels (normally 256). Must be smaller than
             % the dynamic range = maxGrayDepth-minGrayDepth
   glphi = linspace(-pi,pi,gl); % Discretized phi vector on [-pi,pi]. The 
                                % sampling interval consists on dividing the
@@ -158,8 +158,9 @@ switch discretization % Gray-level discretized azimuthal angle vector
                                % first page of:
   % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf     
  case 2 % 2: user-defined gl values
-  glphi = [1 10 100 201 255]; % Custom gl vector: the mask will only have 
+  glphi = [1 10 100 201 202]; % Custom gl vector: the mask will only have 
                               % these levels
+  gl = 202; % That is the reference gl when one has personalized gl's
 end
 
 %% Parameters: Laguerre-Gauss

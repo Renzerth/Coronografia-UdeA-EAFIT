@@ -1,5 +1,5 @@
 %% Plot Phase Msk on the screen, not the SLM
-function pcfig = f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM)
+function pcfig = f_fig_maskPCscreen(x,y,wrappedMask,tit,gl,showM)
 % Inputs:
 %  x,y: cartesian coordinates vector
 %  WrappedMask: function to be plotted. The mask should already be wrapped

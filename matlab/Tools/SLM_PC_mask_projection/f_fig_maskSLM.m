@@ -25,7 +25,8 @@ function slmhfig = f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang
 
 %% Wrapping and Circular pupil Application
 if abs_ang == 2
- wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
+ wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl, ...
+                                    levShft);
  tit = 'Phase Mask';
  str = 'Value of phase';  
  
