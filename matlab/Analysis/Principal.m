@@ -39,8 +39,9 @@ Parameters; % Adds to the algorithm all the needed parameters
 % open Parameters; % Keep open always
 
 %% Directories and add functions
-addpath(subscripts); % Adds all the sub programs of the algorithm
-addDirectories; % Adds all the directories to use in the algorithm
+% Adds initial functions
+addpath(strcat('..',pathSep,toolsFldr,pathSep,filemanag)); 
+[analysDir,toolsDir,dataDir,outDir] = f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd); % Adds all the directories to use in the algorithm
 
 %% Spatial definitions
 spatialDefinitions; % Defines the cartesian/polar coordinates, its 

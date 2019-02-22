@@ -35,7 +35,7 @@ maskSel = 0; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 2; % Allows to plot the final mask, as it can be a combination 
+plotMask = 1; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -48,9 +48,9 @@ plotMask = 2; % Allows to plot the final mask, as it can be a combination
 %%%%%%%%%%%%%%%%%%%%%%% PART 2: HARDWARE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % scrnIdx: screen number selector. In [1,N] with N the # of screens
 % Windows 7 PC used in 2019 (according to):
-%  -Principal screen: Windows(2); MATLAB scrnIdx(1); AnyDesk(2)
-%  -Pluto screen: Windows(1); MATLAB scrnIdx(3); Anydesk(1)
-%  -LC2002 screen: Windows(3); MATLAB scrnIdx(2); Anydesk(0)
+%  -Principal screen: MATLAB scrnIdx(1); Windows(2); AnyDesk(2)
+%  -Pluto screen: MATLAB scrnIdx(3); Windows(1); Anydesk(1)
+%  -LC2002 screen: MATLAB scrnIdx(2); Windows(3); Anydesk(0)
 switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
@@ -82,7 +82,7 @@ end
 %% SLM positionining calibration
 shiftBool = 0; % Shift activated (1)[SLM displaying] or deactivated (0)
                % [exporting masks]. 
-shiftCart = [90,0]; % [yshift,xshift], works when shiftBool = 1
+shiftCart = [0,0]; % [yshift,xshift], works when shiftBool = 1
                     % Percentages of movement of the total size of the
                     % mask (cartesian coordinates convention)
                     % Calibrated with: s = +1; ph0 = 0, tc = 1; 
@@ -146,7 +146,7 @@ mingl = 0; % Minimum gray level depth. Ref: 0
 maxgl = 255; % Maximum gray level depth. Ref: 255
 levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
              % Corresponds to the brightness or constant shift of the gl's
-discretization = 2; % Variable for the next switch
+discretization = 1; % Variable for the next switch
 switch discretization % Gray-level discretized azimuthal angle vector
  case 1 % 1: Evenly-spaced gl phase values
   gl = 100; % Number of gray levels (normally 256). Must be smaller than
@@ -176,7 +176,6 @@ norm = 0; % Normalize magnitude and phase (to unity). yes(1); no(0)
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
 f_FR = maxNumPix*pixSize^2/L; % Criterium to determine the MINIMUM f_FR
 % From: 2_edgar_2015_Generation_Optical_Vortices_Binary_Vortex_Lenses.pdf
-
 
 %% Parameters: Elliptic Gaussian Vortex
 bcst = 0.1; % Ellipticity. cy/cx = 1/alpha. Ref: .1, .2, .4, .6, .8 and 1
@@ -243,7 +242,6 @@ outFlrd = 'Output'; % Folder name: output data
 toolsFldr = 'Tools'; % Folder name: functions
 filemanag = 'File_managing'; % Folder with the function f_makeParentFolder,
                              % the 1st function that is used in the program
-subscripts = 'Sub_scripts'; % Folder with the sub-sripts
 % Folders:
 %  Analysis: principal scripts
 %  Data: the inputs of the algorithm are the acquired vortex images
@@ -251,7 +249,8 @@ subscripts = 'Sub_scripts'; % Folder with the sub-sripts
 %  Output: processed images or plots
 %  Output -> ProcessedDir: specific processed images folder
 %  Tools: functions used in the program
-%  Tools -> File_managing: where f_makeParentFolder.m is
+%  Tools -> File_managing: where f_makeParentFolder.m and f_addDirectories
+%  are
 
 
               
@@ -259,7 +258,7 @@ subscripts = 'Sub_scripts'; % Folder with the sub-sripts
 %%%%%%%%%%%%%%%%%%%%%%% PART 5: ACADEMIC-PURPOSE ASPECTS %%%%%%%%%%%%%%%%%%
 % Zernike, FT, simulation in the free space that is not very depured
 %% Optional plots and procedures
-FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
+FTmask = 1; % Finds the FFT of the mask and plots it: yes(1); no(0)
 gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)
 maskZernReconstr = 0; % Reconstructs the mask with Zernike polynomials and
                       % plots the error
