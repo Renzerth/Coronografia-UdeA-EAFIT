@@ -18,9 +18,9 @@ tit = 'Displayed phase mask';
 imgpath = strcat(DatalogDir,pathSep,cameraPlane,'_'); % More information 
 % will be concatenated for a full path of the measured images inside the
 % next "for" loops
-if plotMask == 0
-  error('plotMask should not be 0 when meas equals 1.');
-end
+DisplayPlot = 2; % plotMask = 2
+
+
 
 %% Measurements
 for idxtc = 1:ltcvect 
@@ -35,7 +35,7 @@ for idxtc = 1:ltcvect
                                    
     %% Display the phase mask on the SLM
     slmhfig = f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft, ... 
-                            abs_ang,binMask,monitorSize,scrnIdx,plotMask);
+                            abs_ang,binMask,monitorSize,scrnIdx,DisplayPlot);
    
     %% Record a snapshot
     if measSimulated == 0
@@ -44,22 +44,16 @@ for idxtc = 1:ltcvect
         snap = wrappedMask; % "Simulated" measurements (the mask is saved)
     end
     expImgs{idxgral} = snap; % An extructure for future use (?)
-    A = expImgs{idxgral}; % A variable for the save function
+    % A = expImgs{idxgral}; % A variable for the save function
 
     %% Saving the measurement
     tcstr = strcat('tc_',num2str(tcvect(idxtc))); 
     glstr = strcat('gl_',num2str(glvect(idxgl)));
     MeasInfo{idxgral} = [tcstr '_' glstr]; % Dataname for each experimental
                                            % data
-    if savetype == 1  % .mat format
-        imgfullpath = [imgpath MeasInfo{idxgral}];
-        % save(directory+filename,variables) % ,'-append'
-        save(imgfullpath,'A'); % Save as .matd
-    else % savetype = 2. dataformat is used
-        imgfullpath = [imgpath MeasInfo{idxgral} dataformat];
-        % imwrite(variables,directory+filename+extension)
-        imwrite(expImgs{idxgral}, imgfullpath); 
-    end
+    imgfullpath = strcat(imgpath,MeasInfo{idxgral},dataformat);
+    % imwrite(variables,directory+filename+extension)
+    imwrite(expImgs{idxgral}, imgfullpath); 
         
     %% Displaying the measurement
 % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium
@@ -86,6 +80,11 @@ for idxtc = 1:ltcvect
 end
 % MATLAB 2018b: disp(newline); MATLAB 2016: disp(char(10)) 
 % Aeasthetic reasons: Not needed in MATLAB 2016
+
+%% Store all measurements in a .mat file
+imgfullpath = strcat(imgpath,'allmeas'); % Saves the cell
+% save(directory+filename,variables) % ,'-append'
+save(imgfullpath,'expImgs'); % Save as .mat
 
 %% End of the measurements
 % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium

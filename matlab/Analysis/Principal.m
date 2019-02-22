@@ -95,7 +95,7 @@ if meas == 1
    AutomatMeasure; % Future script
 
    %% Post-processing of the data
-   DataProcessing; % Metric of the degree of extintion applied
+   %DataProcessing; % Metric of the degree of extintion applied
 
    %% Save data
    % SaveData; % Or maybe save plot(s) of the applied metrics

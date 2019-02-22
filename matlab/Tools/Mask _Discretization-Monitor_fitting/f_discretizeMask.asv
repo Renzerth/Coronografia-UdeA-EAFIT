@@ -15,6 +15,7 @@ for i = 1:n
             if mask(i, j) <= levels(z)
                 discreteMask(i,j) = levels(z);
                 found = 0;
+            elseif (discreteMask(i,j) - levels(z) < t)
             else
                 z = z + 1;
             end

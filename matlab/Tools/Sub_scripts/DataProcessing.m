@@ -10,24 +10,25 @@ disp('Processing started:'); disp(t1_dt)
 processedImgname = strcat(ProcessedDir,pathSep,'processed_', ...
                           cameraPlane,'_');
 
-for idxgral = 1:totalImgs
+% for idxgral = 1:totalImgs
  %% Loading   
  % load(directory+filename,variables)
- A = load(imgfullpath,'A'); % imgfullpath comes from AutomatMeasure
+
+ A = load(imgfullpath,'expImgs'); % imgfullpath comes from AutomatMeasure
  
  %% Processsing
  A = A'; % Processing of the image. So far nothing, just an example
  
  %% Saving
  processedImgfullpath = strcat(processedImgname,MeasInfo{idxgral});
- if savetype == 1 % .mat format   
-  % save(directory+filename,variables)
-  save(processedImgfullpath,'A'); % .mat
- else % savetype = 2. dataformat is used
-  % imwrite(variables,directory+filename+extension)
-  imwrite(expImgs{idxgral}, strcat(processedImgfullpath,dataformat)); 
- end   
-end
+%  if savetype == 1 % .mat format   
+%   % save(directory+filename,variables)
+%   save(processedImgfullpath,'A'); % .mat
+%  else % savetype = 2. dataformat is used
+%   % imwrite(variables,directory+filename+extension)
+% imwrite(expImgs{idxgral}, strcat(processedImgfullpath,dataformat)); 
+%  end   
+%end
 
 %% End of the processing
 % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium
