@@ -46,19 +46,20 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd);
 % Adds all the directories to use in the algorithm
 
 %% Spatial definitions
-[X,Y,r,phi,Xpc,Ypc,rPC,phiPC,sSize,monitorSize] = ...
+[Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,sSize,monitorSize] = ...
 f_DefineSpace(spaceSupport,shiftCart,pixSize,scrnIdx,circularMask, ...
 shiftBool,coordType);
 % Defines the cartesian/polar coordinates, its sampling interval and 
 % discretized angular part for gl
                 
 %% Phase mask selection and plot on the screen or on the SLM
-[mask,maskName] = f_PlotSelectedMask(X,Y,r,phi,Xpc,Ypc,rPC,phiPC,gl, ...
+[mask,maskName] = f_PlotSelectedMask(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,gl, ...
 glphi,mingl,maxgl,levShft,tc,s,ph0,p,W,binv,norm, L,f_FR,bcst,z_coeff, ...
 a,frac,pupil,sSize,disp_wrap,plot_z,binMask,monitorSize,scrnIdx, ...
-abs_ang,plotMask,maskSel);           
-% f_PlotSelectedMask->f_SpiralMask->f_ProjectMask->f_MaskWrapCircDiscret
-          
+abs_ang,plotMask,maskSel);   
+% Dependencies:
+% f_PlotSelectedMask -> f_SpiralMask (or any other) -> f_ProjectMask -> 
+% f_MaskWrapCircDiscret -> (f_discretizeMask & f_ScaleMatrixData)          
 
                            
                            

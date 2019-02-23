@@ -1,8 +1,10 @@
-function [X,Y,r,phi,Xpc,Ypc,rPC,phiPC,sSize,monitorSize] = ...
+function [Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,sSize,monitorSize] = ...
 f_DefineSpace(spaceSupport,shiftCart,pixSize,scrnIdx,circularMask, ...
 shiftBool,coordType)
 switch coordType
  case 1 % Size defined by the user, space support defined by the SLM to use
+  % This applies when one won't project a full screen mask and a desired 
+  % image resolution is wanted 
   %% Spatial definitions
   sSize = 2^k - 1; % Number of samples; odd number so that vortex gets
                    % centered (spatial size); Spatial size. ref: 2^k-1
@@ -13,9 +15,11 @@ switch coordType
                                  % coordinates
   x = spaceVector; % Cartesian x-vector
   y = x; % Cartesian y-vector: square grid
-  Xslm = X;
+  % Xslm = X;
 
- case 2 % Size defined by the resolution of the selected screen                 
+ case 2 % Size defined by the resolution of the selected screen     
+  % This applies when a full screen mask will be displayed for the SLM with
+  % the exact screen resolution
   %% Screen coordinates
   enablechange = false; 
   % false: won't change default figure display monitor. Leave this value as
@@ -41,11 +45,7 @@ switch coordType
   % drawn normally on the whole screen
   Xrescaled = AspectRatio*X; % Used for the mask generation on the pc. It 
                              % is never shifted
-  if circularMask == 1 % X is then used as Xrescaled
-   Xslm = Xrescaled;
-  else % The mask will have an elliptical shape
-   Xslm = X;
-  end
+  
 end
 
 %% Polar coordinates for the PC
@@ -68,11 +68,16 @@ switch shiftBool
   % Pending
      
 end
+
+if circularMask == 1 && coordType == 2 % X is used as Xrescaled 
+   X = Xrescaled; % Circular truncation in full screen
+end % Otherwise X=X and one has the elliptical truncation in full screen
+
 % X,Y variables redefined for being used in the EGV and Fork masks
 % The signs of the shifts account for the cartesian coordinates convention
-X = Xslm - shiftX; % Shifted X for the SLM
-Y = Y + shiftY; % Shifted Y for the SLM.
-[phi,r] = cart2pol(X,Y); % Polar coordinates with an added
+Xslm = X - shiftX; % Shifted X for the SLM
+Yslm = Y + shiftY; % Shifted Y for the SLM.
+[phiSLM,rSLM] = cart2pol(X,Y); % Polar coordinates with an added
                          % shift. The signs compensate the 
                          % normal cartesian convention for 
                          % displacing the phase mask
