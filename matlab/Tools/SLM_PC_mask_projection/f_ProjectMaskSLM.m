@@ -1,5 +1,5 @@
 %% Plot Phase Mask 
-function slmhfig = f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask,monitorSize,scrnIdx,plotMask)
+function slmhfig = f_ProjectMaskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask,monitorSize,scrnIdx,plotMask)
 % Inputs:
 %  x,y: cartesian coordinates vector
 %  r: polar coordinate (in cm)
@@ -35,7 +35,7 @@ switch abs_ang
   str = 'Value of amplitude';
   
  case 2 % Phase
-  wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl, ...
+  wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl,maxgl, ...
                                     levShft);
   tit = 'Phase Mask';
   str = 'Value of phase';  

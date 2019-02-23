@@ -1,5 +1,5 @@
 %% Spiral Phase Mask
-function mask = f_Spiral_Mask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,binMask,showM)
+function mask = f_SpiralMask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,binMask,showM)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
@@ -39,10 +39,10 @@ mask = exp(1i*mask); % Wrapped mask and complex
 %  interval
 
 %% Circular pupil and wrapping
-wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
+wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl,maxgl,levShft);
 
 %% Plot (with axes)
 tit = strcat('Spiral phase mask with topological charge ',num2str(tc));
-f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM);
+f_ProjectMaskPC(x, y, wrappedMask, tit, gl, showM);
 
 end

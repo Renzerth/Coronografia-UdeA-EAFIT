@@ -1,6 +1,7 @@
 %% Generate a Zernike phase mask (wavefront)
-function mask = f_Zernike_Mask(x,y,r,z_coeff,a,frac,L,gl,glphi,mingl, ...
-                  maxgl,levShft,pupil,sSize,disp_wrap,plot_z,binMask,monitorSize,showM)
+function mask = f_ZernikeMask(x,y,r,z_coeff,a,frac,L,gl,glphi,mingl, ...
+                  maxgl,levShft,pupil,sSize,disp_wrap,plot_z,binMask, ...
+                  monitorSize,scrnIdx,showM)
 % Characterizes the aberrations of the system
 % Inputs:
 %  x,y: cartesian coordinates vector
@@ -34,6 +35,7 @@ function mask = f_Zernike_Mask(x,y,r,z_coeff,a,frac,L,gl,glphi,mingl, ...
 %  abs_ang: Magnitude (1); Phase (2) 
 %  *-
 %  monitorSize: size of the selected screen 
+%  screenIndex: screen number selector. In [1,N] with N the # of screen
 %  showM: show the mask. yes(1); no(0)
 %
 % Outputs:
@@ -65,7 +67,7 @@ else
 end
 
 %% Zernike Polynomials
-n_mask = f_Zernike_Builder(z_vec,pupil,sSize,plot_z); % Defocus 
+n_mask = f_ZernikeBuilder(z_vec,pupil,sSize,plot_z); % Defocus 
 % (vector, pupil size, Matrix size (zernike phase size), graph:1 or not:0)
 mask = exp(1i*n_mask); % Wrapped mask
 
@@ -76,8 +78,8 @@ if disp_wrap == 1 && showM == 1
 elseif showM == 1 % disp_wrap = 0
     abs_ang = 1; % "Magnitude" in order to not wrap the phase
     plotMask = showM; % plotMask = show; for 0 and 1.
-    f_fig_maskSLM(x,y,r,n_mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
-                  binMask,monitorSize,plotMask);
+    f_ProjectMaskSLM(x,y,r,n_mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
+                  binMask,monitorSize,scrnIdx,plotMask);
     title('Unwrapped phase mask'); % The amplitude title is replaced
 end
 

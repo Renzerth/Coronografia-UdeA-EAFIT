@@ -30,11 +30,11 @@ for idxtc = 1:ltcvect
     tc = tcvect(idxtc); % Specific tc for this iteration
     gl = glvect(idxgl); % Specific gl for this iteration
     SelectMask; % Selects a phase mask to display
-    wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl, ...
+    wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl, ...
                                        maxgl,levShft);
                                    
     %% Display the phase mask on the SLM
-    slmhfig = f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft, ... 
+    slmhfig = f_ProjectMaskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft, ... 
                             abs_ang,binMask,monitorSize,scrnIdx,DisplayPlot);
    
     %% Record a snapshot
@@ -64,7 +64,7 @@ for idxtc = 1:ltcvect
 
     % The numbers after 'position' were empirically obtained
     showmask = 1;
-    pcfig = f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showmask);
+    pcfig = f_ProjectMaskPC(x, y, wrappedMask, tit, gl, showmask);
     set(pcfig,'units','normalized','position',[5/10 1/10 1/3 1/2]);
      
     %% Preparation for a new measurement iteration          

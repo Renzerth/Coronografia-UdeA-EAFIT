@@ -18,8 +18,7 @@ switch coordType
   % false: won't change default figure display monitor. Leave this value as
   % zero always as the figure display monitor will be changed later on.
   % This is changed if one wants to display in the SLMs when plotMask = 2
-  [X,Y,AspectRatio,monitorSize] = ...
-                             f_makeScreenCoordinates(scrnIdx,enablechange);
+  [X,Y,AspectRatio,monitorSize] = f_MakeScreenCoords(scrnIdx,enablechange);
   % Calculates the monitor size
   scaleFactor = 1e-3; % um to mm. Constant factor
   % halfSizeX,Y: half physical size of the SLM's active area. Taken with 
@@ -32,7 +31,7 @@ switch coordType
 end
 
 %% Aspect ratio application
-AspectRatio
+%AspectRatio
 
 %% Polar coordinates with a shift of the mask
 if shiftBool == 1

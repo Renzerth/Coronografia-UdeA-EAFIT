@@ -1,7 +1,8 @@
 %% Laguerre Gauss phase masks
 
-function mask = f_LG_Mask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s, ...
-                       ph0,p,W,binv,norm,abs_ang,binMask,monitorSize,showM)
+function mask = f_LGMask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s, ...
+                         ph0,p,W,binv,norm,abs_ang,binMask,monitorSize, ...
+                         scrnIdx,showM)
 % Inputs: 
 %  x,y: cartesian coordinates
 %  r,phi: polar coordinates (r in cm)
@@ -23,6 +24,7 @@ function mask = f_LG_Mask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s, ...
 %  abs_ang: Magnitude (1); Phase (2)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  monitorSize: size of the selected screen 
+%  screenIndex: screen number selector. In [1,N] with N the # of screen
 %  showM: show the mask. yes(1); no(0)
 %
 % Output:
@@ -48,7 +50,7 @@ if binv == 1 && tc == 0 % Only applies binary inversion when tc = 0
 end
 
 %% Normalization constants (amplitude and phase)
-wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl,levShft);
+wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl,maxgl,levShft);
 if norm == 1
     norm_ang = max(max(wrappedMask)); % Max value
     wrappedMask = wrappedMask/norm_ang; % Normalization
@@ -60,12 +62,12 @@ end
 if showM == 1
   if abs_ang == 2
     tit = strcat('LG phase mask with topological charge ',num2str(tc), ...
-           ' and radial node ',num2str(p));   
-    f_fig_maskPCscreen(x, y, wrappedMask, tit, gl, showM);
+                 ' and radial node ',num2str(p));   
+    f_ProjectMaskPC(x, y, wrappedMask, tit, gl, showM);
   else % abs_ang == 1
     plotMask = showM; % plotMask = show; for 0 and 1.
-    f_fig_maskSLM(x,y,r,mag,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
-                  binMask,monitorSize,plotMask)
+    f_ProjectMaskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
+                    binMask,monitorSize,scrnIdx,plotMask)
     title('Amplitude of LG');
     cbh = colorbar; cbh.Label.String = 'Value';
   end
