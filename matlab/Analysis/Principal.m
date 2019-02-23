@@ -41,20 +41,22 @@ Parameters; % Adds to the algorithm all the needed parameters
 %% Directories and add functions
 % Adds initial functions
 addpath(strcat('..',pathSep,toolsFldr,pathSep,filemanag)); 
-[analysDir,toolsDir,dataDir,outDir] = f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd); % Adds all the directories to use in the algorithm
+[analysDir,toolsDir,dataDir,outDir] ...
+= f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd);
+% Adds all the directories to use in the algorithm
 
 %% Spatial definitions
-spatialDefinitions; % Defines the cartesian/polar coordinates, its 
+DefineSpace; % Defines the cartesian/polar coordinates, its 
                     % sampling interval and discretized angular part for gl
                 
 %% Plot one mask for tests: phase mask selection
-PhaseMaskSel; % Selects the type of phase mask.
+SelectMask; % Selects the type of phase mask.
               % The variables "mask" and "maskName" are outputs here
 
 %% Phase mask plot on the screen or on the SLM
 %%% Plot phase mask on the Fourier plane of the vortex coronagraph
-f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask, ...
-              monitorSize,scrnIdx,plotMask);
+f_ProjectMaskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
+                 binMask,monitorSize,scrnIdx,plotMask);
 
 
 
@@ -62,11 +64,11 @@ f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask, ...
 %%%%%%%%%%%%%%%%%%%%%%% MEASUREMENTS BY AN AUTOMATED PARAMETER VARIATION
 if meas == 1
  %% Folders and register creations on Data and Output    
- FoldersRegistersCreation;
+CreateFoldersRegisters;
 
  if measSimulated == 0 % When a real measurement will be performed
      %% Hardware initialization
-     % HardwareInit; % Future script 
+     % InitializeHardware;
                      % Turns the camera on and create all the needed 
                      % variables. Remember to leave the preview open
      [vid,src] = f_selectCamera(camera,exposure,format);
@@ -92,17 +94,15 @@ if meas == 1
   % Still not sure if needed: null tc beam or a high tc beam(long radius)
 
   %% Automated measurement
-  AutomatMeasure; % Performs measurements with the camera and stores them
+  AutomateMeasurement; % Performs measurements with the camera and stores them
 
-  %% Post-processing of the data
-  %DataProcessing; % Metric of the degree of extintion applied
-
-  %% Save data
-  % SaveData; % Or maybe save plot(s) of the applied metrics
+  %% Post-processing of the data and saving
+  %ProcessData; % Metric of the degree of extintion applied
+                % Saves plot(s) of the applied metrics
  end
 
  %% Termination
- % Terminate_settings; % Future script % Clears variables, closes all and
+ % TerminateSettings; % Future script % Clears variables, closes all and
                        % deactivates the cameras
  % delete(vid); % Clean up the camera
 
