@@ -1,29 +1,26 @@
 function [mask,maskName] = f_SelectMask(X,Y,r,phi,gl,glphi,mingl,maxgl,...
                                         levShft,tc,s,ph0,p,W,binv,norm,...
-                                        abs_ang,L,f_FR,bcst,z_coeff,a,...
-                                        frac,pupil,sSize,disp_wrap,...
-                                        plot_z,binMask,monitorSize,...
-                                        scrnIdx,showM)
-% Improvements:
-% The sSize problem will be solved later. As well the L input in f_EGVMask
-%
+                                        L,f_FR,bcst,z_coeff,a,frac, ...
+                                        pupil,sSize,disp_wrap,plot_z, ...
+                                        binMask,monitorSize,scrnIdx,...
+                                        abs_ang,plotMask,maskSel)
 % Inputs:
 %  Explained inside each function on every case
 %
 % Outputs:
-% Complex mask
-% Name of the selected mask
+%  mask: complex structure
+%  maskName: name of the selected mask
 switch maskSel 
     
  case 0 % Spiral phase mask or mapa de fase espiral or máscara espiral
         % de fase or máscara helicoidal de fase 
   mask = f_SpiralMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0, ...
-                       binMask,showM);
+                      binMask,monitorSize,scrnIdx,abs_ang,plotMask);
   maskName = 'Spiral';
    
  case 1 % Laguerre-Gauss (LG) beams
   mask = f_LGMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p,W, ...
-                   binv,norm,abs_ang,binMask,monitorSize,scrnIdx,showM);
+                   binv,norm,binMask,monitorSize,scrnIdx,abs_ang,showM);
   maskName = 'LG';
  
  case 2 % Vortex Producing Lens (VPL) = Helicoidal + Fresnel lens
@@ -46,7 +43,6 @@ switch maskSel
   
 %%%%%%%%%%%%%%%%%%%% NOT USED BUT FOR ACADEMIC PURPOSES %%%%%%%%%%%%%%%%%%%
  case 5 % Zernike (aberrations)
-  sSize = min(min(size(X)),min(size(Y)));
   mask = f_ZernikeMask(x,y,r,z_coeff,a,frac,L,gl,glphi,mingl,maxgl, ...
                       levShft,pupil,sSize,disp_wrap,plot_z, ...
                       binMask,monitorSize,scrnIdx,showM);
@@ -54,9 +50,9 @@ switch maskSel
  case 6 % Laguerre-Gauss (LG) + Zernike
   sSize = min(max(X),max(Y));
   mask = f_LGZernikeMask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s, ...
-                           ph0,p,W,binv,norm,abs_ang,z_coeff,a,frac,L, ...
+                           ph0,p,W,binv,norm,z_coeff,a,frac,L, ...
                            pupil,sSize,disp_wrap,plot_z,binMask, ...
-                           monitorSize,showM);
+                           monitorSize,abs_ang,showM);
                        
  case 7 % Hermite-Gauss (HG) beams
      

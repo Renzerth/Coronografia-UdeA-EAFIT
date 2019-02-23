@@ -1,5 +1,5 @@
 %% Plot Phase Msk on the screen, not the SLM
-function pcfig = f_ProjectMaskPC(wrappedMask,tit,gl,showM)
+function pcfig = old_f_ProjectMaskPC(wrappedMask,tit,gl,showM)
 % Inputs:
 %  WrappedMask: function to be plotted. The mask should already be wrapped
 %  with the angle function

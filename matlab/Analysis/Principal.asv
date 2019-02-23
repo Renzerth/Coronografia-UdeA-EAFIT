@@ -50,13 +50,19 @@ DefineSpace; % Defines the cartesian/polar coordinates, its
                     % sampling interval and discretized angular part for gl
                 
 %% Plot one mask for tests: phase mask selection
-SelectMask; % Selects the type of phase mask.
-              % The variables "mask" and "maskName" are outputs here
+% Selects the type of phase mask
+[mask,maskName] = f_SelectMask(X,Y,r,phi,gl,glphi,mingl,maxgl,levShft, ...
+                               tc,s,ph0,p,W,binv,norm, L,f_FR,bcst, ...
+                               z_coeff,a,frac,pupil,sSize,disp_wrap, ...
+                               plot_z,binMask,monitorSize,scrnIdx, ...
+                               abs_ang,plotMask,maskSel);
+
 
 %% Phase mask plot on the screen or on the SLM
+tit = 'SLM mask'
 %%% Plot phase mask on the Fourier plane of the vortex coronagraph
-f_ProjectMaskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
-                 binMask,monitorSize,scrnIdx,plotMask);
+f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
+                 binMask,monitorSize,scrnIdx,tit,abs_ang,plotMask);
 
 
 
@@ -77,24 +83,25 @@ if meas == 1
  %% Measurement debugging
  % Usefull for aligning the vortex and adjusting exposure parameters
  if measDebug == 1
-  SingleFrame = f_ImageCapture(vid,dataDir,filename,imgformat,pathSep,snapsfldr); 
+  SingleFrame = f_CaptureImage(vid,dataDir,filename,imgformat,pathSep, ...
+                               snapsfldr); 
   % Takes a camera shot,shows a figure and saves it   
   figure; imhist(SingleFrame); % Shows a histogram of the snapshot
 
   % Get some hardware/software/tools info:
-  % get(vid); % Displays the general parameters of the camera
-  % src = getselectedsource(vid); % A existing variable. Similar to get(vid)
-  % imaqhwinfo(vid); % Displays the driver connection with MATLAB
-  % imaqhwinfo % All the installed adaptors in the Image Acquisition Toolbox
-  % disp(vid); % Displays acquisition information
-  % imaqtool; % toolbox for the camera
+  % get(vid): displays the general parameters of the camera
+  % getselectedsource(vid): an existing variable (src). Similar to get(vid)
+  % imaqhwinfo(vid): displays the driver connection with MATLAB
+  % imaqhwinfo: all the installed adaptors in the Image Acquisition Toolbox
+  % disp(vid): displays acquisition information
+  % imaqtool: toolbox for the camera
   % imaqreset: refresh image acquisition hardware by restoring the settings
  else
   %% Reference measurement
   % Still not sure if needed: null tc beam or a high tc beam(long radius)
 
   %% Automated measurement
-  AutomateMeasurement; % Performs measurements with the camera and stores them
+  AutomateMeasurement; % Performs measurements and stores them
 
   %% Post-processing of the data and saving
   %ProcessData; % Metric of the degree of extintion applied
@@ -119,7 +126,7 @@ end % End of measurements
 
 
 %%%%%%%%%%%%%%%%%%%%%%% ACADEMIC PURPOSES: Zernike, simulation
-% abs(mask) should always be 1, meaning that it is normalized; try by yourself
+% abs(mask): should always be 1, meaning that it is normalized
 
 %% Fourier transform of the mask
 if FTmask == 1

@@ -1,44 +1,43 @@
-%% Plot Phase Mask 
-function slmhfig = f_ProjectMaskSLM(r,mask,gl,glphi,mingl,maxgl, ...
-                                    levShft,abs_ang,binMask,monitorSize,...
-                                    scrnIdx,plotMask)
+%% Plot Phase Mask either on the PC or on the SLM
+function fighandler = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,...
+                                    binMask,monitorSize,scrnIdx,tit,...
+                                    abs_ang,plotMask)
 % Inputs:
 %  r: polar coordinate (in cm)
-%  mask: function to be plotted. It is wrapped on [-pi,pi] if abs-ang = 2
+%  mask: function to be plotted. It is wrapped on [-pi,pi] if abs_ang = 2
 %  gl: number of grey levels (normally 256)
 %  glphi: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
 %  levShft: corresponds to the brightness or constant shift of the gl's
-%  abs_ang: Magnitude (1); Phase (2)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  monitorSize: size of the selected screen 
 %  screenIndex: screen number selector. In [1,N] with N the # of screen
+%  tit: plot title
+%  abs_ang: Magnitude (1); Phase (2)
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
-%             plotMask = show; for 0 and 1.
 %
 % Output:
-%  slmhfig: figure handler if needed outside the function
+%  fighandler: figure handler if needed outside the function
 %
 % Notes:
 %  Image is shown with gl gray levels
-%  m,n,a,b only work for plot = 1
 
 %% Wrapping and Circular pupil Application
 switch abs_ang 
  case 0 % No operation, custom input (assumed to be non complex)
   wrappedMask = mask;
-  tit = 'Mask';
+  figtit = 'Mask';
   str = 'Amplitude';
  case 1 % Amplitude
   wrappedMask = abs(mask); % Actually, this is an amplitude filter
-  tit = 'Amplitude Mask';
+  figtit = 'Amplitude Mask';
   str = 'Value of amplitude';
   
  case 2 % Phase
   wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl,maxgl, ...
                                     levShft);
-  tit = 'Phase Mask';
+  figtit = 'Phase Mask';
   str = 'Wrapped phase value';  
 end
 
@@ -46,10 +45,10 @@ end
 switch plotMask
   case 0 
       % Won't plot at all
-  case 1 % Screen: normal plot
+  case 1 % PC Screen: normal plot
     % slmhfig = figure('color','white','units','normalized','position',...
            % [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',tit);
-    slmhfig = figure('color','white','Name',tit); 
+    fighandler = figure('color','white','Name',figtit); 
     imagesc(wrappedMask); axis square; colormap(gray(gl));
     title(tit);
     set(gca,'xtick',[]); set(gca,'ytick',[]) % No axes values
@@ -76,22 +75,22 @@ switch plotMask
                                                      % size figures
     offsetPixel = [1,1]; % Mandatory: pixels have this origin [0,0] doesn't
                          % exist
-    slmhfig = figure('Visible','off','MenuBar','none','Toolbar','none', ...
+    fighandler = figure('Visible','off','MenuBar','none','Toolbar','none', ...
                      'NumberTitle','off');
     % Hide Menu bar and Tool bar
-    slmhfig.Units = 'Pixels'; % 'color','black',
+    fighandler.Units = 'Pixels'; % 'color','black',
     set(gca,'Units','Pixels');
     set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
     %set(gca,'xtick',[]); set(gca,'ytick',[]) % No axis values
     image(wrappedMask);  % Plots in SLM screen 
     axis off; colormap(gray(gl));
     % axis fill;
-    slmhfig.Visible = 'on';
+    fighandler.Visible = 'on';
     [~] = f_changeProjectionMonitor('Restore'); % Restore default figure
     
   case 3 % Screen: surface plot
-    slmhfig = figure('color','white','units','normalized','position',...
-                     [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',tit);
+    fighandler = figure('color','white','units','normalized','position',...
+                     [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',figtit);
     surf(wrappedMask), colormap(gray(gl)), shading interp; % 3D Surface
     axis square; title(tit);
     cbh = colorbar; cbh.Label.String = str;

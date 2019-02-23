@@ -22,8 +22,10 @@ minMask = min(wrappedMask(:)); % Just a definition that isn't used
 %% Discretized phase mask
 % Important: this is applied after the exp(i*mask) was created and then it
 % was wrapped with angle so that it is discretized on [-pi,pi]
-wrappedMask = f_discretizeMask(wrappedMask,glphi); % Mask discretization
-wrappedMask = f_ScaleMatrixData(wrappedMask,mingl,maxgl) + levShft; 
+
+% TEMPORARLY COMMENTED !
+% wrappedMask = f_discretizeMask(wrappedMask,glphi); % Mask discretization
+% wrappedMask = f_ScaleMatrixData(wrappedMask,mingl,maxgl) + levShft; 
 % Scaling to uint8 values
 
 %% Mask Binarization

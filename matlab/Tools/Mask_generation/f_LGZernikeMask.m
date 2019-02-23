@@ -2,9 +2,9 @@
 
 function mask = f_LGZernikeMask(x,y,r,phi,gl,glphi,mingl,maxgl, ...
                                   levShft,tc,s,ph0,p,W,binv,norm, ...
-                                  abs_ang,z_coeff,a,frac,L,pupil,sSize, ...
+                                  z_coeff,a,frac,L,pupil,sSize, ...
                                   disp_wrap,plot_z,binMask,monitorSize, ...
-                                  showM)
+                                  abs_ang,showM)
 % Generates and plots a Laguerre Gauss + Zernike mask
 %
 % Inputs: 
@@ -25,7 +25,6 @@ function mask = f_LGZernikeMask(x,y,r,phi,gl,glphi,mingl,maxgl, ...
 %  bininv: Binary inversion of the mask. Only applied when tc=0. Binary 
 %          masks are only abtained when tc=0. yes(1); no(0)
 %  norm: normalize magnitude and phase. yes(1); no(0)
-%  abs_ang: Magnitude (1); Phase (2)
 %  z_coeff: 
 %     selected aberrations: any combination on [1,20]; zernike
 %     coefficients. ANSI standard. Zernike with desired weights.
@@ -47,6 +46,7 @@ function mask = f_LGZernikeMask(x,y,r,phi,gl,glphi,mingl,maxgl, ...
 %  plot_z: plot (1); no plot (0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  monitorSize: size of the selected screen 
+%  abs_ang: Magnitude (1); Phase (2)
 %  showM: show the mask. yes(1); no(0)
 %
 % Outputs:

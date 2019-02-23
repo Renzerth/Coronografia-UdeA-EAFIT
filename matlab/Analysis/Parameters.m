@@ -278,19 +278,19 @@ maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum
                % Only works when FTmask = 1
 gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)
 maskZernReconstr = 0; % Reconstructs the mask with Zernike polynomials and
-                      % plots the error
-                      
-if maskZernReconstr == 1 || maskSel == 5 || maskSel == 6
- %% Parameters: Zernike
- % L and gl are used here
- z_coeff = -1; % Zernike coeffient vector (see f_ZernikeMask.m)
- a = 60; % Arbitrary constant; the bigger, the more intense; ref: a=20
- frac = 0.125; % To adjust the wrapped phase; ref: 0.125
- pupil = 1; % Pupil relative size: [0,1]; like a percentage
- disp_wrap = 0; % (0): Original; (1): wrapped mask on [-pi,pi] 
- plot_z = 0; % plot with Zernike builder: yes(1); no(0)
- ReconstrNumb = 14; % Number of polynomials to use for the reconstruction
-end
+                      % plots the error             
+
+%% Parameters: Zernike
+% Used in maskZernReconstr, maskSel = 5 and maskSel = 6
+% L and gl are also used with Zernike
+z_coeff = -1; % Zernike coeffient vector (see f_ZernikeMask.m)
+a = 60; % Arbitrary constant; the bigger, the more intense; ref: a=20
+frac = 0.125; % To adjust the wrapped phase; ref: 0.125
+pupil = 1; % Pupil relative size: [0,1]; like a percentage
+disp_wrap = 0; % (0): Original; (1): wrapped mask on [-pi,pi] 
+plot_z = 0; % plot with Zernike builder: yes(1); no(0)
+ReconstrNumb = 14; % Number of polynomials to use for the reconstruction
+% sSize defined in DefineSpace.m
                
 if sim == 1
  %% Simulation parameters

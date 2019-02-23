@@ -70,4 +70,7 @@ end
 %% Polar coordinates for the PC
 [phiPC,rPC] = cart2pol(X,Y); % Without shifts and no scaling: mask always 
                              % circular and centered
+                             
+%% Zernike
+sSize = min(min(size(X)),min(size(Y)));
 

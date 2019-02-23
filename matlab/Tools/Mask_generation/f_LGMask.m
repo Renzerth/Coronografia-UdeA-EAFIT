@@ -25,6 +25,7 @@ function mask = f_LGMask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s, ...
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  monitorSize: size of the selected screen 
 %  screenIndex: screen number selector. In [1,N] with N the # of screen
+
 %  showM: show the mask. yes(1); no(0)
 %
 % Output:
