@@ -32,7 +32,8 @@ switch maskSel
 %%%%%%%%%%%%%%%%%%%% NOT USED BUT FOR ACADEMIC PURPOSES %%%%%%%%%%%%%%%%%%%
  case 5 % Zernike (aberrations)
   mask = f_ZernikeMask(x,y,r,z_coeff,a,frac,L,gl,glphi,mingl,maxgl, ...
-           levShft,pupil,spaceSupport,disp_wrap,plot_z,binMask,monitorSize,showM);
+                      levShft,pupil,spaceSupport,disp_wrap,plot_z, ...
+                      binMask,monitorSize,scrnIdx,showM);
   
  case 6 % Laguerre-Gauss (LG) + Zernike
   mask = f_LGZernikeMask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s, ...

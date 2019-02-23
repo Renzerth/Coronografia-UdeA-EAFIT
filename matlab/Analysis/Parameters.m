@@ -43,7 +43,7 @@ maskSel = 5; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 2; % Allows to plot the final mask, as it can be a combination 
+plotMask = 1; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -182,7 +182,7 @@ p = 5; % Number of radial nodes. If p=0, normal helicoid masks are obtained
 W = 100; % Width of the modes; for LG; ref: 100
 binv = 1; % Binary inversion of the mask: yes(1); no(0). It is only applied 
           % when tc is zero. It is usefull to be applied for odd p. 
-norm = 0; % Normalize magnitude and phase (to unity). yes(1); no(0)         
+norm = 1; % Normalize magnitude and phase (to unity). yes(1); no(0)         
 
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
@@ -281,7 +281,7 @@ maskZernReconstr = 0; % Reconstructs the mask with Zernike polynomials and
 if maskZernReconstr == 1 || maskSel == 5 || maskSel == 6
  %% Parameters: Zernike
  % L and gl are used here
- z_coeff = [1, 0.1]; % Zernike coeffient vector (see f_Zernike_Mask.m)
+ z_coeff = -1; % Zernike coeffient vector (see f_ZernikeMask.m)
  a = 60; % Arbitrary constant; the bigger, the more intense; ref: a=20
  frac = 0.125; % To adjust the wrapped phase; ref: 0.125
  pupil = 1; % Pupil relative size: [0,1]; like a percentage

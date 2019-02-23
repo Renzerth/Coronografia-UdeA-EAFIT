@@ -27,7 +27,7 @@
 %  -If a camera is not recognized or even the screen index are not acting
 %  coherently, restart MATLAB
 %  -For high resolution monitors, sometimes the figure bar may appear but
-%  this presents no problem for the masks projection
+%  this presents no problem for the mask projection
 %  
 %
 % Samuel Plazas(PA1/PA2/TG) - Juan Jose Cadavid(Master thesis) - 2018/2019

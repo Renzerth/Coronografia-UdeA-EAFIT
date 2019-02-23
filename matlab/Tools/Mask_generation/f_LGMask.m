@@ -55,7 +55,7 @@ if norm == 1
     norm_ang = max(max(wrappedMask)); % Max value
     wrappedMask = wrappedMask/norm_ang; % Normalization
     norm_mag = max(max(mag)); % Max value
-    mag = mag/norm_mag; % Normalization
+    mask = mag/norm_mag; % Normalization
 end
 
 %% Plot binary mask
