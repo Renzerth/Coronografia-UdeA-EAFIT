@@ -29,7 +29,7 @@ end
 precision = 3; % Precision of displayed results: significative digits (3)
 showM = 1; % Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
            % analog to "plotMask" on the SLM Position section
-maskSel = 5; % Phase mask selection:
+maskSel = 0; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -287,6 +287,7 @@ if maskZernReconstr == 1 || maskSel == 5 || maskSel == 6
  pupil = 1; % Pupil relative size: [0,1]; like a percentage
  disp_wrap = 0; % (0): Original; (1): wrapped mask on [-pi,pi] 
  plot_z = 0; % plot with Zernike builder: yes(1); no(0)
+ ReconstrNumb = 14; % Number of polynomials to use for the reconstruction
 end
                
 if sim == 1
