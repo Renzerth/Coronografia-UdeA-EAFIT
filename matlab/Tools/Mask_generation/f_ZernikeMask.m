@@ -1,10 +1,9 @@
 %% Generate a Zernike phase mask (wavefront)
-function mask = f_ZernikeMask(x,y,r,z_coeff,a,frac,L,gl,glphi,mingl, ...
+function mask = f_ZernikeMask(r,z_coeff,a,frac,L,gl,glphi,mingl, ...
                   maxgl,levShft,pupil,sSize,disp_wrap,plot_z,binMask, ...
                   monitorSize,scrnIdx,showM)
 % Characterizes the aberrations of the system
 % Inputs:
-%  x,y: cartesian coordinates vector
 %  r: polar coordinate (in cm)
 %  z_coeff: 
 %     selected aberrations: any combination on [1,20]; zernike
@@ -73,12 +72,12 @@ mask = exp(1i*n_mask); % Wrapped mask
 
 %% Plot 
 if disp_wrap == 1 && showM == 1
-  figure; imagesc(x,y,angle(mask)), title('Wrapped phase mask');
+  figure; imagesc(angle(mask)), title('Wrapped phase mask');
   colormap(gray(gl)); cbh = colorbar; cbh.Label.String = 'Value of phase';
 elseif showM == 1 % disp_wrap = 0
     abs_ang = 1; % "Magnitude" in order to not wrap the phase
     plotMask = showM; % plotMask = show; for 0 and 1.
-    f_ProjectMaskSLM(x,y,r,n_mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
+    f_ProjectMaskSLM(r,n_mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
                   binMask,monitorSize,scrnIdx,plotMask);
     title('Unwrapped phase mask'); % The amplitude title is replaced
 end

@@ -1,4 +1,4 @@
-% function [Xrescaled,X,Y,x,y,r,phi] = f_spatialDefinitions(circMask,sSize,spaceSupport,pixSize,scrnIdx)
+function [X,Y,Xpc,Ypc,r,phi,rPC,phiPC,sSize] = f_DefineSpace(spaceSupport,shiftCart,pixSize,scrnIdx)
 switch coordType
  case 1 % Size defined by the user, space support defined by the SLM to use
   %% Spatial definitions
@@ -46,6 +46,12 @@ switch coordType
   end
 end
 
+%% Polar coordinates for the PC
+Xpc = X; Ypc = Y; % Needed for the PC coordinates later on
+[phiPC,rPC] = cart2pol(Xpc,Ypc); % Without shifts and no scaling: mask is 
+                                 % always circular and centered
+
+                             
 %% Polar coordinates with a shift of the mask (for the SLM)
 switch shiftBool 
  case 0
@@ -61,16 +67,17 @@ switch shiftBool
   % Pending
      
 end
-
-[phi,r] = cart2pol(Xslm-shiftX,Y+shiftY); % Polar coordinates with an added
-                                       % shift. The signs compensate the 
-                                       % normal cartesian convention for 
-                                       % displacing the phase mask
+% X,Y variables redefined for being used in the EGV and Fork masks
+% The signs of the shifts account for the cartesian coordinates convention
+X = Xslm - shiftX; % Shifted X for the SLM
+Y = Y + shiftY; % Shifted Y for the SLM.
+[phi,r] = cart2pol(X,Y); % Polar coordinates with an added
+                         % shift. The signs compensate the 
+                         % normal cartesian convention for 
+                         % displacing the phase mask
                                        
-%% Polar coordinates for the PC
-[phiPC,rPC] = cart2pol(X,Y); % Without shifts and no scaling: mask always 
-                             % circular and centered
+
                              
 %% Zernike
 sSize = min(min(size(X)),min(size(Y)));
-
+end
