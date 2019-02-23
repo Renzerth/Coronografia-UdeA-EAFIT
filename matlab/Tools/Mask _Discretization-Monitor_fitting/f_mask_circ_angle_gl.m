@@ -36,11 +36,12 @@ if binMask == 1
 end
 
 %% Phase mask times a pupil aperture
-rmax = 1;  % the maximum value of r (diagonal of the square)
+% rmax = max(r);  % the maximum value of r (diagonal of the square)
 % rSize = rmax/sqrt(2); % Equals this since twice rSize^2 equals
-                       % rmax^2 (Pythagorean theorem)
+                      % rmax^2 (Pythagorean theorem)
 
-rSize = rmax; % Test
+rmax = 1; % Unitary
+rSize = rmax; % Both are equal
 
 
 binCirc = double(r <= rSize); % Binary mask.

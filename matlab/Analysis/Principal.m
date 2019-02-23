@@ -92,7 +92,7 @@ if meas == 1
   % Still not sure if needed: null tc beam or a high tc beam(long radius)
 
   %% Automated measurement
-  AutomatMeasure; % Future script
+  AutomatMeasure; % Performs measurements with the camera and stores them
 
   %% Post-processing of the data
   %DataProcessing; % Metric of the degree of extintion applied

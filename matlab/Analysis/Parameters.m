@@ -264,8 +264,9 @@ filemanag = 'File_managing'; % Folder with the function f_makeParentFolder,
 %%%%%%%%%%%%%%%%%%%%%%% PART 5: ACADEMIC-PURPOSE ASPECTS %%%%%%%%%%%%%%%%%%
 % Zernike, FT, simulation in the free space that is not very depured
 %% Optional plots and procedures
-FTmask = 1; % Finds the FFT of the mask and plots it: yes(1); no(0)
+FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
 maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum
+               % Only works when FTmask = 1
 gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)
 maskZernReconstr = 0; % Reconstructs the mask with Zernike polynomials and
                       % plots the error
