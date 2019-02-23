@@ -27,8 +27,6 @@ switch coordType
   % On both cases full screen means that plotMask = 2
 end
 precision = 3; % Precision of displayed results: significative digits (3)
-showM = 1; % Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
-           % analog to "plotMask" on the SLM Position section
 maskSel = 0; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
@@ -43,14 +41,16 @@ maskSel = 0; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 2; % Allows to plot the final mask, as it can be a combination 
+plotMask = 1; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
               % 2: on the SLM
               % 3: on the screen but surface-plot type
 
-
+% OLD:
+% showM = 1; Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
+           % analog to "plotMask" on the SLM Position section
               
               
 %%%%%%%%%%%%%%%%%%%%%%% PART 2: HARDWARE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

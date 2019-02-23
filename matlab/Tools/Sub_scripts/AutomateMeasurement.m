@@ -1,5 +1,6 @@
 % [imgfullpath] = f_AutomateMeasurement(savetype,pathSep,dataformat,cameraPlane)
-
+% Plots phase masks on the Fourier plane of the vortex coronagraph and
+% takes images of either its Lyot or PSF plane
 %% Automated measurements
 showM = 0; % Don't show a fig in "PhaseMaskSel": this should always be 0.
 totalImgs = ltcvect*lglvect; % Number of images to be taken
@@ -18,7 +19,7 @@ tit = 'Displayed phase mask';
 imgPath = strcat(DatalogDir,pathSep,cameraPlane,'_'); % More information 
 % will be concatenated for a full path of the measured images inside the
 % next "for" loops
-DisplayPlot = 2; % plotMask = 2
+plotMask = 2; % Always plot on the SLM
 
 
 
@@ -26,16 +27,20 @@ DisplayPlot = 2; % plotMask = 2
 for idxtc = 1:ltcvect 
   for idxgl = 1:lglvect
       
-    %% Generate the phase mask
+    %% Generate the phase mask and display it on the SLM
     tc = tcvect(idxtc); % Specific tc for this iteration
     gl = glvect(idxgl); % Specific gl for this iteration
-    SelectMask; % Selects a phase mask to display
-    wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl, ...
-                                       maxgl,levShft);
-                                   
-    %% Display the phase mask on the SLM
-    slmhfig = f_ProjectMaskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft, ... 
-                            abs_ang,binMask,monitorSize,scrnIdx,DisplayPlot);
+    [mask,maskName] = f_PlotSelectedMask(X,Y,r,phi,gl,glphi,mingl,maxgl,...
+    levShft,tc,s,ph0,p,W,binv,norm, L,f_FR,bcst,z_coeff,a,frac,pupil,...
+    sSize,disp_wrap,plot_z,binMask,monitorSize,scrnIdx,abs_ang,plotMask,...
+    maskSel);
+    
+    % OLD:
+    % SelectMask; % Selects a phase mask to display
+    % wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl, ...
+                                       % maxgl,levShft);                           
+    % slmhfig = f_ProjectMaskSLM(x,y,r,mask,gl,glphi,mingl,maxgl, ... 
+                % levShft,abs_ang,binMask,monitorSize,scrnIdx,DisplayPlot);
    
     %% Record a snapshot
     if measSimulated == 0

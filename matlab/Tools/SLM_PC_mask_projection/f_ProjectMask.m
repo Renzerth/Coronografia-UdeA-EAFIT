@@ -1,10 +1,11 @@
 %% Plot Phase Mask either on the PC or on the SLM
 function fighandler = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,...
-                                    binMask,monitorSize,scrnIdx,tit,...
-                                    abs_ang,plotMask)
+                          binMask,monitorSize,scrnIdx,tit,abs_ang,plotMask)
 % Inputs:
 %  r: polar coordinate (in cm)
-%  mask: function to be plotted. It is wrapped on [-pi,pi] if abs_ang = 2
+%  mask: function to be plotted. It is wrapped on [-pi,pi] if abs_ang = 2.
+%        Complex structure that has not been truncated.
+%        mask = exp(i*UnwrappedMask)
 %  gl: number of grey levels (normally 256)
 %  glphi: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
@@ -35,8 +36,9 @@ switch abs_ang
   str = 'Value of amplitude';
   
  case 2 % Phase
+  % Circular pupil and wrapping   
   wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl,maxgl, ...
-                                    levShft);
+                                      levShft);
   figtit = 'Phase Mask';
   str = 'Wrapped phase value';  
 end
@@ -69,7 +71,7 @@ switch plotMask
       end 
     end
     
-  case 2  % Plot on the SLM
+  case 2  % Plot on the SLM. 
     enablechange = true; % SLM figure display monitor activated
     f_changeProjectionMonitor(scrnIdx,enablechange); % Allow full-screen 
                                                      % size figures

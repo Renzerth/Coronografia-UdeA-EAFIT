@@ -1,4 +1,5 @@
-function wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl,maxgl,levShft)
+function wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi, ...
+                                             mingl,maxgl,levShft)
 % Multiplies the phase mask by the maximum circle size with its outer
 % borders containing the minimum value of the phase (normally -pi)
 % Wraps the phase with the function "angle"
@@ -6,14 +7,15 @@ function wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl,maxgl,le
 %
 % Inputs:
 %  r: polar coordinate (in cm)
-%  mask: complex phase mask, i.e., mask = exp(1i*unwrapped mask) [wrapped]
+%  mask: complex structure that has not been truncated and is wrapped on
+%        [-pi,pi]. mask = exp(i*UnwrappedMask) 
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  glphi: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
 %  levShft: corresponds to the brightness or constant shift of the gl's
 %
 % Output:
-%  wrappedMask: real-valued mask (angle), wrapped on [-pi,pi]
+%  wrappedMask: real-valued mask (angle), wrapped on [-pi,pi] and truncated
 
 %% Mask wrapping
 wrappedMask = angle(mask); % Phase of the mask on [-pi, pi]. Real-valued
@@ -24,8 +26,8 @@ minMask = min(wrappedMask(:)); % Just a definition that isn't used
 % was wrapped with angle so that it is discretized on [-pi,pi]
 
 % TEMPORARLY COMMENTED !
-% wrappedMask = f_discretizeMask(wrappedMask,glphi); % Mask discretization
-% wrappedMask = f_ScaleMatrixData(wrappedMask,mingl,maxgl) + levShft; 
+wrappedMask = f_discretizeMask(wrappedMask,glphi); % Mask discretization
+wrappedMask = f_ScaleMatrixData(wrappedMask,mingl,maxgl) + levShft; 
 % Scaling to uint8 values
 
 %% Mask Binarization
