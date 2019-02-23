@@ -24,16 +24,21 @@ function slmhfig = f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang
 %  m,n,a,b only work for plot = 1
 
 %% Wrapping and Circular pupil Application
-if abs_ang == 2
- wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl, ...
+switch abs_ang 
+ case 0 % No operation, custom input (assumed to be non complex)
+  wrappedMask = mask;
+  tit = 'Mask';
+  str = 'Amplitude';
+ case 1 % Amplitude
+  wrappedMask = abs(mask); % Actually, this is an amplitude filter
+  tit = 'Amplitude Mask';
+  str = 'Value of amplitude';
+  
+ case 2 % Phase
+  wrappedMask = f_mask_circ_angle_gl(r,mask,binMask,glphi,mingl,maxgl, ...
                                     levShft);
- tit = 'Phase Mask';
- str = 'Value of phase';  
- 
-else % abs_ang == 1
- wrappedMask = abs(mask); % Actually, this is an amplitude filter
- tit = 'Amplitude Mask';
- str = 'Value of amplitude';
+  tit = 'Phase Mask';
+  str = 'Value of phase';  
 end
 
 %% Plot

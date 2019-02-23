@@ -129,8 +129,8 @@ imgformat = '.png'; % Format with period. mat, bmp, png, jpg
 %%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS PARAMETERS %%%%%%%%%%%%%%%%%%%%%%
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
-abs_ang = 2; % Magnitude (1) or phase (2) plot
-tc = 2; % Topological charge (integer bigger or equal to one)
+abs_ang = 2; % Custom(0), magnitude (1) or phase (2) plot
+tc = 1; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
 s = +1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
@@ -265,7 +265,7 @@ filemanag = 'File_managing'; % Folder with the function f_makeParentFolder,
 % Zernike, FT, simulation in the free space that is not very depured
 %% Optional plots and procedures
 FTmask = 1; % Finds the FFT of the mask and plots it: yes(1); no(0)
-maskFTlog = 0; % (1)Plots the log10 of the spectrum. (0) normal spectrum
+maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum
 gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)
 maskZernReconstr = 0; % Reconstructs the mask with Zernike polynomials and
                       % plots the error
