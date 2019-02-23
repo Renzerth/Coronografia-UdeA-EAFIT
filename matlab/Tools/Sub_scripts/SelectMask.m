@@ -2,7 +2,7 @@ switch maskSel
     
  case 0 % Spiral phase mask or mapa de fase espiral or máscara espiral
         % de fase or máscara helicoidal de fase 
-  mask = f_SpiralMask(rPC,phiPC,gl,glphi,mingl,maxgl,levShft,tc,s,ph0, ...
+  mask = f_SpiralMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0, ...
                        binMask,showM);
   maskName = 'Spiral';
    

@@ -47,13 +47,19 @@ switch coordType
 end
 
 %% Polar coordinates with a shift of the mask (for the SLM)
-if shiftBool == 1
- shiftCart = shiftCart/100; % Percentage w.r.t the half size 
- % old shift in cm: shiftCart = spaceSupport*shiftCart/100
- shiftX = shiftCart(2); % Cartesian shift in x
- shiftY = shiftCart(1); % Cartesian shift in y
-else
- shiftX = 0; shiftY = 0; % Shift deactivated   
+switch shiftBool 
+ case 0
+  shiftX = 0; shiftY = 0; % Shift deactivated   
+      
+ case 1
+  shiftCart = shiftCart/100; % Percentage w.r.t the half size 
+  % old shift in cm: shiftCart = spaceSupport*shiftCart/100
+  shiftX = shiftCart(2); % Cartesian shift in x
+  shiftY = shiftCart(1); % Cartesian shift in y
+ 
+ case 2 % Self-centering algorithm
+  % Pending
+     
 end
 
 [phi,r] = cart2pol(Xslm-shiftX,Y+shiftY); % Polar coordinates with an added

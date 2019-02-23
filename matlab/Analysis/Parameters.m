@@ -88,13 +88,15 @@ switch slm
 end 
 
 %% SLM positionining calibration
-shiftBool = 0; % Shift activated (1)[SLM displaying] or deactivated (0)
-               % [exporting masks]. 
-shiftCart = [0,0]; % [yshift,xshift], works when shiftBool = 1
-                    % Percentages of movement of the total size of the
-                    % mask (cartesian coordinates convention)
-                    % Calibrated with: s = +1; ph0 = 0, tc = 1; 
-                    % Ranges: [0,100]
+shiftBool = 1; 
+% 0: shift deactivated [for exporting masks]
+% 1: shift activated [SLM displaying]
+% 2: self-centering algorithm
+shiftCart = [50,25]; % [yshift,xshift], works when shiftBool = 1
+                     % Percentages of movement of the total size of the
+                     % mask (cartesian coordinates convention)
+                     % Calibrated with: s = +1; ph0 = 0, tc = 1; 
+                     % Ranges per shift: [0,100] (percentage)
               
 %% Camera selection and parameters
 camera = 'DMK23U445';
