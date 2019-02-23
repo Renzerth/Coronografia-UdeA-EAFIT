@@ -1,3 +1,18 @@
+function [mask,maskName] = f_SelectMask(X,Y,r,phi,gl,glphi,mingl,maxgl,...
+                                        levShft,tc,s,ph0,p,W,binv,norm,...
+                                        abs_ang,L,f_FR,bcst,z_coeff,a,...
+                                        frac,pupil,sSize,disp_wrap,...
+                                        plot_z,binMask,monitorSize,...
+                                        scrnIdx,showM)
+% Improvements:
+% The sSize problem will be solved later. As well the L input in f_EGVMask
+%
+% Inputs:
+%  Explained inside each function on every case
+%
+% Outputs:
+% Complex mask
+% Name of the selected mask
 switch maskSel 
     
  case 0 % Spiral phase mask or mapa de fase espiral or máscara espiral
@@ -10,7 +25,7 @@ switch maskSel
   mask = f_LGMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p,W, ...
                    binv,norm,abs_ang,binMask,monitorSize,scrnIdx,showM);
   maskName = 'LG';
-  
+ 
  case 2 % Vortex Producing Lens (VPL) = Helicoidal + Fresnel lens
   mask = f_VPLMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,L, ...
                     f_FR,binMask,showM);
@@ -59,4 +74,5 @@ switch maskSel
  otherwise % Void; Ideal response; no aberrations
   mask = 1; % Unitary
   
+end
 end

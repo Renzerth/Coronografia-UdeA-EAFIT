@@ -1,10 +1,10 @@
 %% Spiral Phase Mask
-function mask = f_SpiralMask(rPC,phiPC,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,binMask,showM)
+function mask = f_SpiralMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,binMask,showM)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
 % Inputs:
-%  rPC,phiPC: polar coordinates (r in cm) without rescaling and shifts
+%  r,ph: polar coordinates (r in cm)
 %  gl: number of grey levels (normally 256)
 %  glphi: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
@@ -21,7 +21,7 @@ function mask = f_SpiralMask(rPC,phiPC,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,bin
 %% Spiral phase mask Generation
 % m = -s*tc; % OLD: Minus to compensate convention
 m = s*tc; % tc with a sign
-mask = m*(phiPC + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
+mask = m*(phi + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
 
 %% Discretized phase mask
 % glPHI = meshgrid(glphi);
@@ -38,7 +38,7 @@ mask = exp(1i*mask); % Wrapped mask and complex
 %  interval
 
 %% Circular pupil and wrapping
-wrappedMask = f_MaskWrapCircDiscret(rPC,mask,binMask,glphi,mingl,maxgl,levShft);
+wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl,maxgl,levShft);
 
 %% Plot (with axes)
 tit = strcat('Spiral phase mask with topological charge ',num2str(tc));

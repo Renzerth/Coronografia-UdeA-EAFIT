@@ -50,8 +50,13 @@ DefineSpace; % Defines the cartesian/polar coordinates, its
                     % sampling interval and discretized angular part for gl
                 
 %% Plot one mask for tests: phase mask selection
-SelectMask; % Selects the type of phase mask.
-              % The variables "mask" and "maskName" are outputs here
+% Selects the type of phase mask
+[mask,maskName] = f_SelectMask(X,Y,r,phi,gl,glphi,mingl,maxgl,levShft,...
+                               tc,s,ph0,p,W,binv,norm,abs_ang,L,f_FR,...
+                               bcst,z_coeff,a,frac,pupil,sSize,...
+                               disp_wrap,plot_z,binMask,monitorSize,...
+                               scrnIdx,showM); 
+
 
 %% Phase mask plot on the screen or on the SLM
 %%% Plot phase mask on the Fourier plane of the vortex coronagraph
