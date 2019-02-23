@@ -64,37 +64,38 @@ f_ProjectMaskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
 %%%%%%%%%%%%%%%%%%%%%%% MEASUREMENTS BY AN AUTOMATED PARAMETER VARIATION
 if meas == 1
  %% Folders and register creations on Data and Output    
-CreateFoldersRegisters;
+ CreateFoldersRegisters;
 
+ %% Hardware initialization
  if measSimulated == 0 % When a real measurement will be performed
-     %% Hardware initialization
-     % InitializeHardware;
-                     % Turns the camera on and create all the needed 
+  % InitializeHardware;
+               % Turns the camera on and create all the needed 
                      % variables. Remember to leave the preview open
-     [vid,src] = f_selectCamera(camera,exposure,format);
+  [vid,src] = f_selectCamera(camera,exposure,format);
  end
 
  %% Measurement debugging
  % Usefull for aligning the vortex and adjusting exposure parameters
  if measDebug == 1
-  SingleFrame = f_ImageCapture(vid,dataDir,filename,imgformat,pathSep,snapsfldr); 
+  SingleFrame = f_CaptureImage(vid,dataDir,filename,imgformat,pathSep, ...
+                               snapsfldr); 
   % Takes a camera shot,shows a figure and saves it   
   figure; imhist(SingleFrame); % Shows a histogram of the snapshot
 
   % Get some hardware/software/tools info:
-  % get(vid); % Displays the general parameters of the camera
-  % src = getselectedsource(vid); % A existing variable. Similar to get(vid)
-  % imaqhwinfo(vid); % Displays the driver connection with MATLAB
-  % imaqhwinfo % All the installed adaptors in the Image Acquisition Toolbox
-  % disp(vid); % Displays acquisition information
-  % imaqtool; % toolbox for the camera
+  % get(vid): displays the general parameters of the camera
+  % getselectedsource(vid): an existing variable (src). Similar to get(vid)
+  % imaqhwinfo(vid): displays the driver connection with MATLAB
+  % imaqhwinfo: all the installed adaptors in the Image Acquisition Toolbox
+  % disp(vid): displays acquisition information
+  % imaqtool: toolbox for the camera
   % imaqreset: refresh image acquisition hardware by restoring the settings
  else
   %% Reference measurement
   % Still not sure if needed: null tc beam or a high tc beam(long radius)
 
   %% Automated measurement
-  AutomateMeasurement; % Performs measurements with the camera and stores them
+  AutomateMeasurement; % Performs measurements and stores them
 
   %% Post-processing of the data and saving
   %ProcessData; % Metric of the degree of extintion applied
@@ -119,7 +120,7 @@ end % End of measurements
 
 
 %%%%%%%%%%%%%%%%%%%%%%% ACADEMIC PURPOSES: Zernike, simulation
-% abs(mask) should always be 1, meaning that it is normalized; try by yourself
+% abs(mask): should always be 1, meaning that it is normalized
 
 %% Fourier transform of the mask
 if FTmask == 1

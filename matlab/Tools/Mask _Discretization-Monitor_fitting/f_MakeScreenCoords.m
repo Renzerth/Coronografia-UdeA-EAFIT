@@ -1,13 +1,17 @@
 function [X,Y,AspectRatio,monitorSize] = f_MakeScreenCoords(scrnIdx,enablechange,varargin)
 % Inputs:
 % screenIndex: screen number selector. In [1,N] with N the # of screens
-% varargin: function activated (1) or not (0)
+% varargin: relativeCoordSelect. false: pixels space; true: unitary spaces
+%
+% Outputs:
+% X and Y vectors of the size of the screem
+% AspectRatio: of the screen
+% monitorSize: of the screen
 
 %% Input Verification
 if nargin == 3 % number of inputs
     if isa(varargin{1},'logical')
         relativeCoordSelect = varargin{1};
-        % When it is
     else
         relativeCoordSelect = true; % Unitary space
     end

@@ -1,4 +1,4 @@
-% function f_spatialDefinitions(circMask)
+% function [Xrescaled,X,Y,x,y,r,phi] = f_spatialDefinitions(circMask,sSize,spaceSupport,pixSize,scrnIdx)
 switch coordType
  case 1 % Size defined by the user, space support defined by the SLM to use
   %% Spatial definitions
@@ -31,22 +31,29 @@ switch coordType
 end
 
 %% Aspect ratio application
-if circularMask == 1
-Xrescaled = AspectRatio*X;
+% Regarding the drawing of the masks on the SLM screens:
+% Original X (output of f_MakeScreenCoords): the circular mask is drawn as
+% an ellipse due to the screen transformation (elliptical scaling of the
+% space)
+% Xrescaled: the spatial scaling is compensated and the circular mask is
+% drawn normally on the whole screen
+Xrescaled = AspectRatio*X; % Used for the mask generation on the pc. It is
+                           % never shifted
+if circularMask == 1 % X is then also used as Xrescaled
 X = Xrescaled;
 end
 
 %% Polar coordinates with a shift of the mask
 if shiftBool == 1
  shiftCart = shiftCart/100; % Percentage w.r.t the half size 
- % old shift in cm shiftCart = spaceSupport*shiftCart/100
+ % old shift in cm: shiftCart = spaceSupport*shiftCart/100
  shiftX = shiftCart(2); % Cartesian shift in x
  shiftY = shiftCart(1); % Cartesian shift in y
 else
  shiftX = 0; shiftY = 0; % Shift deactivated   
 end
 
-[phi,r] = cart2pol(X-shiftX,(Y+shiftY)); % Polar coordinates with an added
-                                         % shift. The signs compensate the 
-                                         % normal cartesian convention for 
-                                         % displacing the phase mask
+[phi,r] = cart2pol(X-shiftX,Y+shiftY); % Polar coordinates with an added
+                                       % shift. The signs compensate the 
+                                       % normal cartesian convention for 
+                                       % displacing the phase mask

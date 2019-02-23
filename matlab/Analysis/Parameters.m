@@ -21,7 +21,7 @@ switch coordType
           % Size is calculated as 2^k - 1
           
  case 2
-  circularMask = 1;
+  circularMask = 0;
   % 1: The mask presents a circular form when in the full screen 
   % 0: The mask presents an elliptical form when in the full screen
   % On both cases full screen means that plotMask = 2
