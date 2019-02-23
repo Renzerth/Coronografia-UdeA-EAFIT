@@ -61,58 +61,58 @@ f_fig_maskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang,binMask, ...
 
 %%%%%%%%%%%%%%%%%%%%%%% MEASUREMENTS BY AN AUTOMATED PARAMETER VARIATION
 if meas == 1
-  %% Folders and register creations on Data and Output    
-  FoldersRegistersCreation;
+ %% Folders and register creations on Data and Output    
+ FoldersRegistersCreation;
 
-  if measSimulated == 0 % When a real measurement will be performed
-      %% Hardware initialization
-      % HardwareInit; % Future script 
-                      % Turns the camera on and create all the needed 
-                      % variables. Remember to leave the preview open
-      [vid,src] = f_selectCamera(camera,exposure,format);
-  end
+ if measSimulated == 0 % When a real measurement will be performed
+     %% Hardware initialization
+     % HardwareInit; % Future script 
+                     % Turns the camera on and create all the needed 
+                     % variables. Remember to leave the preview open
+     [vid,src] = f_selectCamera(camera,exposure,format);
+ end
 
-  %% Measurement debugging
-  % Usefull for aligning the vortex and adjusting exposure parameters
-  if measDebug == 1
-   SingleFrame = f_ImageCapture(vid,dataDir,filename,imgformat,pathSep,snapsfldr); 
-   % Takes a camera shot,shows a figure and saves it   
-   figure; imhist(SingleFrame); % Shows a histogram of the snapshot
+ %% Measurement debugging
+ % Usefull for aligning the vortex and adjusting exposure parameters
+ if measDebug == 1
+  SingleFrame = f_ImageCapture(vid,dataDir,filename,imgformat,pathSep,snapsfldr); 
+  % Takes a camera shot,shows a figure and saves it   
+  figure; imhist(SingleFrame); % Shows a histogram of the snapshot
 
-   % Get some hardware/software/tools info:
-   % get(vid); % Displays the general parameters of the camera
-   % src = getselectedsource(vid); % A existing variable. Similar to get(vid)
-   % imaqhwinfo(vid); % Displays the driver connection with MATLAB
-   % imaqhwinfo % All the installed adaptors in the Image Acquisition Toolbox
-   % disp(vid); % Displays acquisition information
-   % imaqtool; % toolbox for the camera
-   % imaqreset: refresh image acquisition hardware by restoring the settings
-  else
-   %% Reference measurement
-   % Still not sure if needed: null tc beam or a high tc beam(long radius)
+  % Get some hardware/software/tools info:
+  % get(vid); % Displays the general parameters of the camera
+  % src = getselectedsource(vid); % A existing variable. Similar to get(vid)
+  % imaqhwinfo(vid); % Displays the driver connection with MATLAB
+  % imaqhwinfo % All the installed adaptors in the Image Acquisition Toolbox
+  % disp(vid); % Displays acquisition information
+  % imaqtool; % toolbox for the camera
+  % imaqreset: refresh image acquisition hardware by restoring the settings
+ else
+  %% Reference measurement
+  % Still not sure if needed: null tc beam or a high tc beam(long radius)
 
-   %% Automated measurement
-   AutomatMeasure; % Future script
+  %% Automated measurement
+  AutomatMeasure; % Future script
 
-   %% Post-processing of the data
-   %DataProcessing; % Metric of the degree of extintion applied
+  %% Post-processing of the data
+  %DataProcessing; % Metric of the degree of extintion applied
 
-   %% Save data
-   % SaveData; % Or maybe save plot(s) of the applied metrics
-  end
+  %% Save data
+  % SaveData; % Or maybe save plot(s) of the applied metrics
+ end
 
-  %% Termination
-  % Terminate_settings; % Future script % Clears variables, closes all and
-                        % deactivates the cameras
-  % delete(vid); % Clean up the camera
+ %% Termination
+ % Terminate_settings; % Future script % Clears variables, closes all and
+                       % deactivates the cameras
+ % delete(vid); % Clean up the camera
 
-  %% End notification
-  if beepSound == 1
-      for beepTimes = 1:3 % Numbe of beeps
-          beep();
-          pause(0.2); % Time between the beeps
-      end
-  end
+ %% End notification
+ if beepSound == 1
+     for beepTimes = 1:3 % Numbe of beeps
+         beep();
+         pause(0.2); % Time between the beeps
+     end
+ end
 end % End of measurements
 
 
@@ -123,7 +123,7 @@ end % End of measurements
 
 %% Fourier transform of the mask
 if FTmask == 1
-    maskFT; % Performs the FFT of the mask and shows x and y profiles
+    maskSpectrum; % Performs the FFT of the mask and shows x and y profiles
 end
 
 %% Gradient of the mask

@@ -2,12 +2,12 @@
 %% Algorithm sections
 measDebug = 0; % Debugging before actually measuring. Displays the default 
                % phase mask and shots a photo with the camera
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 measSimulated = 1; % Saves the mask and does not involve the cameras: 
                    % yes (1) or no (0)
 beepSound = 0; % Beep sound when measurement finishes. Only works when 
                % meas = 1
-slm = 'Pluto'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
+slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 sim = 0; % Simulate: yes (1) or no (0)
 
 %% General algorithm parameters
@@ -16,7 +16,8 @@ coordType = 2;  % Type of calculation of the spatial coordinates. def: 2
 % 2: size defined by the resolution of the selected screen    
 if coordType == 1
   k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
-          % Default: 10      
+          % Default: 10   
+          % Size is calculated as 2^k - 1
 end
 precision = 3; % Precision of displayed results: significative digits (3)
 showM = 1; % Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
@@ -149,7 +150,7 @@ levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
 discretization = 1; % Variable for the next switch
 switch discretization % Gray-level discretized azimuthal angle vector
  case 1 % 1: Evenly-spaced gl phase values.
-  gl = 3; % Number of gray levels (normally 256). Must be smaller than
+  gl = 256; % Number of gray levels (normally 256). Must be smaller than
             % the dynamic range = maxGrayDepth-minGrayDepth
   glphi = linspace(-pi,pi,gl); % Discretized phi vector on [-pi,pi]. The 
                                % sampling interval consists on dividing the
@@ -158,11 +159,14 @@ switch discretization % Gray-level discretized azimuthal angle vector
                                % first page of:
   % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf     
  case 2 % 2: user-defined gl values
-  glphi = [1 10 100 201 202]/256*2*pi-pi; % Custom gl vector: the mask will only have 
+  glphi = [1 10 100 201 202]; % Custom gl vector: the mask will only have
                               % these levels
-                              
+  glphi = glphi*2*pi/256 - pi; % Conversion from gray to phase levels                  
   gl = 202; % That is the reference gl when one has personalized gl's
 end
+% OLD:
+% a = 0:255 valores de la fase (256 valores posibles de fase)
+% angle = a/256*2*pi-pi
 
 %% Parameters: Laguerre-Gauss
 p = 5; % Number of radial nodes. If p=0, normal helicoid masks are obtained
@@ -260,7 +264,8 @@ filemanag = 'File_managing'; % Folder with the function f_makeParentFolder,
 %%%%%%%%%%%%%%%%%%%%%%% PART 5: ACADEMIC-PURPOSE ASPECTS %%%%%%%%%%%%%%%%%%
 % Zernike, FT, simulation in the free space that is not very depured
 %% Optional plots and procedures
-FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
+FTmask = 1; % Finds the FFT of the mask and plots it: yes(1); no(0)
+maskFTlog = 0; % (1)Plots the log10 of the spectrum. (0) normal spectrum
 gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)
 maskZernReconstr = 0; % Reconstructs the mask with Zernike polynomials and
                       % plots the error

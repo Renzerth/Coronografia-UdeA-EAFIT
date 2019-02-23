@@ -1,8 +1,8 @@
 switch coordType
  case 1 % Size defined by the user, space support defined by the SLM to use
   %% Spatial definitions
-  sSize = 2^k-1; % Number of samples; odd number so that vortex gets
-                 % centered (spatial size); Spatial size. ref: 2^k-1
+  sSize = 2^k - 1; % Number of samples; odd number so that vortex gets
+                   % centered (spatial size); Spatial size. ref: 2^k-1
   spaceSupport = spaceSupport/2; % Half support of the SLM window in cm
   spaceVector = -spaceSupport:2*spaceSupport/(sSize-1):spaceSupport; 
   % Symmetric space
