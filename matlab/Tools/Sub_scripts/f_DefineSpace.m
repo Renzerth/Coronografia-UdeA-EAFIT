@@ -1,4 +1,6 @@
-function [X,Y,Xpc,Ypc,r,phi,rPC,phiPC,sSize] = f_DefineSpace(spaceSupport,shiftCart,pixSize,scrnIdx)
+function [X,Y,r,phi,Xpc,Ypc,rPC,phiPC,sSize,monitorSize] = ...
+f_DefineSpace(spaceSupport,shiftCart,pixSize,scrnIdx,circularMask, ...
+shiftBool,coordType)
 switch coordType
  case 1 % Size defined by the user, space support defined by the SLM to use
   %% Spatial definitions
@@ -39,9 +41,9 @@ switch coordType
   % drawn normally on the whole screen
   Xrescaled = AspectRatio*X; % Used for the mask generation on the pc. It 
                              % is never shifted
-  if circularMask == 1 % X is then also used as Xrescaled
+  if circularMask == 1 % X is then used as Xrescaled
    Xslm = Xrescaled;
-  else
+  else % The mask will have an elliptical shape
    Xslm = X;
   end
 end
@@ -50,8 +52,7 @@ end
 Xpc = X; Ypc = Y; % Needed for the PC coordinates later on
 [phiPC,rPC] = cart2pol(Xpc,Ypc); % Without shifts and no scaling: mask is 
                                  % always circular and centered
-
-                             
+                          
 %% Polar coordinates with a shift of the mask (for the SLM)
 switch shiftBool 
  case 0
@@ -75,8 +76,6 @@ Y = Y + shiftY; % Shifted Y for the SLM.
                          % shift. The signs compensate the 
                          % normal cartesian convention for 
                          % displacing the phase mask
-                                       
-
                              
 %% Zernike
 sSize = min(min(size(X)),min(size(Y)));

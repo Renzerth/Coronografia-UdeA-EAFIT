@@ -41,32 +41,26 @@ Parameters; % Adds to the algorithm all the needed parameters
 %% Directories and add functions
 % Adds initial functions
 addpath(strcat('..',pathSep,toolsFldr,pathSep,filemanag)); 
-[analysDir,toolsDir,dataDir,outDir] ...
-= f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd);
+[analysDir,toolsDir,dataDir,outDir] = ...
+f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd);
 % Adds all the directories to use in the algorithm
 
 %% Spatial definitions
-DefineSpace; % Defines the cartesian/polar coordinates, its 
-                    % sampling interval and discretized angular part for gl
+[X,Y,r,phi,Xpc,Ypc,rPC,phiPC,sSize] = f_DefineSpace(spaceSupport, ...
+shiftCart,pixSize,scrnIdx,circularMask,shiftBool,coordType);
+% Defines the cartesian/polar coordinates, its sampling interval and 
+% discretized angular part for gl
                 
-%% Plot one mask for tests: phase mask selection
-% Selects the type of phase mask
-[mask,maskName] = f_SelectMask(X,Y,r,phi,gl,glphi,mingl,maxgl,levShft, ...
-                               tc,s,ph0,p,W,binv,norm, L,f_FR,bcst, ...
-                               z_coeff,a,frac,pupil,sSize,disp_wrap, ...
-                               plot_z,binMask,monitorSize,scrnIdx, ...
-                               abs_ang,plotMask,maskSel);
+%% Phase mask selection and plot on the screen or on the SLM
+[mask,maskName] = f_PlotSelectedMask(X,Y,r,phi,gl,glphi,mingl,maxgl, ...
+levShft,tc,s,ph0,p,W,binv,norm, L,f_FR,bcst,z_coeff,a,frac,pupil, ...
+sSize,disp_wrap,plot_z,binMask,monitorSize,scrnIdx,abs_ang,plotMask, ...
+maskSel);           
+% f_PlotSelectedMask->f_SpiralMask->f_ProjectMask->f_MaskWrapCircDiscret
+          
 
-
-%% Phase mask plot on the screen or on the SLM
-tit = 'SLM mask'
-%%% Plot phase mask on the Fourier plane of the vortex coronagraph
-f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
-                 binMask,monitorSize,scrnIdx,tit,abs_ang,plotMask);
-
-
-
-
+                           
+                           
 %%%%%%%%%%%%%%%%%%%%%%% MEASUREMENTS BY AN AUTOMATED PARAMETER VARIATION
 if meas == 1
  %% Folders and register creations on Data and Output    
