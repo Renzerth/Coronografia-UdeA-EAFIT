@@ -2,22 +2,22 @@ switch maskSel
     
  case 0 % Spiral phase mask or mapa de fase espiral or máscara espiral
         % de fase or máscara helicoidal de fase 
-  mask = f_SpiralMask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0, ...
+  mask = f_SpiralMask(rPC,phiPC,gl,glphi,mingl,maxgl,levShft,tc,s,ph0, ...
                        binMask,showM);
   maskName = 'Spiral';
    
  case 1 % Laguerre-Gauss (LG) beams
-  mask = f_LGMask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p,W, ...
+  mask = f_LGMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p,W, ...
                    binv,norm,abs_ang,binMask,monitorSize,scrnIdx,showM);
   maskName = 'LG';
   
  case 2 % Vortex Producing Lens (VPL) = Helicoidal + Fresnel lens
-  mask = f_VPLMask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,L, ...
+  mask = f_VPLMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,L, ...
                     f_FR,binMask,showM);
   maskName = 'VPL';
   
  case 3 % Elliptic Gaussian Vortex (EGV) mask or Vórtice elíptico-gaussiano
-  mask = f_EGVMask(x,y,X,Y,r,gl,glphi,mingl,maxgl,levShft,tc,s,ph0, ...
+  mask = f_EGVMask(X,Y,r,gl,glphi,mingl,maxgl,levShft,tc,s,ph0, ...
                     bcst,binMask,showM);
   maskName = 'EGV';
   
@@ -25,7 +25,7 @@ switch maskSel
         % fork phase mask or holograma en forma de tenedor or fork
         % grating plate or rejilla de Ronchi con una dislocación 
         % (2013_Vortex_Generations_Mach-Zehnder_Interferometer)
-  mask = f_ForkMask(x,y,X,Y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s, ...
+  mask = f_ForkMask(X,Y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s, ...
                 ph0,L,period,T0,frkTyp,Aalpha,Angalp,Angbet,binMask,showM);
   maskName = 'Fork';
   

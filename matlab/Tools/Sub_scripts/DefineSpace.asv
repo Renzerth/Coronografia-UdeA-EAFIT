@@ -28,22 +28,20 @@ switch coordType
   % x,y: vectors of SLM's physical size  
   x = linspace(-halfSizeX,halfSizeX,monitorSize(1));                                     
   y = linspace(-halfSizeY,halfSizeY,monitorSize(2)); 
+
+  %% Aspect ratio application
+  % Regarding the drawing of the masks on the SLM screens:
+  % Original X (output of f_MakeScreenCoords): the circular mask is drawn 
+  % as an ellipse due to the screen transformation (elliptical scaling of 
+  % the space)
+  % Xrescaled: the spatial scaling is compensated and the circular mask is
+  % drawn normally on the whole screen
+  Xrescaled = AspectRatio*X; % Used for the mask generation on the pc. It 
+                             % is never shifted
+
 end
 
-%% Aspect ratio application
-% Regarding the drawing of the masks on the SLM screens:
-% Original X (output of f_MakeScreenCoords): the circular mask is drawn as
-% an ellipse due to the screen transformation (elliptical scaling of the
-% space)
-% Xrescaled: the spatial scaling is compensated and the circular mask is
-% drawn normally on the whole screen
-Xrescaled = AspectRatio*X; % Used for the mask generation on the pc. It is
-                           % never shifted
-if circularMask == 1 % X is then also used as Xrescaled
-X = Xrescaled;
-end
-
-%% Polar coordinates with a shift of the mask
+%% Polar coordinates with a shift of the mask (for the SLM)
 if shiftBool == 1
  shiftCart = shiftCart/100; % Percentage w.r.t the half size 
  % old shift in cm: shiftCart = spaceSupport*shiftCart/100

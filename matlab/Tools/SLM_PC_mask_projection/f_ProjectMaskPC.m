@@ -1,7 +1,6 @@
 %% Plot Phase Msk on the screen, not the SLM
-function pcfig = f_fig_maskPCscreen(x,y,wrappedMask,tit,gl,showM)
+function pcfig = f_ProjectMaskPC(wrappedMask,tit,gl,showM)
 % Inputs:
-%  x,y: cartesian coordinates vector
 %  WrappedMask: function to be plotted. The mask should already be wrapped
 %  with the angle function
 %  tit: Figure title
@@ -17,7 +16,7 @@ function pcfig = f_fig_maskPCscreen(x,y,wrappedMask,tit,gl,showM)
 if showM == 1
   pcfig = figure('color','white','Name','Phase Mask'); 
   % imagesc(x,y,wrappedMask); axis square; colormap(hot(gl)); % Hot
-  imagesc(x,y,wrappedMask); axis square; colormap(gray(gl));% Gray
+  imagesc(wrappedMask); axis square; colormap(gray(gl));% Gray
   title(tit);
   cbh = colorbar; cbh.Label.String = 'Wrapped phase value';
   

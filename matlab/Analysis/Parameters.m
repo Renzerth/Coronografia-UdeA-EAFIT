@@ -21,7 +21,7 @@ switch coordType
           % Size is calculated as 2^k - 1
           
  case 2
-  circularMask = 0;
+  circularMask = 1;
   % 1: The mask presents a circular form when in the full screen 
   % 0: The mask presents an elliptical form when in the full screen
   % On both cases full screen means that plotMask = 2
@@ -43,7 +43,7 @@ maskSel = 0; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
+plotMask = 2; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen

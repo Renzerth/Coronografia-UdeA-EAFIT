@@ -11,6 +11,7 @@ switch coordType
                                  % coordinates
   x = spaceVector; % Cartesian x-vector
   y = x; % Cartesian y-vector: square grid
+  Xslm = X;
 
  case 2 % Size defined by the resolution of the selected screen                 
   %% Screen coordinates
@@ -28,22 +29,24 @@ switch coordType
   % x,y: vectors of SLM's physical size  
   x = linspace(-halfSizeX,halfSizeX,monitorSize(1));                                     
   y = linspace(-halfSizeY,halfSizeY,monitorSize(2)); 
+
+  %% Aspect ratio application
+  % Regarding the drawing of the masks on the SLM screens:
+  % Original X (output of f_MakeScreenCoords): the circular mask is drawn 
+  % as an ellipse due to the screen transformation (elliptical scaling of 
+  % the space)
+  % Xrescaled: the spatial scaling is compensated and the circular mask is
+  % drawn normally on the whole screen
+  Xrescaled = AspectRatio*X; % Used for the mask generation on the pc. It 
+                             % is never shifted
+  if circularMask == 1 % X is then also used as Xrescaled
+   Xslm = Xrescaled;
+  else
+   Xslm = X;
+  end
 end
 
-%% Aspect ratio application
-% Regarding the drawing of the masks on the SLM screens:
-% Original X (output of f_MakeScreenCoords): the circular mask is drawn as
-% an ellipse due to the screen transformation (elliptical scaling of the
-% space)
-% Xrescaled: the spatial scaling is compensated and the circular mask is
-% drawn normally on the whole screen
-Xrescaled = AspectRatio*X; % Used for the mask generation on the pc. It is
-                           % never shifted
-if circularMask == 1 % X is then also used as Xrescaled
-X = Xrescaled;
-end
-
-%% Polar coordinates with a shift of the mask
+%% Polar coordinates with a shift of the mask (for the SLM)
 if shiftBool == 1
  shiftCart = shiftCart/100; % Percentage w.r.t the half size 
  % old shift in cm: shiftCart = spaceSupport*shiftCart/100
@@ -53,7 +56,12 @@ else
  shiftX = 0; shiftY = 0; % Shift deactivated   
 end
 
-[phi,r] = cart2pol(X-shiftX,Y+shiftY); % Polar coordinates with an added
+[phi,r] = cart2pol(Xslm-shiftX,Y+shiftY); % Polar coordinates with an added
                                        % shift. The signs compensate the 
                                        % normal cartesian convention for 
                                        % displacing the phase mask
+                                       
+%% Polar coordinates for the PC
+[phiPC,rPC] = cart2pol(X,Y); % Without shifts and no scaling: mask always 
+                             % circular and centered
+
