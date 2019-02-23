@@ -7,11 +7,12 @@ function [X,Y,AspectRatio,monitorSize] = f_MakeScreenCoords(scrnIdx,enablechange
 if nargin == 3 % number of inputs
     if isa(varargin{1},'logical')
         relativeCoordSelect = varargin{1};
+        % When it is
     else
-        relativeCoordSelect = true;
+        relativeCoordSelect = true; % Unitary space
     end
 else
-    relativeCoordSelect = true;
+    relativeCoordSelect = true; % Unitary space
 end
 
 %% Projection monitor properties

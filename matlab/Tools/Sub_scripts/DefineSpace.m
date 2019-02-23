@@ -31,7 +31,10 @@ switch coordType
 end
 
 %% Aspect ratio application
-%AspectRatio
+if circularMask == 1
+Xrescaled = AspectRatio*X;
+X = Xrescaled;
+end
 
 %% Polar coordinates with a shift of the mask
 if shiftBool == 1
