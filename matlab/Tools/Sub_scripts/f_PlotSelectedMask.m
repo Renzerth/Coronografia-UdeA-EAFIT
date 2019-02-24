@@ -1,7 +1,7 @@
 function [mask,maskName] = f_PlotSelectedMask(X,Y,rSLM,phiSLM,Xpc,Ypc,rPC, ...
 phiPC,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p,W,binv,norm,L,f_FR,bcst, ...
 z_coeff,a,frac,pupil,sSize,disp_wrap,plot_z,binMask,monitorSize, ...
-scrnIdx,abs_ang,plotMask,maskSel)
+scrnIdx,coordType,abs_ang,plotMask,maskSel)
                                         
 % Inputs:
 %  Explained inside each function on every case
@@ -14,43 +14,45 @@ switch maskSel
     
  case 0 % Spiral phase mask or mapa de fase espiral or máscara espiral
         % de fase or máscara helicoidal de fase 
-  mask = f_SpiralMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl,levShft,tc, ...
-                      s,ph0,binMask,monitorSize,scrnIdx,abs_ang,plotMask);
+  mask = f_SpiralMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl, ...
+  levShft,tc,s,ph0,binMask,monitorSize,scrnIdx,coordType,abs_ang,plotMask);
   maskName = 'Spiral';
    
  case 1 % Laguerre-Gauss (LG) beams
-  mask = f_LGMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl,levShft,tc,s, ...
-              ph0,p,W,binv,norm,binMask,monitorSize,scrnIdx,abs_ang,showM);
+  mask = f_LGMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl,levShft,tc,...
+  s,ph0,p,W,binv,norm,binMask,monitorSize,scrnIdx,coordType,abs_ang,showM);
   maskName = 'LG';
  
  case 2 % Vortex Producing Lens (VPL) = Helicoidal + Fresnel lens
-  mask = f_VPLMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl,levShft,tc,s, ...
-                   ph0,L,f_FR,binMask,showM);
+  mask = f_VPLMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl,levShft, ...
+                   tc,s,ph0,L,f_FR,binMask,coordType,abs_ang,showM);
   maskName = 'VPL';
   
  case 3 % Elliptic Gaussian Vortex (EGV) mask or Vórtice elíptico-gaussiano
-  mask = f_EGVMask(X,Y,Xpc,Ypc,rSLM,rPC,gl,glphi,mingl,maxgl,levShft,tc, ...
-                   s,ph0,bcst,binMask,showM);
+  mask = f_EGVMask(X,Y,Xpc,Ypc,rSLM,rPC,gl,glphi,mingl,maxgl,levShft, ...
+                   tc,s,ph0,bcst,binMask,coordType,abs_ang,showM);
   maskName = 'EGV';
   
  case 4 % Threefold dislocation hologram or double pitch fork hologram or
         % fork phase mask or holograma en forma de tenedor or fork
         % grating plate or rejilla de Ronchi con una dislocación 
         % (2013_Vortex_Generations_Mach-Zehnder_Interferometer)
-  mask = f_ForkMask(X,Y,Xpc,Ypc,rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl, ...
-   levShft,tc,s,ph0,L,period,T0,frkTyp,Aalpha,Angalp,Angbet,binMask,showM);
+  mask = f_ForkMask(X,Y,Xpc,Ypc,rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl, ...
+  maxgl,levShft,tc,s,ph0,L,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
+  binMask,coordType,abs_ang,showM);
   maskName = 'Fork';
   
 %%%%%%%%%%%%%%%%%%%% NOT USED BUT FOR ACADEMIC PURPOSES %%%%%%%%%%%%%%%%%%%
  case 5 % Zernike (aberrations)
   mask = f_ZernikeMask(rSLM,rPC,z_coeff,a,frac,L,gl,glphi,mingl,maxgl, ...
-   levShft,pupil,sSize,disp_wrap,plot_z,binMask,monitorSize,scrnIdx,showM);
+  levShft,pupil,sSize,disp_wrap,plot_z,binMask,monitorSize,scrnIdx, ...
+  coordType,abs_ang,showM);
   maskName = 'Zernike';
                   
  case 6 % Laguerre-Gauss (LG) + Zernike
-  mask = f_LGZernikeMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl,levShft, ...
-         tc,s,ph0,p,W,binv,norm,z_coeff,a,frac,L,pupil,sSize,disp_wrap, ...
-         plot_z,binMask,monitorSize,abs_ang,showM);
+  mask = f_LGZernikeMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl, ...
+         levShft,tc,s,ph0,p,W,binv,norm,z_coeff,a,frac,L,pupil,sSize, ...
+         disp_wrap,plot_z,binMask,monitorSize,coordType,abs_ang,showM);
   maskName = 'LG_Zernike';                    
  case 7 % Hermite-Gauss (HG) beams
      

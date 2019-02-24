@@ -1,6 +1,6 @@
 %% Plot Phase Mask either on the PC or on the SLM
 function fighandler = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,...
-                          binMask,monitorSize,scrnIdx,tit,abs_ang,plotMask)
+                binMask,monitorSize,scrnIdx,tit,coordType,abs_ang,plotMask)
 % Inputs:
 %  r: polar coordinate (in cm)
 %  mask: function to be plotted. It is wrapped on [-pi,pi] if abs_ang = 2.
@@ -14,6 +14,9 @@ function fighandler = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,...
 %  monitorSize: size of the selected screen 
 %  screenIndex: screen number selector. In [1,N] with N the # of screen
 %  tit: plot title
+%  coordType: type of calculation of the spatial coordinates. def: 2 
+%    -1: size defined by the user, space support defined by the SLM to use
+%    -2: size defined by the resolution of the selected screen    
 %  abs_ang: Magnitude (1); Phase (2)
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
@@ -38,7 +41,7 @@ switch abs_ang
  case 2 % Phase
   % Circular pupil and wrapping   
   wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl,maxgl, ...
-                                      levShft);
+                                      levShft,coordType);
   figtit = 'Phase Mask';
   str = 'Wrapped phase value';  
 end
@@ -72,17 +75,23 @@ switch plotMask
     end
     
   case 2  % Plot on the SLM. 
-    enablechange = true; % SLM figure display monitor activated
-    f_changeProjectionMonitor(scrnIdx,enablechange); % Allow full-screen 
+    if coordType == 2  
+     enablechange = true; % SLM figure display monitor activated
+     f_changeProjectionMonitor(scrnIdx,enablechange); % Allow full-screen 
                                                      % size figures
-    offsetPixel = [1,1]; % Mandatory: pixels have this origin [0,0] doesn't
-                         % exist
+    end
+    offsetPixel = [1,1]; % Mandatory: pixels have this origin [0,0] 
+                         % doesn't exist
     fighandler = figure('Visible','off','MenuBar','none','Toolbar', ...
                         'none','NumberTitle','off');
     % Hide Menu bar and Tool bar
     fighandler.Units = 'Pixels'; % 'color','black',
     set(gca,'Units','Pixels');
-    set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
+    if coordType == 1
+       set(gca,'OuterPosition',[[0 0] monitorSize(1) monitorSize(2)]); 
+    else
+       set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
+    end
     image(wrappedMask);  % Plots in SLM screen 
     axis off; colormap(gray(gl));
     % axis fill;

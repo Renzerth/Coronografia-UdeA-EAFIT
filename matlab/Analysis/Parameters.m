@@ -10,17 +10,7 @@ beepSound = 0; % Beep sound when measurement finishes. Only works when
 slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 sim = 0; % Simulate: yes (1) or no (0)
 
-%% General algorithm parameters
-coordType = 1;  % Type of calculation of the spatial coordinates. def: 2 
-% 1: size defined by the user, space support defined by the SLM to use
-% 2: size defined by the resolution of the selected screen    
-k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
-        % Default: 10. Size is calculated as 2^k - 1
-        % Only works when coordType = 1
-circularMask = 1; % Only works when coordType = 2
-  % 0: The mask presents an elliptical form when in the full screen
-  % 1: The mask presents a circular form when in the full screen
-  % On both cases full screen means that plotMask = 2
+%% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
 maskSel = 0; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
@@ -46,7 +36,30 @@ plotMask = 2; % Allows to plot the final mask, as it can be a combination
 % OLD:
 % showM = 1; Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
            % analog to "plotMask" on the SLM Position section
+           
+%% SLM positionining calibration, coordinates and type of truncation
+coordType = 1;  % Type of calculation of the spatial coordinates. def: 2 
+% 1: size defined by the user, space support defined by the SLM to use
+% 2: size defined by the resolution of the selected screen    
+k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
+        % Default: 10. Size is calculated as 2^k - 1
+        % Only works when coordType = 1
+circularMask = 0; % Only works when coordType = 2
+  % 0: The mask presents an elliptical form when in the full screen
+  % 1: The mask presents a circular form when in the full screen
+  % On both cases full screen means that plotMask = 2
+shiftBool = 0; % Only shifts when plotMask = 2
+% 0: shift deactivated [for exporting masks]
+% 1: shift activated [SLM displaying]
+% 2: self-centering algorithm
+shiftCart = [5,10]; % [yshift,xshift], works when shiftBool = 1
+                     % Percentages of movement of the total size of the
+                     % mask (cartesian coordinates convention)
+                     % Calibrated with: s = +1; ph0 = 0, tc = 1; 
+                     % Ranges per shift: [0,100] (percentage)          
               
+                     
+                     
               
 %%%%%%%%%%%%%%%%%%%%%%% PART 2: HARDWARE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % scrnIdx: screen number selector. In [1,N] with N the # of screens
@@ -81,17 +94,6 @@ switch slm
   otherwise
     warning('Please select an SLM');
 end 
-
-%% SLM positionining calibration
-shiftBool = 1; % Only shifts when plotMask = 2
-% 0: shift deactivated [for exporting masks]
-% 1: shift activated [SLM displaying]
-% 2: self-centering algorithm
-shiftCart = [50,25]; % [yshift,xshift], works when shiftBool = 1
-                     % Percentages of movement of the total size of the
-                     % mask (cartesian coordinates convention)
-                     % Calibrated with: s = +1; ph0 = 0, tc = 1; 
-                     % Ranges per shift: [0,100] (percentage)
               
 %% Camera selection and parameters
 camera = 'DMK23U445';
@@ -114,7 +116,6 @@ switch camera
     format = 'Y800 (1280x960)';    
     cameraPlane = 'notusedhere';
 end
-
 
 % For 'DMK42BUC03' [Delete]:
 % -Default: 0.0556 or 1.282
