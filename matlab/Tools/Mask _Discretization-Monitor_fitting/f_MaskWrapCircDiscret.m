@@ -1,5 +1,5 @@
-function wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,...
-                                  binv,glphi,mingl,maxgl,levShft,coordType)
+function wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,binv,glphi,...
+                       mingl,maxgl,levShft,coordType,plotMask)
 % Multiplies the phase mask by the maximum circle size with its outer
 % borders containing the minimum value of the phase (normally -pi)
 % Wraps the phase with the function "angle"
@@ -18,6 +18,8 @@ function wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,...
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use
 %    -2: size defined by the resolution of the selected screen    
+%  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
+%             a surface (3)
 %
 % Output:
 %  wrappedMask: real-valued mask (angle), wrapped on [-pi,pi] and truncated
@@ -52,7 +54,7 @@ end
 % In both cases of the next if-else, rMax is found as the maximum radius
 % that allows to circumscribe a circle inside an square for coordType == 1
 % or inside a rectangle for coordType == 2
-if coordType == 2 % User-defined
+if coordType == 1 % User-defined
     rMax = max(r(:));  % the maximum value of r (diagonal of the square)
     rSize = rMax/sqrt(2); % Equals this since twice rSize^2 equals
                           % rmax^2 (Pythagorean theorem)
@@ -73,30 +75,40 @@ else % coordType == 2 % Screen-resolution defined
 end
 
 %% Mask padarray with zeros if needed
-A = size(r) - size(wrappedMask); % Size comparison
-if ~all(A) % True when at least one of the elements is nonzero
-    idx = find(A ~= 0);
-    pad = A(idx);
-    if isscalar(pad)
-        % Zeros padded symmetrically
-        if idx == 2
+% Only used for Zernike masks (the only one assumed to be generated with a
+% squared size):
+if  plotMask == 2 % SLM
+    A = size(r) - size(wrappedMask); % Size comparison
+    if ~all(A) % True when at least one of the elements is nonzero
+        idx = find(A ~= 0);
+        pad = A(idx);
+        if isscalar(pad)
+            %% Orientation of the padding
+            % Horizontal Padding:
+            a1 = [0 pad/2];
+            a2 = [0 (pad+1)/2];
+            a3 = [0 (pad+1)/2 - 1];
+            if idx == 1 % Vertical Padding: same as horizontal but shifted
+               a1 = circshift(a1,1); % Circular shift
+               a2 = circshift(a2,1); % Circular shift
+               a3 = circshift(a3,1); % Circular shift
+            end 
+            %% Padding
+            % Replicated since that the outer value of the Zernike are
+            % constant
             if mod(pad,2) == 0 % Even pad (symmetric)
-                wrappedMask = padarray(wrappedMask,[0 pad/2],'replicate','both');
+                wrappedMask = padarray(wrappedMask,a1,'replicate','both');
                 % A = [zeros(1,pad/2) A zeros(1,pad/2)];
             else % Odd pad (asymmetric)
-                wrappedMask = padarray(wrappedMask,[0 (pad+1)/2],'replicate','pre');
-                wrappedMask = padarray(wrappedMask,[0 (pad+1)/2 - 1],'replicate','pos');
+                wrappedMask = padarray(wrappedMask,a2,'replicate','pre');
+                wrappedMask = padarray(wrappedMask,a3,'replicate','pos');
                 % A = [zeros(1,(pad+1)/2) A zeros(1,(pad+1)/2-1)]; 
-            end  
-        else % idx == 1
-            if mod(pad,2) == 0 % Even pad (symmetric)
-                wrappedMask = padarray(wrappedMask,[pad/2 0],'replicate','both');
-            else % Odd pad (asymmetric)
-                wrappedMask = padarray(wrappedMask,[(pad+1)/2 0],'replicate','pre');
-                wrappedMask = padarray(wrappedMask,[(pad+1)/2 - 1 0],'replicate','pos');
             end  
         end
     end
+else % plotMask == 0 or 1 or 3 % PC
+    siz = size(wrappedMask);
+    r = r(1:siz,1:siz); % "Anti" pad array: r takes the mask's size
 end
 
 %% Phase mask times a circular (or elliptical) aperture

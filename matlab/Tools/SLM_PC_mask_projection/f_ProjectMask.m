@@ -59,7 +59,7 @@ switch abs_ang
  case 2 % Phase
   % Circular pupil and wrapping   
   wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,binv,glphi,mingl, ...
-                                      maxgl,levShft,coordType);
+                                      maxgl,levShft,coordType,plotMask);
   figtit = 'Phase Mask';
   str = 'Wrapped phase value'; % Colorbar string
 end

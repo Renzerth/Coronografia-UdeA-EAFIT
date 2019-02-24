@@ -84,5 +84,6 @@ Yslm = Y + shiftY; % Shifted Y for the SLM.
                                      % displacing the phase mask
                              
 %% Zernike
-sSize = min(min(size(X)),min(size(Y)));
+sSize = min(min(size(X)),min(size(Y))); 
+% sSize = size(rSLM); % OLD
 end
