@@ -22,7 +22,6 @@ function wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi, ...
 
 %% Mask wrapping
 wrappedMask = angle(mask); % Phase of the mask on [-pi, pi]. Real-valued
-minMask = min(wrappedMask(:)); % Just a definition that isn't used
 
 %% Discretized phase mask
 % Important: this is applied after the exp(i*mask) was created and then it
@@ -33,12 +32,16 @@ wrappedMask = f_ScaleMatrixData(wrappedMask,mingl,maxgl) + levShft;
 % Scaling to uint8 values
 
 %% Mask Binarization
-% binarizes the mask w.r.t the max and min of the phase (boolean)
+% binarizes the mask w.r.t the max,mid and min of the phase (boolean)
+minMask = min(wrappedMask(:)); % Minimum value of the mask
+maxMask = max(wrappedMask(:)); % Maximum value of the mask
+midMask = (minMask+maxMask)/2; % Medium value of the mask
+
 if binMask == 1 
-    wrappedMask = double(wrappedMask < 0); % Binarizes on [0,1] by dividing
-                                           % the phase above and bellow 0
-    wrappedMask = wrappedMask*minMask; % Establishes the lower binary value 
-                                       % as the lowest value of the phase
+    wrappedMask = double(wrappedMask < midMask); 
+    % Binarizes on [0,1] by the phase above and bellow the mid value
+    % wrappedMask = wrappedMask*minMask; % Establishes the lower binary
+    % value as the lowest value of the phase
 end
 
 % In both cases of the next if-else, rMax is found as the maximum radius

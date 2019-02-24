@@ -15,7 +15,7 @@ function [ LG ] = f_LaguerreGauss(r, phi, m, s, ph0, p, W)
 %     intensity distribution. There are p+1 rings or airy disks present. 
 %     Denotes the rings transitions
 %  W = w(0): radius of the beam; could depend on z: decreases along the
-%            optical axis for example
+%            optical axis for example. In general: w = w(z)
 %
 % Notes:
 %  z = 0; an incidence plane is assumed during calculations

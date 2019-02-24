@@ -19,7 +19,7 @@ function mask = f_SpiralMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl, ...
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use
 %    -2: size defined by the resolution of the selected screen    
-%  abs_ang: Magnitude (1); Phase (2)
+%  abs_ang: custom(0)[mask real-valued]; magnitude (1); phase (2)
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
 %

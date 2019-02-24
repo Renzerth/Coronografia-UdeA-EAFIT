@@ -11,7 +11,7 @@ slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
-abs_ang = 1; % Custom(0), magnitude (1) or phase (2) plot
+abs_ang = 2; % Custom(0)[mask real-valued], magnitude (1) or phase (2) plot
 maskSel = 1; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
@@ -26,7 +26,7 @@ maskSel = 1; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 2; % Allows to plot the final mask, as it can be a combination 
+plotMask = 1; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -38,7 +38,7 @@ plotMask = 2; % Allows to plot the final mask, as it can be a combination
            % analog to "plotMask" on the SLM Position section
            
 %% SLM positionining calibration, coordinates and type of truncation
-coordType = 1;  % Type of calculation of the spatial coordinates. def: 2 
+coordType = 2;  % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
 k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
@@ -52,7 +52,7 @@ shiftBool = 0; % Only shifts when plotMask = 2
 % 0: shift deactivated [for exporting masks]
 % 1: shift activated [SLM displaying]
 % 2: self-centering algorithm
-shiftCart = [5,20]; % [yshift,xshift], works when shiftBool = 1
+shiftCart = [100,0]; % [yshift,xshift], works when shiftBool = 1
                      % Percentages of movement of the total size of the
                      % mask (cartesian coordinates convention)
                      % Calibrated with: s = +1; ph0 = 0, tc = 1; 
@@ -132,19 +132,6 @@ imgformat = '.png'; % Format with period. mat, bmp, png, jpg
                     
                     
 %%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS PARAMETERS %%%%%%%%%%%%%%%%%%%%%%
-%% Parameters: Laguerre-Gauss, spiral phase mask and general masks
-L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
-tc = 2; % Topological charge (integer bigger or equal to one)
-        % tc = Azimuthal index m for LG. Fractional tc result on phase
-        % patterns of Hermite-Gauss (maybe just a coincidence)
-s = +1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
-ph0 = 0; % Initial phase of the angle [radians]; reference +pi from
-         % normal zero of trig circle and same rotation convention.
-         % This corresponds to a normal rotation of the mask for stethic
-         % reasons and shouldn't affect the results. Only affects if the
-         % vortex is no fully centered
-binMask = 0; % Binarizes the mask w.r.t the max/min of the phase (boolean)
-       
 %% Gray levels (discretization levels of the mask)
 % Dynamic range = maxGrayDepth - minGrayDepth
 mingl = 0; % Minimum gray level depth. Ref: 0
@@ -172,14 +159,26 @@ end
 % a = 0:255 valores de la fase (256 valores posibles de fase)
 % angle = a/256*2*pi-pi
 
+%% Parameters: Laguerre-Gauss, spiral phase mask and general masks
+L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
+tc = 3; % Topological charge (integer bigger or equal to one)
+        % tc = Azimuthal index m for LG. Fractional tc result on phase
+        % patterns of Hermite-Gauss (maybe just a coincidence)
+s = +1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
+ph0 = 0; % Initial phase of the angle [radians]; reference +pi from
+         % normal zero of trig circle and same rotation convention.
+         % This corresponds to a normal rotation of the mask for stethic
+         % reasons and shouldn't affect the results. Only affects if the
+         % vortex is no fully centered
+binMask = 1; % Binarizes the mask w.r.t the max/min of the phase (boolean)
+binv = 0; % Binary inversion of the mask: yes(1); no(0). Only applies when 
+          % binMask=1. It is usefull to be applied for odd p's on LG beams
+
 %% Parameters: Laguerre-Gauss
 p = 5; % Number of radial nodes. If p=0, normal helicoid masks are obtained
        % If they are used and tc=0(m=0); binary masks are obtained
        % Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
-W = 1023/10; % Width of the modes; for LG; ref: 100
-binvLG = 0; % Binary inversion of the mask: yes(1); no(0). It is only 
-            % applied when tc is zero. It is usefull to be applied for
-            % odd p's. 
+W = 20; % Width of the modes; for LG; ref: [0,100] % Close to being a %
 normLG = 0; % Normalize magnitude (to unity). yes(1); no(0)         
 
 %% Parameters: VPL Phase mask, 

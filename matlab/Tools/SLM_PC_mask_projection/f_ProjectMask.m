@@ -17,7 +17,7 @@ function fighandler = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,...
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use
 %    -2: size defined by the resolution of the selected screen    
-%  abs_ang: Magnitude (1); Phase (2)
+%  abs_ang: custom(0)[mask real-valued]; magnitude (1); phase (2)
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
 %
@@ -33,6 +33,10 @@ switch abs_ang
   wrappedMask = mask;
   figtit = 'Mask';
   str = 'Amplitude';
+  if isreal(mask) == false
+      error(['When you choose abs_ang = 0, mask must be selected to be' ...
+            'real-valued']);
+  end
  case 1 % Amplitude
   wrappedMask = abs(mask); % Actually, this is an amplitude filter
   figtit = 'Amplitude Mask';
@@ -111,6 +115,7 @@ switch plotMask
   surf(wrappedMask), colormap(gray(gl)), shading interp; % 3D Surface
   axis square; title(tit);
   cbh = colorbar; cbh.Label.String = str;
+  pax = gca; pax.FontSize = 16; % Font size
   % No axis values:
   set(gca,'xtick',[]); set(gca,'ytick',[]);  set(gca,'ztick',[]) 
   axis off
