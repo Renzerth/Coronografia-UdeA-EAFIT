@@ -1,3 +1,6 @@
+function f_SimulateFreeSpace(x,y,X,Y,r,mask,starAmplitude,planetAmplitude, ...
+pixelSeparation,w1,w2,rPupilSize,showIin,showPupilin,showFPmag,logscale,...
+showFPphas,showPhasout,showMagout,showIout)
 %% Vortex Simulation With Gaussians - Coronagraphy
 %%% Part 1, only the input field is generated
 % Purpose:

@@ -33,6 +33,13 @@ function mask = f_LGMask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s, ...
 %
 % Samuel Plazas Escudero - Juan José Cadavid - 2018 - Advanced Project 1
 
+%% Coordinates selection
+if plotMask == 2 % SLM
+    r = rSLM; phi = phiSLM;
+else % plotMask == 0 or 1 or 3 % PC
+    r = rPC; phi = phiPC;
+end
+
 %% Parameters: Laguerre-Gauss
 m = tc; % Azimuthal index = topological charge
 sSize = length(x); % Size of the original x,y coordinates
@@ -60,21 +67,13 @@ if norm == 1
 end
 
 %% Plot binary mask
-if showM == 1
-  if abs_ang == 2
-    tit = strcat('LG phase mask with topological charge ',num2str(tc), ...
+tit = strcat('LG phase mask with topological charge ',num2str(tc), ...
                  ' and radial node ',num2str(p));   
-    f_ProjectMaskPC(x, y, wrappedMask, tit, gl, showM);
-  else % abs_ang == 1
-    plotMask = showM; % plotMask = show; for 0 and 1.
-    f_ProjectMaskSLM(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
+f_ProjectMask(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
                     binMask,monitorSize,scrnIdx,plotMask)
-    title('Amplitude of LG');
-    cbh = colorbar; cbh.Label.String = 'Value';
-  end
-end
-
 %%% OLD
+%  title('Amplitude of LG');
+%  cbh = colorbar; cbh.Label.String = 'Value';
 % if abs_ang == 2
 %   h = pcolor(x,y,mask); 
 % else % var == 1

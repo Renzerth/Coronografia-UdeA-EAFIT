@@ -8,6 +8,7 @@ measSimulated = 1; % Saves the mask and does not involve the cameras:
 beepSound = 0; % Beep sound when measurement finishes. Only works when 
                % meas = 1
 slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
+simB = 1; % Simulate: yes (1) or no (0)
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
@@ -133,7 +134,7 @@ imgformat = '.png'; % Format with period. mat, bmp, png, jpg
 %%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS PARAMETERS %%%%%%%%%%%%%%%%%%%%%%
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
-abs_ang = 1; % Custom(0), magnitude (1) or phase (2) plot
+abs_ang = 2; % Custom(0), magnitude (1) or phase (2) plot
 tc = 1; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
@@ -272,9 +273,8 @@ FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
 maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum
                % Only works when FTmask = 1
 gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)
-maskZernReconstr = 0; % Reconstructs the mask with Zernike polynomials and
-                      % plots the error  
-simBool = 0; % Simulate: yes (1) or no (0)                      
+maskZernReconstr = 1; % Reconstructs the mask with Zernike polynomials and
+                      % plots the error             
 
 %% Parameters: Zernike
 % Used in maskZernReconstr, maskSel = 5 and maskSel = 6
@@ -288,7 +288,7 @@ plot_z = 0; % plot with Zernike builder: yes(1); no(0)
 ReconstrNumb = 14; % Number of polynomials to use for the reconstruction
 % sSize defined in DefineSpace.m
                
-if simBool == 1
+if sim == 1
  %% Simulation parameters
  starAmplitude = 1; % ref: 1
  planetAmplitude = 0.8; % ref: 0.1

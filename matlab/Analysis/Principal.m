@@ -46,7 +46,7 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd);
 % Adds all the directories to use in the algorithm
 
 %% Spatial definitions
-[Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,sSize,monitorSize] = ...
+[x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,sSize,monitorSize] = ...
 f_DefineSpace(spaceSupport,k,shiftCart,pixSize,scrnIdx,circularMask, ...
 shiftBool,coordType);
 % Defines the cartesian/polar coordinates, its sampling interval and 
@@ -125,28 +125,25 @@ end % End of measurements
 % abs(mask): should always be 1, meaning that it is normalized
 
 %% Fourier transform of the mask
-if FTmask == 1
-    maskSpectrum; % Performs the FFT of the mask and shows x and y profiles
-end
+% Executed if desired on the parameters
+% Performs the FFT of the mask and shows x and y profiles
+f_ComputeMaskSpectrum(x,y,mask,maskFTlog,FTmask);
 
 %% Gradient of the mask
+% Executed if desired on the parameters
 % Shows the singularity clearly
-if gradMask == 1
-    [xg,yg] = gradient(angle(mask));
-    figure; contour(x,y,angle(mask)); hold on;
-    quiver(x,y,xg,yg); title('Gradient of the mask'); hold off
-    figure; imagesc(x,y,xg); 
-    colormap(hot); title('X-profile gradient of the mask');
-    figure; imagesc(x,y,yg); 
-    colormap(hot); title('Y-profile gradient of the mask');
-end
+f_ComputeMaskGradient(x,y,mask,gradMask);
 
 %% Reconstruction of the mask with Zernike polynomials
-if maskZernReconstr == 1
-    f_Zernike_Reconstruction(14,angle(mask),1);
-end
+% Executed if desired on the parameters
+% Computes a wavefront reconstruction using Zernike's Polynomials and 
+% calculates the function expansion coefficients
+f_ZernikeReconstruction(14,angle(mask),1,maskZernReconstr);
 
 %% Simulation
-if sim == 1
-Simulation; % Executed if desired on the parameters
+% Executed if desired on the parameters
+if simBool
+f_SimulateFreeSpace(x,y,Xpc,Ypc,rPC,mask,starAmplitude,planetAmplitude, ...
+pixelSeparation,w1,w2,rPupilSize,showIin,showPupilin,showFPmag, ...
+logscale,showFPphas,showPhasout,showMagout,showIout)
 end
