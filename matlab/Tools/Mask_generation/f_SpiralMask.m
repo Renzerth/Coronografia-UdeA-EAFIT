@@ -5,7 +5,7 @@ function mask = f_SpiralMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl, ...
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
 % Inputs:
-%  r,phi: polar coordinates (r in cm)
+%  r,phi: polar coordinates (r in cm) for both the PC and SLM
 %  gl: number of grey levels (normally 256)
 %  glphi: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255

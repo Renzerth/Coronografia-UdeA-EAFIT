@@ -11,7 +11,8 @@ slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
-maskSel = 0; % Phase mask selection:
+abs_ang = 1; % Custom(0), magnitude (1) or phase (2) plot
+maskSel = 1; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -133,8 +134,7 @@ imgformat = '.png'; % Format with period. mat, bmp, png, jpg
 %%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS PARAMETERS %%%%%%%%%%%%%%%%%%%%%%
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
-abs_ang = 1; % Custom(0), magnitude (1) or phase (2) plot
-tc = 1; % Topological charge (integer bigger or equal to one)
+tc = 2; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
 s = +1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
@@ -176,10 +176,11 @@ end
 p = 5; % Number of radial nodes. If p=0, normal helicoid masks are obtained
        % If they are used and tc=0(m=0); binary masks are obtained
        % Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
-W = 100; % Width of the modes; for LG; ref: 100
-binv = 1; % Binary inversion of the mask: yes(1); no(0). It is only applied 
-          % when tc is zero. It is usefull to be applied for odd p. 
-norm = 1; % Normalize magnitude and phase (to unity). yes(1); no(0)         
+W = 1023/10; % Width of the modes; for LG; ref: 100
+binvLG = 0; % Binary inversion of the mask: yes(1); no(0). It is only 
+            % applied when tc is zero. It is usefull to be applied for
+            % odd p's. 
+normLG = 0; % Normalize magnitude (to unity). yes(1); no(0)         
 
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length

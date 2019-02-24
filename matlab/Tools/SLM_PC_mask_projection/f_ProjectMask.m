@@ -97,7 +97,7 @@ switch plotMask
    set(gcf,'OuterPosition',[MidVect monitorSize(1)+tol monitorSize(2)+tol]); 
   end
   % Fpr coordType the fig is maximized
-  image(wrappedMask);  % Plots in SLM screen 
+  imagesc(wrappedMask);  % Plots in SLM screen 
   axis off; colormap(gray(gl));
   % axis fill;
   fighandler.Visible = 'on';

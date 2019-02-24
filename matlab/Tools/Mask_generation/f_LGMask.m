@@ -1,11 +1,10 @@
 %% Laguerre Gauss phase masks
 
-function mask = f_LGMask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s, ...
-                         ph0,p,W,binv,norm,abs_ang,binMask,monitorSize, ...
-                         scrnIdx,showM)
+function mask = f_LGMask(rSLM,rPC,phiSLM,phiPC,gl,glphi,mingl,maxgl,levShft,tc,s, ...
+                         ph0,p,W,binvLG,normLG,binMask,monitorSize, ...
+                         scrnIdx,coordType,abs_ang,plotMask)
 % Inputs: 
-%  x,y: cartesian coordinates
-%  r,phi: polar coordinates (r in cm)
+%  r,phi: polar coordinates (r in cm) for both the PC and SLM
 %  gl: number of grey levels (normally 256)
 %  glphi: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
@@ -18,15 +17,18 @@ function mask = f_LGMask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s, ...
 %     Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
 %  W: width of the modes: related with the radius of the phase and with the
 %     disks on the magnitude
-%  bininv: Binary inversion of the mask. Only applied when tc=0. Binary 
+%  binvLG: Binary inversion of the mask. Only applied when tc=0. Binary 
 %          masks are only abtained when tc=0. yes(1); no(0)
-%  norm: normalize magnitude and phase. yes(1); no(0)
-%  abs_ang: Magnitude (1); Phase (2)
+%  normLG: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  monitorSize: size of the selected screen 
-%  screenIndex: screen number selector. In [1,N] with N the # of screen
-
-%  showM: show the mask. yes(1); no(0)
+%  scrnIdx: screen number selector. In [1,N] with N the # of screen
+%  coordType: type of calculation of the spatial coordinates. def: 2 
+%    -1: size defined by the user, space support defined by the SLM to use
+%    -2: size defined by the resolution of the selected screen    
+%  abs_ang: Magnitude (1); Phase (2)
+%  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
+%             a surface (3)
 %
 % Output:
 %  mask: Phase mask
@@ -42,35 +44,35 @@ end
 
 %% Parameters: Laguerre-Gauss
 m = tc; % Azimuthal index = topological charge
-sSize = length(x); % Size of the original x,y coordinates
+% sSize = length(x); % Size of the original x,y coordinates
+sSize = min(size(r)); % Addded but not fully sure
 W = W/sSize; % Normalization with number of samples
 
 %% Phase mask
-LG = f_LaguerreGauss(r,phi,m,s,ph0,p,W); % Generate Laguerre-Gauss mode: it
-                                         % has both magnitude and phase
-mag = abs(LG); % Magnitude of LG
-% mask = mag.*exp(1i*angle(LG)); % Redundant step
-mask = LG; % Phase mask. Wrapped on [-pi,pi], modulo(2pi)
+mask = f_LaguerreGauss(r,phi,m,s,ph0,p,W); % Generates a Laguerre-Gauss 
+% mode: it has both magnitude and phase, meaning that:
+% mask = abs(mask).*exp(1i*angle(mask))
+
+% OLD:
+% mag = abs(LG); % Magnitude of LG
+% mask = LG; % Phase mask. Wrapped on [-pi,pi], modulo(2pi)
 
 %% Binary inversion
-if binv == 1 && tc == 0 % Only applies binary inversion when tc = 0
+if binvLG == 1 && tc == 0 % Only applies binary inversion when tc = 0
     mask = ctranspose(-mask); % Binary inversion 
 end
 
-%% Normalization constants (amplitude and phase)
-wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl,maxgl,levShft);
-if norm == 1
-    norm_ang = max(max(wrappedMask)); % Max value
-    wrappedMask = wrappedMask/norm_ang; % Normalization
-    norm_mag = max(max(mag)); % Max value
-    mask = mag/norm_mag; % Normalization
+%% Normalization constants (amplitude)
+if normLG == 1 % Phase is not changed
+    NormMag = max(abs(mask(:))); % Max value
+    mask = mask/NormMag; % Normalization of the magnitude
 end
 
 %% Plot binary mask
 tit = strcat('LG phase mask with topological charge ',num2str(tc), ...
                  ' and radial node ',num2str(p));   
-f_ProjectMask(x,y,r,mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
-                    binMask,monitorSize,scrnIdx,plotMask)
+f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,binMask,monitorSize, ...
+              scrnIdx,tit,coordType,abs_ang,plotMask);
 %%% OLD
 %  title('Amplitude of LG');
 %  cbh = colorbar; cbh.Label.String = 'Value';
