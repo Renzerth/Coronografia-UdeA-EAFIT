@@ -48,67 +48,70 @@ end
 
 %% Plot
 switch plotMask
-  case 0 
-      % Won't plot at all
-  case 1 % PC Screen: normal plot
-    % slmhfig = figure('color','white','units','normalized','position',...
-           % [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',tit);
-    fighandler = figure('color','white','Name',figtit); 
-    imagesc(wrappedMask); axis square; colormap(gray(gl));
-    title(tit);
-    set(gca,'xtick',[]); set(gca,'ytick',[]) % No axes values
-    cbh = colorbar; cbh.Label.String = str;
-    pax = gca; pax.FontSize = 16; % Font size   
-    if abs_ang == 2
-      % Next, pi ticks are added to the colorbar if the phase value extreme
-      % points are near -pi and pi; otherwise the default colorbar is shown
-      upTol = abs(max(wrappedMask(:)) - pi); % upper tolerance
-      lowTol = abs(abs(min(wrappedMask(:))) - pi); % lower tolerance
-      % Tol and a were found empirically
-      Tol = 0.3; % Tolerance for pi ticks
-      a = 0.15; % Colorbar custom tick adjustment
-      if upTol < Tol && lowTol < Tol % Tolerances near pi values
-           % cbh.Ticks = linspace(1, 7, 2*pi); % 2*pi: period of e^(i*x) 
-           cbh.Ticks = linspace(-pi+a, pi-a, 5);
-           cbh.TickLabels = {'-\pi' '-\pi/2' '0'  '\pi/2' '\pi'};
-      end 
-    end
-    
-  case 2  % Plot on the SLM. 
-    if coordType == 2  
-     enablechange = true; % SLM figure display monitor activated
-     f_changeProjectionMonitor(scrnIdx,enablechange); % Allow full-screen 
-                                                     % size figures
-    end
-    offsetPixel = [1,1]; % Mandatory: pixels have this origin [0,0] 
-                         % doesn't exist
-    fighandler = figure('Visible','off','MenuBar','none','Toolbar', ...
-                        'none','NumberTitle','off');
-    % Hide Menu bar and Tool bar
-    fighandler.Units = 'Pixels'; % 'color','black',
-    set(gca,'Units','Pixels');
-    if coordType == 1
-       set(gca,'OuterPosition',[[0 0] monitorSize(1) monitorSize(2)]); 
-    else
-       set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
-    end
-    image(wrappedMask);  % Plots in SLM screen 
-    axis off; colormap(gray(gl));
-    % axis fill;
-    fighandler.Visible = 'on';
-    [~] = f_changeProjectionMonitor('Restore'); % Restore default figure
-    % OLD
-    %set(gca,'xtick',[]); set(gca,'ytick',[]) % No axis values
-    
-  case 3 % Screen: surface plot
-    fighandler = figure('color','white','units','normalized','position',...
-                     [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',figtit);
-    surf(wrappedMask), colormap(gray(gl)), shading interp; % 3D Surface
-    axis square; title(tit);
-    cbh = colorbar; cbh.Label.String = str;
-    % No axis values:
-    set(gca,'xtick',[]); set(gca,'ytick',[]);  set(gca,'ztick',[]) 
-    axis off
+ case 0 
+  % Won't plot at all
+ case 1 % PC Screen: normal plot
+  % OLD:   
+  % slmhfig = figure('color','white','units','normalized','position',...
+  % [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',tit);
   
+  fighandler = figure('color','white','Name',figtit); 
+  imagesc(wrappedMask); axis square; colormap(gray(gl));
+  title(tit);
+  set(gca,'xtick',[]); set(gca,'ytick',[]) % No axes values
+  cbh = colorbar; cbh.Label.String = str;
+  pax = gca; pax.FontSize = 16; % Font size   
+  if abs_ang == 2
+   % Next, pi ticks are added to the colorbar if the phase value extreme
+   % points are near -pi and pi; otherwise the default colorbar is shown
+   upTol = abs(max(wrappedMask(:)) - pi); % upper tolerance
+   lowTol = abs(abs(min(wrappedMask(:))) - pi); % lower tolerance
+   % Tol and a were found empirically
+   Tol = 0.3; % Tolerance for pi ticks
+   a = 0.15; % Colorbar custom tick adjustment
+   if upTol < Tol && lowTol < Tol % Tolerances near pi values
+    % cbh.Ticks = linspace(1, 7, 2*pi); % 2*pi: period of e^(i*x) 
+    cbh.Ticks = linspace(-pi+a, pi-a, 5);
+    cbh.TickLabels = {'-\pi' '-\pi/2' '0'  '\pi/2' '\pi'};
+   end 
+  end
+    
+ case 2  % Plot on the SLM. 
+  enablechange = true; % SLM figure display monitor activated
+  [res,~]= f_changeProjectionMonitor(scrnIdx,enablechange);
+  % Allow full-screen size figures when coordType == 2
+  offsetPixel = [1,1]; % Mandatory: pixels have this origin [0,0] 
+                       % doesn't exist
+  fighandler = figure('Visible','off','MenuBar','none','Toolbar', ...
+                      'none','NumberTitle','off');
+  % Hide Menu bar and Tool bar
+  fighandler.Units = 'Pixels'; % 'color','black',
+  set(gca,'Units','Pixels'); % Axis units
+  set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
+  if coordType == 1
+   MidVectMonitor = floor((res+1)/2); % SLM monitor mid vector
+   MidVectMask = floor((size(wrappedMask)+1)/2); % Mask mid vector
+   MidVect = MidVectMonitor - MidVectMask; % pixel position of the mask
+   set(gcf,'Units','Pixels'); % Figure units
+   set(gcf,'OuterPosition',[MidVect monitorSize(1) monitorSize(2)]); 
+  end
+  % Fpr coordType the fig is maximized
+  image(wrappedMask);  % Plots in SLM screen 
+  axis off; colormap(gray(gl));
+  % axis fill;
+  fighandler.Visible = 'on';
+  [~] = f_changeProjectionMonitor('Restore'); % Restore default figure
+  % OLD
+  % set(gca,'xtick',[]); set(gca,'ytick',[]) % No axis values
+    
+ case 3 % Screen: surface plot
+  fighandler = figure('color','white','units','normalized','position',...
+               [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',figtit);
+  surf(wrappedMask), colormap(gray(gl)), shading interp; % 3D Surface
+  axis square; title(tit);
+  cbh = colorbar; cbh.Label.String = str;
+  % No axis values:
+  set(gca,'xtick',[]); set(gca,'ytick',[]);  set(gca,'ztick',[]) 
+  axis off
 end
 end

@@ -52,7 +52,7 @@ shiftBool = 0; % Only shifts when plotMask = 2
 % 0: shift deactivated [for exporting masks]
 % 1: shift activated [SLM displaying]
 % 2: self-centering algorithm
-shiftCart = [5,10]; % [yshift,xshift], works when shiftBool = 1
+shiftCart = [5,20]; % [yshift,xshift], works when shiftBool = 1
                      % Percentages of movement of the total size of the
                      % mask (cartesian coordinates convention)
                      % Calibrated with: s = +1; ph0 = 0, tc = 1; 
