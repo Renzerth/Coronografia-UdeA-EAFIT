@@ -88,9 +88,9 @@ switch slm
     
   case 'No-SLM'
    spaceSupport = 1; % A unitary space can be created when coordType=1
-   maxNumPix = 1; % Unitary
-   pixSize = 1; % Unitary
-   scrnIdx = 1; % PC screen
+   maxNumPix = max([1920 1080]); % As the Pluto SLM
+   pixSize = 8; % As the Pluto SLM
+   scrnIdx = 1; % PC screem
   otherwise
     warning('Please select an SLM');
 end 
@@ -132,33 +132,6 @@ imgformat = '.png'; % Format with period. mat, bmp, png, jpg
                     
                     
 %%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS PARAMETERS %%%%%%%%%%%%%%%%%%%%%%
-%% Gray levels (discretization levels of the mask)
-% Dynamic range = maxGrayDepth - minGrayDepth
-mingl = 0; % Minimum gray level depth. Ref: 0
-maxgl = 255; % Maximum gray level depth. Ref: 255
-levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
-             % Corresponds to the brightness or constant shift of the gl's
-discretization = 1; % Variable for the next switch
-switch discretization % Gray-level discretized azimuthal angle vector
- case 1 % 1: Evenly-spaced gl phase values.
-  gl = 256; % Number of gray levels (normally 256). Must be smaller than
-            % the dynamic range = maxGrayDepth-minGrayDepth
-  glphi = linspace(-pi,pi,gl); % Discretized phi vector on [-pi,pi]. The 
-                               % sampling interval consists on dividing the
-                               % range over the gray levels. Similar to the
-                               % VPL Edgar's discretization formula on the
-                               % first page of:
-  % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf     
- case 2 % 2: user-defined gl values
-  glphi = [1 10 100 201 202]; % Custom gl vector: the mask will only have
-                              % these levels
-  glphi = glphi*2*pi/256 - pi; % Conversion from gray to phase levels                  
-  gl = 202; % That is the reference gl when one has personalized gl's
-end
-% OLD:
-% a = 0:255 valores de la fase (256 valores posibles de fase)
-% angle = a/256*2*pi-pi
-
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
 tc = 1; % Topological charge (integer bigger or equal to one)
@@ -171,7 +144,7 @@ ph0 = 0; % Initial phase of the angle [radians]; reference +pi from
          % reasons and shouldn't affect the results. Only affects if the
          % vortex is no fully centered
 % For abs_ang = 2:
-binMask = 0; % Binarizes the mask w.r.t the max/min of the phase (boolean)
+binMask = 1; % Binarizes the mask w.r.t the max/min of the phase (boolean)
 binv = 0; % Binary inversion of the mask: yes(1); no(0). Only applies when 
           % binMask=1. It is usefull to be applied for odd p's on LG beams
 % For abs_ang = 1:
@@ -223,6 +196,32 @@ Angbet = pi/2; % Diffraction angle of vertical direction (y) [radians]
 % Range: [-pi/2,pi/2]
 % The "*" items remarks in the 'Smooth transition' comments also apply here
 
+%% Gray levels (discretization levels of the mask)
+% Dynamic range = maxGrayDepth - minGrayDepth
+mingl = 0; % Minimum gray level depth. Ref: 0
+maxgl = 255; % Maximum gray level depth. Ref: 255
+levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
+             % Corresponds to the brightness or constant shift of the gl's
+discretization = 1; % Variable for the next switch
+switch discretization % Gray-level discretized azimuthal angle vector
+ case 1 % 1: Evenly-spaced gl phase values.
+  gl = 256; % Number of gray levels (normally 256). Must be smaller than
+            % the dynamic range = maxGrayDepth-minGrayDepth
+  glphi = linspace(-pi,pi,gl); % Discretized phi vector on [-pi,pi]. The 
+                               % sampling interval consists on dividing the
+                               % range over the gray levels. Similar to the
+                               % VPL Edgar's discretization formula on the
+                               % first page of:
+  % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf     
+ case 2 % 2: user-defined gl values
+  glphi = [1 10 100 201 202]; % Custom gl vector: the mask will only have
+                              % these levels
+  glphi = glphi*2*pi/256 - pi; % Conversion from gray to phase levels                  
+  gl = 202; % That is the reference gl when one has personalized gl's
+end
+% OLD:
+% a = 0:255 valores de la fase (256 valores posibles de fase)
+% angle = a/256*2*pi-pi
 
 
 

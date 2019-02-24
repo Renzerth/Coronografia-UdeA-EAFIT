@@ -27,13 +27,13 @@ switch maskSel
   maskName = 'LG';
  
  case 2 % Vortex Producing Lens (VPL) = Helicoidal + Fresnel lens
-  mask = f_VPLMask(r,phi,gl,glphi,mingl,maxgl,levShft, ...
-          tc,s,ph0,L,f_FR,normMag,binMask,binv,coordType,abs_ang,plotMask);
+  mask = f_VPLMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,L,f_FR, ...
+  normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask);
   maskName = 'VPL';
   
  case 3 % Elliptic Gaussian Vortex (EGV) mask or Vórtice elíptico-gaussiano
-  mask = f_EGVMask(X,Y,r,gl,glphi,mingl,maxgl, ...
-  levShft,tc,s,ph0,bcst,normMag,binMask,binv,coordType,abs_ang,plotMask);
+  mask = f_EGVMask(X,Y,r,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,bcst, ...
+  normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask);
   maskName = 'EGV';
   
  case 4 % Threefold dislocation hologram or double pitch fork hologram or

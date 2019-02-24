@@ -1,7 +1,8 @@
 %% Elliptic Gaussian Vortex (EGV)
 % Taken from: 1_2017_IMP_Elliptic_Gaussian Optical Vortices_PRA_Kotlyar
 
-function mask = f_EGVMask(x,y,X,Y,r,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,bcst,binMask,showM)
+function mask = f_EGVMask(X,Y,r,gl,glphi,mingl,maxgl,levShft,tc,s,ph0, ...
+bcst,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
@@ -29,9 +30,9 @@ function mask = f_EGVMask(x,y,X,Y,r,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,bcst,b
 %
 
 
-%% Elliptic Gaussian beam phase mask
+%% Elliptic Gaussian beam phase mask: scalated azimuthal coordinate
 phi = atan2(bcst*Y,X); % Angle component with elliptic gaussian beam
-% atan2(beta^(0.5)*Y,beta^-(0.5)*X) % OLD: Works the same as above
+% atan2(beta^(0.5)*Y,beta^-(0.5)*X) % Works the same as above
 
 %% Spiral phase mask Generation
 m = s*tc; % tc with a sign

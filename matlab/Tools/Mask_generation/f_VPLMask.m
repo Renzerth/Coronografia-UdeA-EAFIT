@@ -3,8 +3,8 @@
 % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf
 % Equation 3, page 2
 
-function mask = f_VPLMask(r,phi,gl,glphi,mingl,maxgl, ...
-levShft,tc,s,ph0,L,f_FR,normMag,binMask,binv,coordType,abs_ang,plotMask);
+function mask = f_VPLMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0, ...
+L,f_FR,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 % Generates and plots a VPL mask:  helicoidal mask + fresnel lens
 %
 % Inputs: 
@@ -31,7 +31,7 @@ m = s*tc;  % tc with a sign
 maskSPP = m*(phi + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
 maskSPP = exp(1i*maskSPP); % Wrapped mask
 
-%% VPL Mask
+%% VPL Mask generation
 scaleFactor = 1e4; % cm to um. Constant factor
 r = r*scaleFactor; % r converted to um
 VPLfactor = -(pi*r.^2)/(L*f_FR);
@@ -40,12 +40,10 @@ mask = maskSPP.*maskVPL;
 % maskSPP*maskVPL; gives cool results as the Fresnel lens but in a linear
 % fashion: a chirp ramp for tc = 0. It is just a test without validity
 
-%% Plot (with axes)
-if showM == 1
-  wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl,maxgl,levShft);
-  tit = strcat('VPL with topological charge ',num2str(tc),' and ', ...
-               num2str(gl),' gray levels');  
-  f_ProjectMaskPC(x, y, wrappedMask, tit, gl, showM);
-end
+%% Plot the mask
+tit = strcat('VPL with topological charge',{' '},num2str(tc),{' '}, ...
+             'and',{' '},num2str(gl),{' '},'gray levels');  
+f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask,binv, ...
+              monitorSize,scrnIdx,tit,coordType,abs_ang,plotMask);
 
 end
