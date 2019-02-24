@@ -1,6 +1,6 @@
 function [x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,sSize,monitorSize] = ...
 f_DefineSpace(spaceSupport,k,shiftCart,pixSize,scrnIdx,circularMask, ...
-shiftBool,coordType)
+shiftBool,coordType,maskSel)
 switch coordType
  case 1 % Size defined by the user, space support defined by the SLM to use
   % This applies when one won't project a full screen mask and a desired 
@@ -67,10 +67,10 @@ switch shiftBool
  
  case 2 % Self-centering algorithm
   % Pending
-     
 end
 
-if circularMask == 1 && coordType == 2 % X is used as Xrescaled 
+% Circular should also apply whenver Zernike is used
+if (circularMask == 1 || maskSel == 5 || maskSel == 6) && coordType == 2
    X = Xrescaled; % Circular truncation in full screen
 end % Otherwise X=X and one has the elliptical truncation in full screen
 

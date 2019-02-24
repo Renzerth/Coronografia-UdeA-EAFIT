@@ -52,7 +52,7 @@ end
 % In both cases of the next if-else, rMax is found as the maximum radius
 % that allows to circumscribe a circle inside an square for coordType == 1
 % or inside a rectangle for coordType == 2
-if coordType == 1 % User-defined
+if coordType == 2 % User-defined
     rMax = max(r(:));  % the maximum value of r (diagonal of the square)
     rSize = rMax/sqrt(2); % Equals this since twice rSize^2 equals
                           % rmax^2 (Pythagorean theorem)
@@ -68,7 +68,7 @@ else % coordType == 2 % Screen-resolution defined
     else % idx == 2 % (for portrait monitors)
         rMax = r(1,rMove); % The rMax is in the x direction
     end
-    % if one has a unitary space, rmax = 1 always
+    % if one has a unitary space, rMax = 1 always
     rSize = rMax; % Both rmax and rsize are equal
 end
 
@@ -81,19 +81,19 @@ if ~all(A) % True when at least one of the elements is nonzero
         % Zeros padded symmetrically
         if idx == 2
             if mod(pad,2) == 0 % Even pad (symmetric)
-                wrappedMask = padarray(wrappedMask,[0 pad/2],0,'both');
+                wrappedMask = padarray(wrappedMask,[0 pad/2],'replicate','both');
                 % A = [zeros(1,pad/2) A zeros(1,pad/2)];
             else % Odd pad (asymmetric)
-                wrappedMask = padarray(wrappedMask,[0 (pad+1)/2],0,'pre');
-                wrappedMask = padarray(wrappedMask,[0 (pad+1)/2 - 1],0,'pos');
+                wrappedMask = padarray(wrappedMask,[0 (pad+1)/2],'replicate','pre');
+                wrappedMask = padarray(wrappedMask,[0 (pad+1)/2 - 1],'replicate','pos');
                 % A = [zeros(1,(pad+1)/2) A zeros(1,(pad+1)/2-1)]; 
             end  
         else % idx == 1
             if mod(pad,2) == 0 % Even pad (symmetric)
-                wrappedMask = padarray(wrappedMask,[pad/2 0],0,'both');
+                wrappedMask = padarray(wrappedMask,[pad/2 0],'replicate','both');
             else % Odd pad (asymmetric)
-                wrappedMask = padarray(wrappedMask,[(pad+1)/2 0],0,'pre');
-                wrappedMask = padarray(wrappedMask,[(pad+1)/2 - 1 0],0,'pos');
+                wrappedMask = padarray(wrappedMask,[(pad+1)/2 0],'replicate','pre');
+                wrappedMask = padarray(wrappedMask,[(pad+1)/2 - 1 0],'replicate','pos');
             end  
         end
     end

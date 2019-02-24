@@ -28,7 +28,6 @@
 %  coherently, restart MATLAB
 %  -For high resolution monitors, sometimes the figure bar may appear but
 %  this presents no problem for the mask projection
-%  
 %
 % Samuel Plazas(PA1/PA2/TG) - Juan Jose Cadavid(Master thesis) - 2018/2019
 
@@ -48,7 +47,7 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd);
 %% Spatial definitions
 [x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,sSize,monitorSize] = ...
 f_DefineSpace(spaceSupport,k,shiftCart,pixSize,scrnIdx,circularMask, ...
-shiftBool,coordType);
+shiftBool,coordType,maskSel);
 % Defines the cartesian/polar coordinates, its sampling interval and 
 % discretized angular part for gl
 %%% Coordinates selection:
