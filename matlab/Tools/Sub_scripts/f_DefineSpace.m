@@ -46,7 +46,11 @@ switch coordType
   % drawn normally on the whole screen
   Xrescaled = AspectRatio*X; % Used for the mask generation on the pc. It 
                              % is never shifted
-  
+  % Circular should also apply whenever Zernike is used for both pc and SLM
+  % Xrescaled only applies for coordType = 2
+  if circularMask == 1 || maskSel == 5 || maskSel == 6
+      X = Xrescaled; % Circular truncation in full screen
+  end % Otherwise X=X and one has the elliptical truncation in full screen
 end
 
 %% Polar coordinates for the PC
@@ -68,11 +72,6 @@ switch shiftBool
  case 2 % Self-centering algorithm
   % Pending
 end
-
-% Circular should also apply whenver Zernike is used
-if (circularMask == 1 || maskSel == 5 || maskSel == 6) && coordType == 2
-   X = Xrescaled; % Circular truncation in full screen
-end % Otherwise X=X and one has the elliptical truncation in full screen
 
 % X,Y variables redefined for being used in the EGV and Fork masks
 % The signs of the shifts account for the cartesian coordinates convention

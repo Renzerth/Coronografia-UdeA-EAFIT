@@ -28,7 +28,7 @@ maskSel = 5; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
+plotMask = 2; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -50,6 +50,8 @@ circularMask = 1; % Only works when coordType = 2
   % 0: The mask presents an elliptical form when in the full screen
   % 1: The mask presents a circular form when in the full screen
   % On both cases full screen means that plotMask = 2
+  % It is always applied for Zernike masks (maskSel=5,6) either for PC or
+  % for the SLM
 shiftBool = 0; % Only shifts when plotMask = 2
 % 0: shift deactivated [for exporting masks]
 % 1: shift activated [SLM displaying]
@@ -282,7 +284,7 @@ simBool = 0; % Simulate: yes (1) or no (0)
 %% Parameters: Zernike
 % Used in maskZernReconstr, maskSel = 5 and maskSel = 6
 % L and gl are also used with Zernike
-z_coeff = -1; % Zernike coeffient vector (see f_ZernikeMask.m)
+z_coeff = [3 4]; % Zernike coeffient vector (see f_ZernikeMask.m)
 a = 60; % Arbitrary constant; the bigger, the more intense; ref: a=20
 frac = 0.125; % To adjust the wrapped phase; ref: 0.125
 pupil = 1; % Pupil relative size: [0,1]; like a percentage

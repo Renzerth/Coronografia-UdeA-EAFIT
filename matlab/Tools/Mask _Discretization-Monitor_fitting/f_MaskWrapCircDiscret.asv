@@ -1,5 +1,5 @@
-function wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,...
-                                  binv,glphi,mingl,maxgl,levShft,coordType)
+function wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,binv,glphi,...
+                       mingl,maxgl,levShft,coordType,plotMask)
 % Multiplies the phase mask by the maximum circle size with its outer
 % borders containing the minimum value of the phase (normally -pi)
 % Wraps the phase with the function "angle"
@@ -18,6 +18,8 @@ function wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,...
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use
 %    -2: size defined by the resolution of the selected screen    
+%  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
+%             a surface (3)
 %
 % Output:
 %  wrappedMask: real-valued mask (angle), wrapped on [-pi,pi] and truncated
@@ -73,8 +75,9 @@ else % coordType == 2 % Screen-resolution defined
 end
 
 %% Mask padarray with zeros if needed
-% Only used for Zernike masks: maskSel = 5,6 AND plotMask == 2
-if  (maskSel == 5 || maskSel == 6) && plotMask == 2
+% Only used for Zernike masks (the only one assumed to be generated with a
+% squared size):
+if  plotMask == 2 % SLM
     A = size(r) - size(wrappedMask); % Size comparison
     if ~all(A) % True when at least one of the elements is nonzero
         idx = find(A ~= 0);
@@ -103,7 +106,15 @@ if  (maskSel == 5 || maskSel == 6) && plotMask == 2
             end  
         end
     end
+else % plotMask == 0 or 1 or 3 % PC
+    % "Anti" pad array: r takes the mask's size
+    mYmid = floor((siz(wrappedMask,1)+1)/2);
+    mXmid = floor((siz(wrappedMask,2)+1)/2);
+    rXmid = floor((size(r,2)+1)/2);
+    rYmid = floor((size(r,1)+1)/2);
+    r = r(rYmid-mYmid:rYmid+mYmid,rXmid-mXmid:rXmid+mXmid); 
 end
+
 %% Phase mask times a circular (or elliptical) aperture
 % Depends on the variable circularMask inside f_DefineSpace.m
 binCirc = double(r <= rSize); % Binary mask.

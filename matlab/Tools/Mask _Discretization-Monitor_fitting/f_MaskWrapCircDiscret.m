@@ -76,10 +76,12 @@ end
 
 %% Mask padarray with zeros if needed
 % Only used for Zernike masks (the only one assumed to be generated with a
-% squared size):
-if  plotMask == 2 % SLM
-    A = size(r) - size(wrappedMask); % Size comparison
-    if ~all(A) % True when at least one of the elements is nonzero
+% square-size):
+A = size(r) - size(wrappedMask); % Size comparison
+if any(A) % True when tests whether any of the elements along various
+          % dimensions of an array are nonzero
+    if  plotMask == 2 % SLM
+    
         idx = find(A ~= 0);
         pad = A(idx);
         if isscalar(pad)
@@ -104,11 +106,17 @@ if  plotMask == 2 % SLM
                 wrappedMask = padarray(wrappedMask,a3,'replicate','pos');
                 % A = [zeros(1,(pad+1)/2) A zeros(1,(pad+1)/2-1)]; 
             end  
+        else % pad is a vector
+            % MISSING
         end
+    else % plotMask == 0 or 1 or 3 % PC
+        % "Anti" pad array: r takes the mask's size
+        mYmid = floor((size(wrappedMask,1)+1)/2);
+        mXmid = floor((size(wrappedMask,2)+1)/2);
+        rXmid = floor((size(r,2)+1)/2);
+        rYmid = floor((size(r,1)+1)/2);
+        r = r(rYmid-mYmid+1:rYmid+mYmid,rXmid-mXmid+1:rXmid+mXmid); 
     end
-else % plotMask == 0 or 1 or 3 % PC
-    siz = size(wrappedMask);
-    r = r(1:siz,1:siz); % "Anti" pad array: r takes the mask's size
 end
 
 %% Phase mask times a circular (or elliptical) aperture
