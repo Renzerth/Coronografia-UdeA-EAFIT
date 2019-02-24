@@ -38,8 +38,9 @@ switch abs_ang
   figtit = 'Mask';
   str = 'Amplitude';
   if isreal(mask) == false
-      error(['When you choose abs_ang = 0, mask must be selected to be' ...
-            'real-valued']);
+   warning(['When you choose abs_ang = 0, mask must be selected to be' ...
+            'real-valued. Selecting the real part...']);
+   wrappedMask = real(mask);  
   end
  case 1 % Amplitude
   wrappedMask = abs(mask); % Actually, this is an amplitude filter

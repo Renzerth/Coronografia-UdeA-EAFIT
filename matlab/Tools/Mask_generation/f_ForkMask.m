@@ -1,8 +1,9 @@
 %% Elliptic Gaussian Vortex (EGV)pi
 % Taken from: 2015_Vortex_CGH_Adjustable-SPP_Jain
 
-function mask = f_ForkMask(x,y,X,Y,r,phi,gl,glphi,mingl,maxgl,levShft, ...
-            tc,s,ph0,L,period,T0,frkTyp,Aalpha,Angalp,Angbet,binMask,showM)
+function mask = f_ForkMask(X,Y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s, ...
+ph0,L,period,T0,frkTyp,Aalpha,Angalp,Angbet,normMag,binMask,binv, ...
+monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
@@ -29,7 +30,9 @@ function mask = f_ForkMask(x,y,X,Y,r,phi,gl,glphi,mingl,maxgl,levShft, ...
 %
 % Outputs: Threefold dislocation hologram or double pitch fork hologram or
 %          fork phase mask or holograma en forma de tenedor
-% mask: Elliptic Gaussian Vortex (EGV)
+% mask: Fork mask. Complex structure that has not been truncated and is 
+% wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
+%
 %
 
 switch frkTyp
@@ -61,12 +64,9 @@ switch frkTyp
         
 end
 
-%% Plot (with axes)
-if showM == 1
-  wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl,maxgl,levShft);
-  tit = strcat('Fork mask with topological charge ',num2str(tc), ...
-               ' and period = ',num2str(period));
-  f_ProjectMaskPC(x, y, wrappedMask, tit, gl, showM);
-end
-
+%% Plot the mask
+tit = strcat('Fork mask with topological charge',{' '},num2str(tc), ...
+             {' '},'and period =',{' '},num2str(period));
+f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask,binv, ...
+              monitorSize,scrnIdx,tit,coordType,abs_ang,plotMask);
 end

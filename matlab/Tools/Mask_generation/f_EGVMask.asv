@@ -26,7 +26,8 @@ bcst,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %  showM: show the mask. yes(1); no(0)
 %
 % Outputs:
-% mask: Elliptic Gaussian Vortex (EGV)
+% mask: Elliptic Gaussian Vortex (EGV). Complex structure that has not been
+% truncated and is wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
 %
 
 
@@ -39,12 +40,10 @@ m = s*tc; % tc with a sign
 mask = m*(phi + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
 mask = exp(1i*mask); % Wrapped mask
 
-%% Plot (with axes)
-if showM == 1
-  wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl,maxgl,levShft);
-  tit = strcat('EGV with topological charge ',num2str(tc), ...
-         ' and beta = ',num2str(bcst));
-  f_ProjectMaskPC(x, y, wrappedMask, tit, gl, showM);
-end
+%% Plot the mask
+tit = strcat('EGV with topological charge ',num2str(tc), ...
+             ' and beta = ',num2str(bcst));
+f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask,binv, ...
+              monitorSize,scrnIdx,tit,coordType,abs_ang,plotMask);
 
 end

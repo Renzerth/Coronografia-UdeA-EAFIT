@@ -1,7 +1,7 @@
 %% Generate a Zernike phase mask (wavefront)
-function mask = f_ZernikeMask(r,z_coeff,a,frac,L,gl,glphi,mingl, ...
-                  maxgl,levShft,pupil,sSize,disp_wrap,plot_z,binMask, ...
-                  monitorSize,scrnIdx,showM)
+function mask = f_ZernikeMask(r,z_coeff,a,frac,L,gl,glphi,mingl,maxgl, ...
+levShft,pupil,sSize,disp_wrap,plot_z,normMag,binMask,binv,monitorSize, ...
+scrnIdx,coordType,abs_ang,plotMask)
 % Characterizes the aberrations of the system
 % Inputs:
 %  r: polar coordinate (in cm)
@@ -38,12 +38,13 @@ function mask = f_ZernikeMask(r,z_coeff,a,frac,L,gl,glphi,mingl, ...
 %  showM: show the mask. yes(1); no(0)
 %
 % Outputs:
-%  Zernike phase mask
+%  Zernike phase mask. Complex structure that has not been truncated and is
+%  wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
 %
 % Missing:
 %  it still doesn't modulate on 2pi completely
 
-%% Parameters
+%% Parameters (input z_coeff vector verification)
 o1 = size(z_coeff); % Dimensions of z_coeff
 o2 = abs(z_coeff) > ones(size(z_coeff)); % Ask if elemts are bigger than one
 o2 = sum(o2); % Sum all elements; zero if they are all smaller than one
@@ -62,7 +63,7 @@ elseif o1(1) == 1 &&  o2 == 0 % Column vector and #s less than 1 [#s]' % B)
  end
 else
   warning('Not valid input');
-  z_vec = zeros(1,2)'; % Initialization
+  z_vec = zeros(1,2)'; % Initialization so that there are no errors
 end
 
 %% Zernike Polynomials
@@ -70,8 +71,8 @@ n_mask = f_ZernikeBuilder(z_vec,pupil,sSize,plot_z); % Defocus
 % (vector, pupil size, Matrix size (zernike phase size), graph:1 or not:0)
 mask = exp(1i*n_mask); % Wrapped mask
 
-%% Plot 
-if disp_wrap == 1 && showM == 1
+%% Plot the mask
+if disp_wrap == 1 % Wrapped
   figure; imagesc(angle(mask)), title('Wrapped phase mask');
   colormap(gray(gl)); cbh = colorbar; cbh.Label.String = 'Value of phase';
 elseif showM == 1 % disp_wrap = 0

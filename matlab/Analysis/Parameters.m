@@ -12,7 +12,7 @@ slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[mask real-valued], magnitude (1) or phase (2) plot
-maskSel = 2; % Phase mask selection:
+maskSel = 4; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -144,7 +144,7 @@ ph0 = 0; % Initial phase of the angle [radians]; reference +pi from
          % reasons and shouldn't affect the results. Only affects if the
          % vortex is no fully centered
 % For abs_ang = 2:
-binMask = 1; % Binarizes the mask w.r.t the max/min of the phase (boolean)
+binMask = 0; % Binarizes the mask w.r.t the max/min of the phase (boolean)
 binv = 0; % Binary inversion of the mask: yes(1); no(0). Only applies when 
           % binMask=1. It is usefull to be applied for odd p's on LG beams
 % For abs_ang = 1:

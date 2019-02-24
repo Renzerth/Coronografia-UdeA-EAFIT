@@ -24,7 +24,9 @@ L,f_FR,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %  showM: show the mask. yes(1); no(0)
 %
 % Outputs:
-% mask: Vortex-Producing Lens (VPL) phase mask
+% mask: Vortex-Producing Lens (VPL) phase mask. Complex structure that has
+% not been truncated and is wrapped on [-pi,pi]. mask = exp(i*UnwrppedMsk).
+%
 
 %% Spiral phase mask Generation
 m = s*tc;  % tc with a sign

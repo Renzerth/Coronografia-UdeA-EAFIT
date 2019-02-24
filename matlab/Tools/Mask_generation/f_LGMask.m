@@ -31,7 +31,8 @@ W,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %             a surface (3)
 %
 % Output:
-%  mask: Phase mask
+%  mask: LG mask. Complex structure that has not been truncated and is 
+%  wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
 %
 % Samuel Plazas Escudero - Juan José Cadavid - 2018 - Advanced Project 1
 
