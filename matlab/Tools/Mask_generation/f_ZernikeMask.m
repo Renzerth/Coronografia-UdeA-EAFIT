@@ -73,8 +73,8 @@ mask = exp(1i*n_mask); % Wrapped mask
 
 %% Plot the mask
 if disp_wrap == 1 % Wrapped
-  figure; imagesc(angle(mask)), title('Wrapped phase mask');
-  colormap(gray(gl)); cbh = colorbar; cbh.Label.String = 'Value of phase';
+%   figure; imagesc(angle(mask)), title('Wrapped phase mask');
+%   colormap(gray(gl)); cbh = colorbar; cbh.Label.String = 'Value of phase';
 elseif showM == 1 % disp_wrap = 0
     abs_ang = 1; % "Magnitude" in order to not wrap the phase
     plotMask = showM; % plotMask = show; for 0 and 1.
