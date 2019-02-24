@@ -72,6 +72,33 @@ else % coordType == 2 % Screen-resolution defined
     rSize = rMax; % Both rmax and rsize are equal
 end
 
+%% Mask padarray with zeros if needed
+A = size(r) - size(wrappedMask); % Size comparison
+if ~all(A) % True when at least one of the elements is nonzero
+    idx = find(A ~= 0);
+    pad = A(idx);
+    if isscalar(pad)
+        % Zeros padded symmetrically
+        if idx == 2
+            if mod(pad,2) == 0 % Even pad (symmetric)
+                wrappedMask = padarray(wrappedMask,[0 pad/2],0,'both');
+                % A = [zeros(1,pad/2) A zeros(1,pad/2)];
+            else % Odd pad (asymmetric)
+                wrappedMask = padarray(wrappedMask,[0 (pad+1)/2],0,'pre');
+                wrappedMask = padarray(wrappedMask,[0 (pad+1)/2 - 1],0,'pos');
+                % A = [zeros(1,(pad+1)/2) A zeros(1,(pad+1)/2-1)]; 
+            end  
+        else % idx == 1
+            if mod(pad,2) == 0 % Even pad (symmetric)
+                wrappedMask = padarray(wrappedMask,[pad/2 0],0,'both');
+            else % Odd pad (asymmetric)
+                wrappedMask = padarray(wrappedMask,[(pad+1)/2 0],0,'pre');
+                wrappedMask = padarray(wrappedMask,[(pad+1)/2 - 1 0],0,'pos');
+            end  
+        end
+    end
+end
+
 %% Phase mask times a circular (or elliptical) aperture
 % Depends on the variable circularMask inside f_DefineSpace.m
 binCirc = double(r <= rSize); % Binary mask.

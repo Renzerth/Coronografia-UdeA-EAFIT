@@ -11,8 +11,10 @@ slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
-abs_ang = 2; % Custom(0)[mask real-valued], magnitude (1) or phase (2) plot
-maskSel = 4; % Phase mask selection:
+abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
+             % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
+             % Zernike.
+maskSel = 5; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -44,7 +46,7 @@ coordType = 2;  % Type of calculation of the spatial coordinates. def: 2
 k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
         % Default: 10. Size is calculated as 2^k - 1
         % Only works when coordType = 1
-circularMask = 0; % Only works when coordType = 2
+circularMask = 1; % Only works when coordType = 2
   % 0: The mask presents an elliptical form when in the full screen
   % 1: The mask presents a circular form when in the full screen
   % On both cases full screen means that plotMask = 2
@@ -284,7 +286,7 @@ z_coeff = -1; % Zernike coeffient vector (see f_ZernikeMask.m)
 a = 60; % Arbitrary constant; the bigger, the more intense; ref: a=20
 frac = 0.125; % To adjust the wrapped phase; ref: 0.125
 pupil = 1; % Pupil relative size: [0,1]; like a percentage
-disp_wrap = 0; % (0): Original; (1): wrapped mask on [-pi,pi] 
+disp_wrap = 1; % (0): Original; (1): wrapped mask on [-pi,pi] 
 plot_z = 0; % plot with Zernike builder: yes(1); no(0)
 ReconstrNumb = 14; % Number of polynomials to use for the reconstruction
 % sSize defined in DefineSpace.m

@@ -1,7 +1,7 @@
 %% Generate a Zernike phase mask (wavefront)
 function mask = f_ZernikeMask(r,z_coeff,a,frac,L,gl,glphi,mingl,maxgl, ...
 levShft,pupil,sSize,disp_wrap,plot_z,normMag,binMask,binv,monitorSize, ...
-scrnIdx,coordType,abs_ang,plotMask)
+scrnIdx,coordType,plotMask)
 % Characterizes the aberrations of the system
 % Inputs:
 %  r: polar coordinate (in cm)
@@ -17,25 +17,28 @@ scrnIdx,coordType,abs_ang,plotMask)
 %     A) z_coeff = -1 (just that)
 %     B) z_coeff = [0.1 -0.13 0.15 0 -1 0.78]' (transposed)
 %     C) z_coeff = [2 3 1 5 7] (normal)
-%  a: arbitrary constant; the bigger, the more intense; ref: a=20
+%  a: arbitrary constant; the bigger, the more intense the mask; ref: a=20
 %  frac: to adjust the wrapped phase; ref: 0.125
 %  L: laser wavelength [um]
-%  pupil
 %  gl: gray levels of Zernike. Normally 256
 %  glphi: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
 %  levShft: corresponds to the brightness or constant shift of the gl's
 %  pupil: defines pupil relative size (w.r.t. sSize), like a percentage
 %  sSize: Size of cartesian coordinates. Space Size
-%  disp_wrap: original (0) or wrapped mask (1)
+%  disp_wrap: unwrapped (0) or wrapped mask (1)
 %  plot_z: plot (1); no plot (0)
-%  *-Not used directly here (but needed as an input of an inner function):
+%  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
-%  abs_ang: Magnitude (1); Phase (2) 
-%  *-
+%  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
+%        binMask=1. It is usefull to be applied for odd p's on LG beams
 %  monitorSize: size of the selected screen 
-%  screenIndex: screen number selector. In [1,N] with N the # of screen
-%  showM: show the mask. yes(1); no(0)
+%  scrnIdx: screen number selector. In [1,N] with N the # of screen
+%  coordType: type of calculation of the spatial coordinates. def: 2 
+%    -1: size defined by the user, space support defined by the SLM to use
+%    -2: size defined by the resolution of the selected screen    
+%  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
+%             a surface (3)
 %
 % Outputs:
 %  Zernike phase mask. Complex structure that has not been truncated and is
@@ -72,16 +75,19 @@ n_mask = f_ZernikeBuilder(z_vec,pupil,sSize,plot_z); % Defocus
 mask = exp(1i*n_mask); % Wrapped mask
 
 %% Plot the mask
-if disp_wrap == 1 % Wrapped
-%   figure; imagesc(angle(mask)), title('Wrapped phase mask');
-%   colormap(gray(gl)); cbh = colorbar; cbh.Label.String = 'Value of phase';
-elseif showM == 1 % disp_wrap = 0
-    abs_ang = 1; % "Magnitude" in order to not wrap the phase
-    plotMask = showM; % plotMask = show; for 0 and 1.
-    f_ProjectMaskSLM(r,n_mask,gl,glphi,mingl,maxgl,levShft,abs_ang, ...
-                  binMask,monitorSize,scrnIdx,plotMask);
-    title('Unwrapped phase mask'); % The amplitude title is replaced
+if disp_wrap == 1 % Wrapped phase
+    abs_ang = 2; % Phase plot
+    tit ='Wrapped phase mask';
+    % mask = mask; % No change
+    str = ''; % Empty, it only works for abs_ang = 0
+else % disp_wrap = 0
+    abs_ang = 0; % Custom input in order to not wrap the phase
+    tit = 'Unwrapped phase mask'; % The amplitude title is replaced  
+    mask = n_mask; % Unwrapped mask
+    str = 'Unwrapped phase value';
 end
+f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask,binv, ...
+              monitorSize,scrnIdx,tit,str,coordType,abs_ang,plotMask);
 
 %% Phase wrapping test (optional): 
 % The wrapped phase should do complete cycles of 2pi

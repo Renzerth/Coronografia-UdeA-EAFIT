@@ -7,8 +7,7 @@ bcst,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
 % Inputs: 
-%  x,y: cartesian coordinates vector
-%  X,Y: A symmetric grid of the spatial vector: 2D Cartesian coordiantes
+%  X,Y: A grid of the spatial vector: 2D Cartesian coordiantes
 %  r: polar coordinate (in cm)
 %  gl: number of grey levels (normally 256)
 %  glphi: discretized phi vector on [-pi,pi].
@@ -18,18 +17,27 @@ bcst,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask
 %  bcst (beta): Ellipticity.cy/cx = 1/alpha. Ref: .1, .2, .4, .6, .8 and 1
-%  alpha is a dimensionless parameter that defines the ellipticity of
-%  the intensity null: if alpha < 1, the major axis is on the x axis,
-%  if alpha > 1 – on the y axis, if alpha < 0, the vortex phase rotates
-%  clockwise, if alpha > 0 – anticlockwise.
+%               alpha is a dimensionless parameter that defines the 
+%               ellipticity of the intensity null: if alpha < 1, the major 
+%               axis is on the x axis, if alpha > 1 – on the y axis, if 
+%               alpha < 0, the vortex phase rotates clockwise, if alpha > 0
+%               then anticlockwise.
+%  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
-%  showM: show the mask. yes(1); no(0)
+%  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
+%        binMask=1. It is usefull to be applied for odd p's on LG beams
+%  monitorSize: size of the selected screen 
+%  scrnIdx: screen number selector. In [1,N] with N the # of screen
+%  coordType: type of calculation of the spatial coordinates. def: 2 
+%    -1: size defined by the user, space support defined by the SLM to use
+%    -2: size defined by the resolution of the selected screen    
+%  abs_ang: custom(0)[mask real-valued]; magnitude (1); phase (2)
+%  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
+%             a surface (3)
 %
 % Outputs:
 % mask: Elliptic Gaussian Vortex (EGV). Complex structure that has not been
 % truncated and is wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
-%
-
 
 %% Elliptic Gaussian beam phase mask: scalated azimuthal coordinate
 phi = atan2(bcst*Y,X); % Angle component with elliptic gaussian beam

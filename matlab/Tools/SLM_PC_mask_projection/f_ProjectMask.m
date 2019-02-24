@@ -1,6 +1,7 @@
 %% Plot Phase Mask either on the PC or on the SLM
 function fighandler = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,...
-   normMag,binMask,binv,monitorSize,scrnIdx,tit,coordType,abs_ang,plotMask)
+normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType,abs_ang, ...
+plotMask)
 % Inputs:
 %  r: polar coordinate (in cm)
 %  mask: function to be plotted. It is wrapped on [-pi,pi] if abs_ang = 2.
@@ -18,10 +19,13 @@ function fighandler = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,...
 %  monitorSize: size of the selected screen 
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
 %  tit: plot title
+%  str: colorbar string when abs_ang = 0
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use
 %    -2: size defined by the resolution of the selected screen    
-%  abs_ang: custom(0)[mask real-valued]; magnitude (1); phase (2)
+%  abs_ang: custom(0)[str has to be defined for this case], magnitude
+%           (1) or phase (2) plot. Doesn't apply for Zernike and LG +
+%           Zernike.
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
 %
@@ -36,16 +40,16 @@ switch abs_ang
  case 0 % No operation, custom input (assumed to be non complex)
   wrappedMask = mask;
   figtit = 'Mask';
-  str = 'Amplitude';
   if isreal(mask) == false
    warning(['When you choose abs_ang = 0, mask must be selected to be' ...
             'real-valued. Selecting the real part...']);
    wrappedMask = real(mask);  
   end
+  % str: defined in the input
  case 1 % Amplitude
   wrappedMask = abs(mask); % Actually, this is an amplitude filter
   figtit = 'Amplitude Mask';
-  str = 'Value of amplitude';
+  str = 'Value of amplitude'; % Colorbar string
   %% Normalization constants (amplitude)
   if normMag == 1 % Phase is not changed
       norm = max(wrappedMask(:)); % Max value
@@ -57,7 +61,7 @@ switch abs_ang
   wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,binv,glphi,mingl, ...
                                       maxgl,levShft,coordType);
   figtit = 'Phase Mask';
-  str = 'Wrapped phase value';  
+  str = 'Wrapped phase value'; % Colorbar string
 end
 
 %% Plot
@@ -68,13 +72,15 @@ switch plotMask
   % OLD:   
   % slmhfig = figure('color','white','units','normalized','position',...
   % [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',tit);
-  
+  %% Plot the mask
   fighandler = figure('color','white','Name',figtit); 
   imagesc(wrappedMask); axis square; colormap(gray(gl));
   title(tit);
   set(gca,'xtick',[]); set(gca,'ytick',[]) % No axes values
   cbh = colorbar; cbh.Label.String = str;
   pax = gca; pax.FontSize = 16; % Font size   
+  
+  %% Add the -pi -> +pi ticks
   if abs_ang == 2
    % Next, pi ticks are added to the colorbar if the phase value extreme
    % points are near -pi and pi; otherwise the default colorbar is shown
@@ -100,8 +106,14 @@ switch plotMask
                       'none','NumberTitle','off');
   % Hide Menu bar and Tool bar
   fighandler.Units = 'Pixels'; % 'color','black',
+  
+  %% Figure size
+  %%% For cordType 1 and 2:
   set(gca,'Units','Pixels'); % Axis units
   set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
+  % For coordType = 2 the fig is maximized
+  
+  %%% For cordType 1:
   if coordType == 1
    tol = 50;
    MidVectMonitor = floor((res+1)/2); % SLM monitor mid vector
@@ -110,7 +122,8 @@ switch plotMask
    set(gcf,'Units','Pixels'); % Figure units
    set(gcf,'OuterPosition',[MidVect monitorSize(1)+tol monitorSize(2)+tol]); 
   end
-  % Fpr coordType the fig is maximized
+  
+  %% Figure plotting
   imagesc(wrappedMask);  % Plots in SLM screen 
   axis off; colormap(gray(gl));
   % axis fill;
