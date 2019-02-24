@@ -11,21 +11,16 @@ slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 sim = 0; % Simulate: yes (1) or no (0)
 
 %% General algorithm parameters
-coordType = 2;  % Type of calculation of the spatial coordinates. def: 2 
+coordType = 1;  % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
-switch coordType
- case 1
-  k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
-          % Default: 10   
-          % Size is calculated as 2^k - 1
-          
- case 2
-  circularMask = 1;
-  % 1: The mask presents a circular form when in the full screen 
+k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
+        % Default: 10. Size is calculated as 2^k - 1
+        % Only works when coordType = 1
+circularMask = 1; % Only works when coordType = 2
   % 0: The mask presents an elliptical form when in the full screen
+  % 1: The mask presents a circular form when in the full screen
   % On both cases full screen means that plotMask = 2
-end
 precision = 3; % Precision of displayed results: significative digits (3)
 maskSel = 0; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
@@ -41,7 +36,7 @@ maskSel = 0; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
+plotMask = 2; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -88,7 +83,7 @@ switch slm
 end 
 
 %% SLM positionining calibration
-shiftBool = 1; 
+shiftBool = 1; % Only shifts when plotMask = 2
 % 0: shift deactivated [for exporting masks]
 % 1: shift activated [SLM displaying]
 % 2: self-centering algorithm

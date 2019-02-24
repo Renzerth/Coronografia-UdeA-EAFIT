@@ -1,5 +1,5 @@
 function [Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,sSize,monitorSize] = ...
-f_DefineSpace(spaceSupport,shiftCart,pixSize,scrnIdx,circularMask, ...
+f_DefineSpace(spaceSupport,k,shiftCart,pixSize,scrnIdx,circularMask, ...
 shiftBool,coordType)
 switch coordType
  case 1 % Size defined by the user, space support defined by the SLM to use
@@ -16,6 +16,7 @@ switch coordType
   x = spaceVector; % Cartesian x-vector
   y = x; % Cartesian y-vector: square grid
   % Xslm = X;
+  monitorSize = size(X);% Square coordinates
 
  case 2 % Size defined by the resolution of the selected screen     
   % This applies when a full screen mask will be displayed for the SLM with
@@ -77,10 +78,10 @@ end % Otherwise X=X and one has the elliptical truncation in full screen
 % The signs of the shifts account for the cartesian coordinates convention
 Xslm = X - shiftX; % Shifted X for the SLM
 Yslm = Y + shiftY; % Shifted Y for the SLM.
-[phiSLM,rSLM] = cart2pol(X,Y); % Polar coordinates with an added
-                         % shift. The signs compensate the 
-                         % normal cartesian convention for 
-                         % displacing the phase mask
+[phiSLM,rSLM] = cart2pol(Xslm,Yslm); % Polar coordinates with an added
+                                     % shift. The signs compensate the 
+                                     % normal cartesian convention for 
+                                     % displacing the phase mask
                              
 %% Zernike
 sSize = min(min(size(X)),min(size(Y)));

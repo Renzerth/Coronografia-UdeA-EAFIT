@@ -21,11 +21,12 @@ switch coordType
           % Size is calculated as 2^k - 1
           
  case 2
-  circularMask = 1; % Displays the mask   
+  circularMask = 1;
+  % 1: The mask presents a circular form when in the full screen 
+  % 0: The mask presents an elliptical form when in the full screen
+  % On both cases full screen means that plotMask = 2
 end
 precision = 3; % Precision of displayed results: significative digits (3)
-showM = 1; % Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
-           % analog to "plotMask" on the SLM Position section
 maskSel = 0; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
@@ -40,14 +41,16 @@ maskSel = 0; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 2; % Allows to plot the final mask, as it can be a combination 
+plotMask = 1; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
               % 2: on the SLM
               % 3: on the screen but surface-plot type
 
-
+% OLD:
+% showM = 1; Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
+           % analog to "plotMask" on the SLM Position section
               
               
 %%%%%%%%%%%%%%%%%%%%%%% PART 2: HARDWARE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,13 +88,15 @@ switch slm
 end 
 
 %% SLM positionining calibration
-shiftBool = 0; % Shift activated (1)[SLM displaying] or deactivated (0)
-               % [exporting masks]. 
-shiftCart = [0,0]; % [yshift,xshift], works when shiftBool = 1
-                    % Percentages of movement of the total size of the
-                    % mask (cartesian coordinates convention)
-                    % Calibrated with: s = +1; ph0 = 0, tc = 1; 
-                    % Ranges: [0,100]
+shiftBool = 1; % Only shifts when plotMask = 2
+% 0: shift deactivated [for exporting masks]
+% 1: shift activated [SLM displaying]
+% 2: self-centering algorithm
+shiftCart = [50,25]; % [yshift,xshift], works when shiftBool = 1
+                     % Percentages of movement of the total size of the
+                     % mask (cartesian coordinates convention)
+                     % Calibrated with: s = +1; ph0 = 0, tc = 1; 
+                     % Ranges per shift: [0,100] (percentage)
               
 %% Camera selection and parameters
 camera = 'DMK23U445';
@@ -179,7 +184,7 @@ p = 5; % Number of radial nodes. If p=0, normal helicoid masks are obtained
 W = 100; % Width of the modes; for LG; ref: 100
 binv = 1; % Binary inversion of the mask: yes(1); no(0). It is only applied 
           % when tc is zero. It is usefull to be applied for odd p. 
-norm = 0; % Normalize magnitude and phase (to unity). yes(1); no(0)         
+norm = 1; % Normalize magnitude and phase (to unity). yes(1); no(0)         
 
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
@@ -273,18 +278,19 @@ maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum
                % Only works when FTmask = 1
 gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)
 maskZernReconstr = 0; % Reconstructs the mask with Zernike polynomials and
-                      % plots the error
-                      
-if maskZernReconstr == 1 || maskSel == 5 || maskSel == 6
- %% Parameters: Zernike
- % L and gl are used here
- z_coeff = [1, 0.1]; % Zernike coeffient vector (see f_Zernike_Mask.m)
- a = 60; % Arbitrary constant; the bigger, the more intense; ref: a=20
- frac = 0.125; % To adjust the wrapped phase; ref: 0.125
- pupil = 1; % Pupil relative size: [0,1]; like a percentage
- disp_wrap = 0; % (0): Original; (1): wrapped mask on [-pi,pi] 
- plot_z = 0; % plot with Zernike builder: yes(1); no(0)
-end
+                      % plots the error             
+
+%% Parameters: Zernike
+% Used in maskZernReconstr, maskSel = 5 and maskSel = 6
+% L and gl are also used with Zernike
+z_coeff = -1; % Zernike coeffient vector (see f_ZernikeMask.m)
+a = 60; % Arbitrary constant; the bigger, the more intense; ref: a=20
+frac = 0.125; % To adjust the wrapped phase; ref: 0.125
+pupil = 1; % Pupil relative size: [0,1]; like a percentage
+disp_wrap = 0; % (0): Original; (1): wrapped mask on [-pi,pi] 
+plot_z = 0; % plot with Zernike builder: yes(1); no(0)
+ReconstrNumb = 14; % Number of polynomials to use for the reconstruction
+% sSize defined in DefineSpace.m
                
 if sim == 1
  %% Simulation parameters

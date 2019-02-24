@@ -77,18 +77,19 @@ switch plotMask
                                                      % size figures
     offsetPixel = [1,1]; % Mandatory: pixels have this origin [0,0] doesn't
                          % exist
-    fighandler = figure('Visible','off','MenuBar','none','Toolbar','none', ...
-                     'NumberTitle','off');
+    fighandler = figure('Visible','off','MenuBar','none','Toolbar', ...
+                        'none','NumberTitle','off');
     % Hide Menu bar and Tool bar
     fighandler.Units = 'Pixels'; % 'color','black',
     set(gca,'Units','Pixels');
     set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
-    %set(gca,'xtick',[]); set(gca,'ytick',[]) % No axis values
     image(wrappedMask);  % Plots in SLM screen 
     axis off; colormap(gray(gl));
     % axis fill;
     fighandler.Visible = 'on';
     [~] = f_changeProjectionMonitor('Restore'); % Restore default figure
+    % OLD
+    %set(gca,'xtick',[]); set(gca,'ytick',[]) % No axis values
     
   case 3 % Screen: surface plot
     fighandler = figure('color','white','units','normalized','position',...

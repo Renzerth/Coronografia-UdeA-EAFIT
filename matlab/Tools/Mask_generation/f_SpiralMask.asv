@@ -1,5 +1,5 @@
 %% Spiral Phase Mask
-function mask = f_SpiralMask(r,phi,rPC,phiPC,gl,glphi,mingl,maxgl, ...
+function mask = f_SpiralMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl, ...
              levShft,tc,s,ph0,binMask,monitorSize,scrnIdx,abs_ang,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
@@ -24,8 +24,14 @@ function mask = f_SpiralMask(r,phi,rPC,phiPC,gl,glphi,mingl,maxgl, ...
 %  mask: spiral phase mask. Complex structure that has not been truncated
 %        and is wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
 
-%% Spiral phase mask Generation
+%% Coordinates selection
+if plotMask == 2 
+    s
+else % plotMask == 0 or 1 or 3
+    u
+end
 
+%% Spiral phase mask Generation
 m = s*tc; % tc with a sign
 mask = m*(phi + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
 

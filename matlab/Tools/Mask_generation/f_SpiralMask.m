@@ -25,10 +25,10 @@ function mask = f_SpiralMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl, ...
 %        and is wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
 
 %% Coordinates selection
-if plotMask == 0 || plotMask == 1 || plotMask == 3
-    
-else
-    u
+if plotMask == 2 % SLM
+    r = rSLM; phi = phiSLM;
+else % plotMask == 0 or 1 or 3 % PC
+    r = rPC; phi = phiPC;
 end
 
 %% Spiral phase mask Generation
@@ -54,7 +54,7 @@ mask = exp(1i*mask); % Wrapped mask and complex
 %  interval
 
 %% Plot (with axes)
-tit = strcat('Spiral phase mask with topological charge ',num2str(tc));
+tit = strcat('Spiral phase mask with topological charge',{' '},num2str(tc));
 f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,binMask,monitorSize, ...
               scrnIdx,tit,abs_ang,plotMask);
 
