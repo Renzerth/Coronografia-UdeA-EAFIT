@@ -12,7 +12,7 @@ slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[mask real-valued], magnitude (1) or phase (2) plot
-maskSel = 1; % Phase mask selection:
+maskSel = 2; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -161,7 +161,7 @@ end
 
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
-tc = 3; % Topological charge (integer bigger or equal to one)
+tc = 1; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
 s = +1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
@@ -170,17 +170,19 @@ ph0 = 0; % Initial phase of the angle [radians]; reference +pi from
          % This corresponds to a normal rotation of the mask for stethic
          % reasons and shouldn't affect the results. Only affects if the
          % vortex is no fully centered
-binMask = 1; % Binarizes the mask w.r.t the max/min of the phase (boolean)
+% For abs_ang = 2:
+binMask = 0; % Binarizes the mask w.r.t the max/min of the phase (boolean)
 binv = 0; % Binary inversion of the mask: yes(1); no(0). Only applies when 
           % binMask=1. It is usefull to be applied for odd p's on LG beams
-
+% For abs_ang = 1:
+normMag = 0; % Normalize magnitude. yes(1); no(0). 
+          
 %% Parameters: Laguerre-Gauss
 p = 5; % Number of radial nodes. If p=0, normal helicoid masks are obtained
        % If they are used and tc=0(m=0); binary masks are obtained
        % Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
 W = 20; % Width of the modes; for LG; ref: [0,100] % Close to being a %
-normLG = 0; % Normalize magnitude (to unity). yes(1); no(0)         
-
+         
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
 f_FR = maxNumPix*pixSize^2/L; % Criterium to determine the MINIMUM f_FR

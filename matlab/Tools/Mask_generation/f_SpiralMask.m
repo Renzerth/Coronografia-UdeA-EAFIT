@@ -1,6 +1,7 @@
 %% Spiral Phase Mask
-function mask = f_SpiralMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl, ...
-             levShft,tc,s,ph0,binMask,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
+function mask = f_SpiralMask(r,phi,gl,glphi,mingl,maxgl, ...
+             levShft,tc,s,ph0,normMag,binMask,binv,monitorSize,scrnIdx,...
+             coordType,abs_ang,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
@@ -13,8 +14,14 @@ function mask = f_SpiralMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl, ...
 %  tc: Topological charge
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask
+%  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  monitorSize: size of the selected screen 
+%  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
+%        binMask=1. It is usefull to be applied for odd p's on LG beams
+%  monitorSize: size of the selected screen 
+%  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
+%        binMask=1. It is usefull to be applied for odd p's on LG beams
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use
@@ -26,13 +33,6 @@ function mask = f_SpiralMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl, ...
 % Output:
 %  mask: spiral phase mask. Complex structure that has not been truncated
 %        and is wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
-
-%% Coordinates selection
-if plotMask == 2 % SLM
-    r = rSLM; phi = phiSLM;
-else % plotMask == 0 or 1 or 3 % PC
-    r = rPC; phi = phiPC;
-end
 
 %% Spiral phase mask Generation
 m = s*tc; % tc with a sign
@@ -58,7 +58,7 @@ mask = exp(1i*mask); % Wrapped mask and complex
 
 %% Plot (with axes)
 tit = strcat('Spiral phase mask with topological charge',{' '},num2str(tc));
-f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,binMask,monitorSize, ...
-              scrnIdx,tit,coordType,abs_ang,plotMask);
+f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask,binv, ...
+              monitorSize,scrnIdx,tit,coordType,abs_ang,plotMask);
 
 end

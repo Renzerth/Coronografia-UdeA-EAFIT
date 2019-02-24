@@ -3,7 +3,8 @@
 % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf
 % Equation 3, page 2
 
-function mask = f_VPLMask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,L,f_FR,binMask,showM)
+function mask = f_VPLMask(r,phi,gl,glphi,mingl,maxgl, ...
+levShft,tc,s,ph0,L,f_FR,normMag,binMask,binv,coordType,abs_ang,plotMask);
 % Generates and plots a VPL mask:  helicoidal mask + fresnel lens
 %
 % Inputs: 
@@ -25,18 +26,19 @@ function mask = f_VPLMask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,L,f_FR
 % Outputs:
 % mask: Vortex-Producing Lens (VPL) phase mask
 
-    %% Spiral phase mask Generation
-    m = s*tc;  % tc with a sign
-    maskSPP = m*(phi + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
-    maskSPP = exp(1i*maskSPP); % Wrapped mask
+%% Spiral phase mask Generation
+m = s*tc;  % tc with a sign
+maskSPP = m*(phi + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
+maskSPP = exp(1i*maskSPP); % Wrapped mask
 
-    %% VPL Mask
-    r = r*1e4; % r is a in cm and converted to um
-    VPLfactor = -(pi*r.^2)/(L*f_FR);
-    maskVPL = exp(1i*VPLfactor);
-    mask = maskSPP.*maskVPL; % mask*maskVPL; gives cool results as the Fresnel
-                          % lens but in a lineal fashion: a chirp ramp for
-                          % tc = 0
+%% VPL Mask
+scaleFactor = 1e4; % cm to um. Constant factor
+r = r*scaleFactor; % r converted to um
+VPLfactor = -(pi*r.^2)/(L*f_FR);
+maskVPL = exp(1i*VPLfactor);
+mask = maskSPP.*maskVPL; 
+% maskSPP*maskVPL; gives cool results as the Fresnel lens but in a linear
+% fashion: a chirp ramp for tc = 0. It is just a test without validity
 
 %% Plot (with axes)
 if showM == 1

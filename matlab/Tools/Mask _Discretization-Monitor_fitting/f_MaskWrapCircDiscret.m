@@ -1,5 +1,5 @@
-function wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi, ...
-                                             mingl,maxgl,levShft,coordType)
+function wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,...
+                                  binv,glphi,mingl,maxgl,levShft,coordType)
 % Multiplies the phase mask by the maximum circle size with its outer
 % borders containing the minimum value of the phase (normally -pi)
 % Wraps the phase with the function "angle"
@@ -10,6 +10,8 @@ function wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi, ...
 %  mask: complex structure that has not been truncated and is wrapped on
 %        [-pi,pi]. mask = exp(i*UnwrappedMask) 
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
+%  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
+%        binMask=1. It is usefull to be applied for odd p's on LG beams
 %  glphi: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
 %  levShft: corresponds to the brightness or constant shift of the gl's
@@ -31,7 +33,7 @@ wrappedMask = f_discretizeMask(wrappedMask,glphi); % Mask discretization
 wrappedMask = f_ScaleMatrixData(wrappedMask,mingl,maxgl) + levShft; 
 % Scaling to uint8 values
 
-%% Mask Binarization
+%% Mask Binarization and binary inversion
 % binarizes the mask w.r.t the max,mid and min of the phase (boolean)
 minMask = min(wrappedMask(:)); % Minimum value of the mask
 maxMask = max(wrappedMask(:)); % Maximum value of the mask
@@ -42,6 +44,9 @@ if binMask == 1
     % Binarizes on [0,1] by the phase above and bellow the mid value
     % wrappedMask = wrappedMask*minMask; % Establishes the lower binary
     % value as the lowest value of the phase
+    if binv == 1 % Binary inversion
+        wrappedMask = imcomplement(wrappedMask); % Applied to the angle
+    end
 end
 
 % In both cases of the next if-else, rMax is found as the maximum radius

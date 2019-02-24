@@ -1,6 +1,6 @@
 %% Plot Phase Mask either on the PC or on the SLM
 function fighandler = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,...
-                binMask,monitorSize,scrnIdx,tit,coordType,abs_ang,plotMask)
+   normMag,binMask,binv,monitorSize,scrnIdx,tit,coordType,abs_ang,plotMask)
 % Inputs:
 %  r: polar coordinate (in cm)
 %  mask: function to be plotted. It is wrapped on [-pi,pi] if abs_ang = 2.
@@ -10,9 +10,13 @@ function fighandler = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,...
 %  glphi: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
 %  levShft: corresponds to the brightness or constant shift of the gl's
+%  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  monitorSize: size of the selected screen 
-%  screenIndex: screen number selector. In [1,N] with N the # of screen
+%  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
+%        binMask=1. It is usefull to be applied for odd p's on LG beams
+%  monitorSize: size of the selected screen 
+%  scrnIdx: screen number selector. In [1,N] with N the # of screen
 %  tit: plot title
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use
@@ -41,11 +45,16 @@ switch abs_ang
   wrappedMask = abs(mask); % Actually, this is an amplitude filter
   figtit = 'Amplitude Mask';
   str = 'Value of amplitude';
+  %% Normalization constants (amplitude)
+  if normMag == 1 % Phase is not changed
+      norm = max(wrappedMask(:)); % Max value
+      wrappedMask = wrappedMask/norm; % Normalization of the magnitude
+  end
   
  case 2 % Phase
   % Circular pupil and wrapping   
-  wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,glphi,mingl,maxgl, ...
-                                      levShft,coordType);
+  wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,binv,glphi,mingl, ...
+                                      maxgl,levShft,coordType);
   figtit = 'Phase Mask';
   str = 'Wrapped phase value';  
 end
