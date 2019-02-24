@@ -80,8 +80,8 @@ switch plotMask
   enablechange = true; % SLM figure display monitor activated
   [res,~]= f_changeProjectionMonitor(scrnIdx,enablechange);
   % Allow full-screen size figures when coordType == 2
-  offsetPixel = [1,1]; % Mandatory: pixels have this origin [0,0] 
-                       % doesn't exist
+  offsetPixel = [1,1]; % Mandatory: pixels have this origin. 
+                       % [0,0] doesn't exist
   fighandler = figure('Visible','off','MenuBar','none','Toolbar', ...
                       'none','NumberTitle','off');
   % Hide Menu bar and Tool bar
@@ -89,11 +89,12 @@ switch plotMask
   set(gca,'Units','Pixels'); % Axis units
   set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
   if coordType == 1
+   tol = 50;
    MidVectMonitor = floor((res+1)/2); % SLM monitor mid vector
    MidVectMask = floor((size(wrappedMask)+1)/2); % Mask mid vector
    MidVect = MidVectMonitor - MidVectMask; % pixel position of the mask
    set(gcf,'Units','Pixels'); % Figure units
-   set(gcf,'OuterPosition',[MidVect monitorSize(1) monitorSize(2)]); 
+   set(gcf,'OuterPosition',[MidVect monitorSize(1)+tol monitorSize(2)+tol]); 
   end
   % Fpr coordType the fig is maximized
   image(wrappedMask);  % Plots in SLM screen 
