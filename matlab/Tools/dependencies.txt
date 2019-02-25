@@ -1,0 +1,9 @@
+Dependencies: 
+projectVortexToDisplay.m
+-> f_scaleMatrix.m
+-> f_discretizeMask.m
+-> f_makeScreenCoordinates.m --> f_changeProjectionMonitor.m
+-> f_changeProjectionMonitor.m
+
+
+f_PlotSelectedMask.m -> f_SpiralMask (or any other) -> f_ProjectMask -> f_MaskWrapCircDiscret -> (f_discretizeMask && f_ScaleMatrixData)  

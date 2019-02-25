@@ -64,7 +64,7 @@ binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask,maskSel);
 % Dependencies:
 % f_PlotSelectedMask -> f_SpiralMask (or any other) -> f_ProjectMask -> 
 % f_MaskWrapCircDiscret -> (f_discretizeMask & f_ScaleMatrixData)          
-
+close all;
                            
                            
 %%%%%%%%%%%%%%%%%%%%%%% MEASUREMENTS BY AN AUTOMATED PARAMETER VARIATION
@@ -102,7 +102,13 @@ if meas == 1
   % Still not sure if needed: null tc beam or a high tc beam(long radius)
 
   %% Automated measurement
-  AutomateMeasurement; % Performs measurements and stores them
+  f_AutomateMeasurement(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
+phiPC,glphi,mingl,maxgl,levShft,s,ph0,p,W,L,f_FR,bcst,period,T0,frkTyp,...
+Aalpha,Angalp,Angbet,z_coeff,a,frac,pupil,sSize,disp_wrap,plot_z, ...
+normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,maskSel, ...
+ltcvect,lglvect,wait,DatalogDir,dataformat,pathSep,cameraPlane,tcvect,...
+glvect,measSimulated,recordingDelay);
+  % Performs measurements and stores them
 
   %% Post-processing of the data and saving
   %ProcessData; % Metric of the degree of extintion applied

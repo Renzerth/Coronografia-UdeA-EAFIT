@@ -251,8 +251,10 @@ dataFlrd = 'Data'; % Folder name: input data
 snapsfldr = 'TestSnapshots'; % Snapshot tests folder (inside dataFlrd)
 outFlrd = 'Output'; % Folder name: output data
 toolsFldr = 'Tools'; % Folder name: functions
-filemanag = 'File_managing'; % Folder with the function f_makeParentFolder,
-                             % the 1st function that is used in the program
+filemanag = 'Files-Folders_Managing'; % Folder with the function 
+                                      % f_makeParentFolder, the 1st 
+                                      % function that is used in the 
+                                      % program
 % Folders:
 %  Analysis: principal scripts
 %  Data: the inputs of the algorithm are the acquired vortex images

@@ -1,14 +1,17 @@
-% [imgfullpath] = f_AutomateMeasurement(savetype,pathSep,dataformat,cameraPlane,ltcvect,lglvect)
+function [] = f_AutomateMeasurement(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
+phiPC,glphi,mingl,maxgl,levShft,s,ph0,p,W,L,f_FR,bcst,period,T0,frkTyp,...
+Aalpha,Angalp,Angbet,z_coeff,a,frac,pupil,sSize,disp_wrap,plot_z, ...
+normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,maskSel, ...
+ltcvect,lglvect,wait,DatalogDir,dataformat,pathSep,cameraPlane,tcvect,...
+glvect,measSimulated,recordingDelay)
 % Plots phase masks on the Fourier plane of the vortex coronagraph and
 % takes images of either its Lyot or PSF plane
 %% Automated measurements
-showM = 0; % Don't show a fig in "PhaseMaskSel": this should always be 0.
 totalImgs = ltcvect*lglvect; % Number of images to be taken
 expImgs = cell(1,totalImgs); % Cell with the experimental images
 MeasInfo = cell(1,totalImgs); % Same initialization as expImgs
 idxgral = 1; % Initialization of the general index that runs 
-             % on: [1,totalImgs]
-% fileFormat = '.bmp'; % OLD: save each image
+             % on the range: [1,totalImgs]
 
 %% Measurements initialization
 % Copyright PhD student Jens de Pelsmaeker VUB B-PHOT 2018,Brussels,Belgium
@@ -18,7 +21,7 @@ disp('Measurement started'); disp(t1_dt)
 tit = 'Displayed phase mask';
 imgPath = strcat(DatalogDir,pathSep,cameraPlane,'_'); % More information 
 % will be concatenated for a full path of the measured images inside the
-% next "for" loops
+% next two "for" loops
 
 %% Measurements
 for idxtc = 1:ltcvect 
@@ -28,7 +31,9 @@ for idxtc = 1:ltcvect
     tc = tcvect(idxtc); % Specific tc for this iteration
     gl = glvect(idxgl); % Specific gl for this iteration
     plotMask = 2; % Select SLM
-    [mask,wrapMask,slmhfig,maskName] = f_PlotSelectedMask(X,Y,r,phi,gl, ...
+    [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
+                                      phiPC,plotMask);
+    [mask,wrapMask,slmhfig] = f_PlotSelectedMask(X,Y,r,phi,gl, ...
     glphi,mingl,maxgl,levShft,tc,s,ph0,p,W,L,f_FR,bcst,period,T0,frkTyp,...
     Aalpha,Angalp,Angbet,z_coeff,a,frac,pupil,sSize,disp_wrap,plot_z, ...
     normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang, ... 
@@ -63,11 +68,12 @@ for idxtc = 1:ltcvect
     %% Display the mask on the PC
     plotMask = 1; % Select PC
     [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
-                                      phiPC,plotMask);
-    str = ''; % Empty, it only works for abs_ang = 0                               
-    [~,pcfig] = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl, ...
-    levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str, ...
-    coordType,abs_ang,plotMask);
+                                      phiPC,plotMask);                             
+    [~,~,pcfig] = f_PlotSelectedMask(X,Y,r,phi,gl, ...
+    glphi,mingl,maxgl,levShft,tc,s,ph0,p,W,L,f_FR,bcst,period,T0,frkTyp,...
+    Aalpha,Angalp,Angbet,z_coeff,a,frac,pupil,sSize,disp_wrap,plot_z, ...
+    normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang, ... 
+    plotMask,maskSel); 
     set(pcfig,'units','normalized','position',[5/10 1/10 1/3 1/2]);
      
     %% Preparation for a new measurement iteration          
