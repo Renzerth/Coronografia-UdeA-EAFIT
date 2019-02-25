@@ -7,7 +7,7 @@ bcst,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
 % Inputs: 
-%  X,Y: A grid of the spatial vector: 2D Cartesian coordiantes
+%  X,Y: A meshgrid of the spatial vector: 2D Cartesian coordinates
 %  r: polar coordinate (in cm)
 %  gl: number of grey levels (normally 256)
 %  glphi: discretized phi vector on [-pi,pi].
@@ -36,8 +36,8 @@ bcst,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %             a surface (3)
 %
 % Outputs:
-% mask: Elliptic Gaussian Vortex (EGV). Complex structure that has not been
-% truncated and is wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
+%  mask: Elliptic Gaussian Vortex (EGV). Complex structure that has not 
+%  been truncated and is wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
 
 %% Elliptic Gaussian beam phase mask: scalated azimuthal coordinate
 phi = atan2(bcst*Y,X); % Angle component with elliptic gaussian beam

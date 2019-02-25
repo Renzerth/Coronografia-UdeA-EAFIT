@@ -5,7 +5,7 @@ ph0,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
 % Inputs:
-%  r,phi: polar coordinates (r in cm) for both the PC and SLM
+%  r,phi: polar coordinates for both the PC and SLM
 %  gl: number of grey levels (normally 256)
 %  glphi: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
@@ -27,28 +27,13 @@ ph0,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %             a surface (3)
 %
 % Output:
-%  mask: spiral phase mask. Complex structure that has not been truncated
-%        and is wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
+%  mask: spiral phase mask. Complex structure that has not been truncated 
+%  and is wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
 
 %% Spiral phase mask generation
 m = s*tc; % tc with a sign
 mask = m*(phi + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
 mask = exp(1i*mask); % Wrapped mask and complex
-
-% OLD:
-% m = -s*tc; %  Minus to compensate convention
-
-% OLD1:
-% glPHI = meshgrid(glphi);
-% discretPhi = f_discretizeMask(mask,glphi); % Mask discretization
-% mask = f_scaleMatrix(discretPhi,mingl,maxgl) + levShft; 
-
-% OLD2:
-% mask = angle(mask);
-%  mask = angle(exp(1i*m*(phi+ph0+pi))) + pi; % Wrapped on [0,2*pi]
-%  mask = mod(m*(phi+ph0),2*pi);
-%  pi was added to compensate the initial angle and to correct the wrapping
-%  interval
 
 %% Plot the mask
 tit = strcat('Spiral phase mask with topological charge',{' '}, ...

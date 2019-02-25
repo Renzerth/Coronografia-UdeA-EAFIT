@@ -4,7 +4,7 @@ levShft,pupil,sSize,disp_wrap,plot_z,normMag,binMask,binv,monitorSize, ...
 scrnIdx,coordType,plotMask)
 % Characterizes the aberrations of the system
 % Inputs:
-%  r: polar coordinate (in cm)
+%  r: polar coordinate
 %  z_coeff: 
 %     selected aberrations: any combination on [1,20]; zernike
 %     coefficients. ANSI standard. Zernike with desired weights.

@@ -8,8 +8,7 @@ L,f_FR,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 % Generates and plots a VPL mask:  helicoidal mask + fresnel lens
 %
 % Inputs: 
-%  x,y: cartesian coordinates vector
-%  r,phi: polar coordinates (r in cm)
+%  r,phi: polar coordinates for both the PC and SLM
 %  gl: number of grey levels (normally 256)
 %  glphi: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
@@ -20,12 +19,22 @@ L,f_FR,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %  L: Laser wavelength [um]
 %  f_FR: Fresnel lens focal distance or diffractive lens phase focal length
 %        in um
+%  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
-%  showM: show the mask. yes(1); no(0)
+%  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
+%        binMask=1. It is usefull to be applied for odd p's on LG beams
+%  monitorSize: size of the selected screen 
+%  scrnIdx: screen number selector. In [1,N] with N the # of screen
+%  coordType: type of calculation of the spatial coordinates. def: 2 
+%    -1: size defined by the user, space support defined by the SLM to use
+%    -2: size defined by the resolution of the selected screen    
+%  abs_ang: custom(0)[mask real-valued]; magnitude (1); phase (2)
+%  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
+%             a surface (3)
 %
 % Outputs:
-% mask: Vortex-Producing Lens (VPL) phase mask. Complex structure that has
-% not been truncated and is wrapped on [-pi,pi]. mask = exp(i*UnwrppedMsk).
+% mask: Vortex-Producing Lens (VPL) phase mask. Complex structure that has 
+% not been truncated and is wrapped on [-pi,pi]. mask=exp(i*UnwrappedMask)
 %
 
 %% Spiral phase mask Generation

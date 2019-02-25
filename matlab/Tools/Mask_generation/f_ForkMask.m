@@ -22,7 +22,6 @@ monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %  T0: constant absorption coefficient of the hologram
 %  frkTyp: 1: smooth transition; 2: phase jump transition
 %  Aalpha: amplitude of the phase modulation
-%  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  Angalp,Angbet: diffraction angles of horizontal and vertical directions
 %                 they are limited to [-pi/2,pi/2] [radians]
 %  normMag: normalize magnitude. yes(1); no(0)
@@ -42,8 +41,8 @@ monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %
 % Outputs: Threefold dislocation hologram or double pitch fork hologram or
 %          fork phase mask or holograma en forma de tenedor
-% mask: Fork mask. Complex structure that has not been truncated and is 
-% wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
+% mask: Fork mask. Complex structure that has not been truncated and is
+%       wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
 
 switch frkTyp
     case 1 % Smooth transition hologram

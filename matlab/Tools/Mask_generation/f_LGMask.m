@@ -3,7 +3,7 @@
 function mask = f_LGMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p, ...
 W,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 % Inputs: 
-%  r,phi: polar coordinates (r in cm) for both the PC and SLM
+%  r,phi: polar coordinates for both the PC and SLM
 %  gl: number of grey levels (normally 256)
 %  glphi: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
@@ -47,26 +47,15 @@ mask = f_LaguerreGauss(r,phi,m,s,ph0,p,W); % Generates a Laguerre-Gauss
 % mode: it has both magnitude and phase, meaning that:
 % mask = abs(mask).*exp(1i*angle(mask))
 
-% OLD:
-% mag = abs(LG); % Magnitude of LG
-% mask = LG; % Phase mask. Wrapped on [-pi,pi], modulo(2pi)
-
 %% Plot the mask
 tit = strcat('LG phase mask with topological charge',{' '},num2str(tc), ...
                  ' and radial node',{' '},num2str(p));   
 str = ''; % Empty, it only works for abs_ang = 0
 f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask, ...
 binv,monitorSize,scrnIdx,tit,str,coordType,abs_ang,plotMask);
-          
-%%% OLD
-%  title('Amplitude of LG');
-%  cbh = colorbar; cbh.Label.String = 'Value';
-% if abs_ang == 2
+ 
+%% Mask in a bone colormap
 %   h = pcolor(x,y,mask); 
-% else % var == 1
-%   h = pcolor(x,y,abs(LG));
-%   % Only positive values since it is a intensity measurement
-% end
 % colormap('bone'), set(h,'EdgeColor','none'), set(h,'FaceColor','interp');
 % set(gca,'Visible','off'), set(gcf,'Color','black'), axis square, hold off;
 % shg; % shg makes the current figure visible and raises it above all other

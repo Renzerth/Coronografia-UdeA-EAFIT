@@ -34,10 +34,6 @@ plotMask = 2; % Allows to plot the final mask, as it can be a combination
               % 1: on the screen
               % 2: on the SLM
               % 3: on the screen but surface-plot type
-
-% OLD:
-% showM = 1; Plot the individual mask inside "PhaseMaskSel.m": no(0)-yes(1)
-           % analog to "plotMask" on the SLM Position section
            
 %% SLM positionining calibration, coordinates and type of truncation
 coordType = 2;  % Type of calculation of the spatial coordinates. def: 2 

@@ -136,7 +136,8 @@ f_ComputeMaskSpectrum(x,y,mask,maskFTlog,FTmask);
 %% Gradient of the mask
 % Executed if desired on the parameters
 % Shows the singularity clearly
-f_ComputeMaskGradient(x,y,mask,gradMask);
+AngMask = angle(mask);
+f_ComputeMaskGradient(x,y,AngMask,gradMask);
 
 %% Reconstruction of the mask with Zernike polynomials
 % Executed if desired on the parameters

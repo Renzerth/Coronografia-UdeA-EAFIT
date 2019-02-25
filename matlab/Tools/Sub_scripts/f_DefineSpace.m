@@ -31,8 +31,9 @@ shiftBool,coordType,maskSel,plotMask)
 %
 % Outputs:
 % x,y: cartesian coordinates
-% Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC: meshgrids and polar coordinates
-%                                          of both the SLM and the PC
+% Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC: meshgrids of 2D cartesian and 
+%                                          polar coordinates of both the 
+%                                          SLM and the PC
 % sSize: screen size for the Zernike polynomials generation
 % monitorSize: resolution of the monitor selected by the scrnIdx
 

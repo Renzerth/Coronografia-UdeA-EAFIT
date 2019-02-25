@@ -1,4 +1,5 @@
-function [RZS,a,RMS,Error] = f_ZernikeReconstruction(M,WaFr,A,maskZernReconstr)
+function [RZS,a,RMS,Error] = f_ZernikeReconstruction(M,WaFr,A, ...
+                                                     maskZernReconstr)
 % Zernike_Reconstruction is a function that computes 
 % a wavefront reconstruction using Zernike's Polynomials
 % and by calculating the function expansion coefficients.

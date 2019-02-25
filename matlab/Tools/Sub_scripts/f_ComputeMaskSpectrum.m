@@ -1,16 +1,17 @@
 function f_ComputeMaskSpectrum(x,y,mask,maskFTlog,FTmask)
-if FTmask == 1
- %% OLD
- % a = abs(FFT2D((exp(1*1i*phi))));
- % b = 20*log10(a);
- % figure;
- % imagesc(b);
- % figure;
- % g = improfile(b,[1,1023],[512,512]);
- % plot(g)
+% Computes the spectrum of a compelx mask of the form 
+% mask = exp(i*UnwrappedMask), by using the cartesian coordinate vectors
+% x,y and by optionally plotting with log scale. FTmask and maskFTlog are
+% booleans
 
- %% Inputs
- tol = 1;
+if FTmask == 1
+%% Inputs
+if maskFTlog == 1
+ tol = 1; % Tolerance of each side when plotting the FFT profiles since 
+          % some values may tend to -infinity when masFTlog = 1
+else
+ tol = 0; % tol is an index, so it must be an integer
+end
 
  %% Fourier transform
  FFT2D = @(s) ifftshift((fft2(fftshift(s)))); % 2D Fourier Transform
@@ -50,4 +51,13 @@ if FTmask == 1
  g = improfile(mask,[midY,midY],[1,maxX]);
  plot(y(1+tol:end-tol),g(1+tol:end-tol)); 
  title('Vertical profile of abs squared FFT');
+ 
+  %% OLD
+ % a = abs(FFT2D((exp(1*1i*phi))));
+ % b = 20*log10(a);
+ % figure;
+ % imagesc(b);
+ % figure;
+ % g = improfile(b,[1,1023],[512,512]);
+ % plot(g)
 end

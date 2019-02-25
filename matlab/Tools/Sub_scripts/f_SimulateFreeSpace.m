@@ -2,6 +2,27 @@ function f_SimulateFreeSpace(x,y,X,Y,r,mask,starAmplitude,planetAmplitude, ...
 pixelSeparation,w1,w2,rPupilSize,showIin,showPupilin,showFPmag,logscale,...
 showFPphas,showPhasout,showMagout,showIout)
 %% Vortex Simulation With Gaussians - Coronagraphy
+% Inputs:
+% x,y: cartesian coordinate vectors
+% X,Y,r: meshgrids of cartesian and radial polar
+% mask: complex structure that has not been truncated and is 
+%  wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
+% star-planet_Amplitude: of each body. The star is centered and the body
+% can be separated by a:
+% pixelSeparation: of the two bodies
+% w1,w2: with of each body (star-planet)
+% rPupilSize:  Input pupil radius. percentage [0,1]; ref: 0.5
+% showIin: show input intensity
+% showPupilin: show input pupil
+% showFPmag: show Fourier plane magnitude
+% logscale: apply logscale to the Fourier plane magnitude
+% showFPphas: show Fourier plane phase
+% showPhasout: show output phase
+% showMagout: show output magnitude
+% showIout: sow output intensity
+%
+% Outputs:
+%
 %%% Part 1, only the input field is generated
 % Purpose:
 % A vortex is modulated with two bodies with variable size, intensity and
