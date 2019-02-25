@@ -2,7 +2,7 @@
 %% Algorithm sections
 measDebug = 0; % Debugging before actually measuring. Displays the default 
                % phase mask and shots a photo with the camera
-meas = 0; % Measure: yes (1) or no (0)
+meas = 1; % Measure: yes (1) or no (0)
 measSimulated = 1; % Saves the mask and does not involve the cameras: 
                    % yes (1) or no (0)
 beepSound = 1; % Beep sound when measurement finishes. Only works when 
@@ -13,7 +13,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 5; % Phase mask selection:
+maskSel = 1; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -27,7 +27,7 @@ maskSel = 5; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 2; % Allows to plot the final mask, as it can be a combination 
+plotMask = 1; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -35,10 +35,10 @@ plotMask = 2; % Allows to plot the final mask, as it can be a combination
               % 3: on the screen but surface-plot type
            
 %% SLM positionining calibration, coordinates and type of truncation
-coordType = 1;  % Type of calculation of the spatial coordinates. def: 2 
+coordType = 2;  % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
-k = 9; % Bits for grey levels; 2^k is the resolution (size of x and y)
+k = 8; % Bits for grey levels; 2^k is the resolution (size of x and y)
         % Default: 10. Size is calculated as 2^k - 1
         % Only works when coordType = 1
 circularMask = 0; % Only works when coordType = 2
@@ -151,7 +151,7 @@ binv = 0; % Binary inversion of the mask: yes(1); no(0). Only applies when
 normMag = 0; % Normalize magnitude. yes(1); no(0). 
           
 %% Parameters: Laguerre-Gauss
-p = 5; % Number of radial nodes. If p=0, normal helicoid masks are obtained
+p = 0; % Number of radial nodes. If p=0, normal helicoid masks are obtained
        % If they are used and tc=0(m=0); binary masks are obtained
        % Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
 W = 20; % Width of the modes; for LG; ref: [0,100] % Close to being a %
@@ -271,7 +271,7 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 %%%%%%%%%%%%%%%%%%%%%%% PART 5: ACADEMIC-PURPOSE ASPECTS %%%%%%%%%%%%%%%%%%
 % Zernike, FT, simulation in the free space that is not very depured
 %% Optional plots and procedures
-FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
+FTmask = 1; % Finds the FFT of the mask and plots it: yes(1); no(0)
 maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum
                % Only works when FTmask = 1
 gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)

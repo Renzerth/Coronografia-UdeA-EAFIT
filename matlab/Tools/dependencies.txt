@@ -5,7 +5,7 @@ Dependencies:
 ->     f_ProjectMask
 ->       f_MaskWrapCircDiscret
 ->         f_discretizeMask
-->         f_ScaleMatrixData) 
+->         f_ScaleMatrixData
 ->       f_changeProjectionMonitor 
 
 -> projectVortexToDisplay.m (NOT USED)

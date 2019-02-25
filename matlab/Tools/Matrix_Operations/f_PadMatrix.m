@@ -15,7 +15,7 @@ if (size(B,1) > size(A,1)) || (size(B,2) > size(A,2))
    end
   else % pad is a vector
     Apadded = f_MatrixSymmetricPadding(A,pad(1),method,vert); % Vertical
-    Apadded = ff_MatrixSymmetricPadding(Apadded,pad(2),method,hor); % Hor
+    Apadded = f_MatrixSymmetricPadding(Apadded,pad(2),method,hor); % Hor
   end
 end
 end

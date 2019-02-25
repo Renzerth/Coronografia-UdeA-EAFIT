@@ -37,26 +37,26 @@ coordType,abs_ang,plotMask) % [wrapMask,wrapMaskFig]
 %  Image is shown with gl gray levels
 
 %% Wrapping and Circular pupil Application
-if plotMask ~= 0
- switch abs_ang 
+
+switch abs_ang
   case 0 % No operation, custom input (assumed to be non complex)
-   wrapMask = mask;
-   figtit = 'Mask';
-   if isreal(mask) == false
-    warning(['When you choose abs_ang = 0, mask must be selected to be' ...
-             'real-valued. Selecting the real part...']);
-    wrapMask = real(mask);  
-   end
-   % str: defined in the input
+    wrapMask = mask;
+    figtit = 'Mask';
+    if isreal(mask) == false
+      warning(['When you choose abs_ang = 0, mask must be selected to be' ...
+        'real-valued. Selecting the real part...']);
+      wrapMask = real(mask);
+    end
+    % str: defined in the input
   case 1 % Amplitude
-   wrapMask = abs(mask); % Actually, this is an amplitude filter
-   figtit = 'Amplitude Mask';
-   str = 'Value of amplitude'; % Colorbar string
-   %% Normalization constants (amplitude)
-   if normMag == 1 % Phase is not changed
-       norm = max(wrapMask(:)); % Max value
-       wrapMask = wrapMask/norm; % Normalization of the magnitude
-   end
+    wrapMask = abs(mask); % Actually, this is an amplitude filter
+    figtit = 'Amplitude Mask';
+    str = 'Value of amplitude'; % Colorbar string
+    %% Normalization constants (amplitude)
+    if normMag == 1 % Phase is not changed
+      norm = max(wrapMask(:)); % Max value
+      wrapMask = wrapMask/norm; % Normalization of the magnitude
+    end
   
   case 2 % Phase
    % Circular pupil and wrapping   
@@ -65,7 +65,6 @@ if plotMask ~= 0
    figtit = 'Phase Mask';
    str = 'Wrapped phase value'; % Colorbar string
  end
-end
 
 %% Plot
 switch plotMask
@@ -112,21 +111,21 @@ switch plotMask
   wrapMaskFig.Units = 'Pixels'; % 'color','black',
   
   %% Figure size
-  %%% For cordType 1 and 2:
+  %% For cordType 1 and 2:
   set(gca,'Units','Pixels'); % Axis units
   set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
   % For coordType = 2 the fig is maximized
   
   %%% For cordType 1:
-  if coordType == 1
-   tol = 50;
-   MidVectMonitor = floor((res+1)/2); % SLM monitor mid vector
-   MidVectMask = floor((size(wrapMask)+1)/2); % Mask mid vector
-   MidVect = MidVectMonitor - MidVectMask; % pixel position of the mask
-   set(gcf,'Units','Pixels'); % Figure units
-   set(gcf,'OuterPosition',[MidVect monitorSize(1)+tol monitorSize(2)+tol]); 
-  end
-  
+%   if coordType == 1
+%    tol = 50;
+%    MidVectMonitor = floor((res+1)/2); % SLM monitor mid vector
+%    MidVectMask = floor((size(wrapMask)+1)/2); % Mask mid vector
+%    MidVect = MidVectMonitor - MidVectMask; % pixel position of the mask
+%    set(gcf,'Units','Pixels'); % Figure units
+%    set(gcf,'OuterPosition',[MidVect monitorSize(1)+tol monitorSize(2)+tol]); 
+%   end
+   
   %% Figure plotting
   imagesc(wrapMask);  % Plots in SLM screen 
   axis off; colormap(gray(gl));

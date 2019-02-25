@@ -10,7 +10,8 @@ maskSel)
 % Outputs:
 %  mask: complex structure that has not been truncated and is wrapped on
 %        [-pi,pi]. mask = exp(i*UnwrappedMask).
-%  wrapMask: truncation and angle operations on mask.
+%  wrapMask: truncation, discretization and angle operations on mask. 
+%            It is wrapped on [-pi,pi].
 %  wrapMaskFig: figure handler if needed outside the function
 
 %  maskName: name of the selected mask

@@ -37,6 +37,7 @@ coordType,abs_ang,plotMask)
 m = s*tc; % tc with a sign
 mask = m*(phi + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
 mask = exp(1i*mask); % Wrapped mask and complex
+% mask = mod(mask,2*pi) - pi; % Equivalent operation
 
 %% Plot the mask
 tit = strcat('Spiral phase mask with topological charge',{' '}, ...

@@ -29,8 +29,8 @@ end
 
  %% Mid and max points of the mask
  [maxX, maxY] = size(mask);
- midX = ceil((maxX+1)/2);
- midY = ceil((maxY+1)/2);
+ midX = round((maxX+1)/2) + mod(maxX,2);
+ midY = round((maxY+1)/2) + mod(maxY,2);
 
  %% Profiles in the 2D image
  hold on
