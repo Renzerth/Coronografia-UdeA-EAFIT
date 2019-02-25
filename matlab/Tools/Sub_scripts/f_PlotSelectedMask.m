@@ -54,26 +54,29 @@ switch maskSel
   maskName = 'Zernike';
                   
  case 6 % Laguerre-Gauss (LG) + Zernike
-  mask = f_LGZernikeMask(rSLM,phiSLM,rPC,phiPC,gl,glphi,mingl,maxgl, ...
-  levShft,tc,s,ph0,p,W,binv,normMag,z_coeff,a,frac,L,pupil,sSize, ...
-  disp_wrap,plot_z,normMag,binMask,binv,monitorSize,coordType, ...
-  plotMask);
+  mask = f_LGZernikeMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p, ...
+  W,z_coeff,a,frac,L,pupil,sSize,disp_wrap,plot_z,normMag,binMask,binv, ...
+  monitorSize,scrnIdx,coordType,abs_ang,plotMask);
   maskName = 'LG_Zernike';                    
  case 7 % Hermite-Gauss (HG) beams
-     
+  mask = 1;   
+  maskName = 'HG'; 
  case 8 % Mutliple vortices
   % Maybe use mirror padarray!
   % There would be superposition or one may need two SLM's
- 
+  mask = 1;
+  maskName = 'MultipleVortx'; 
  case 9 % Sum of spiral phase masks
   % Check: Storing_High-Dimensional_Quantum_States_in_a_Cold_
-  
+  mask = 1;
+  maskName = 'SpiralPhaseSummed'; 
  case 10 % Gerchberg-Saxton
   % Function itself is done, add and edit constraints 
   % Gerchberg_Saxton;   
-                       
+  mask = 1;    
+  maskName = 'GS'; 
  otherwise % Void; Ideal response; no aberrations
   mask = 1; % Unitary
-  maskName = 'UnitFilter';
+  maskName = 'UnitaryFilter';
 end
 end

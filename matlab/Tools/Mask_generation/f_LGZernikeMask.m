@@ -1,11 +1,10 @@
 %% Laguerre Gauss Binary masks + Zernike Phases
-function mask = f_LGZernikeMask(x,y,r,phi,gl,glphi,mingl,maxgl, ...
-levShft,tc,s,ph0,p,W,binv,norm,z_coeff,a,frac,L,pupil,sSize,disp_wrap, ...
-plot_z,binMask,monitorSize,showM)
+function mask = f_LGZernikeMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc, ...
+s,ph0,p,W,z_coeff,a,frac,L,pupil,sSize,disp_wrap,plot_z,normMag, ...
+binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 % Generates and plots a Laguerre Gauss + Zernike mask
 %
 % Inputs: 
-%  x,y: cartesian coordinates vector
 %  r,phi: polar coordinates (r in cm)
 %  gl: number of grey levels (normally 256)
 %  glphi: discretized phi vector on [-pi,pi].
@@ -19,9 +18,6 @@ plot_z,binMask,monitorSize,showM)
 %     Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
 %  W: width of the modes: related with the radius of the phase and with the
 %     disks on the magnitude
-%  bininv: Binary inversion of the mask. Only applied when tc=0. Binary 
-%          masks are only abtained when tc=0. yes(1); no(0)
-%  norm: normalize magnitude and phase. yes(1); no(0)
 %  z_coeff: 
 %     selected aberrations: any combination on [1,20]; zernike
 %     coefficients. ANSI standard. Zernike with desired weights.
@@ -41,25 +37,50 @@ plot_z,binMask,monitorSize,showM)
 %  sSize: Size of cartesian coordinates. Space Size
 %  disp_wrap: original (0) or wrapped mask (1)
 %  plot_z: plot (1); no plot (0)
+%  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
+%  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
+%        binMask=1. It is usefull to be applied for odd p's on LG beams
 %  monitorSize: size of the selected screen 
-%  abs_ang: Magnitude (1); Phase (2)
-%  showM: show the mask. yes(1); no(0)
+%  scrnIdx: screen number selector. In [1,N] with N the # of screen
+%  coordType: type of calculation of the spatial coordinates. def: 2 
+%    -1: size defined by the user, space support defined by the SLM to use
+%    -2: size defined by the resolution of the selected screen    
+%  abs_ang: custom(0)[mask real-valued]; magnitude (1); phase (2)
+%  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
+%             a surface (3)
 %
 % Outputs:
 % mask: LG+Zernike mask. Complex structure that has not been truncated and
 % is wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
-
-maskZ = f_ZernikeMask(x,y,r,z_coeff,a,frac,L,gl,glphi,mingl,maxgl, ...
-       levShft,pupil,sSize,disp_wrap,plot_z,binMask,monitorSize,showM);
+%
+showEachMask = 0;
+maskZ = f_ZernikeMask(r,z_coeff,a,frac,L,gl,glphi,mingl,maxgl,levShft, ...
+pupil,sSize,disp_wrap,plot_z,normMag,binMask,binv,monitorSize,scrnIdx, ...
+coordType,showEachMask);
 maskLG = f_LGMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p,W, ...
-normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
+normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,showEachMask);
+
+%% LG mask matrix truncation so that its size fits maskZ
+A = size(maskLG) - size(maskZ); % Size comparison
+% Sizes differ when coordType = 2
+if any(A) % True when tests whether any of the elements along various
+          % dimensions of an array are nonzero
+    [ZmidX,ZmidY] = f_ComputeMatrixMidPoints(maskZ);
+    [LGmidX,LGmidY] = f_ComputeMatrixMidPoints(maskLG);
+    maskLG = f_TruncateMatrix(maskZ,ZmidX,ZmidY,maskLG,LGmidX,LGmidY);
+end 
+
+%% Point-to-point masks product    
+% maskZ = maskZ*100; % Just tests
 mask = maskZ.*maskLG; % Combined mask. It is recommended to use binary
-                        % masks on LG
+                      % masks on LG
   
 %% Plot the combined LG + Z mask                      
 tit = strcat('LG phase mask with topological charge',{' '},num2str(tc), ...
              {' '},'and radial node',{' '},num2str(p),{' '}, ...
              '+ Zernike mask');
- 
+str = ''; % Empty, it only works for abs_ang = 0         
+f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask,binv, ...
+              monitorSize,scrnIdx,tit,str,coordType,abs_ang,plotMask);
 end

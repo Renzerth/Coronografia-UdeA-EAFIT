@@ -36,38 +36,41 @@ plotMask)
 %  Image is shown with gl gray levels
 
 %% Wrapping and Circular pupil Application
-switch abs_ang 
- case 0 % No operation, custom input (assumed to be non complex)
-  wrappedMask = mask;
-  figtit = 'Mask';
-  if isreal(mask) == false
-   warning(['When you choose abs_ang = 0, mask must be selected to be' ...
-            'real-valued. Selecting the real part...']);
-   wrappedMask = real(mask);  
-  end
-  % str: defined in the input
- case 1 % Amplitude
-  wrappedMask = abs(mask); % Actually, this is an amplitude filter
-  figtit = 'Amplitude Mask';
-  str = 'Value of amplitude'; % Colorbar string
-  %% Normalization constants (amplitude)
-  if normMag == 1 % Phase is not changed
-      norm = max(wrappedMask(:)); % Max value
-      wrappedMask = wrappedMask/norm; % Normalization of the magnitude
-  end
+if plotMask ~= 0
+ switch abs_ang 
+  case 0 % No operation, custom input (assumed to be non complex)
+   wrappedMask = mask;
+   figtit = 'Mask';
+   if isreal(mask) == false
+    warning(['When you choose abs_ang = 0, mask must be selected to be' ...
+             'real-valued. Selecting the real part...']);
+    wrappedMask = real(mask);  
+   end
+   % str: defined in the input
+  case 1 % Amplitude
+   wrappedMask = abs(mask); % Actually, this is an amplitude filter
+   figtit = 'Amplitude Mask';
+   str = 'Value of amplitude'; % Colorbar string
+   %% Normalization constants (amplitude)
+   if normMag == 1 % Phase is not changed
+       norm = max(wrappedMask(:)); % Max value
+       wrappedMask = wrappedMask/norm; % Normalization of the magnitude
+   end
   
- case 2 % Phase
-  % Circular pupil and wrapping   
-  wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,binv,glphi,mingl, ...
-                                      maxgl,levShft,coordType,plotMask);
-  figtit = 'Phase Mask';
-  str = 'Wrapped phase value'; % Colorbar string
+  case 2 % Phase
+   % Circular pupil and wrapping   
+   wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,binv,glphi,mingl, ...
+                                       maxgl,levShft,coordType,plotMask);
+   figtit = 'Phase Mask';
+   str = 'Wrapped phase value'; % Colorbar string
+ end
 end
 
 %% Plot
 switch plotMask
  case 0 
   % Won't plot at all
+  fighandler = figure('Visible','off');
  case 1 % PC Screen: normal plot
   % OLD:   
   % slmhfig = figure('color','white','units','normalized','position',...

@@ -51,6 +51,7 @@ if binMask == 1
     end
 end
 
+%% Radius for the circular (or elliptical) pupil truncation
 % In both cases of the next if-else, rMax is found as the maximum radius
 % that allows to circumscribe a circle inside an square for coordType == 1
 % or inside a rectangle for coordType == 2
@@ -76,7 +77,8 @@ end
 
 %% Mask padarray with zeros if needed
 % Only used for Zernike masks (the only one assumed to be generated with a
-% square-size):
+% squared-size):
+% Sizes differ when coordType = 2
 A = size(r) - size(wrappedMask); % Size comparison
 if any(A) % True when tests whether any of the elements along various
           % dimensions of an array are nonzero
@@ -99,12 +101,10 @@ if any(A) % True when tests whether any of the elements along various
     wrappedMask = f_SymmetricPadding(wrappedMask,pad(2),method,vert); % H
   end
  else % plotMask == 0 or 1 or 3 % PC
-        % "Anti" pad array: r takes the mask's size
-        mYmid = floor((size(wrappedMask,1)+1)/2);
-        mXmid = floor((size(wrappedMask,2)+1)/2);
-        rXmid = floor((size(r,2)+1)/2);
-        rYmid = floor((size(r,1)+1)/2);
-        r = r(rYmid-mYmid+1:rYmid+mYmid,rXmid-mXmid+1:rXmid+mXmid); 
+      % r matrix truncation so that its size fits in wrappedMask
+      [mXmid,mYmid] = f_ComputeMatrixMidPoints(wrappedMask);
+      [rXmid,rYmid] = f_ComputeMatrixMidPoints(r); 
+      r = f_TruncateMatrix(wrappedMask,mXmid,mYmid,r,rXmid,rYmid);
  end
 end
 

@@ -19,9 +19,9 @@ W,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %     disks on the magnitude
 %  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
-%  monitorSize: size of the selected screen 
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
+%  monitorSize: size of the selected screen 
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use

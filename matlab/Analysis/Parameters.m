@@ -11,10 +11,10 @@ slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
-abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
+abs_ang = 1; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 0; % Phase mask selection:
+maskSel = 6; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -28,7 +28,7 @@ maskSel = 0; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
+plotMask = 2; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -40,19 +40,19 @@ plotMask = 1; % Allows to plot the final mask, as it can be a combination
            % analog to "plotMask" on the SLM Position section
            
 %% SLM positionining calibration, coordinates and type of truncation
-coordType = 2;  % Type of calculation of the spatial coordinates. def: 2 
+coordType = 1;  % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
 k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
         % Default: 10. Size is calculated as 2^k - 1
         % Only works when coordType = 1
-circularMask = 1; % Only works when coordType = 2
+circularMask = 0; % Only works when coordType = 2
   % 0: The mask presents an elliptical form when in the full screen
   % 1: The mask presents a circular form when in the full screen
   % On both cases full screen means that plotMask = 2
   % It is always applied for Zernike masks (maskSel=5,6) either for PC or
   % for the SLM
-shiftBool = 1; % Only shifts when plotMask = 2
+shiftBool = 0; % Only shifts when plotMask = 2
 % 0: shift deactivated [for exporting masks]
 % 1: shift activated [SLM displaying]
 % 2: self-centering algorithm
@@ -284,7 +284,7 @@ simBool = 0; % Simulate: yes (1) or no (0)
 %% Parameters: Zernike
 % Used in maskZernReconstr, maskSel = 5 and maskSel = 6
 % L and gl are also used with Zernike
-z_coeff = [3 4]; % Zernike coeffient vector (see f_ZernikeMask.m)
+z_coeff = [1 2 3]; % Zernike coeffient vector (see f_ZernikeMask.m)
 a = 60; % Arbitrary constant; the bigger, the more intense; ref: a=20
 frac = 0.125; % To adjust the wrapped phase; ref: 0.125
 pupil = 1; % Pupil relative size: [0,1]; like a percentage
