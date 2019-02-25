@@ -14,8 +14,8 @@ function [ LG ] = f_LaguerreGauss(r, phi, m, s, ph0, p, W)
 %  p: degree of polynomial. Is known as the number of radial nodes in the
 %     intensity distribution. There are p+1 rings or airy disks present. 
 %     Denotes the rings transitions
-%  w = w(0): radius of the beam; could depend on z: decreases along the
-%            optical axis for example
+%  W = w(0): radius of the beam; could depend on z: decreases along the
+%            optical axis for example. In general: w = w(z)
 %
 % Notes:
 %  z = 0; an incidence plane is assumed during calculations
@@ -24,7 +24,7 @@ function [ LG ] = f_LaguerreGauss(r, phi, m, s, ph0, p, W)
 %  1_book_Orbital angular momentum origins_behavior_applications_2011
 %  Page: 169; it has z dependence (not the case here)
 
-normFactor = sqrt( 2*factorial(p) / (pi*W.^2*factorial(p+abs(m))) );
+normFactor = sqrt( 2*factorial(p) / (pi*factorial(p+abs(m))*W.^2) );
 rNorm = r*sqrt(2)*W.^(-1);
 U = exp(-rNorm.^2/2); % Gaussian function
 radial = (rNorm).^abs(m) .* U .* ...
