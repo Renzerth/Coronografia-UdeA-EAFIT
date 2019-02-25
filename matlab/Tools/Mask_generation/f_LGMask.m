@@ -54,8 +54,9 @@ mask = f_LaguerreGauss(r,phi,m,s,ph0,p,W); % Generates a Laguerre-Gauss
 %% Plot the mask
 tit = strcat('LG phase mask with topological charge',{' '},num2str(tc), ...
                  ' and radial node',{' '},num2str(p));   
-f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask,binv, ...
-              monitorSize,scrnIdx,tit,coordType,abs_ang,plotMask);
+str = ''; % Empty, it only works for abs_ang = 0
+f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask, ...
+binv,monitorSize,scrnIdx,tit,str,coordType,abs_ang,plotMask);
           
 %%% OLD
 %  title('Amplitude of LG');

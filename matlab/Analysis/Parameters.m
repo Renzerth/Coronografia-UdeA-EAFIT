@@ -14,7 +14,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 5; % Phase mask selection:
+maskSel = 0; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -28,7 +28,7 @@ maskSel = 5; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 2; % Allows to plot the final mask, as it can be a combination 
+plotMask = 1; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -52,15 +52,15 @@ circularMask = 1; % Only works when coordType = 2
   % On both cases full screen means that plotMask = 2
   % It is always applied for Zernike masks (maskSel=5,6) either for PC or
   % for the SLM
-shiftBool = 0; % Only shifts when plotMask = 2
+shiftBool = 1; % Only shifts when plotMask = 2
 % 0: shift deactivated [for exporting masks]
 % 1: shift activated [SLM displaying]
 % 2: self-centering algorithm
-shiftCart = [100,0]; % [yshift,xshift], works when shiftBool = 1
-                     % Percentages of movement of the total size of the
-                     % mask (cartesian coordinates convention)
-                     % Calibrated with: s = +1; ph0 = 0, tc = 1; 
-                     % Ranges per shift: [0,100] (percentage)          
+shiftCart = [10,0]; % [yshift,xshift], works when shiftBool = 1
+                    % Percentages of movement of the total size of the
+                    % mask (cartesian coordinates convention)
+                    % Calibrated with: s = +1; ph0 = 0, tc = 1; 
+                    % Ranges per shift: [0,100] (percentage)          
               
                      
                      

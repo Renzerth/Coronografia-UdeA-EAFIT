@@ -45,7 +45,8 @@ mask = maskSPP.*maskVPL;
 %% Plot the mask
 tit = strcat('VPL with topological charge',{' '},num2str(tc),{' '}, ...
              'and',{' '},num2str(gl),{' '},'gray levels');  
-f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask,binv, ...
-              monitorSize,scrnIdx,tit,coordType,abs_ang,plotMask);
+str = ''; % Empty, it only works for abs_ang = 0
+f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask, ...
+binv,monitorSize,scrnIdx,tit,str,coordType,abs_ang,plotMask);
 
 end

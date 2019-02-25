@@ -52,8 +52,8 @@ plot_z,binMask,monitorSize,showM)
 
 maskZ = f_ZernikeMask(x,y,r,z_coeff,a,frac,L,gl,glphi,mingl,maxgl, ...
        levShft,pupil,sSize,disp_wrap,plot_z,binMask,monitorSize,showM);
-maskLG = f_LGMask(x,y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p, ...
-                 W,binv,norm,abs_ang,binMask,monitorSize,showM);
+maskLG = f_LGMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p,W, ...
+normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 mask = maskZ.*maskLG; % Combined mask. It is recommended to use binary
                         % masks on LG
   

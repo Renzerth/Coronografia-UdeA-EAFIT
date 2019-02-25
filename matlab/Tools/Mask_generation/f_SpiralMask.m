@@ -53,7 +53,8 @@ mask = exp(1i*mask); % Wrapped mask and complex
 %% Plot the mask
 tit = strcat('Spiral phase mask with topological charge',{' '}, ...
       num2str(tc));
-f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask,binv, ...
-              monitorSize,scrnIdx,tit,coordType,abs_ang,plotMask);
+str = ''; % Empty, it only works for abs_ang = 0
+f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask, ...
+binv,monitorSize,scrnIdx,tit,str,coordType,abs_ang,plotMask);
 
 end

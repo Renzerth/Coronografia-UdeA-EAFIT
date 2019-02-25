@@ -4,6 +4,7 @@ Angbet,z_coeff,a,frac,pupil,sSize,disp_wrap,plot_z,normMag,binMask,binv,...
 monitorSize,scrnIdx,coordType,abs_ang,plotMask,maskSel)                                        
 % Inputs:
 %  Explained inside each function on every case
+%  maskSel: selects a specific mask
 %
 % Outputs:
 %  mask: complex structure that has not been truncated.

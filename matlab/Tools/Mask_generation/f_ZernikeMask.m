@@ -94,4 +94,5 @@ f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask,binv, ...
 % min(b,[],'omitnan') % Negative
 % min(cos(b(:)),[],'omitnan') % positive since the phase was wrapped 
                               % for intensity   
+                              
 end                              

@@ -1,6 +1,41 @@
 function [x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,sSize,monitorSize] = ...
 f_DefineSpace(spaceSupport,k,shiftCart,pixSize,scrnIdx,circularMask, ...
-shiftBool,coordType,maskSel)
+shiftBool,coordType,maskSel,plotMask)
+% Inputs:
+%  spaceSupport: full side-length of the SLM (or unitary without an SLM)
+%  k: bits for grey levels; 2^k is the resolution (size of x and y)
+%     Default: 10. Size is calculated as 2^k - 1
+%     Only works when coordType = 1
+%  shiftCart:[yshift,xshift], works when shiftBool = 1
+%             Percentages of movement of the total size of the mask 
+%             (cartesian coordinates convention). Calibrated with: s = +1;
+%             ph0 = 0, tc = 1. Ranges per shift: [0,100] (percentage)  
+%  pixSize: SLM pixel's size in um
+%  scrnIdx: screen number selector. In [1,N] with N the # of screen
+%  circularMask: Only works when coordType = 2 and when maskSel ~= (5,6)
+%           0: The mask presents an elliptical form when in the full screen
+%           1: The mask presents a circular form when in the full screen
+%           On both cases full screen means that plotMask = 2
+%           It is always applied for Zernike masks (maskSel=5,6) either for 
+%           the PC or for the SLM
+%  shiftBool: Only shifts when plotMask = 2
+%             0: shift deactivated [for exporting masks]
+%             1: shift activated [SLM displaying]
+%             2: self-centering algorithm
+%  coordType: type of calculation of the spatial coordinates. def: 2 
+%    -1: size defined by the user, space support defined by the SLM to use
+%    -2: size defined by the resolution of the selected screen
+%  maskSel: selects a specific mask
+%  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
+%             a surface (3)
+%
+% Outputs:
+% x,y: cartesian coordinates
+% Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC: meshgrids and polar coordinates
+%                                          of both the SLM and the PC
+% sSize: screen size for the Zernike polynomials generation
+% monitorSize: resolution of the monitor selected by the scrnIdx
+
 switch coordType
  case 1 % Size defined by the user, space support defined by the SLM to use
   % This applies when one won't project a full screen mask and a desired 
@@ -48,7 +83,7 @@ switch coordType
                              % is never shifted
   % Circular should also apply whenever Zernike is used for both pc and SLM
   % Xrescaled only applies for coordType = 2
-  if circularMask == 1 || maskSel == 5 || maskSel == 6
+  if (circularMask == 1 && plotMask == 2)|| (maskSel == 5 || maskSel == 6)
       X = Xrescaled; % Circular truncation in full screen
   end % Otherwise X=X and one has the elliptical truncation in full screen
 end

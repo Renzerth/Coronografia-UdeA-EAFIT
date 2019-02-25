@@ -51,7 +51,8 @@ mask = exp(1i*mask); % Wrapped mask
 %% Plot the mask
 tit = strcat('EGV with topological charge',{' '},num2str(tc),{' '}, ...
              'and beta = ',{' '},num2str(bcst));
-f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask,binv, ...
-              monitorSize,scrnIdx,tit,coordType,abs_ang,plotMask);
+str = ''; % Empty, it only works for abs_ang = 0
+f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask, ...
+binv,monitorSize,scrnIdx,tit,str,coordType,abs_ang,plotMask);
 
 end

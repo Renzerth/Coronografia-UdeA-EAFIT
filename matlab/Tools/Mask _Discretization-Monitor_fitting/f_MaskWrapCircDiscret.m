@@ -80,43 +80,32 @@ end
 A = size(r) - size(wrappedMask); % Size comparison
 if any(A) % True when tests whether any of the elements along various
           % dimensions of an array are nonzero
-    if  plotMask == 2 % SLM
-    
-        idx = find(A ~= 0);
-        pad = A(idx);
-        if isscalar(pad)
-            %% Orientation of the padding
-            % Horizontal Padding:
-            a1 = [0 pad/2];
-            a2 = [0 (pad+1)/2];
-            a3 = [0 (pad+1)/2 - 1];
-            if idx == 1 % Vertical Padding: same as horizontal but shifted
-               a1 = circshift(a1,1); % Circular shift
-               a2 = circshift(a2,1); % Circular shift
-               a3 = circshift(a3,1); % Circular shift
-            end 
-            %% Padding
-            % Replicated since that the outer value of the Zernike are
-            % constant
-            if mod(pad,2) == 0 % Even pad (symmetric)
-                wrappedMask = padarray(wrappedMask,a1,'replicate','both');
-                % A = [zeros(1,pad/2) A zeros(1,pad/2)];
-            else % Odd pad (asymmetric)
-                wrappedMask = padarray(wrappedMask,a2,'replicate','pre');
-                wrappedMask = padarray(wrappedMask,a3,'replicate','pos');
-                % A = [zeros(1,(pad+1)/2) A zeros(1,(pad+1)/2-1)]; 
-            end  
-        else % pad is a vector
-            % MISSING
-        end
-    else % plotMask == 0 or 1 or 3 % PC
+ if  plotMask == 2 % SLM
+  %% Padding
+  idx = find(A ~= 0);
+  pad = A(idx);
+  method = 'replicate'; % For padding: 'replicate', 'symmetric',
+                        % 'circular' or a scalar
+  hor = 1; vert = 2; % Padding Direction: horizontal (H) or vertical (V)
+  if isscalar(pad)                  
+   % Replicated since that the outer value of the Zernike are constant
+   if idx == 1 % Vertical Padding
+   wrappedMask = f_SymmetricPadding(wrappedMask,pad,method,hor); % V
+   else % idx = 2 % Horizontal Padding
+    wrappedMask = f_SymmetricPadding(wrappedMask,pad,method,vert); % H
+   end
+  else % pad is a vector
+    wrappedMask = f_SymmetricPadding(wrappedMask,pad(1),method,hor); % V
+    wrappedMask = f_SymmetricPadding(wrappedMask,pad(2),method,vert); % H
+  end
+ else % plotMask == 0 or 1 or 3 % PC
         % "Anti" pad array: r takes the mask's size
         mYmid = floor((size(wrappedMask,1)+1)/2);
         mXmid = floor((size(wrappedMask,2)+1)/2);
         rXmid = floor((size(r,2)+1)/2);
         rYmid = floor((size(r,1)+1)/2);
         r = r(rYmid-mYmid+1:rYmid+mYmid,rXmid-mXmid+1:rXmid+mXmid); 
-    end
+ end
 end
 
 %% Phase mask times a circular (or elliptical) aperture
