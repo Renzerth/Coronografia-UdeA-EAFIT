@@ -64,11 +64,12 @@ binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask,maskSel);
 % Dependencies:
 % f_PlotSelectedMask -> f_SpiralMask (or any other) -> f_ProjectMask -> 
 % f_MaskWrapCircDiscret -> (f_discretizeMask & f_ScaleMatrixData)          
-close all;
+
                            
                            
 %%%%%%%%%%%%%%%%%%%%%%% MEASUREMENTS BY AN AUTOMATED PARAMETER VARIATION
 if meas == 1
+  close all; % Closes opened figures
  %% Folders and register creations on Data and Output    
 [DatalogDir,ltcvect,lglvect] = f_CreateFoldersRegisters(maskName,tcvect,...
                                glvect,slm,dataDir,outDir,pathSep);
