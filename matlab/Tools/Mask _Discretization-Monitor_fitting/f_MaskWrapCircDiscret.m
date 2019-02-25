@@ -83,25 +83,12 @@ A = size(r) - size(wrappedMask); % Size comparison
 if any(A) % True when tests whether any of the elements along various
           % dimensions of an array are nonzero
  if  plotMask == 2 % SLM
-  %% Padding
-  idx = find(A ~= 0);
-  pad = A(idx);
-  method = 'replicate'; % For padding: 'replicate', 'symmetric',
-                        % 'circular' or a scalar
-  hor = 1; vert = 2; % Padding Direction: horizontal (H) or vertical (V)
-  if isscalar(pad)                  
-   % Replicated since that the outer value of the Zernike are constant
-   if idx == 1 % Vertical Padding
-   wrappedMask = f_SymmetricPadding(wrappedMask,pad,method,hor); % V
-   else % idx = 2 % Horizontal Padding
-    wrappedMask = f_SymmetricPadding(wrappedMask,pad,method,vert); % H
-   end
-  else % pad is a vector
-    wrappedMask = f_SymmetricPadding(wrappedMask,pad(1),method,hor); % V
-    wrappedMask = f_SymmetricPadding(wrappedMask,pad(2),method,vert); % H
-  end
+  %% wrappedMask matrix padding so that its size fits r
+      method = 'replicate'; % For padding: 'replicate', 'symmetric',
+                            % 'circular' or a scalar
+      wrappedMask = f_PadMatrix(wrappedMask,r,method);
  else % plotMask == 0 or 1 or 3 % PC
-      % r matrix truncation so that its size fits in wrappedMask
+      %% r matrix truncation so that its size fits in wrappedMask
       [mXmid,mYmid] = f_ComputeMatrixMidPoints(wrappedMask);
       [rXmid,rYmid] = f_ComputeMatrixMidPoints(r); 
       r = f_TruncateMatrix(wrappedMask,mXmid,mYmid,r,rXmid,rYmid);
