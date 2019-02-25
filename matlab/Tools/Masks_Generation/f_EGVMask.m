@@ -1,8 +1,9 @@
 %% Elliptic Gaussian Vortex (EGV)
 % Taken from: 1_2017_IMP_Elliptic_Gaussian Optical Vortices_PRA_Kotlyar
 
-function mask = f_EGVMask(X,Y,r,gl,glphi,mingl,maxgl,levShft,tc,s,ph0, ...
-bcst,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
+function [mask,wrapMask,wrapMaskFig] = f_EGVMask(X,Y,r,gl,glphi,mingl, ...
+maxgl,levShft,tc,s,ph0,bcst,normMag,binMask,binv,monitorSize,scrnIdx, ...
+coordType,abs_ang,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
@@ -38,6 +39,8 @@ bcst,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 % Outputs:
 %  mask: Elliptic Gaussian Vortex (EGV). Complex structure that has not 
 %  been truncated and is wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
+%  wrapMask: truncation and angle operations on mask.
+%  wrapMaskFig: figure handler if needed outside the function
 
 %% Elliptic Gaussian beam phase mask: scalated azimuthal coordinate
 phi = atan2(bcst*Y,X); % Angle component with elliptic gaussian beam
@@ -52,7 +55,8 @@ mask = exp(1i*mask); % Wrapped mask
 tit = strcat('EGV with topological charge',{' '},num2str(tc),{' '}, ...
              'and beta = ',{' '},num2str(bcst));
 str = ''; % Empty, it only works for abs_ang = 0
-f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask, ...
-binv,monitorSize,scrnIdx,tit,str,coordType,abs_ang,plotMask);
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl, ...
+levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
+abs_ang,plotMask);
 
 end

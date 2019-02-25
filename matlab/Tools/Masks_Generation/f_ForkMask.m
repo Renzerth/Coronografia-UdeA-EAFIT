@@ -1,9 +1,9 @@
 %% Elliptic Gaussian Vortex (EGV)pi
 % Taken from: 2015_Vortex_CGH_Adjustable-SPP_Jain
 
-function mask = f_ForkMask(X,Y,r,phi,gl,glphi,mingl,maxgl,levShft,tc,s, ...
-ph0,L,period,T0,frkTyp,Aalpha,Angalp,Angbet,normMag,binMask,binv, ...
-monitorSize,scrnIdx,coordType,abs_ang,plotMask)
+function [mask,wrapMask,wrapMaskFig] = f_ForkMask(X,Y,r,phi,gl,glphi, ...
+mingl,maxgl,levShft,tc,s,ph0,L,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
+normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
@@ -43,6 +43,8 @@ monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %          fork phase mask or holograma en forma de tenedor
 % mask: Fork mask. Complex structure that has not been truncated and is
 %       wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
+%  wrapMask: truncation and angle operations on mask.
+%  wrapMaskFig: figure handler if needed outside the function
 
 switch frkTyp
     case 1 % Smooth transition hologram
@@ -77,7 +79,8 @@ end
 tit = strcat('Fork mask with topological charge',{' '},num2str(tc), ...
              {' '},'and period =',{' '},num2str(period));
 str = ''; % Empty, it only works for abs_ang = 0
-f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask, ...
-binv,monitorSize,scrnIdx,tit,str,coordType,abs_ang,plotMask);
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl, ...
+levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
+abs_ang,plotMask);
 
 end

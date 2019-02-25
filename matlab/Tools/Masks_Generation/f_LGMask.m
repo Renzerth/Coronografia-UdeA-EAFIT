@@ -1,7 +1,8 @@
 %% Laguerre Gauss phase masks
 
-function mask = f_LGMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0,p, ...
-W,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
+function [mask,wrapMask,wrapMaskFig] = f_LGMask(r,phi,gl,glphi,mingl, ...
+maxgl,levShft,tc,s,ph0,p,W,normMag,binMask,binv,monitorSize,scrnIdx, ...
+coordType,abs_ang,plotMask)
 % Inputs: 
 %  r,phi: polar coordinates for both the PC and SLM
 %  gl: number of grey levels (normally 256)
@@ -30,9 +31,11 @@ W,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
 %
-% Output:
+% Outputs:
 %  mask: LG mask. Complex structure that has not been truncated and is 
 %  wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
+%  wrapMask: truncation and angle operations on mask.
+%  wrapMaskFig: figure handler if needed outside the function
 %
 % Samuel Plazas Escudero - Juan José Cadavid - 2018 - Advanced Project 1
 
@@ -51,8 +54,9 @@ mask = f_LaguerreGauss(r,phi,m,s,ph0,p,W); % Generates a Laguerre-Gauss
 tit = strcat('LG phase mask with topological charge',{' '},num2str(tc), ...
                  ' and radial node',{' '},num2str(p));   
 str = ''; % Empty, it only works for abs_ang = 0
-f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask, ...
-binv,monitorSize,scrnIdx,tit,str,coordType,abs_ang,plotMask);
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl, ...
+levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
+abs_ang,plotMask);
  
 %% Mask in a bone colormap
 %   h = pcolor(x,y,mask); 

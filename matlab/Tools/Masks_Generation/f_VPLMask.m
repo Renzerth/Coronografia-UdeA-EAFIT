@@ -3,8 +3,9 @@
 % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf
 % Equation 3, page 2
 
-function mask = f_VPLMask(r,phi,gl,glphi,mingl,maxgl,levShft,tc,s,ph0, ...
-L,f_FR,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
+function [mask,wrapMask,wrapMaskFig] = f_VPLMask(r,phi,gl,glphi,mingl, ...
+maxgl,levShft,tc,s,ph0,L,f_FR,normMag,binMask,binv,monitorSize,scrnIdx, ...
+coordType,abs_ang,plotMask)
 % Generates and plots a VPL mask:  helicoidal mask + fresnel lens
 %
 % Inputs: 
@@ -33,8 +34,10 @@ L,f_FR,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %             a surface (3)
 %
 % Outputs:
-% mask: Vortex-Producing Lens (VPL) phase mask. Complex structure that has 
-% not been truncated and is wrapped on [-pi,pi]. mask=exp(i*UnwrappedMask)
+%  mask: Vortex-Producing Lens (VPL) phase mask. Complex structure that has 
+%  not been truncated and is wrapped on [-pi,pi]. mask=exp(i*UnwrappedMask)
+%  wrapMask: truncation and angle operations on mask.
+%  wrapMaskFig: figure handler if needed outside the function
 %
 
 %% Spiral phase mask Generation
@@ -55,7 +58,8 @@ mask = maskSPP.*maskVPL;
 tit = strcat('VPL with topological charge',{' '},num2str(tc),{' '}, ...
              'and',{' '},num2str(gl),{' '},'gray levels');  
 str = ''; % Empty, it only works for abs_ang = 0
-f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask, ...
-binv,monitorSize,scrnIdx,tit,str,coordType,abs_ang,plotMask);
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl, ...
+levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
+abs_ang,plotMask);
 
 end

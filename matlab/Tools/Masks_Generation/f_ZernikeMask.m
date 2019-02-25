@@ -1,7 +1,7 @@
 %% Generate a Zernike phase mask (wavefront)
-function mask = f_ZernikeMask(r,z_coeff,a,frac,L,gl,glphi,mingl,maxgl, ...
-levShft,pupil,sSize,disp_wrap,plot_z,normMag,binMask,binv,monitorSize, ...
-scrnIdx,coordType,plotMask)
+function [mask,wrapMask,wrapMaskFig] = f_ZernikeMask(r,z_coeff,a,frac, ...
+L,gl,glphi,mingl,maxgl,levShft,pupil,sSize,disp_wrap,plot_z,normMag, ...
+binMask,binv,monitorSize,scrnIdx,coordType,plotMask)
 % Characterizes the aberrations of the system
 % Inputs:
 %  r: polar coordinate
@@ -43,6 +43,8 @@ scrnIdx,coordType,plotMask)
 % Outputs:
 %  Zernike phase mask. Complex structure that has not been truncated and is
 %  wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
+%  wrapMask: truncation and angle operations on mask.
+%  wrapMaskFig: figure handler if needed outside the function
 %
 % Missing:
 %  it still doesn't modulate on 2pi completely
@@ -86,8 +88,9 @@ else % disp_wrap = 0
     mask = n_mask; % Unwrapped mask
     str = 'Unwrapped phase value';
 end
-f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,normMag,binMask,binv, ...
-              monitorSize,scrnIdx,tit,str,coordType,abs_ang,plotMask);
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl, ...
+levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
+abs_ang,plotMask);
 
 %% Phase wrapping test (optional): 
 % The wrapped phase should do complete cycles of 2pi
