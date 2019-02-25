@@ -1,5 +1,5 @@
 %% Plot Phase Mask either on the PC or on the SLM
-function [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,glphi,mingl,...
+function [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
 maxgl,levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str, ...
 coordType,abs_ang,plotMask) % [wrapMask,wrapMaskFig]
 % Inputs:
@@ -8,7 +8,7 @@ coordType,abs_ang,plotMask) % [wrapMask,wrapMaskFig]
 %        Complex structure that has not been truncated.
 %        mask = exp(i*UnwrappedMask)
 %  gl: number of grey levels (normally 256)
-%  glphi: discretized phi vector on [-pi,pi].
+%  phaseValues: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
 %  levShft: corresponds to the brightness or constant shift of the gl's
 %  normMag: normalize magnitude. yes(1); no(0)
@@ -60,7 +60,7 @@ switch abs_ang
   
   case 2 % Phase
    % Circular pupil and wrapping   
-   wrapMask = f_MaskWrapCircDiscret(r,mask,binMask,binv,glphi,mingl, ...
+   [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask,binMask,binv,phaseValues,mingl, ...
                                        maxgl,levShft,coordType,plotMask);
    figtit = 'Phase Mask';
    str = 'Wrapped phase value'; % Colorbar string
@@ -77,7 +77,7 @@ switch plotMask
   % [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',tit);
   %% Plot the mask
   wrapMaskFig = figure('color','white','Name',figtit); 
-  imagesc(wrapMask); axis square; colormap(gray(gl));
+  imagesc(wrapMask); axis square; colormap(customMap);
   title(tit);
   set(gca,'xtick',[]); set(gca,'ytick',[]) % No axes values
   cbh = colorbar; cbh.Label.String = str;
@@ -102,6 +102,8 @@ switch plotMask
  case 2  % Plot on the SLM. 
   enablechange = true; % SLM figure display monitor activated
   [res,~]= f_changeProjectionMonitor(scrnIdx,enablechange);
+  % 2018a: gcf.WindowState = 'maximized';
+  % https://blogs.mathworks.com/pick/2018/07/13/maximize-your-figures/
   % Allow full-screen size figures when coordType == 2
   offsetPixel = [1,1]; % Mandatory: pixels have this origin. 
                        % [0,0] doesn't exist
@@ -128,7 +130,7 @@ switch plotMask
    
   %% Figure plotting
   imagesc(wrapMask);  % Plots in SLM screen 
-  axis off; colormap(gray(gl));
+  axis off; colormap(customMap);
   % axis fill;
   wrapMaskFig.Visible = 'on';
   [~] = f_changeProjectionMonitor('Restore'); % Restore default figure

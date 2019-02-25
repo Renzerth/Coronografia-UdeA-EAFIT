@@ -1,12 +1,12 @@
 %% Laguerre Gauss phase masks
 
-function [mask,wrapMask,wrapMaskFig] = f_LGMask(r,phi,gl,glphi,mingl, ...
-maxgl,levShft,tc,s,ph0,p,W,normMag,binMask,binv,monitorSize,scrnIdx, ...
+function [mask,wrapMask,wrapMaskFig] = f_LGMask(r,phi,gl,phaseValues,mingl, ...
+maxgl,levShft,tc,s,ph0,p,WsizeRatio,normMag,binMask,binv,monitorSize,scrnIdx, ...
 coordType,abs_ang,plotMask)
 % Inputs: 
 %  r,phi: polar coordinates for both the PC and SLM
 %  gl: number of grey levels (normally 256)
-%  glphi: discretized phi vector on [-pi,pi].
+%  phaseValues: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
 %  levShft: corresponds to the brightness or constant shift of the gl's
 %  tc: topological charge = m (azimuthal index). When tc = 0, the mask is
@@ -41,12 +41,11 @@ coordType,abs_ang,plotMask)
 
 %% Parameters: Laguerre-Gauss
 m = tc; % Azimuthal index = topological charge
-% sSize = length(x); % Size of the original x,y coordinates
-% sSize = min(size(r)); % Addded but not fully sure
-W = W/100; % Normalization with number of samples
+sSize = min(size(r)); % Addded but not fully sure
+WsizeRatio = sSize*WsizeRatio; % Normalization with number of samples
 
 %% Laguerre-Gauss mask
-mask = f_LaguerreGauss(r,phi,m,s,ph0,p,W); % Generates a Laguerre-Gauss 
+mask = f_LaguerreGauss(r,phi,m,s,ph0,p,WsizeRatio); % Generates a Laguerre-Gauss 
 % mode: it has both magnitude and phase, meaning that:
 % mask = abs(mask).*exp(1i*angle(mask))
 
@@ -54,7 +53,7 @@ mask = f_LaguerreGauss(r,phi,m,s,ph0,p,W); % Generates a Laguerre-Gauss
 tit = strcat('LG phase mask with topological charge',{' '},num2str(tc), ...
                  ' and radial node',{' '},num2str(p));   
 str = ''; % Empty, it only works for abs_ang = 0
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl, ...
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,maxgl, ...
 levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
 abs_ang,plotMask);
  

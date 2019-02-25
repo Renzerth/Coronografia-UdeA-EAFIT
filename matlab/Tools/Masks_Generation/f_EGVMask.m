@@ -1,7 +1,7 @@
 %% Elliptic Gaussian Vortex (EGV)
 % Taken from: 1_2017_IMP_Elliptic_Gaussian Optical Vortices_PRA_Kotlyar
 
-function [mask,wrapMask,wrapMaskFig] = f_EGVMask(X,Y,r,gl,glphi,mingl, ...
+function [mask,wrapMask,wrapMaskFig] = f_EGVMask(X,Y,r,gl,phaseValues,mingl, ...
 maxgl,levShft,tc,s,ph0,bcst,normMag,binMask,binv,monitorSize,scrnIdx, ...
 coordType,abs_ang,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
@@ -11,7 +11,7 @@ coordType,abs_ang,plotMask)
 %  X,Y: A meshgrid of the spatial vector: 2D Cartesian coordinates
 %  r: polar coordinate (in cm)
 %  gl: number of grey levels (normally 256)
-%  glphi: discretized phi vector on [-pi,pi].
+%  phaseValues: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
 %  levShft: corresponds to the brightness or constant shift of the gl's
 %  tc: Topological charge
@@ -55,7 +55,7 @@ mask = exp(1i*mask); % Wrapped mask
 tit = strcat('EGV with topological charge',{' '},num2str(tc),{' '}, ...
              'and beta = ',{' '},num2str(bcst));
 str = ''; % Empty, it only works for abs_ang = 0
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl, ...
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,maxgl, ...
 levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
 abs_ang,plotMask);
 

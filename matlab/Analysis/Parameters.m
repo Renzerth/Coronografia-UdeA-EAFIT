@@ -2,7 +2,7 @@
 %% Algorithm sections
 measDebug = 0; % Debugging before actually measuring. Displays the default 
                % phase mask and shots a photo with the camera
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 measSimulated = 1; % Saves the mask and does not involve the cameras: 
                    % yes (1) or no (0)
 beepSound = 1; % Beep sound when measurement finishes. Only works when 
@@ -154,7 +154,7 @@ normMag = 0; % Normalize magnitude. yes(1); no(0).
 p = 0; % Number of radial nodes. If p=0, normal helicoid masks are obtained
        % If they are used and tc=0(m=0); binary masks are obtained
        % Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
-W = 20; % Width of the modes; for LG; ref: [0,100] % Close to being a %
+WsizeRatio = 0.5; % Width of the modes; for LG; ref: [0,1]
          
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
@@ -202,22 +202,22 @@ mingl = 0; % Minimum gray level depth. Ref: 0
 maxgl = 255; % Maximum gray level depth. Ref: 255
 levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
              % Corresponds to the brightness or constant shift of the gl's
-discretization = 1; % Variable for the next switch
+gl = 256; % Number of gray levels (normally 256). Must be smaller than
+          % the dynamic range = maxGrayDepth-minGrayDepth. Default: 256             
+discretization = 2; % Variable for the next switch
 switch discretization % Gray-level discretized azimuthal angle vector
  case 1 % 1: Evenly-spaced gl phase values.
-  gl = 256; % Number of gray levels (normally 256). Must be smaller than
-            % the dynamic range = maxGrayDepth-minGrayDepth
-  glphi = linspace(-pi,pi,gl); % Discretized phi vector on [-pi,pi]. The 
+  
+  phaseValues = linspace(0,2*pi,gl); % Discretized phi vector on [-pi,pi]. The 
                                % sampling interval consists on dividing the
                                % range over the gray levels. Similar to the
                                % VPL Edgar's discretization formula on the
                                % first page of:
   % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf     
  case 2 % 2: user-defined gl values
-  glphi = [1 10 100 201 202]; % Custom gl vector: the mask will only have
+  phaseValues = [1 10 100 201 202]; % Custom gl vector: the mask will only have
                               % these levels
-  glphi = glphi*2*pi/256 - pi; % Conversion from gray to phase levels                  
-  gl = 202; % That is the reference gl when one has personalized gl's
+  phaseValues = phaseValues*2*pi/255; % Conversion from gray to phase levels                  
 end
 % OLD:
 % a = 0:255 valores de la fase (256 valores posibles de fase)
@@ -271,7 +271,7 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 %%%%%%%%%%%%%%%%%%%%%%% PART 5: ACADEMIC-PURPOSE ASPECTS %%%%%%%%%%%%%%%%%%
 % Zernike, FT, simulation in the free space that is not very depured
 %% Optional plots and procedures
-FTmask = 1; % Finds the FFT of the mask and plots it: yes(1); no(0)
+FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
 maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum
                % Only works when FTmask = 1
 gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)

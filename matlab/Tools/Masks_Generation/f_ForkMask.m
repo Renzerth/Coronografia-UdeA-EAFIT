@@ -1,7 +1,7 @@
 %% Elliptic Gaussian Vortex (EGV)pi
 % Taken from: 2015_Vortex_CGH_Adjustable-SPP_Jain
 
-function [mask,wrapMask,wrapMaskFig] = f_ForkMask(X,Y,r,phi,gl,glphi, ...
+function [mask,wrapMask,wrapMaskFig] = f_ForkMask(X,Y,r,phi,gl,phaseValues, ...
 mingl,maxgl,levShft,tc,s,ph0,L,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
 normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
@@ -11,7 +11,7 @@ normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %  X,Y: A grid of the spatial vector: 2D Cartesian coordiantes
 %  r,phi: polar coordinates (r in cm)
 %  gl: number of grey levels (normally 256)
-%  glphi: discretized phi vector on [-pi,pi].
+%  phaseValues: discretized phi vector on [-pi,pi].
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
 %  levShft: corresponds to the brightness or constant shift of the gl's
 %  tc: Topological charge
@@ -79,7 +79,7 @@ end
 tit = strcat('Fork mask with topological charge',{' '},num2str(tc), ...
              {' '},'and period =',{' '},num2str(period));
 str = ''; % Empty, it only works for abs_ang = 0
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl, ...
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,maxgl, ...
 levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
 abs_ang,plotMask);
 
