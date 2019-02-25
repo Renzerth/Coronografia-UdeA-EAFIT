@@ -57,10 +57,10 @@ shiftBool,coordType,maskSel,plotMask);
 % f_SelectCoordinates one just selects already-calculated variables
                 
 %% Phase mask selection and plot on the screen or on the SLM
-[mask,maskName] = f_PlotSelectedMask(X,Y,r,phi,gl,glphi,mingl,maxgl, ...
-levShft,tc,s,ph0,p,W,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
-z_coeff,a,frac,pupil,sSize,disp_wrap,plot_z,normMag,binMask,binv, ...
-monitorSize,scrnIdx,coordType,abs_ang,plotMask,maskSel);  
+[mask,wrapMask,~,maskName] = f_PlotSelectedMask(X,Y,r,phi,gl,glphi, ...
+mingl,maxgl,levShft,tc,s,ph0,p,W,L,f_FR,bcst,period,T0,frkTyp,Aalpha, ...
+Angalp,Angbet,z_coeff,a,frac,pupil,sSize,disp_wrap,plot_z,normMag, ...
+binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask,maskSel);  
 % Dependencies:
 % f_PlotSelectedMask -> f_SpiralMask (or any other) -> f_ProjectMask -> 
 % f_MaskWrapCircDiscret -> (f_discretizeMask & f_ScaleMatrixData)          
@@ -143,7 +143,7 @@ f_ComputeMaskGradient(x,y,AngMask,gradMask);
 % Executed if desired on the parameters
 % Computes a wavefront reconstruction using Zernike's Polynomials and 
 % calculates the function expansion coefficients
-f_ZernikeReconstruction(14,angle(mask),1,maskZernReconstr);
+f_ZernikeReconstruction(14,wrapMask,1,maskZernReconstr);
 
 %% Simulation
 % Executed if desired on the parameters

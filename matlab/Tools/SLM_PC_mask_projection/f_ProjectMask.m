@@ -1,9 +1,9 @@
 %% Plot Phase Mask either on the PC or on the SLM
-function fighandler = f_ProjectMask(r,mask,gl,glphi,mingl,maxgl,levShft,...
-normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType,abs_ang, ...
-plotMask)
+function [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,glphi,mingl,...
+maxgl,levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str, ...
+coordType,abs_ang,plotMask) % [wrapMask,wrapMaskFig]
 % Inputs:
-%  r: polar coordinate (in cm)
+%  r: polar coordinate
 %  mask: function to be plotted. It is wrapped on [-pi,pi] if abs_ang = 2.
 %        Complex structure that has not been truncated.
 %        mask = exp(i*UnwrappedMask)
@@ -29,8 +29,9 @@ plotMask)
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
 %
-% Output:
-%  fighandler: figure handler if needed outside the function
+% Outputs:
+%  wrapMask: truncation and angle operations on mask.
+%  wrapMaskFig: figure handler if needed outside the function
 %
 % Notes:
 %  Image is shown with gl gray levels
@@ -39,27 +40,27 @@ plotMask)
 if plotMask ~= 0
  switch abs_ang 
   case 0 % No operation, custom input (assumed to be non complex)
-   wrappedMask = mask;
+   wrapMask = mask;
    figtit = 'Mask';
    if isreal(mask) == false
     warning(['When you choose abs_ang = 0, mask must be selected to be' ...
              'real-valued. Selecting the real part...']);
-    wrappedMask = real(mask);  
+    wrapMask = real(mask);  
    end
    % str: defined in the input
   case 1 % Amplitude
-   wrappedMask = abs(mask); % Actually, this is an amplitude filter
+   wrapMask = abs(mask); % Actually, this is an amplitude filter
    figtit = 'Amplitude Mask';
    str = 'Value of amplitude'; % Colorbar string
    %% Normalization constants (amplitude)
    if normMag == 1 % Phase is not changed
-       norm = max(wrappedMask(:)); % Max value
-       wrappedMask = wrappedMask/norm; % Normalization of the magnitude
+       norm = max(wrapMask(:)); % Max value
+       wrapMask = wrapMask/norm; % Normalization of the magnitude
    end
   
   case 2 % Phase
    % Circular pupil and wrapping   
-   wrappedMask = f_MaskWrapCircDiscret(r,mask,binMask,binv,glphi,mingl, ...
+   wrapMask = f_MaskWrapCircDiscret(r,mask,binMask,binv,glphi,mingl, ...
                                        maxgl,levShft,coordType,plotMask);
    figtit = 'Phase Mask';
    str = 'Wrapped phase value'; % Colorbar string
@@ -70,14 +71,14 @@ end
 switch plotMask
  case 0 
   % Won't plot at all
-  fighandler = figure('Visible','off');
+  wrapMaskFig = figure('Visible','off');
  case 1 % PC Screen: normal plot
   % OLD:   
   % slmhfig = figure('color','white','units','normalized','position',...
   % [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',tit);
   %% Plot the mask
-  fighandler = figure('color','white','Name',figtit); 
-  imagesc(wrappedMask); axis square; colormap(gray(gl));
+  wrapMaskFig = figure('color','white','Name',figtit); 
+  imagesc(wrapMask); axis square; colormap(gray(gl));
   title(tit);
   set(gca,'xtick',[]); set(gca,'ytick',[]) % No axes values
   cbh = colorbar; cbh.Label.String = str;
@@ -87,8 +88,8 @@ switch plotMask
   if abs_ang == 2
    % Next, pi ticks are added to the colorbar if the phase value extreme
    % points are near -pi and pi; otherwise the default colorbar is shown
-   upTol = abs(max(wrappedMask(:)) - pi); % upper tolerance
-   lowTol = abs(abs(min(wrappedMask(:))) - pi); % lower tolerance
+   upTol = abs(max(wrapMask(:)) - pi); % upper tolerance
+   lowTol = abs(abs(min(wrapMask(:))) - pi); % lower tolerance
    % Tol and a were found empirically
    Tol = 0.3; % Tolerance for pi ticks
    a = 0.15; % Colorbar custom tick adjustment
@@ -105,10 +106,10 @@ switch plotMask
   % Allow full-screen size figures when coordType == 2
   offsetPixel = [1,1]; % Mandatory: pixels have this origin. 
                        % [0,0] doesn't exist
-  fighandler = figure('Visible','off','MenuBar','none','Toolbar', ...
+  wrapMaskFig = figure('Visible','off','MenuBar','none','Toolbar', ...
                       'none','NumberTitle','off');
   % Hide Menu bar and Tool bar
-  fighandler.Units = 'Pixels'; % 'color','black',
+  wrapMaskFig.Units = 'Pixels'; % 'color','black',
   
   %% Figure size
   %%% For cordType 1 and 2:
@@ -120,25 +121,25 @@ switch plotMask
   if coordType == 1
    tol = 50;
    MidVectMonitor = floor((res+1)/2); % SLM monitor mid vector
-   MidVectMask = floor((size(wrappedMask)+1)/2); % Mask mid vector
+   MidVectMask = floor((size(wrapMask)+1)/2); % Mask mid vector
    MidVect = MidVectMonitor - MidVectMask; % pixel position of the mask
    set(gcf,'Units','Pixels'); % Figure units
    set(gcf,'OuterPosition',[MidVect monitorSize(1)+tol monitorSize(2)+tol]); 
   end
   
   %% Figure plotting
-  imagesc(wrappedMask);  % Plots in SLM screen 
+  imagesc(wrapMask);  % Plots in SLM screen 
   axis off; colormap(gray(gl));
   % axis fill;
-  fighandler.Visible = 'on';
+  wrapMaskFig.Visible = 'on';
   [~] = f_changeProjectionMonitor('Restore'); % Restore default figure
   % OLD
   % set(gca,'xtick',[]); set(gca,'ytick',[]) % No axis values
     
  case 3 % Screen: surface plot
-  fighandler = figure('color','white','units','normalized','position',...
+  wrapMaskFig = figure('color','white','units','normalized','position',...
                [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',figtit);
-  surf(wrappedMask), colormap(gray(gl)), shading interp; % 3D Surface
+  surf(wrapMask), colormap(gray(gl)), shading interp; % 3D Surface
   axis square; title(tit);
   cbh = colorbar; cbh.Label.String = str;
   pax = gca; pax.FontSize = 16; % Font size
