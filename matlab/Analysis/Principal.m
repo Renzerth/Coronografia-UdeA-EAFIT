@@ -70,7 +70,8 @@ binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask,maskSel);
 %%%%%%%%%%%%%%%%%%%%%%% MEASUREMENTS BY AN AUTOMATED PARAMETER VARIATION
 if meas == 1
  %% Folders and register creations on Data and Output    
- CreateFoldersRegisters;
+[DatalogDir,ltcvect,lglvect] = f_CreateFoldersRegisters(maskName,tcvect,...
+                               glvect,slm,dataDir,outDir,pathSep);
 
  %% Hardware initialization
  if measSimulated == 0 % When a real measurement will be performed
