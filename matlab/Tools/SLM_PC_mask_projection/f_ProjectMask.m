@@ -126,12 +126,11 @@ switch plotMask
    MidVectMask = ceil((size(wrapMask)+1)/2); % Mask mid vector
    MidVect = MidVectMonitor - MidVectMask; % pixel position of the mask
    set(gcf,'Units','Pixels'); % Figure units
-   boolMaximized = 2;
-   if boolMaximized == 1
+   if MaximizedMask == 1
      xMov = monitorSize(1) + tolx; % x movement
      yMov = monitorSize(2) + toly; % y movement
      set(gca,'Position',[MidVect xMov yMov]); % figure position
-   else
+   else % MaximizedMask = 0
      xMov = res(1) + tolx; % x movement
      yMov = res(2) + toly; % y movement
      set(gca,'Position',[0 0 xMov yMov]); % figure position
