@@ -57,11 +57,11 @@ end
 % In both cases of the next if-else, rMax is found as the maximum radius
 % that allows to circumscribe a circle inside an square for coordType == 1
 % or inside a rectangle for coordType == 2
-if coordType == 1 % User-defined
-    rMax = max(r(:));  % the maximum value of r (diagonal of the square)
-    rSize = rMax/sqrt(2); % Equals this since twice rSize^2 equals
-                          % rmax^2 (Pythagorean theorem)
-else % coordType == 2 % Screen-resolution defined
+% if coordType == 1 % User-defined
+%     rMax = max(r(:));  % the maximum value of r (diagonal of the square)
+%     rSize = rMax/sqrt(2); % Equals this since twice rSize^2 equals
+%                           % rmax^2 (Pythagorean theorem)
+% else % coordType == 2 % Screen-resolution defined
     rSizeVect = size(r); % 2D vector with the size of r
     rMidVect = floor((rSizeVect+1)/2); % mid points of the size of r
     rMove = max(rMidVect); % Maximum midpoint in order to move here
@@ -75,7 +75,7 @@ else % coordType == 2 % Screen-resolution defined
     end
     % if one has a unitary space, rMax = 1 always
     rSize = rMax; % Both rmax and rsize are equal
-end
+% end
 
 %% Mask padarray with zeros if needed
 % Only used for Zernike masks (the only one assumed to be generated with a

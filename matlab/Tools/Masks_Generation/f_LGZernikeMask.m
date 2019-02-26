@@ -1,6 +1,6 @@
 %% Laguerre Gauss Binary masks + Zernike Phases
 function [mask,wrapMask,wrapMaskFig] = f_LGZernikeMask(r,phi,gl,phaseValues, ...
-mingl,maxgl,levShft,tc,s,ph0,p,W,z_coeff,a,frac,L,pupil,sSize,disp_wrap,...
+mingl,maxgl,levShft,tc,s,ph0,p,W,z_coeff,a,frac,L,pupil,ZernikeSize,disp_wrap,...
 plot_z,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 % Generates and plots a Laguerre Gauss + Zernike mask
 %
@@ -34,7 +34,7 @@ plot_z,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMa
 %  frac: to adjust the wrapped phase; ref: 0.125
 %  L: laser wavelength [um]
 %  pupil: defines pupil relative size (w.r.t. sSize), like a percentage
-%  sSize: Size of cartesian coordinates. Space Size
+%  ZernikeSize: screen size for the Zernike polynomials generation
 %  disp_wrap: original (0) or wrapped mask (1)
 %  plot_z: plot (1); no plot (0)
 %  normMag: normalize magnitude. yes(1); no(0)
@@ -59,7 +59,7 @@ plot_z,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMa
 
 showEachMask = 0;
 [maskZ,~,~]= f_ZernikeMask(r,z_coeff,a,frac,L,gl,phaseValues,mingl,maxgl, ...
-levShft,pupil,sSize,disp_wrap,plot_z,normMag,binMask,binv,monitorSize, ...
+levShft,pupil,ZernikeSize,disp_wrap,plot_z,normMag,binMask,binv,monitorSize, ...
 scrnIdx,coordType,showEachMask);
 [maskLG,~,~] = f_LGMask(r,phi,gl,phaseValues,mingl,maxgl,levShft,tc,s,ph0,p, ...
 W,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,showEachMask);

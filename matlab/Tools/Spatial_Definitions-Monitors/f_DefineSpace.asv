@@ -85,7 +85,7 @@ end
                              % is never shifted
   % Circular should also apply whenever Zernike is used for both pc and SLM
   % Xrescaled only applies for coordType = 2
-  if ((circularMask == 1 && plotMask == 2) || (maskSel == 5 || maskSel == 6)) && ~(MaxMask == 0 && coordType == 1) 
+  if (circularMask == 1 && plotMask == 2) || (maskSel == 5 || maskSel == 6) && ~(MaxMask = 0 && coordType == 1) 
       X = Xrescaled; % Circular truncation in full screen
   end % Otherwise X=X and one has the elliptical truncation in full screen
 
@@ -119,6 +119,6 @@ Yslm = Y + shiftY; % Shifted Y for the SLM.
                                      % displacing the phase mask
                              
 %% Zernike
-ZernikeSize = min(length(X),length(Y)); 
+ZernikeSize = min(size(X),size(Y)); 
 % sSize = size(rSLM); % OLD
 end

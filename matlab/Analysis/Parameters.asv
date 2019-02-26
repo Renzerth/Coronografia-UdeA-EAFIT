@@ -13,7 +13,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 1; % Phase mask selection:
+maskSel = 0; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -35,13 +35,15 @@ plotMask = 2; % Allows to plot the final mask, as it can be a combination
               % 3: on the screen but surface-plot type
            
 %% SLM positionining calibration, coordinates and type of truncation
-coordType = 1;  % Type of calculation of the spatial coordinates. def: 2 
+coordType = 2;  % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
-  k = 4; % Bits for grey levels; 2^k is the resolution (size of x and y)
-         % Default: 10. Size is calculated as 2^k - 1
-         % Only works when coordType = 1
-  MaximizedMask = 1; % (0): (1):       
+k = 9; % Bits for grey levels; 2^k is the resolution (size of x and y)
+       % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
+       % Only works when coordType = 1
+sSize = 2^k - 1;  % Spatial size: number of samples; odd number so that 
+                  % the vortex gets centered. ref: 2^k-1       
+MaxMask = 0; % 1: maximizes the mask for coordType = 1; 0: doesn't      
 circularMask = 0; % Only works when coordType = 2
   % 0: The mask presents an elliptical form when in the full screen
   % 1: The mask presents a circular form when in the full screen
@@ -72,8 +74,8 @@ switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
     % spaceSupport = 1; % Unitary space: spaceVector = -1:2/(Ssize-1):1;
-    spaceSupport = min([0.864 1.536]); % Size of the SLM window in cm:
-                                       % 1.536cm x 0.864cm
+    sSupport = min([0.864 1.536]); % Size of the SLM window in cm:
+                                   % 1.536cm x 0.864cm
     maxNumPix = max([1920 1080]); % Maximum number of pixels on the SLM 
                                   % (either horizontal or vertical); SLM's 
                                   % resolution in pixels: 1920 x 1080 
@@ -82,13 +84,13 @@ switch slm
     
   case 'LC2002'
     %% SLM parameters (transmision)
-    spaceSupport = min([2.66 2.00]); % Same as the reflection SLM
+    sSupport = min([2.66 2.00]); % Same as the reflection SLM
     maxNumPix = max([800 600]); % Same as the reflection SLM
     pixSize = 32; % Same as the reflection SLM in um
     scrnIdx = 2; % Screen number selector. Default: 2
     
   case 'No-SLM'
-   spaceSupport = 1; % A unitary space can be created when coordType=1
+   sSupport = 1; % A unitary space can be created when coordType=1
    maxNumPix = max([1920 1080]); % As the Pluto SLM
    pixSize = 8; % As the Pluto SLM
    scrnIdx = 1; % PC screem

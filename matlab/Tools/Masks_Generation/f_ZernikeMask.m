@@ -1,6 +1,6 @@
 %% Generate a Zernike phase mask (wavefront)
 function [mask,wrapMask,wrapMaskFig] = f_ZernikeMask(r,z_coeff,a,frac, ...
-L,gl,phaseValues,mingl,maxgl,levShft,pupil,sSize,disp_wrap,plot_z,normMag, ...
+L,gl,phaseValues,mingl,maxgl,levShft,pupil,ZernikeSize,disp_wrap,plot_z,normMag, ...
 binMask,binv,monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 % Characterizes the aberrations of the system
 % Inputs:
@@ -25,7 +25,7 @@ binMask,binv,monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
 %  levShft: corresponds to the brightness or constant shift of the gl's
 %  pupil: defines pupil relative size (w.r.t. sSize), like a percentage
-%  sSize: Size of cartesian coordinates. Space Size
+%  ZernikeSize: screen size for the Zernike polynomials generation
 %  disp_wrap: unwrapped (0) or wrapped mask (1)
 %  plot_z: plot (1); no plot (0)
 %  normMag: normalize magnitude. yes(1); no(0)
@@ -73,7 +73,7 @@ else
 end
 
 %% Zernike Polynomials
-unwrapmask = f_ZernikeBuilder(z_vec,pupil,sSize,plot_z); 
+unwrapmask = f_ZernikeBuilder(z_vec,pupil,ZernikeSize,plot_z); 
 % (vector, pupil size, Matrix size (zernike phase size), graph:1 or not:0)
 mask = exp(1i*unwrapmask); % Wrapped mask
 
