@@ -119,14 +119,14 @@ switch plotMask
   % For coordType = 2 the fig is maximized
   
   %%% For cordType 1:
-%   if coordType == 1
-%    tol = 50;
-%    MidVectMonitor = floor((res+1)/2); % SLM monitor mid vector
-%    MidVectMask = floor((size(wrapMask)+1)/2); % Mask mid vector
-%    MidVect = MidVectMonitor - MidVectMask; % pixel position of the mask
-%    set(gcf,'Units','Pixels'); % Figure units
-%    set(gcf,'OuterPosition',[MidVect monitorSize(1)+tol monitorSize(2)+tol]); 
-%   end
+  if coordType == 1
+   tol = 50;
+   MidVectMonitor = floor((res+1)/2); % SLM monitor mid vector
+   MidVectMask = floor((size(wrapMask)+1)/2); % Mask mid vector
+   MidVect = MidVectMonitor - MidVectMask; % pixel position of the mask
+   set(gcf,'Units','Pixels'); % Figure units
+   set(gcf,'OuterPosition',[MidVect monitorSize(1)+tol monitorSize(2)+tol]); 
+  end
    
   %% Figure plotting
   imagesc(wrapMask);  % Plots in SLM screen 
