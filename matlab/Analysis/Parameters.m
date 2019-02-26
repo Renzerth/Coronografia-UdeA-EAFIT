@@ -13,7 +13,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 5; % Phase mask selection:
+maskSel = 1; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -27,7 +27,7 @@ maskSel = 5; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
+plotMask = 2; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -35,10 +35,10 @@ plotMask = 1; % Allows to plot the final mask, as it can be a combination
               % 3: on the screen but surface-plot type
            
 %% SLM positionining calibration, coordinates and type of truncation
-coordType = 2;  % Type of calculation of the spatial coordinates. def: 2 
+coordType = 1;  % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
-k = 8; % Bits for grey levels; 2^k is the resolution (size of x and y)
+k = 9; % Bits for grey levels; 2^k is the resolution (size of x and y)
         % Default: 10. Size is calculated as 2^k - 1
         % Only works when coordType = 1
 circularMask = 0; % Only works when coordType = 2
@@ -197,14 +197,19 @@ Angbet = pi/2; % Diffraction angle of vertical direction (y) [radians]
 % The "*" items remarks in the 'Smooth transition' comments also apply here
 
 %% Gray levels (discretization levels of the mask)
+
+% MAYBE NOT USED ANYMORE:
+% -----
 % Dynamic range = maxGrayDepth - minGrayDepth
 mingl = 0; % Minimum gray level depth. Ref: 0
 maxgl = 255; % Maximum gray level depth. Ref: 255
 levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
              % Corresponds to the brightness or constant shift of the gl's
+% -----        
+             
 gl = 256; % Number of gray levels (normally 256). Must be smaller than
           % the dynamic range = maxGrayDepth-minGrayDepth. Default: 256             
-discretization = 2; % Variable for the next switch
+discretization = 1; % Variable for the next switch
 switch discretization % Gray-level discretized azimuthal angle vector
  case 1 % 1: Evenly-spaced gl phase values.
   
@@ -215,7 +220,7 @@ switch discretization % Gray-level discretized azimuthal angle vector
                                % first page of:
   % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf     
  case 2 % 2: user-defined gl values
-  phaseValues = [1 10 100 201 202]; % Custom gl vector: the mask will only have
+  phaseValues = [1 10 255]; % Custom gl vector: the mask will only have
                               % these levels
   phaseValues = phaseValues*2*pi/255; % Conversion from gray to phase levels                  
 end

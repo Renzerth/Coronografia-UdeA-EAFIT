@@ -37,7 +37,6 @@ coordType,abs_ang,plotMask) % [wrapMask,wrapMaskFig]
 %  Image is shown with gl gray levels
 
 %% Wrapping and Circular pupil Application
-
 switch abs_ang
   case 0 % No operation, custom input (assumed to be non complex)
     wrapMask = mask;
@@ -113,19 +112,21 @@ switch plotMask
   wrapMaskFig.Units = 'Pixels'; % 'color','black',
   
   %% Figure size
-  %% For cordType 1 and 2:
+  %%% For cordType 1 and 2:
   set(gca,'Units','Pixels'); % Axis units
   set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
   % For coordType = 2 the fig is maximized
   
   %%% For cordType 1:
+  %% Size comparison of r and mask (only for maskSel = 5 or 6)
   if coordType == 1
-   tol = 50;
+   tolx = 20; % x tolerance for correcting the Zernike polynomials
+   toly = 20; % y tolerance for correcting the Zernike polynomials
    MidVectMonitor = floor((res+1)/2); % SLM monitor mid vector
    MidVectMask = floor((size(wrapMask)+1)/2); % Mask mid vector
    MidVect = MidVectMonitor - MidVectMask; % pixel position of the mask
    set(gcf,'Units','Pixels'); % Figure units
-   set(gcf,'OuterPosition',[MidVect monitorSize(1)+tol monitorSize(2)+tol]); 
+   set(gcf,'OuterPosition',[MidVect monitorSize(1)+tolx monitorSize(2)+toly]); 
   end
    
   %% Figure plotting

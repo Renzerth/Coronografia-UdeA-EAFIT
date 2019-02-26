@@ -72,9 +72,9 @@ else
 end
 
 %% Zernike Polynomials
-n_mask = f_ZernikeBuilder(z_vec,pupil,sSize,plot_z); % Defocus 
+unwrapmask = f_ZernikeBuilder(z_vec,pupil,sSize,plot_z); 
 % (vector, pupil size, Matrix size (zernike phase size), graph:1 or not:0)
-mask = exp(1i*n_mask); % Wrapped mask
+mask = exp(1i*unwrapmask); % Wrapped mask
 
 %% Plot the mask
 if disp_wrap == 1 % Wrapped phase
@@ -85,7 +85,7 @@ if disp_wrap == 1 % Wrapped phase
 else % disp_wrap = 0
     abs_ang = 0; % Custom input in order to not wrap the phase
     tit = 'Unwrapped phase mask'; % The amplitude title is replaced  
-    mask = n_mask; % Unwrapped mask
+    mask = unwrapmask; % Unwrapped mask
     str = 'Unwrapped phase value';
 end
 [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,maxgl, ...
