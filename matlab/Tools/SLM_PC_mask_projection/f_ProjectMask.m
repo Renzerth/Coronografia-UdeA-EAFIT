@@ -1,7 +1,7 @@
 %% Plot Phase Mask either on the PC or on the SLM
 function [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
 maxgl,levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str, ...
-coordType,abs_ang,plotMask) % [wrapMask,wrapMaskFig]
+coordType,abs_ang,MaxMask,plotMask) % [wrapMask,wrapMaskFig]
 % Inputs:
 %  r: polar coordinate
 %  mask: function to be plotted. It is wrapped on [-pi,pi] if abs_ang = 2.
@@ -26,6 +26,7 @@ coordType,abs_ang,plotMask) % [wrapMask,wrapMaskFig]
 %  abs_ang: custom(0)[str has to be defined for this case], magnitude
 %           (1) or phase (2) plot. Doesn't apply for Zernike and LG +
 %           Zernike.
+%  MaxMask: maximizes the mask for coordType = 1 (0): doesn't
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
 %
@@ -126,11 +127,11 @@ switch plotMask
    MidVectMask = ceil((size(wrapMask)+1)/2); % Mask mid vector
    MidVect = MidVectMonitor - MidVectMask; % pixel position of the mask
    set(gcf,'Units','Pixels'); % Figure units
-   if MaximizedMask == 1
+   if MaxMask == 0
      xMov = monitorSize(1) + tolx; % x movement
      yMov = monitorSize(2) + toly; % y movement
      set(gca,'Position',[MidVect xMov yMov]); % figure position
-   else % MaximizedMask = 0
+   else % MaximizedMask = 1
      xMov = res(1) + tolx; % x movement
      yMov = res(2) + toly; % y movement
      set(gca,'Position',[0 0 xMov yMov]); % figure position
@@ -155,5 +156,5 @@ switch plotMask
   % No axis values:
   set(gca,'xtick',[]); set(gca,'ytick',[]);  set(gca,'ztick',[]) 
   axis off
-  end
+ end
 end

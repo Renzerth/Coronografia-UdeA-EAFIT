@@ -13,7 +13,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 1; % Phase mask selection:
+maskSel = 0; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -41,7 +41,7 @@ coordType = 1;  % Type of calculation of the spatial coordinates. def: 2
 k = 4; % Bits for grey levels; 2^k is the resolution (size of x and y)
        % Default: 10. Size is calculated as 2^k - 1
        % Only works when coordType = 1
-MaximizedMask = 1; % (1): maximizes the mask for coordType = 1 (0): doesn't      
+MaxMask = 0; % (1): maximizes the mask for coordType = 1 (0): doesn't      
 circularMask = 0; % Only works when coordType = 2
   % 0: The mask presents an elliptical form when in the full screen
   % 1: The mask presents a circular form when in the full screen

@@ -1,7 +1,7 @@
 %% Generate a Zernike phase mask (wavefront)
 function [mask,wrapMask,wrapMaskFig] = f_ZernikeMask(r,z_coeff,a,frac, ...
 L,gl,phaseValues,mingl,maxgl,levShft,pupil,sSize,disp_wrap,plot_z,normMag, ...
-binMask,binv,monitorSize,scrnIdx,coordType,plotMask)
+binMask,binv,monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 % Characterizes the aberrations of the system
 % Inputs:
 %  r: polar coordinate
@@ -37,6 +37,7 @@ binMask,binv,monitorSize,scrnIdx,coordType,plotMask)
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use
 %    -2: size defined by the resolution of the selected screen    
+%  MaxMask: maximizes the mask for coordType = 1 (0): doesn't
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
 %
@@ -90,7 +91,7 @@ else % disp_wrap = 0
 end
 [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,maxgl, ...
 levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
-abs_ang,plotMask);
+abs_ang,MaxMask,plotMask);
 
 %% Phase wrapping test (optional): 
 % The wrapped phase should do complete cycles of 2pi

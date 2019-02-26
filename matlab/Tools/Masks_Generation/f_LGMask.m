@@ -2,7 +2,7 @@
 
 function [mask,wrapMask,wrapMaskFig] = f_LGMask(r,phi,gl,phaseValues,mingl, ...
 maxgl,levShft,tc,s,ph0,p,WsizeRatio,normMag,binMask,binv,monitorSize,scrnIdx, ...
-coordType,abs_ang,plotMask)
+coordType,abs_ang,MaxMask,plotMask)
 % Inputs: 
 %  r,phi: polar coordinates for both the PC and SLM
 %  gl: number of grey levels (normally 256)
@@ -28,6 +28,7 @@ coordType,abs_ang,plotMask)
 %    -1: size defined by the user, space support defined by the SLM to use
 %    -2: size defined by the resolution of the selected screen    
 %  abs_ang: custom(0)[mask real-valued]; magnitude (1); phase (2)
+%  MaxMask: maximizes the mask for coordType = 1 (0): doesn't
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
 %
@@ -55,7 +56,7 @@ tit = strcat('LG phase mask with topological charge',{' '},num2str(tc), ...
 str = ''; % Empty, it only works for abs_ang = 0
 [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,maxgl, ...
 levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
-abs_ang,plotMask);
+abs_ang,MaxMask,plotMask);
  
 %% Mask in a bone colormap
 %   h = pcolor(x,y,mask); 

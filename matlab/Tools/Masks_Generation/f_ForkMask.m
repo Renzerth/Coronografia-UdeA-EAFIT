@@ -3,7 +3,7 @@
 
 function [mask,wrapMask,wrapMaskFig] = f_ForkMask(X,Y,r,phi,gl,phaseValues, ...
 mingl,maxgl,levShft,tc,s,ph0,L,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
-normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
+normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
@@ -36,6 +36,7 @@ normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,plotMask)
 %  abs_ang: custom(0)[str has to be defined for this case], magnitude
 %           (1) or phase (2) plot. Doesn't apply for Zernike and LG +
 %           Zernike.
+%  MaxMask: maximizes the mask for coordType = 1 (0): doesn't
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
 %
@@ -81,6 +82,6 @@ tit = strcat('Fork mask with topological charge',{' '},num2str(tc), ...
 str = ''; % Empty, it only works for abs_ang = 0
 [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,maxgl, ...
 levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
-abs_ang,plotMask);
+abs_ang,MaxMask,plotMask);
 
 end
