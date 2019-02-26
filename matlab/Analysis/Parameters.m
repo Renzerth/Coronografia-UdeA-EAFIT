@@ -38,7 +38,7 @@ plotMask = 2; % Allows to plot the final mask, as it can be a combination
 coordType = 1;  % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
-k = 9; % Bits for grey levels; 2^k is the resolution (size of x and y)
+k = 4; % Bits for grey levels; 2^k is the resolution (size of x and y)
         % Default: 10. Size is calculated as 2^k - 1
         % Only works when coordType = 1
 circularMask = 0; % Only works when coordType = 2
@@ -66,7 +66,7 @@ shiftCart = [10,0]; % [yshift,xshift], works when shiftBool = 1
 %  -Principal screen: MATLAB scrnIdx(1); Windows(2); AnyDesk(2)
 %  -Pluto screen: MATLAB scrnIdx(3); Windows(1); Anydesk(1)
 %  -LC2002 screen: MATLAB scrnIdx(2); Windows(3); Anydesk(0)
-slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
+slm = 'Pluto'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 switch slm
   case 'Pluto'
     %% SLM parameters (reflection)

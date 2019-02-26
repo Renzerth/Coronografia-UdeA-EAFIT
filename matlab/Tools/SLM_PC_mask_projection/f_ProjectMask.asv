@@ -119,19 +119,19 @@ switch plotMask
   
   %%% For cordType 1:
   %% Size comparison of r and mask (only for maskSel = 5 or 6)
-  A = size(r) - size(mask); % Size comparison
   if coordType == 1
-%    if any(A) == 1 % Size of r and mask are different 
-%      tolx = 20; % x tolerance for correcting the Zernike polynomials
-%      toly = 5; % y tolerance for correcting the Zernike polynomials
-%    else
-     tolx = 0; toly = 0; % Size of r and mask are different  
-%    end
-   MidVectMonitor = floor((res+1)/2); % SLM monitor mid vector
-   MidVectMask = floor((size(wrapMask)+1)/2); % Mask mid vector
+   tolx = 0; % x tolerance for correcting the Zernike polynomials
+   toly = 0; % y tolerance for correcting the Zernike polynomials
+   MidVectMonitor = ceil((res+1)/2); % SLM monitor mid vector
+   MidVectMask = ceil((size(wrapMask)+1)/2); % Mask mid vector
    MidVect = MidVectMonitor - MidVectMask; % pixel position of the mask
-   set(gcf,'Units','Pixels'); % Figure units
-   set(gcf,'OuterPosition',[MidVect monitorSize(1)+tolx monitorSize(2)+toly]); 
+   if 
+%    xMov = monitorSize(1) + tolx; % x movement
+%    yMov = monitorSize(2) + toly; % y movement
+   xMov = res(1) + tolx; % x movement
+   yMov = res(2) + toly; % y movement
+   %set(gcf,'Units','Pixels'); % Figure units
+   set(gca,'Position',[MidVect xMov yMov]); % figure position
   end
    
   %% Figure plotting

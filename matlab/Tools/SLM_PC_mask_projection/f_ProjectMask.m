@@ -120,15 +120,23 @@ switch plotMask
   %%% For cordType 1:
   %% Size comparison of r and mask (only for maskSel = 5 or 6)
   if coordType == 1
-   tolx = 20; % x tolerance for correcting the Zernike polynomials
-   toly = 20; % y tolerance for correcting the Zernike polynomials
-   MidVectMonitor = floor((res+1)/2); % SLM monitor mid vector
-   MidVectMask = floor((size(wrapMask)+1)/2); % Mask mid vector
+   tolx = 0; % x tolerance for correcting the Zernike polynomials
+   toly = 0; % y tolerance for correcting the Zernike polynomials
+   MidVectMonitor = ceil((res+1)/2); % SLM monitor mid vector
+   MidVectMask = ceil((size(wrapMask)+1)/2); % Mask mid vector
    MidVect = MidVectMonitor - MidVectMask; % pixel position of the mask
    set(gcf,'Units','Pixels'); % Figure units
-   set(gcf,'OuterPosition',[MidVect monitorSize(1)+tolx monitorSize(2)+toly]); 
+   boolMaximized = 2;
+   if boolMaximized == 1
+     xMov = monitorSize(1) + tolx; % x movement
+     yMov = monitorSize(2) + toly; % y movement
+     set(gca,'Position',[MidVect xMov yMov]); % figure position
+   else
+     xMov = res(1) + tolx; % x movement
+     yMov = res(2) + toly; % y movement
+     set(gca,'Position',[0 0 xMov yMov]); % figure position
+   end
   end
-   
   %% Figure plotting
   imagesc(wrapMask);  % Plots in SLM screen 
   axis off; colormap(customMap);
@@ -138,7 +146,7 @@ switch plotMask
   % OLD
   % set(gca,'xtick',[]); set(gca,'ytick',[]) % No axis values
     
- case 3 % Screen: surface plot
+  case 3 % Screen: surface plot
   wrapMaskFig = figure('color','white','units','normalized','position',...
                [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',figtit);
   surf(wrapMask), colormap(gray(gl)), shading interp; % 3D Surface
@@ -148,5 +156,5 @@ switch plotMask
   % No axis values:
   set(gca,'xtick',[]); set(gca,'ytick',[]);  set(gca,'ztick',[]) 
   axis off
-end
+  end
 end
