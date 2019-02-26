@@ -27,7 +27,7 @@ maskSel = 5; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
+plotMask = 2; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -43,7 +43,7 @@ k = 9; % Bits for grey levels; 2^k is the resolution (size of x and y)
        % Only works when coordType = 1
 sSize = 2^k - 1;  % Spatial size: number of samples; odd number so that 
                   % the vortex gets centered. ref: 2^k-1       
-MaxMask = 0; % 1: maximizes the mask for coordType = 1; 0: doesn't      
+MaxMask = 1; % 1: maximizes the mask for coordType = 1; 0: doesn't      
 circularMask = 0; % Only works when coordType = 2
   % 0: The mask presents an elliptical form when in the full screen
   % 1: The mask presents a circular form when in the full screen

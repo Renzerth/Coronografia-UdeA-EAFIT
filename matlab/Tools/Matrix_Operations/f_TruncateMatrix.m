@@ -10,7 +10,8 @@ if (size(A,1) > size(B,1)) || (size(A,2) > size(B,2))
     newX = AmidX-BmidX+1 : AmidX+BmidX; % +1 since indices start with 1
     Atrunc = A(newY,newX);
 else
-    disp('Warning: A must be strictly bigger than B');
+    disp(['Warning: A must be strictly bigger than B. A will not be' ...
+         ' truncated']);
     Atrunc = A;
 end
 

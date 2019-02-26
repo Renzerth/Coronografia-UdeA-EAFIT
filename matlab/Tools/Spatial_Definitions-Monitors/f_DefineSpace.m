@@ -119,6 +119,5 @@ Yslm = Y + shiftY; % Shifted Y for the SLM.
                                      % displacing the phase mask
                              
 %% Zernike
-ZernikeSize = min(length(X),length(Y)); 
-% sSize = size(rSLM); % OLD
+ZernikeSize = min(monitorSize); % Minumum size of the screen
 end
