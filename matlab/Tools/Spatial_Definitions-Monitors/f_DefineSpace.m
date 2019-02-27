@@ -25,9 +25,13 @@ shiftBool,coordType,MaxMask,plotMask,maskSel)
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use
 %    -2: size defined by the resolution of the selected screen
-%  maskSel: selects a specific mask
+%  MaxMask: defines if the mask should be maximized when coordType = 1
+%           -0: custom-size mask that depends on the variable sSize   
+%           -1: maximizes the mask for coordType = 1
+%           -2: maximized mask but keeping its rectangular fashion
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
+%  maskSel: selects a specific mask
 %
 % Outputs:
 % x,y: cartesian coordinates

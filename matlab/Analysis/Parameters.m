@@ -44,10 +44,10 @@ coordType = 1;  % Type of calculation of the spatial coordinates. def: 2
            % Only works when coordType = 1
     sSize = 2^k - 1;  % Spatial size: number of samples; odd number so that 
                       % the vortex gets centered. ref: 2^k-1       
-    MaxMask = 1;
+    MaxMask = 1; % Defines if the mask should be maximized
     % 0: custom-size mask that depends on the variable sSize   
     % 1: maximizes the mask for coordType = 1
-    % 3: maximized mask but keeping its rectangular fashion
+    % 2: maximized mask but keeping its rectangular fashion
 %%% For only for plotMask=2:
     circularMask = 0; % Works either on coordType=2 or when MaxMask=1
      % Won't work for maskSel = 5 or 6 (Zernike)

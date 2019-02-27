@@ -26,7 +26,10 @@ coordType,abs_ang,MaxMask,plotMask) % [wrapMask,wrapMaskFig]
 %  abs_ang: custom(0)[str has to be defined for this case], magnitude
 %           (1) or phase (2) plot. Doesn't apply for Zernike and LG +
 %           Zernike.
-%  MaxMask: maximizes the mask for coordType = 1 (0): doesn't
+%  MaxMask: defines if the mask should be maximized when coordType = 1
+%           -0: custom-size mask that depends on the variable sSize   
+%           -1: maximizes the mask for coordType = 1
+%           -2: maximized mask but keeping its rectangular fashion
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
 %
@@ -132,7 +135,7 @@ switch plotMask
          yMov = res(2) + toly; % y movement
          offsetPixel = [0 0]; % left bottom part
          
-       case 3
+       case 2
    
     end 
   else % coordType = 2 
