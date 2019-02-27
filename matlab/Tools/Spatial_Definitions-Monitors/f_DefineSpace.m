@@ -1,6 +1,6 @@
 function [x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,ZernikeSize, ...
-monitorSize] = f_DefineSpace(sSupport,sSize,shiftCart,shiftBool,pixSize,...
-scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
+monitorSize,coordType] = f_DefineSpace(sSupport,sSize,shiftCart, ...
+shiftBool,pixSize,scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
 % Inputs:
 %  sSupport: full side-length of the SLMs (or unitary without an SLM)
 %  sSize: bits for grey levels; 2^k is the resolution (size of x and y)
@@ -32,6 +32,7 @@ scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
 %  maskSel: selects a specific mask
+%  coordType: input and output since it can change for maskSel = 5 and 6
 %
 % Outputs:
 % x,y: cartesian coordinates
