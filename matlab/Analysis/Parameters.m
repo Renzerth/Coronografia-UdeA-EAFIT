@@ -74,7 +74,7 @@ end
 
 %% SLM positionining calibration, coordinates and type of truncation
 MaskPupil = 0; % Applies a pupil truncation to the mask: (0): no; (1): yes
-coordType = 1;  % Type of calculation of the spatial coordinates. def: 2 
+coordType = 2;  % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
 %%%% For coordType = 1 (user custom-sized):

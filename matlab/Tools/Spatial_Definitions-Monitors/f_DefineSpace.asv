@@ -52,7 +52,7 @@ scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
 %% Zernike mask changes that affect coordType
 % In order to apply circularMask for Zernike, coordType 1 is used with the
 % smallest size of the monitor
-if coordType == 2 && circularMask == 1 && (maskSel == 5 || maskSel == 6)
+if coordType == 2 && circularMask == 1 && ()
        sSize = min(monitorSize); % Minimum since that's the size of a 
                                  % square that can fit inside the screen's 
                                  % rectangle

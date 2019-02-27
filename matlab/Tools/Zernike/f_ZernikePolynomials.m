@@ -36,8 +36,7 @@ n = ceil((-3+sqrt(9+8*j))/2); % Polynomial Order array
 m = 2*j-n.*(n+2); % Azimuthal Frequency array
 
 %% Integration element
-Delta = (2/m_size/apperture)^2;
-
+Delta = (2/m_size/apperture)^2; % Area element
 
 %% Meshgrids definition
 sizX = size(X); % Equals Y's.
