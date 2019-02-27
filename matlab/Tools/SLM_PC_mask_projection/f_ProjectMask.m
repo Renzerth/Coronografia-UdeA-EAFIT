@@ -81,7 +81,7 @@ switch plotMask
   % [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',tit);
   %% Plot the mask
   wrapMaskFig = figure('color','white','units','normalized','position',...
-               [0 0 1 1],'outerposition',[5/10 1/10 1/3 1/2],'Name',figtit); 
+               [0 0 1 1],'outerposition',[5/10 1/10 1/2 3/4],'Name',figtit); 
   imagesc(wrapMask); axis square; colormap(customMap);
   title(tit);
   set(gca,'xtick',[]); set(gca,'ytick',[]) % No axes values
@@ -167,7 +167,7 @@ switch plotMask
     
  case 3 % Screen: surface plot
   wrapMaskFig = figure('color','white','units','normalized','position',...
-               [0 0 1 1],'outerposition',[5/10 1/10 1/3 1/2],'Name',figtit);
+               [0 0 1 1],'outerposition',[5/10 1/10 1/2 3/4],'Name',figtit);
   surf(wrapMask), colormap(gray(gl)), shading interp; % 3D Surface
   axis square; title(tit);
   cbh = colorbar; cbh.Label.String = str;
