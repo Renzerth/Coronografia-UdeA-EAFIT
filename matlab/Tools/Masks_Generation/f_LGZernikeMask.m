@@ -1,10 +1,12 @@
 %% Laguerre Gauss Binary masks + Zernike Phases
-function [mask,wrapMask,wrapMaskFig] = f_LGZernikeMask(r,phi,gl,phaseValues, ...
-mingl,maxgl,levShft,tc,s,ph0,p,W,z_coeff,a,frac,L,pupil,ZernikeSize,shiftCart,shiftBool,disp_wrap,...
+function [mask,wrapMask,wrapMaskFig] = f_LGZernikeMask(X,Y,r,phi,gl,phaseValues, ...
+mingl,maxgl,levShft,tc,s,ph0,p,WsizeRatio,z_coeff,a,frac,L,pupil,ZernikeSize,disp_wrap,...
 plot_z,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 % Generates and plots a Laguerre Gauss + Zernike mask
 %
 % Inputs: 
+%  X,Y: A grid of the spatial vector: 2D Cartesian coordiantes. They
+%  may already have the shiftCart
 %  r,phi: polar coordinates (r in cm)
 %  gl: number of grey levels (normally 256)
 %  phaseValues: discretized phi vector on [-pi,pi].
@@ -16,7 +18,7 @@ plot_z,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMa
 %  p: number of radial nodes. If p=0, normal helicoid masks are obtained.
 %     If they are used and tc=0(m=0); binary masks are obtained.
 %     Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
-%  W: width of the modes: related with the radius of the phase and with the
+%  WsizeRatio: width of the modes: related with the radius of the phase and with the
 %     disks on the magnitude
 %  z_coeff: 
 %     selected aberrations: any combination on [1,20]; zernike
@@ -35,14 +37,6 @@ plot_z,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMa
 %  L: laser wavelength [um]
 %  pupil: defines pupil relative size (w.r.t. sSize), like a percentage
 %  ZernikeSize: screen size for the Zernike polynomials generation
-%  shiftCart: [yshift,xshift], works when shiftBool = 1
-%             Percentages of movement of the total size of the mask 
-%             (cartesian coordinates convention). Calibrated with: s = +1;
-%             ph0 = 0, tc = 1. Ranges per shift: [0,100] (percentage)  
-%  shiftBool: only shifts when plotMask = 2
-%             0: shift deactivated [for exporting masks]
-%             1: shift activated [SLM displaying]
-%             2: self-centering algorithm
 %  disp_wrap: original (0) or wrapped mask (1)
 %  plot_z: plot (1); no plot (0)
 %  normMag: normalize magnitude. yes(1); no(0)
@@ -69,12 +63,14 @@ plot_z,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMa
 %  wrapMask: truncation and angle operations on mask.
 %  wrapMaskFig: figure handler if needed outside the function
 
-showEachMask = 0;
-[maskZ,~,~]= f_ZernikeMask(r,z_coeff,a,frac,L,gl,phaseValues,mingl,maxgl, ...
-levShft,pupil,ZernikeSize,disp_wrap,plot_z,normMag,binMask,binv,monitorSize, ...
-scrnIdx,coordType,showEachMask);
-[maskLG,~,~] = f_LGMask(r,phi,gl,phaseValues,mingl,maxgl,levShft,tc,s,ph0,p, ...
-W,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,showEachMask);
+showEachMask = 0; % 0: so that not all of the individual masks are shown
+                  % during the measurements. Same as plotMask
+[maskZ,~,~]= f_ZernikeMask(X,Y,r,z_coeff,a,frac,L,gl,phaseValues,mingl, ...
+maxgl,levShft,pupil,ZernikeSize,disp_wrap,plot_z,normMag,binMask,binv, ...
+monitorSize,scrnIdx,coordType,MaxMask,showEachMask);
+[maskLG,~,~] = f_LGMask(r,phi,gl,phaseValues,mingl, ...
+maxgl,levShft,tc,s,ph0,p,WsizeRatio,normMag,binMask,binv,monitorSize,scrnIdx, ...
+coordType,abs_ang,MaxMask,showEachMask);
 
 %% LG mask matrix truncation so that its size fits maskZ
 A = size(maskLG) - size(maskZ); % Size comparison
@@ -87,7 +83,6 @@ if any(A) % True when tests whether any of the elements along various
 end 
 
 %% Point-to-point masks product    
-% maskZ = maskZ*100; % Just tests
 mask = maskZ.*maskLG; % Combined mask. It is recommended to use binary
                       % masks on LG
   

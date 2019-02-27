@@ -1,7 +1,7 @@
 %% Plot Phase Mask either on the PC or on the SLM
 function [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
-maxgl,levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str, ...
-coordType,abs_ang,MaxMask,plotMask) % [wrapMask,wrapMaskFig]
+maxgl,levShft,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,tit,str, ...
+coordType,abs_ang,MaxMask,plotMask)
 % Inputs:
 %  r: polar coordinate
 %  mask: function to be plotted. It is wrapped on [-pi,pi] if abs_ang = 2.

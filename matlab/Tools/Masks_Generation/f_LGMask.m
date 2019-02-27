@@ -16,7 +16,7 @@ coordType,abs_ang,MaxMask,plotMask)
 %  p: number of radial nodes. If p=0, normal helicoid masks are obtained.
 %     If they are used and tc=0(m=0); binary masks are obtained.
 %     Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
-%  W: width of the modes: related with the radius of the phase and with the
+%  WsizeRatio: width of the modes: related with the radius of the phase and with the
 %     disks on the magnitude
 %  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
@@ -58,10 +58,10 @@ mask = f_LaguerreGauss(r,phi,m,s,ph0,p,WsizeRatio); % Generates a Laguerre-Gauss
 tit = strcat('LG phase mask with topological charge',{' '},num2str(tc), ...
                  ' and radial node',{' '},num2str(p));   
 str = ''; % Empty, it only works for abs_ang = 0
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,maxgl, ...
-levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
-abs_ang,MaxMask,plotMask);
- 
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
+maxgl,levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str, ...
+coordType,abs_ang,MaxMask,plotMask);
+
 %% Mask in a bone colormap
 %   h = pcolor(x,y,mask); 
 % colormap('bone'), set(h,'EdgeColor','none'), set(h,'FaceColor','interp');

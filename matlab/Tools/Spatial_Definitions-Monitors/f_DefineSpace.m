@@ -58,8 +58,8 @@ switch coordType
   sSupport = sSupport/2; % Half support of the SLM window in cm
   spaceVector = -sSupport:2*sSupport/(sSize-1):sSupport; 
   % Symmetric space
-  [Xcoord1,Ycoord1] = meshgrid(spaceVector); % A symmetric grid: 2D Cartesian 
-                                 % coordinates
+  [Xcoord1,Ycoord1] = meshgrid(spaceVector); % A symmetric grid: 2D 
+                                             % Cartesian coordinates
   x = spaceVector; % Cartesian x-vector
   y = x; % Cartesian y-vector: square grid
   % Xslm = X;

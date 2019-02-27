@@ -1,4 +1,4 @@
-function [VZk,Pupil] = f_ZernikePolynomials(p,apperture,m_size)
+function [VZk,Pupil] = f_ZernikePolynomials(X,Y,p,apperture,m_size)
 % zernikes is a function that computes the Zernike
 % expansion base polynomials. This program features
 % p-th polynomial calculation using the Noll index 
@@ -8,9 +8,12 @@ function [VZk,Pupil] = f_ZernikePolynomials(p,apperture,m_size)
 % expansion base (and almost orthogonal since
 % it is a discrete base)
 %
-% Inputs:  p - Positive integer - Number of polynomials.
-%          apperture - float - Defines pupil relative size (w.r.t. m_size)
-%          m_size - Positive integer - Matrix size.
+% Inputs:  
+%  X,Y: A grid of the spatial vector: 2D Cartesian coordiantes. They
+%  may already have the shiftCart
+%  p: positive integer with the number of polynomials.
+%  apperture: float that defines pupil relative size (w.r.t. m_size)
+%  m_size: positive integer that defines the matrix size.
 %
 % Outputs: VZk -  Vector of Zernike's Polynomials
 %                 used for Coefficient decomposition.
@@ -20,7 +23,8 @@ function [VZk,Pupil] = f_ZernikePolynomials(p,apperture,m_size)
 %
 % Author: Juan José Cadavid Muñoz. EAFIT University
 % Date: 14/03/2015
-% Commented by Samuel Plazas Escudero on 2018/04/03
+% Commented by Samuel Plazas Escudero on 2018/04/03 and variables
+% shiftCart/shiftBool were added on 2019/02/27
 
 %% Intializing
 Pupil = NaN(m_size); % m_size x m_size matrix
@@ -34,8 +38,21 @@ m = 2*j-n.*(n+2); % Azimuthal Frequency array
 %% Integration element
 Delta = (2/m_size/apperture)^2;
 
+
+%% Meshgrids definition
+sizX = size(X); % Equals Y's.
+if sizX(1) ~= sizX(2) % Not a square matrix: then the screen coord's are
+                      % being used
+  spatialSize = min(sizX); % Minimum since that's the size of a square that
+                           % can fit inside the screen's rectangle
+  newx = linspace(min(X(:)),max(X(:)),spatialSize);
+  newy = linspace(min(Y(:)),max(Y(:)),spatialSize);
+  [X,Y] = meshgrid(newx,newy); % New square meshgrid that takes into
+                               % account the shifts of the coordinates and
+                               % a size determined by coordType
+end
 %% Space construction
-[X,Y] = meshgrid(-1:2/(m_size-1):1); % Unitary space
+% [X,Y] = meshgrid(-1:2/(m_size-1):1); % Unitary space
 [Phi, Rho] = cart2pol(X,Y); % Polar
 
 %% Pupil creation

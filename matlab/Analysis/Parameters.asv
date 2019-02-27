@@ -73,7 +73,7 @@ switch slm
 end 
 
 %% SLM positionining calibration, coordinates and type of truncation
-coordType = 1;  % Type of calculation of the spatial coordinates. def: 2 
+coordType = 2;  % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
 %%%% For coordType = 1 (user custom-sized):
@@ -106,15 +106,15 @@ coordType = 1;  % Type of calculation of the spatial coordinates. def: 2
      % On both cases full screen means that plotMask = 2
      % It is always applied for Zernike masks (maskSel=5,6) either for PC 
      % or for the SLM
-    shiftBool = 1; % Shifts if maskSel ~= 5,6
+    shiftBool = 1; % Shift for all masks
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [10,0]; % [yshift,xshift], works when shiftBool = 1
-                        % Percentages of movement of the total size of the
-                        % mask (cartesian coordinates convention)
-                        % Calibrated with: s = +1; ph0 = 0, tc = 1; 
-                        % Ranges per shift: [0,100] (percentage)    
+    shiftCart = [50,25]; % [yshift,xshift], works when shiftBool = 1
+                         % Percentages of movement of the total size of the
+                         % mask (cartesian coordinates convention)
+                         % Calibrated with: s = +1; ph0 = 0, tc = 1; 
+                         % Ranges per shift: [0,100] (percentage)    
               
 %% Camera selection and parameters
 camera = 'DMK23U445';

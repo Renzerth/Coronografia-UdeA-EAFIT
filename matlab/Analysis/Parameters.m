@@ -13,7 +13,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 5; % Phase mask selection:
+maskSel = 6; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -106,15 +106,15 @@ coordType = 1;  % Type of calculation of the spatial coordinates. def: 2
      % On both cases full screen means that plotMask = 2
      % It is always applied for Zernike masks (maskSel=5,6) either for PC 
      % or for the SLM
-    shiftBool = 1; % Shifts if maskSel ~= 5,6
+    shiftBool = 0; % Shift for all masks
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [10,0]; % [yshift,xshift], works when shiftBool = 1
-                        % Percentages of movement of the total size of the
-                        % mask (cartesian coordinates convention)
-                        % Calibrated with: s = +1; ph0 = 0, tc = 1; 
-                        % Ranges per shift: [0,100] (percentage)    
+    shiftCart = [50,25]; % [yshift,xshift], works when shiftBool = 1
+                         % Percentages of movement of the total size of the
+                         % mask (cartesian coordinates convention)
+                         % Calibrated with: s = +1; ph0 = 0, tc = 1; 
+                         % Ranges per shift: [0,100] (percentage)    
               
 %% Camera selection and parameters
 camera = 'DMK23U445';

@@ -1,4 +1,4 @@
-function [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask,binMask,binv,phaseValues,...
+function [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask,phaseValues,binMask,binv,MaskPupil,...
                        mingl,maxgl,levShft,coordType,plotMask)
 % Multiplies the phase mask by the maximum circle size with its outer
 % borders containing the minimum value of the phase (normally -pi)
@@ -9,10 +9,11 @@ function [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask,binMask,binv,phaseV
 %  r: polar coordinate (in cm)
 %  mask: complex structure that has not been truncated and is wrapped on
 %        [-pi,pi]. mask = exp(i*UnwrappedMask) 
+%  phaseValues: discretized phi vector on [-pi,pi].
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
-%  phaseValues: discretized phi vector on [-pi,pi].
+%  MaskPupil: applies a pupil truncation to the mask: (0): no; (1): yes
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
 %  levShft: corresponds to the brightness or constant shift of the gl's
 %  coordType: type of calculation of the spatial coordinates. def: 2 
@@ -55,7 +56,6 @@ if binMask == 1
 end
 
 %% Mask truncation
-MaskPupil = 0;
 if MaskPupil == 1
   %% Radius for the circular (or elliptical) pupil truncation
   % In both cases of the next if-else, rMax is found as the maximum radius

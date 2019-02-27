@@ -1,21 +1,15 @@
-function [RZS,RMS] = f_ZernikeBuilder(a,A,sSize,shiftCart,shiftBool,varargin)
+function [RZS,RMS] = f_ZernikeBuilder(X,Y,a,A,sSize,varargin)
 % Zernike_Reconstruction is a function that computes 
 % a wavefront reconstruction using Zernike's Polynomials
 % and by calculating the function expansion coefficients.
 %
 % Inputs: 
+%  X,Y: A grid of the spatial vector: 2D Cartesian coordiantes. They
+%  may already have the shiftCart
 %  a: Zernike weight vector that contains the aberrations contributions
 %  A: float that defines pupil relative size (w.r.t. sSize), like a
 %                    percentage
 %  sSize: square matrix of the total size of the figure. Space Size
-%  shiftCart: [yshift,xshift], works when shiftBool = 1
-%             Percentages of movement of the total size of the mask 
-%             (cartesian coordinates convention). Calibrated with: s = +1;
-%             ph0 = 0, tc = 1. Ranges per shift: [0,100] (percentage)  
-%  shiftBool: only shifts when plotMask = 2
-%             0: shift deactivated [for exporting masks]
-%             1: shift activated [SLM displaying]
-%             2: self-centering algorithm
 %  varargin: (0) no plots; (1) plots
 % 
 % Outputs:
@@ -45,7 +39,8 @@ M = length(a); % MxM matrix will be created
                  % Correction in order to get correctly the polynomials
 
 %% Zernike polynomial calculation
-[VZk,Pupil] = f_ZernikePolynomials(M,A,sSize); % Creates Z. polynomials
+[VZk,Pupil] = f_ZernikePolynomials(X,Y,M,A,sSize); 
+% Creates Z. polynomials
 
 %% Wavefront Reconstruction
 RZSV = sum(bsxfun(@times, a.', VZk), 2); 

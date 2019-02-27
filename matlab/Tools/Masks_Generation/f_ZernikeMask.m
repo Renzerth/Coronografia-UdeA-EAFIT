@@ -1,9 +1,11 @@
 %% Generate a Zernike phase mask (wavefront)
-function [mask,wrapMask,wrapMaskFig] = f_ZernikeMask(r,z_coeff,a,frac, ...
-L,gl,phaseValues,mingl,maxgl,levShft,pupil,ZernikeSize,shiftCart,shiftBool,disp_wrap,plot_z,normMag, ...
+function [mask,wrapMask,wrapMaskFig] = f_ZernikeMask(X,Y,r,z_coeff,a,frac, ...
+L,gl,phaseValues,mingl,maxgl,levShft,pupil,ZernikeSize,disp_wrap,plot_z,normMag, ...
 binMask,binv,monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 % Characterizes the aberrations of the system
 % Inputs:
+%  X,Y: A grid of the spatial vector: 2D Cartesian coordiantes. They
+%  may already have the shiftCart
 %  r: polar coordinate
 %  z_coeff: 
 %     selected aberrations: any combination on [1,20]; zernike
@@ -26,14 +28,6 @@ binMask,binv,monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 %  levShft: corresponds to the brightness or constant shift of the gl's
 %  pupil: defines pupil relative size (w.r.t. sSize), like a percentage
 %  ZernikeSize: screen size for the Zernike polynomials generation
-%  shiftCart: [yshift,xshift], works when shiftBool = 1
-%             Percentages of movement of the total size of the mask 
-%             (cartesian coordinates convention). Calibrated with: s = +1;
-%             ph0 = 0, tc = 1. Ranges per shift: [0,100] (percentage)  
-%  shiftBool: only shifts when plotMask = 2
-%             0: shift deactivated [for exporting masks]
-%             1: shift activated [SLM displaying]
-%             2: self-centering algorithm
 %  disp_wrap: unwrapped (0) or wrapped mask (1)
 %  plot_z: plot (1); no plot (0)
 %  normMag: normalize magnitude. yes(1); no(0)
@@ -85,7 +79,7 @@ else
 end
 
 %% Zernike Polynomials
-unwrapmask = f_ZernikeBuilder(z_vec,pupil,ZernikeSize,plot_z); 
+unwrapmask = f_ZernikeBuilder(X,Y,z_vec,pupil,ZernikeSize,plot_z); 
 % (vector, pupil size, Matrix size (zernike phase size), graph:1 or not:0)
 mask = exp(1i*unwrapmask); % Wrapped mask
 
