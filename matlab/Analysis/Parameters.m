@@ -13,12 +13,12 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 5; % Phase mask selection:
+maskSel = 0; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
              % 3: Elliptic Gaussian beam phase mask
-             % 4: Fork phase masks
+             % 4: Fork phase mask
              % ---- NOT USED:
              % 5: Zernike (aberrations)
              % 6: Laguerre-Gauss + Zernike
@@ -38,23 +38,29 @@ plotMask = 2; % Allows to plot the final mask, as it can be a combination
 coordType = 1;  % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
-k = 9; % Bits for grey levels; 2^k is the resolution (size of x and y)
-       % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
-       % Only works when coordType = 1
-sSize = 2^k - 1;  % Spatial size: number of samples; odd number so that 
-                  % the vortex gets centered. ref: 2^k-1       
-MaxMask = 1; % 1: maximizes the mask for coordType = 1; 0: doesn't      
-circularMask = 0; % Only works when coordType = 2
-  % 0: The mask presents an elliptical form when in the full screen
-  % 1: The mask presents a circular form when in the full screen
-  % On both cases full screen means that plotMask = 2
-  % It is always applied for Zernike masks (maskSel=5,6) either for PC or
-  % for the SLM
-shiftBool = 0; % Only shifts when plotMask = 2
-% 0: shift deactivated [for exporting masks]
-% 1: shift activated [SLM displaying]
-% 2: self-centering algorithm
-shiftCart = [10,0]; % [yshift,xshift], works when shiftBool = 1
+%%%% For coordType = 1:
+    k = 7; % Bits for grey levels; 2^k is the resolution (size of x and y)
+           % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
+           % Only works when coordType = 1
+    sSize = 2^k - 1;  % Spatial size: number of samples; odd number so that 
+                      % the vortex gets centered. ref: 2^k-1       
+    MaxMask = 1;
+    % 0: custom-size mask that depends on the variable sSize   
+    % 1: maximizes the mask for coordType = 1
+    % 3: maximized mask but keeping its rectangular fashion
+%%% For only for plotMask=2:
+    circularMask = 0; % Works either on coordType=2 or when MaxMask=1
+     % Won't work for maskSel = 5 or 6 (Zernike)
+     % 0: The mask presents an elliptical form when in the full screen
+     % 1: The mask presents a circular form when in the full screen
+     % On both cases full screen means that plotMask = 2
+     % It is always applied for Zernike masks (maskSel=5,6) either for PC 
+     % or for the SLM
+    shiftBool = 0; % shifts the mask
+     % 0: shift deactivated [for exporting masks]
+     % 1: shift activated [SLM displaying]
+     % 2: self-centering algorithm
+    shiftCart = [10,0]; % [yshift,xshift], works when shiftBool = 1
                     % Percentages of movement of the total size of the
                     % mask (cartesian coordinates convention)
                     % Calibrated with: s = +1; ph0 = 0, tc = 1; 
@@ -69,7 +75,7 @@ shiftCart = [10,0]; % [yshift,xshift], works when shiftBool = 1
 %  -Principal screen: MATLAB scrnIdx(1); Windows(2); AnyDesk(2)
 %  -Pluto screen: MATLAB scrnIdx(3); Windows(1); Anydesk(1)
 %  -LC2002 screen: MATLAB scrnIdx(2); Windows(3); Anydesk(0)
-slm = 'Pluto'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
+slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
@@ -201,8 +207,7 @@ Angbet = pi/2; % Diffraction angle of vertical direction (y) [radians]
 
 %% Gray levels (discretization levels of the mask)
 
-% MAYBE NOT USED ANYMORE:
-% -----
+% ----- MAYBE NOT USED ANYMORE:
 % Dynamic range = maxGrayDepth - minGrayDepth
 mingl = 0; % Minimum gray level depth. Ref: 0
 maxgl = 255; % Maximum gray level depth. Ref: 255
@@ -227,9 +232,7 @@ switch discretization % Gray-level discretized azimuthal angle vector
                               % these levels
   phaseValues = phaseValues*2*pi/255; % Conversion from gray to phase levels                  
 end
-% OLD:
-% a = 0:255 valores de la fase (256 valores posibles de fase)
-% angle = a/256*2*pi-pi
+
 
 
 
@@ -280,16 +283,15 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 % Zernike, FT, simulation in the free space that is not very depured
 %% Optional plots and procedures
 FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
-maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum
-               % Only works when FTmask = 1
+%%% For FTmask = 1:
+   maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum                
 gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)
 maskZernReconstr = 0; % Reconstructs the mask with Zernike polynomials and
                       % plots the error  
 simBool = 0; % Simulate: yes (1) or no (0)                      
 
 %% Parameters: Zernike
-% Used in maskZernReconstr, maskSel = 5 and maskSel = 6
-% L and gl are also used with Zernike
+%%%% For maskZernReconstr, maskSel = 5 and maskSel = 6:
 z_coeff = [0 4]; % Zernike coeffient vector (see f_ZernikeMask.m)
 a = 60; % Arbitrary constant; the bigger, the more intense; ref: a=20
 frac = 0.125; % To adjust the wrapped phase; ref: 0.125
@@ -297,7 +299,8 @@ pupil = 1; % Pupil relative size: [0,1]; like a percentage
 disp_wrap = 1; % (0): Original; (1): wrapped mask on [-pi,pi] 
 plot_z = 0; % plot with Zernike builder: yes(1); no(0)
 ReconstrNumb = 14; % Number of polynomials to use for the reconstruction
-% sSize defined in DefineSpace.m
+% ZernikeSize is defined in f_DefineSpace.m
+% L and gl are also used with Zernike
                
 if simBool == 1
  %% Simulation parameters

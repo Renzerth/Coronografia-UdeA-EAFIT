@@ -37,33 +37,40 @@ shiftBool,coordType,MaxMask,plotMask,maskSel)
 % ZernikeSize: screen size for the Zernike polynomials generation
 % monitorSize: resolution of the monitor selected by the scrnIdx
 
-switch coordType
- case 1 % Size defined by the user, space support defined by the SLM to use
-  % This applies when one won't project a full screen mask and a desired 
-  % image resolution is wanted 
-  %% Spatial definitions
-  sSupport = sSupport/2; % Half support of the SLM window in cm
-  spaceVector = -sSupport:2*sSupport/(sSize-1):sSupport; 
-  % Symmetric space
-  [X,Y] = meshgrid(spaceVector); % A symmetric grid: 2D Cartesian 
-                                 % coordinates
-  x = spaceVector; % Cartesian x-vector
-  y = x; % Cartesian y-vector: square grid
-  % Xslm = X;
-  monitorSize = size(X);% Square coordinates
-  
-  enablechange = false; 
-  [~,~,AspectRatio,~] = f_MakeScreenCoords(scrnIdx,enablechange);
- case 2 % Size defined by the resolution of the selected screen     
-  % This applies when a full screen mask will be displayed for the SLM with
-  % the exact screen resolution
-  %% Screen coordinates
+%% Screen coordinates (for coordType=2) and Aspect Ratio for a general use
   enablechange = false; 
   % false: won't change default figure display monitor. Leave this value as
   % zero always as the figure display monitor will be changed later on.
   % This is changed if one wants to display in the SLMs when plotMask = 2
-  [X,Y,AspectRatio,monitorSize] = f_MakeScreenCoords(scrnIdx,enablechange);
-  % Calculates the monitor size
+  [Xcoord2,Ycoord2,AspectRatio,monitorSize] = ...
+  f_MakeScreenCoords(scrnIdx,enablechange); % Calculates the monitor size
+
+%% Coordinate type selection  
+switch coordType
+ case 1 % Size defined by the user, space support defined by the SLM to use
+  % This applies when one won't project a full screen mask and a desired 
+  % image resolution is wanted 
+  %% Spatial definitions (size is user defined)
+  sSupport = sSupport/2; % Half support of the SLM window in cm
+  spaceVector = -sSupport:2*sSupport/(sSize-1):sSupport; 
+  % Symmetric space
+  [Xcoord1,Ycoord1] = meshgrid(spaceVector); % A symmetric grid: 2D Cartesian 
+                                 % coordinates
+  x = spaceVector; % Cartesian x-vector
+  y = x; % Cartesian y-vector: square grid
+  % Xslm = X;
+  monitorSize = size(Xcoord1);% Square coordinates
+  
+  enablechange = false; 
+  [~,~,AspectRatio,~] = f_MakeScreenCoords(scrnIdx,enablechange);
+  X = Xcoord1; Y = Ycoord1;
+  
+ case 2 % Size defined by the resolution of the selected screen     
+  % This applies when a full screen mask will be displayed for the SLM with
+  % the exact screen resolution
+  
+  %% Spatial definitions (screen-size defined)
+  
   scaleFactor = 1e-3; % um to mm. Constant factor
   % halfSizeX,Y: half physical size of the SLM's active area. Taken with 
   % the datasheet parameters
@@ -72,21 +79,21 @@ switch coordType
   % x,y: vectors of SLM's physical size  
   x = linspace(-halfSizeX,halfSizeX,monitorSize(1));                                     
   y = linspace(-halfSizeY,halfSizeY,monitorSize(2)); 
+  X = Xcoord2; Y = Ycoord2; % Screen coordinates
+  
 end
 
-%% Aspect ratio application
+%% Aspect ratio application for the scaling
   % Regarding the drawing of the masks on the SLM screens:
   % Original X (output of f_MakeScreenCoords): the circular mask is drawn 
   % as an ellipse due to the screen transformation (elliptical scaling of 
   % the space)
   % Xrescaled: the spatial scaling is compensated and the circular mask is
   % drawn normally on the whole screen
-  Xrescaled = AspectRatio*X; % Used for the mask generation on the pc. It 
-                             % is never shifted
-  % Circular should also apply whenever Zernike is used for both pc and SLM
-  % Xrescaled only applies for coordType = 2
-  if ((circularMask == 1 && plotMask == 2) || (maskSel == 5 || maskSel == 6)) && ~(MaxMask == 0 && coordType == 1) 
-      X = Xrescaled; % Circular truncation in full screen
+  Xrescaled = AspectRatio*X; % Used for the mask generation: scaling of X
+  if circularMask == 1 && plotMask == 2 && ...
+     (MaxMask == 1 || coordType == 2) && (maskSel ~= 5 && maskSel ~= 6)
+     X = Xrescaled; % Circular truncation in full screen
   end % Otherwise X=X and one has the elliptical truncation in full screen
 
 %% Polar coordinates for the PC
@@ -94,7 +101,7 @@ Xpc = X; Ypc = Y; % Needed for the PC coordinates later on
 [phiPC,rPC] = cart2pol(Xpc,Ypc); % Without shifts and no scaling: mask is 
                                  % always circular and centered
                           
-%% Polar coordinates with a shift of the mask (for the SLM)
+%% Shift of the mask (for the SLM)
 switch shiftBool 
  case 0
   shiftX = 0; shiftY = 0; % Shift deactivated   
@@ -109,6 +116,7 @@ switch shiftBool
   % Pending
 end
 
+%% Polar coordinates for the SLM
 % X,Y variables redefined for being used in the EGV and Fork masks
 % The signs of the shifts account for the cartesian coordinates convention
 Xslm = X - shiftX; % Shifted X for the SLM
@@ -118,6 +126,7 @@ Yslm = Y + shiftY; % Shifted Y for the SLM.
                                      % normal cartesian convention for 
                                      % displacing the phase mask
                              
-%% Zernike
-ZernikeSize = min(monitorSize); % Minumum size of the screen
+%% Zernike polynomials square size
+ZernikeSize = min(monitorSize); % Minumum size of the screen for the
+                                % square-size Zernike polynomials
 end

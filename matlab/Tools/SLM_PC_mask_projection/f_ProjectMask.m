@@ -100,43 +100,50 @@ switch plotMask
   end
     
  case 2  % Plot on the SLM. 
+  %% Monitor selection and resolution retrieval
   enablechange = true; % SLM figure display monitor activated
   [res,~]= f_changeProjectionMonitor(scrnIdx,enablechange);
   % 2018a: gcf.WindowState = 'maximized';
   % https://blogs.mathworks.com/pick/2018/07/13/maximize-your-figures/
-  % Allow full-screen size figures when coordType == 2
-  offsetPixel = [1,1]; % Mandatory: pixels have this origin. 
-                       % [0,0] doesn't exist
+  
+  %% Figure handler definitions
   wrapMaskFig = figure('Visible','off','MenuBar','none','Toolbar', ...
                       'none','NumberTitle','off');
   % Hide Menu bar and Tool bar
-  wrapMaskFig.Units = 'Pixels'; % 'color','black',
+  % wrapMaskFig.Units = 'Pixels'; % 'color','black', NOT NEEDED FOR NOW
   
-  %% Figure size
+  %% Figure size adjusting with a monitor/mask scaling for coordType = 1 or
+  %%% a maximized figure displaying for coordType = 2
   %%% For cordType 1 and 2:
-  set(gca,'Units','Pixels'); % Axis units
-  set(gca,'Position',[offsetPixel monitorSize(1) monitorSize(2)]);
-  % For coordType = 2 the fig is maximized
-  
-  %%% For cordType 1:
-  %% Size comparison of r and mask (only for maskSel = 5 or 6)
-  if coordType == 1
-   tolx = 0; % x tolerance for correcting the Zernike polynomials
-   toly = 0; % y tolerance for correcting the Zernike polynomials
-   MidVectMonitor = ceil((res+1)/2); % SLM monitor mid vector
-   MidVectMask = ceil((size(wrapMask)+1)/2); % Mask mid vector
-   MidVect = MidVectMonitor - MidVectMask; % pixel position of the mask
-   set(gcf,'Units','Pixels'); % Figure units
-   if MaxMask == 0
-     xMov = monitorSize(1) + tolx; % x movement
-     yMov = monitorSize(2) + toly; % y movement
-     set(gca,'Position',[MidVect xMov yMov]); % figure position
-   else % MaximizedMask = 1
-     xMov = res(1) + tolx; % x movement
-     yMov = res(2) + toly; % y movement
-     set(gca,'Position',[0 0 xMov yMov]); % figure position
-   end
+  set(gca,'Units','Pixels'); % Axis units. get current axis command
+  tolx = 0; % x tolerance for correcting the Zernike polynomials
+  toly = 0; % y tolerance for correcting the Zernike polynomials
+  if coordType == 1 
+    switch MaxMask 
+       case 0 % Custom-size mask that depends on the variable sSize
+         xMov = monitorSize(1) + tolx; % x movement
+         yMov = monitorSize(2) + toly; % y movement
+         MidVectMonitor = ceil((res+1)/2); % SLM monitor mid vector
+         MidVectMask = ceil((size(wrapMask)+1)/2); % Mask mid vector
+         offsetPixel = MidVectMonitor - MidVectMask; % Pixel pos of the mask
+         
+       case 1 % Maximizes the mask in a rectangular screen
+         xMov = res(1) + tolx; % x movement
+         yMov = res(2) + toly; % y movement
+         offsetPixel = [0 0]; % left bottom part
+         
+       case 3
+   
+    end 
+  else % coordType = 2 
+    xMov = monitorSize(1) + tolx; % x movement
+    yMov = monitorSize(2) + toly; % y movement
+    offsetPixel = [1,1]; % Mandatory: pixels have this origin. 
+                        % [0,0] doesn't exist
+    % full-screen size figures are always created here
   end
+  set(gca,'Position',[offsetPixel xMov yMov]); % Figure position
+  
   %% Figure plotting
   imagesc(wrapMask);  % Plots in SLM screen 
   axis off; colormap(customMap);
@@ -146,7 +153,7 @@ switch plotMask
   % OLD
   % set(gca,'xtick',[]); set(gca,'ytick',[]) % No axis values
     
-  case 3 % Screen: surface plot
+ case 3 % Screen: surface plot
   wrapMaskFig = figure('color','white','units','normalized','position',...
                [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',figtit);
   surf(wrapMask), colormap(gray(gl)), shading interp; % 3D Surface
