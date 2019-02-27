@@ -80,8 +80,9 @@ switch plotMask
   % slmhfig = figure('color','white','units','normalized','position',...
   % [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',tit);
   %% Plot the mask
-  wrapMaskFig = figure('color','white','units','normalized','position',...
-               [0 0 1 1],'outerposition',[5/10 1/10 1/2 3/4],'Name',figtit); 
+  wrapMaskFig = figure('color','white','Name',figtit); 
+  % 'units','normalized''position',[0 0 1 1],
+  % 'outerposition',[5/10 1/10 1/2 3/4]
   imagesc(wrapMask); axis square; colormap(customMap);
   title(tit);
   set(gca,'xtick',[]); set(gca,'ytick',[]) % No axes values
@@ -112,8 +113,8 @@ switch plotMask
   % https://blogs.mathworks.com/pick/2018/07/13/maximize-your-figures/
   
   %% Figure handler definitions
-  wrapMaskFig = figure('Visible','off','MenuBar','none','Toolbar', ...
-                      'none','NumberTitle','off');
+  wrapMaskFig = figure('color','black','Visible','off','MenuBar','none',...
+                      'Toolbar','none','NumberTitle','off');
   % Hide Menu bar and Tool bar
   % wrapMaskFig.Units = 'Pixels'; % 'color','black', NOT NEEDED FOR NOW
   
@@ -138,11 +139,11 @@ switch plotMask
          
        case 2 % Maximizes the mask but keeping its rectangular fashion
          xMov = min(res); % Smallest width of the screen's resolution
-         yMov = xMov; % y movement
+         yMov = res(2); % y movement
          MidVectMonitor = [ceil((max(res)+1)/2) 0];
          MidVectMask = [ceil((max(xMov)+1)/2) 0];
          offsetPixel = MidVectMonitor - MidVectMask; % Pixel position of 
-                                                   % the mask
+                                                     % the mask
     end 
   else % coordType = 2 
     xMov = monitorSize(1); % x movement
@@ -166,8 +167,9 @@ switch plotMask
   % set(gca,'xtick',[]); set(gca,'ytick',[]) % No axis values
     
  case 3 % Screen: surface plot
-  wrapMaskFig = figure('color','white','units','normalized','position',...
-               [0 0 1 1],'outerposition',[5/10 1/10 1/2 3/4],'Name',figtit);
+  wrapMaskFig = figure('color','white','Name',figtit);
+  % 'units','normalized''position',[0 0 1 1],
+  % 'outerposition',[5/10 1/10 1/2 3/4]
   surf(wrapMask), colormap(gray(gl)), shading interp; % 3D Surface
   axis square; title(tit);
   cbh = colorbar; cbh.Label.String = str;

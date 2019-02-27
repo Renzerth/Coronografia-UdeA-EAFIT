@@ -1,6 +1,6 @@
 %% Laguerre Gauss Binary masks + Zernike Phases
 function [mask,wrapMask,wrapMaskFig] = f_LGZernikeMask(r,phi,gl,phaseValues, ...
-mingl,maxgl,levShft,tc,s,ph0,p,W,z_coeff,a,frac,L,pupil,ZernikeSize,disp_wrap,...
+mingl,maxgl,levShft,tc,s,ph0,p,W,z_coeff,a,frac,L,pupil,ZernikeSize,shiftCart,shiftBool,disp_wrap,...
 plot_z,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 % Generates and plots a Laguerre Gauss + Zernike mask
 %
@@ -35,6 +35,14 @@ plot_z,normMag,binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMa
 %  L: laser wavelength [um]
 %  pupil: defines pupil relative size (w.r.t. sSize), like a percentage
 %  ZernikeSize: screen size for the Zernike polynomials generation
+%  shiftCart: [yshift,xshift], works when shiftBool = 1
+%             Percentages of movement of the total size of the mask 
+%             (cartesian coordinates convention). Calibrated with: s = +1;
+%             ph0 = 0, tc = 1. Ranges per shift: [0,100] (percentage)  
+%  shiftBool: only shifts when plotMask = 2
+%             0: shift deactivated [for exporting masks]
+%             1: shift activated [SLM displaying]
+%             2: self-centering algorithm
 %  disp_wrap: original (0) or wrapped mask (1)
 %  plot_z: plot (1); no plot (0)
 %  normMag: normalize magnitude. yes(1); no(0)

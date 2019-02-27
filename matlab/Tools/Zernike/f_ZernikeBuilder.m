@@ -1,15 +1,23 @@
-function [RZS,RMS] = f_ZernikeBuilder(a,A,sSize,varargin)
+function [RZS,RMS] = f_ZernikeBuilder(a,A,sSize,shiftCart,shiftBool,varargin)
 % Zernike_Reconstruction is a function that computes 
 % a wavefront reconstruction using Zernike's Polynomials
 % and by calculating the function expansion coefficients.
 %
 % Inputs: 
-%        a - Zernike weight vect: contains the aberrations contributions
-%        A - float - Defines pupil relative size (w.r.t. sSize), like a
+%  a: Zernike weight vector that contains the aberrations contributions
+%  A: float that defines pupil relative size (w.r.t. sSize), like a
 %                    percentage
-%        sSize - Square matrix: total size of the figure. Space Size
-%        varargin - 0: no plots; 1: plots
-%             
+%  sSize: square matrix of the total size of the figure. Space Size
+%  shiftCart: [yshift,xshift], works when shiftBool = 1
+%             Percentages of movement of the total size of the mask 
+%             (cartesian coordinates convention). Calibrated with: s = +1;
+%             ph0 = 0, tc = 1. Ranges per shift: [0,100] (percentage)  
+%  shiftBool: only shifts when plotMask = 2
+%             0: shift deactivated [for exporting masks]
+%             1: shift activated [SLM displaying]
+%             2: self-centering algorithm
+%  varargin: (0) no plots; (1) plots
+% 
 % Outputs:
 %         RZS - Reconstructed Zernike Surface,
 %         RMS - Root Mean Square
@@ -20,10 +28,11 @@ function [RZS,RMS] = f_ZernikeBuilder(a,A,sSize,varargin)
 %
 % Author: Juan José Cadavid Muñoz - Eafit University
 % Date - 2014/03/08
-% Commented by Samuel Plazas Escudero on 2018/04/03
+% Commented by Samuel Plazas Escudero on 2018/04/03 and variables
+% shiftCart/shiftBool were added on 2019/02/27
 
 %% Settings
-if nargin == 4
+if nargin == 6
   plotsON = varargin{1};
 else
   plotsON = true;
