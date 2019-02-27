@@ -1,6 +1,6 @@
 %% Spiral Phase Mask
 function [mask,wrapMask,wrapMaskFig] = f_SpiralMask(r,phi,gl,phaseValues, ...
-mingl,maxgl,levShft,tc,s,ph0,normMag,binMask,binv,monitorSize,scrnIdx, ...
+mingl,maxgl,levShft,tc,s,ph0,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx, ...
 coordType,abs_ang,MaxMask,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
@@ -18,6 +18,7 @@ coordType,abs_ang,MaxMask,plotMask)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
+%  MaskPupil: applies a pupil truncation to the mask: (0): no; (1): yes
 %  monitorSize: size of the selected screen for coordType = 2 or of the 
 %  grid (sSize) for coordType = 1 
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
@@ -49,8 +50,8 @@ mask = exp(1i*mask); % Wrapped mask and complex
 tit = strcat('Spiral phase mask with topological charge',{' '}, ...
       num2str(tc));
 str = ''; % Empty, it only works for abs_ang = 0
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,maxgl, ...
-levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
-abs_ang,MaxMask,plotMask);
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
+maxgl,levShft,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,tit, ...
+str,coordType,abs_ang,MaxMask,plotMask);
 
 end

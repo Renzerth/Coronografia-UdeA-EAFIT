@@ -4,7 +4,7 @@
 % Equation 3, page 2
 
 function [mask,wrapMask,wrapMaskFig] = f_VPLMask(r,phi,gl,phaseValues,mingl, ...
-maxgl,levShft,tc,s,ph0,L,f_FR,normMag,binMask,binv,monitorSize,scrnIdx, ...
+maxgl,levShft,tc,s,ph0,L,f_FR,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx, ...
 coordType,abs_ang,MaxMask,plotMask)
 % Generates and plots a VPL mask:  helicoidal mask + fresnel lens
 %
@@ -24,6 +24,7 @@ coordType,abs_ang,MaxMask,plotMask)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
+%  MaskPupil: applies a pupil truncation to the mask: (0): no; (1): yes
 %  monitorSize: size of the selected screen for coordType = 2 or of the 
 %  grid (sSize) for coordType = 1 
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
@@ -63,8 +64,8 @@ mask = maskSPP.*maskVPL;
 tit = strcat('VPL with topological charge',{' '},num2str(tc),{' '}, ...
              'and',{' '},num2str(gl),{' '},'gray levels');  
 str = ''; % Empty, it only works for abs_ang = 0
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,maxgl, ...
-levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
-abs_ang,MaxMask,plotMask);
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
+maxgl,levShft,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,tit, ...
+str,coordType,abs_ang,MaxMask,plotMask);
 
 end

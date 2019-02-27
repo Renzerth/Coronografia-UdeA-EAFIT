@@ -1,5 +1,5 @@
-function [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask,phaseValues,binMask,binv,MaskPupil,...
-                       mingl,maxgl,levShft,coordType,plotMask)
+function [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask, ...
+phaseValues,binMask,binv,MaskPupil,mingl,maxgl,levShft,coordType,plotMask)
 % Multiplies the phase mask by the maximum circle size with its outer
 % borders containing the minimum value of the phase (normally -pi)
 % Wraps the phase with the function "angle"

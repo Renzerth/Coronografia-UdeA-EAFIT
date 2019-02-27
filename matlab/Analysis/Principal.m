@@ -60,10 +60,11 @@ circularMask,coordType,MaxMask,plotMask,maskSel);
 [mask,wrapMask,~,maskName] = f_PlotSelectedMask(X,Y,r,phi,gl,phaseValues, ...
 mingl,maxgl,levShft,tc,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha, ...
 Angalp,Angbet,z_coeff,a,frac,pupil,ZernikeSize,disp_wrap,plot_z,normMag, ...
-binMask,binv,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMask,maskSel);  
+binMask,binv,MaskPupil,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMask,maskSel);  
 % Dependencies:
 % f_PlotSelectedMask -> f_SpiralMask (or any other) -> f_ProjectMask -> 
-% f_MaskWrapCircDiscret -> (f_discretizeMask & f_ScaleMatrixData)          
+% f_MaskWrapCircDiscret -> f_discretizeMask -> f_wrapToRange 
+%                       -> f_ScaleMatrixData       
 
                            
                            

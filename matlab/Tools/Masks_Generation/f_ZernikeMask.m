@@ -1,7 +1,7 @@
 %% Generate a Zernike phase mask (wavefront)
 function [mask,wrapMask,wrapMaskFig] = f_ZernikeMask(X,Y,r,z_coeff,a,frac, ...
 L,gl,phaseValues,mingl,maxgl,levShft,pupil,ZernikeSize,disp_wrap,plot_z,normMag, ...
-binMask,binv,monitorSize,scrnIdx,coordType,MaxMask,plotMask)
+binMask,binv,MaskPupil,monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 % Characterizes the aberrations of the system
 % Inputs:
 %  X,Y: A grid of the spatial vector: 2D Cartesian coordiantes. They
@@ -34,6 +34,7 @@ binMask,binv,monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
+%  MaskPupil: applies a pupil truncation to the mask: (0): no; (1): yes
 %  monitorSize: size of the selected screen for coordType = 2 or of the 
 %  grid (sSize) for coordType = 1  
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
@@ -95,9 +96,9 @@ else % disp_wrap = 0
     mask = unwrapmask; % Unwrapped mask
     str = 'Unwrapped phase value';
 end
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,maxgl, ...
-levShft,normMag,binMask,binv,monitorSize,scrnIdx,tit,str,coordType, ...
-abs_ang,MaxMask,plotMask);
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
+maxgl,levShft,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,tit, ...
+str,coordType,abs_ang,MaxMask,plotMask);
 
 %% Phase wrapping (optional test for curiosity) 
 % The wrapped phase should do complete cycles of 2pi

@@ -49,6 +49,13 @@ scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
   [Xcoord2,Ycoord2,AspectRatio,monitorSize] = ...
   f_MakeScreenCoords(scrnIdx,enablechange); % Calculates the monitor size
 
+%% Zernike mask changes that affect coordType
+%    if  
+%       enablechange = false; % Always false
+%       [~,~,~,screenResolution] = f_MakeScreenCoords(scrnIdx,enablechange); 
+%       sSize = min(screenResolution);
+%     end
+
 %% Coordinate type selection  
 switch coordType
  case 1 % Size defined by the user, space support defined by the SLM to use
@@ -74,7 +81,6 @@ switch coordType
   % the exact screen resolution
   
   %% Spatial definitions (screen-size defined)
-  
   scaleFactor = 1e-3; % um to mm. Constant factor
   % halfSizeX,Y: half physical size of the SLM's active area. Taken with 
   % the datasheet parameters

@@ -13,11 +13,11 @@ coordType,abs_ang,MaxMask,plotMask)
 %  levShft: corresponds to the brightness or constant shift of the gl's
 %  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
-%  monitorSize: size of the selected screen for coordType = 2 or of the 
-%  grid (sSize) for coordType = 1 
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
-%  monitorSize: size of the selected screen 
+%  MaskPupil: applies a pupil truncation to the mask: (0): no; (1): yes
+%  monitorSize: size of the selected screen for coordType = 2 or of the 
+%  grid (sSize) for coordType = 1 
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
 %  tit: plot title
 %  str: colorbar string when abs_ang = 0
@@ -64,8 +64,8 @@ switch abs_ang
   
   case 2 % Phase
    % Circular pupil and wrapping   
-   [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask,binMask,binv,phaseValues,mingl, ...
-                                       maxgl,levShft,coordType,plotMask);
+   [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask,phaseValues, ...
+   binMask,binv,MaskPupil,mingl,maxgl,levShft,coordType,plotMask);
    figtit = 'Phase Mask';
    str = 'Wrapped phase value'; % Colorbar string
  end

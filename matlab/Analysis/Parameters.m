@@ -13,7 +13,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 6; % Phase mask selection:
+maskSel = 5; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -73,25 +73,18 @@ switch slm
 end 
 
 %% SLM positionining calibration, coordinates and type of truncation
+MaskPupil = 0; % Applies a pupil truncation to the mask: (0): no; (1): yes
 coordType = 1;  % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
 %%%% For coordType = 1 (user custom-sized):
-    customSize = 2; 
-    % 1: given by k and sSize
-    % 2: given by the monitor (almost the same as coordType = 2, it can
-    %    also work for maskSel = 5,6 but shiftBool won't work)
-    if customSize == 1
+    %  it can  also work for maskSel = 5,6 but shiftBool won't work)
+    
       k = 7; % Bits for grey levels; 2^k is the resolution (size of x and y)
              % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
              % Only works when coordType = 1
       sSize = 2^k - 1;  % Spatial size: number of samples; odd number so that 
                         % the vortex gets centered. ref: 2^k-1      
-    else % customSize == 2
-      enablechange = false; % Always false
-      [~,~,~,screenResolution] = f_MakeScreenCoords(scrnIdx,enablechange); 
-      sSize = min(screenResolution);
-    end
     MaxMask = 2; % Defines if the mask should be maximized
     % 0: custom-size mask that depends on the variable sSize   
     % 1: maximizes the mask for coordType = 1
