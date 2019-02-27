@@ -18,7 +18,8 @@ coordType,abs_ang,MaxMask,plotMask)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
-%  monitorSize: size of the selected screen 
+%  monitorSize: size of the selected screen for coordType = 2 or of the 
+%  grid (sSize) for coordType = 1 
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use
@@ -41,7 +42,8 @@ coordType,abs_ang,MaxMask,plotMask)
 m = s*tc; % tc with a sign
 mask = m*(phi + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
 mask = exp(1i*mask); % Wrapped mask and complex
-% mask = mod(mask,2*pi) - pi; % Equivalent operation
+% mask = mod(mask,2*pi) - pi; % Equivalent operation: but a real valued
+% function is obtained
 
 %% Plot the mask
 tit = strcat('Spiral phase mask with topological charge',{' '}, ...

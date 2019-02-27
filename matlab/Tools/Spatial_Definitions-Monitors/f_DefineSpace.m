@@ -63,7 +63,7 @@ switch coordType
   x = spaceVector; % Cartesian x-vector
   y = x; % Cartesian y-vector: square grid
   % Xslm = X;
-  monitorSize = size(Xcoord1);% Square coordinates
+  monitorSize = size(Xcoord1); % Square coordinates: [sSize,sSize]
   
   enablechange = false; 
   [~,~,AspectRatio,~] = f_MakeScreenCoords(scrnIdx,enablechange);

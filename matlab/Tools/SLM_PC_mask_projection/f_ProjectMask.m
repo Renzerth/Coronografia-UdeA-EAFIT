@@ -13,7 +13,8 @@ coordType,abs_ang,MaxMask,plotMask) % [wrapMask,wrapMaskFig]
 %  levShft: corresponds to the brightness or constant shift of the gl's
 %  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
-%  monitorSize: size of the selected screen 
+%  monitorSize: size of the selected screen for coordType = 2 or of the 
+%  grid (sSize) for coordType = 1 
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
 %  monitorSize: size of the selected screen 
@@ -79,7 +80,8 @@ switch plotMask
   % slmhfig = figure('color','white','units','normalized','position',...
   % [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',tit);
   %% Plot the mask
-  wrapMaskFig = figure('color','white','Name',figtit); 
+  wrapMaskFig = figure('color','white','units','normalized','position',...
+               [0 0 1 1],'outerposition',[5/10 1/10 1/3 1/2],'Name',figtit); 
   imagesc(wrapMask); axis square; colormap(customMap);
   title(tit);
   set(gca,'xtick',[]); set(gca,'ytick',[]) % No axes values
@@ -88,18 +90,18 @@ switch plotMask
   
   %% Add the -pi -> +pi ticks
   if abs_ang == 2
-   % Next, pi ticks are added to the colorbar if the phase value extreme
-   % points are near -pi and pi; otherwise the default colorbar is shown
-   upTol = abs(max(wrapMask(:)) - pi); % upper tolerance
-   lowTol = abs(abs(min(wrapMask(:))) - pi); % lower tolerance
-   % Tol and a were found empirically
-   Tol = 0.3; % Tolerance for pi ticks
-   a = 0.15; % Colorbar custom tick adjustment
-   if upTol < Tol && lowTol < Tol % Tolerances near pi values
-    % cbh.Ticks = linspace(1, 7, 2*pi); % 2*pi: period of e^(i*x) 
-    cbh.Ticks = linspace(-pi+a, pi-a, 5);
-    cbh.TickLabels = {'-\pi' '-\pi/2' '0'  '\pi/2' '\pi'};
-   end 
+    % Next, pi ticks are added to the colorbar if the phase value extreme
+    % points are near -pi and pi; otherwise the default colorbar is shown
+    upTol = abs(max(wrapMask(:)) - pi); % upper tolerance
+    lowTol = abs(abs(min(wrapMask(:))) - pi); % lower tolerance
+    % Tol and a were found empirically
+    Tol = 0.3; % Tolerance for pi ticks
+    a = 0.15; % Colorbar custom tick adjustment
+    if upTol < Tol && lowTol < Tol % Tolerances near pi values
+      % cbh.Ticks = linspace(1, 7, 2*pi); % 2*pi: period of e^(i*x) 
+      cbh.Ticks = linspace(-pi+a, pi-a, 5);
+      cbh.TickLabels = {'-\pi' '-\pi/2' '0'  '\pi/2' '\pi'};
+    end 
   end
     
  case 2  % Plot on the SLM. 
@@ -116,36 +118,43 @@ switch plotMask
   % wrapMaskFig.Units = 'Pixels'; % 'color','black', NOT NEEDED FOR NOW
   
   %% Figure size adjusting with a monitor/mask scaling for coordType = 1 or
-  %%% a maximized figure displaying for coordType = 2
-  %%% For cordType 1 and 2:
-  set(gca,'Units','Pixels'); % Axis units. get current axis command
-  tolx = 0; % x tolerance for correcting the Zernike polynomials
-  toly = 0; % y tolerance for correcting the Zernike polynomials
+  %%% a maximized figure for coordType = 2
   if coordType == 1 
+    maskSize = monitorSize; % As defined in f_DefineSpace (square-size)
+    % res = the real "monitorSize", taken on the "%% Monitor selection and 
+    % resolution retrieval" Section   
     switch MaxMask 
        case 0 % Custom-size mask that depends on the variable sSize
-         xMov = monitorSize(1) + tolx; % x movement
-         yMov = monitorSize(2) + toly; % y movement
+         xMov = maskSize(1); % x movement
+         yMov = maskSize(2); % y movement
          MidVectMonitor = ceil((res+1)/2); % SLM monitor mid vector
-         MidVectMask = ceil((size(wrapMask)+1)/2); % Mask mid vector
-         offsetPixel = MidVectMonitor - MidVectMask; % Pixel pos of the mask
-         
+         MidVectMask = ceil((size(wrapMask)+1)/2); % Mask mid vector        
+         offsetPixel = MidVectMonitor - MidVectMask; % Pixel position of 
+                                                     % the mask
        case 1 % Maximizes the mask in a rectangular screen
-         xMov = res(1) + tolx; % x movement
-         yMov = res(2) + toly; % y movement
+         xMov = res(1); % x movement
+         yMov = res(2); % y movement
          offsetPixel = [0 0]; % left bottom part
          
-       case 2
-   
+       case 2 % Maximizes the mask but keeping its rectangular fashion
+         xMov = min(res); % Smallest width of the screen's resolution
+         yMov = xMov; % y movement
+         MidVectMonitor = [ceil((max(res)+1)/2) 0];
+         MidVectMask = [ceil((max(xMov)+1)/2) 0];
+         offsetPixel = MidVectMonitor - MidVectMask; % Pixel position of 
+                                                   % the mask
     end 
   else % coordType = 2 
-    xMov = monitorSize(1) + tolx; % x movement
-    yMov = monitorSize(2) + toly; % y movement
+    xMov = monitorSize(1); % x movement
+    yMov = monitorSize(2); % y movement
     offsetPixel = [1,1]; % Mandatory: pixels have this origin. 
                         % [0,0] doesn't exist
     % full-screen size figures are always created here
   end
+  %%% For cordType = 1 and 2:
+  set(gca,'Units','Pixels'); % Axis units. get current axis command
   set(gca,'Position',[offsetPixel xMov yMov]); % Figure position
+  % [left bottom width height]
   
   %% Figure plotting
   imagesc(wrapMask);  % Plots in SLM screen 
@@ -158,7 +167,7 @@ switch plotMask
     
  case 3 % Screen: surface plot
   wrapMaskFig = figure('color','white','units','normalized','position',...
-               [0 0 1 1],'outerposition',[1/2 0 1/2 1],'Name',figtit);
+               [0 0 1 1],'outerposition',[5/10 1/10 1/3 1/2],'Name',figtit);
   surf(wrapMask), colormap(gray(gl)), shading interp; % 3D Surface
   axis square; title(tit);
   cbh = colorbar; cbh.Label.String = str;
@@ -166,5 +175,5 @@ switch plotMask
   % No axis values:
   set(gca,'xtick',[]); set(gca,'ytick',[]);  set(gca,'ztick',[]) 
   axis off
- end
+end % of switch MaxMask 
 end

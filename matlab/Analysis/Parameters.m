@@ -13,7 +13,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 0; % Phase mask selection:
+maskSel = 5; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -38,19 +38,21 @@ plotMask = 2; % Allows to plot the final mask, as it can be a combination
 coordType = 1;  % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
-%%%% For coordType = 1:
+%%%% For coordType = 1 (user custom-sized):
     k = 7; % Bits for grey levels; 2^k is the resolution (size of x and y)
            % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
            % Only works when coordType = 1
     sSize = 2^k - 1;  % Spatial size: number of samples; odd number so that 
                       % the vortex gets centered. ref: 2^k-1       
-    MaxMask = 1; % Defines if the mask should be maximized
+    MaxMask = 2; % Defines if the mask should be maximized
     % 0: custom-size mask that depends on the variable sSize   
     % 1: maximizes the mask for coordType = 1
-    % 2: maximized mask but keeping its rectangular fashion
-%%% For only for plotMask=2:
-    circularMask = 0; % Works either on coordType=2 or when MaxMask=1
-     % Won't work for maskSel = 5 or 6 (Zernike)
+    % 2: maximized mask but keeping its rectangular fashion. MaxMask = 2 is
+    %    analog to having circularMask = 1 for coordType = 1
+%%% For plotMask=2 (SLM plotting):
+    circularMask = 1; % Works either on coordType=2 or when MaxMask=1
+     % Won't work for maskSel = 5 or 6 (Zernike) and then use coordType=1,
+     % and MaxMask = 2.
      % 0: The mask presents an elliptical form when in the full screen
      % 1: The mask presents a circular form when in the full screen
      % On both cases full screen means that plotMask = 2
@@ -75,7 +77,7 @@ coordType = 1;  % Type of calculation of the spatial coordinates. def: 2
 %  -Principal screen: MATLAB scrnIdx(1); Windows(2); AnyDesk(2)
 %  -Pluto screen: MATLAB scrnIdx(3); Windows(1); Anydesk(1)
 %  -LC2002 screen: MATLAB scrnIdx(2); Windows(3); Anydesk(0)
-slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
+slm = 'Pluto'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
