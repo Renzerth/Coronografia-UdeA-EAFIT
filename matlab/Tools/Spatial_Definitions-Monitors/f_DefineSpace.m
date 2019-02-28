@@ -16,7 +16,7 @@ shiftBool,pixSize,scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
 %             2: self-centering algorithm
 %  pixSize: SLM pixel's size in um
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
-%  circularMask: Only works when coordType = 2 and when maskSel ~= (5,6)
+%  circularMask: Only works when coordType = 2
 %           0: The mask presents an elliptical form when in the full screen
 %           1: The mask presents a circular form when in the full screen
 %           On both cases full screen means that plotMask = 2
@@ -42,7 +42,7 @@ shiftBool,pixSize,scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
 % ZernikeSize: screen size for the Zernike polynomials generation
 % monitorSize: resolution of the monitor selected by the scrnIdx
 
-%% Screen coordinates (for coordType=2) and Aspect Ratio for a general use
+%% Screen coordinates and aspect ratio
   enablechange = false; 
   % false: won't change default figure display monitor. Leave this value as
   % zero always as the figure display monitor will be changed later on.
@@ -50,7 +50,7 @@ shiftBool,pixSize,scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
   [Xcoord2,Ycoord2,AspectRatio,monitorSize] = ...
   f_MakeScreenCoords(scrnIdx,enablechange); % Calculates the monitor size
 
-%% Zernike mask changes that affect coordType
+%% Zernike mask changes that affect coordType from 2 to 1
 % In order to apply circularMask for Zernike, coordType 1 is used with the
 % smallest size of the monitor
 if coordType == 2 && circularMask == 1 && (maskSel == 5 || maskSel == 6)
@@ -103,7 +103,7 @@ end
   % drawn normally on the whole screen
   if circularMask == 1 && plotMask == 2 && ...
      (MaxMask == 1 || coordType == 2) && (maskSel ~= 5 && maskSel ~= 6)
-     Xrescaled = AspectRatio*X; % Used for the mask generation: scaling of X
+     Xrescaled = AspectRatio*X; % Used for the mask generation: X scaling
      X = Xrescaled; % Circular truncation in full screen
   end % Otherwise X=X and one has the elliptical truncation in full screen
 

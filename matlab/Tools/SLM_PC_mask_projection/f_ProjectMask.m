@@ -61,6 +61,7 @@ switch abs_ang
       norm = max(wrapMask(:)); % Max value
       wrapMask = wrapMask/norm; % Normalization of the magnitude
     end
+    [wrapMask,customMap] = f_discretizeMask(phaseValues,wrapMask);
   
   case 2 % Phase
    % Circular pupil and wrapping   

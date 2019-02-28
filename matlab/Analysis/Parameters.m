@@ -1,19 +1,19 @@
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-measDebug = 0; % Debugging before actually measuring. Displays the default 
-               % phase mask and shots a photo with the camera
 meas = 0; % Measure: yes (1) or no (0)
-measSimulated = 1; % Saves the mask and does not involve the cameras: 
-                   % yes (1) or no (0)
-beepSound = 1; % Beep sound when measurement finishes. Only works when 
-               % meas = 1
+%%% For meas = 1:
+    measDebug = 0; % Debugging before actually measuring. Displays the 
+                   % default phase mask and shots a photo with the camera
+    measSimulated = 1; % Saves the mask and does not involve the cameras: 
+                       % yes (1) or no (0)
+    beepSound = 1; % Beep sound when measurement finishes.
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 5; % Phase mask selection:
+maskSel = 1; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -27,7 +27,7 @@ maskSel = 5; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
+plotMask = 2; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -43,7 +43,7 @@ plotMask = 1; % Allows to plot the final mask, as it can be a combination
 %  -Principal screen: MATLAB scrnIdx(1); Windows(2); AnyDesk(2)
 %  -Pluto screen: MATLAB scrnIdx(3); Windows(1); Anydesk(1)
 %  -LC2002 screen: MATLAB scrnIdx(2); Windows(3); Anydesk(0)
-slm = 'Pluto'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
+slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
@@ -73,37 +73,34 @@ switch slm
 end 
 
 %% SLM positionining calibration, coordinates and type of truncation
-MaskPupil = 1; % Applies a pupil truncation to the mask: (0): no; (1): yes
+MaskPupil = 0; % Applies a pupil truncation to the mask: (0): no; (1): yes
 coordType = 1; % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
 %%%% For coordType = 1 (user custom-sized):
-    %  it can  also work for maskSel = 5,6 but shiftBool won't work)
-    
-    k = 7; % Bits for grey levels; 2^k is the resolution (size of x and y)
+    k = 5; % Bits for grey levels; 2^k is the resolution (size of x and y)
            % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
            % Only works when coordType = 1
-    sSize = 500;  % Spatial size: number of samples; odd number so that 
-                      % the vortex gets centered. ref: 2^k-1      
-    MaxMask = 1; % Defines if the mask should be maximized
+    sSize = 2^k-1;  % Spatial size: number of samples; odd number so that 
+                    % the vortex gets centered. ref: 2^k-1      
+    % sSize = 500; % Instead of 2^k-1
+    MaxMask = 2; % Defines if the mask should be maximized
     % 0: custom-size mask that depends on the variable sSize   
-    % 1: maximizes the mask for coordType = 1
+    % 1: maximizes the mask for coordType = 1 (elliptical-like pupil)
     % 2: maximized mask but keeping its rectangular fashion. MaxMask = 2 is
     %    analog to having circularMask = 1 for coordType = 1
 %%% For plotMask=2 (SLM plotting):
-    circularMask = 0; % Works either on coordType=2 or when MaxMask=1
+    circularMask = 1; % Works either on coordType=2 or when MaxMask=1
      % Won't work for maskSel = 5 or 6 (Zernike) and then use coordType=1,
      % and MaxMask = 2.
      % 0: The mask presents an elliptical form when in the full screen
      % 1: The mask presents a circular form when in the full screen
      % On both cases full screen means that plotMask = 2
-     % It is always applied for Zernike masks (maskSel=5,6) either for PC 
-     % or for the SLM
-    shiftBool = 0; % Shift for all masks
+    shiftBool = 1; % Shift for all masks
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [25,25]; % [yshift,xshift], works when shiftBool = 1
+    shiftCart = [25,-5]; % [yshift,xshift], works when shiftBool = 1
                          % Percentages of movement of the total size of the
                          % mask (cartesian coordinates convention)
                          % Calibrated with: s = +1; ph0 = 0, tc = 1; 
@@ -165,7 +162,7 @@ binv = 0; % Binary inversion of the mask: yes(1); no(0). Only applies when
 normMag = 0; % Normalize magnitude. yes(1); no(0). 
           
 %% Parameters: Laguerre-Gauss
-p = 0; % Number of radial nodes. If p=0, normal helicoid masks are obtained
+p = 1; % Number of radial nodes. If p=0, normal helicoid masks are obtained
        % If they are used and tc=0(m=0); binary masks are obtained
        % Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
 WsizeRatio = 0.5; % Width of the modes; for LG; ref: [0,1]
@@ -222,20 +219,21 @@ levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
              
 gl = 256; % Number of gray levels (normally 256). Must be smaller than
           % the dynamic range = maxGrayDepth-minGrayDepth. Default: 256             
-discretization = 2; % Variable for the next switch
+discretization = 1; % Variable for the next switch
 switch discretization % Gray-level discretized azimuthal angle vector
  case 1 % 1: Evenly-spaced gl phase values.
-  
   phaseValues = linspace(0,2*pi,gl); % Discretized phi vector on [-pi,pi]. The 
                                % sampling interval consists on dividing the
                                % range over the gray levels. Similar to the
                                % VPL Edgar's discretization formula on the
                                % first page of:
-  % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf     
+  % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf 
+  
  case 2 % 2: user-defined gl values
-  phaseValues = [1 20 10 100 200 255]; % Custom gl vector: the mask will only have
-                              % these levels
-  phaseValues = phaseValues*2*pi/255; % Conversion from gray to phase levels                  
+  phaseValues = [1 20 10 100 200 255];
+  % Custom gl vector: the mask will only have these levels
+  phaseValues = phaseValues*2*pi/255; % Conversion from gray-levels to 
+                                      % phase levels                  
 end
 
 

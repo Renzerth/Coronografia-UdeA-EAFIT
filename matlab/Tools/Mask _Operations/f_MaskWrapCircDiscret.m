@@ -34,7 +34,7 @@ wrapMask = angle(mask); % Phase of the mask on [-pi, pi]. Real-valued
 % Important: this is applied after the exp(i*mask) was created and then it
 % was wrapped with angle so that it is discretized on [-pi,pi]
 
-[customMap,wrapMask] = f_discretizeMask(phaseValues,wrapMask);
+[wrapMask,customMap] = f_discretizeMask(phaseValues,wrapMask);
 
 % wrappedMask = f_discretizeMask(wrappedMask,phaseValues); % Mask 
                                                            % discretization
