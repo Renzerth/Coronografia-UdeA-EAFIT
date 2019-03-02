@@ -13,7 +13,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 0; % Phase mask selection:
+maskSel = 6; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -27,7 +27,7 @@ maskSel = 0; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
+plotMask = 2; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -43,7 +43,7 @@ plotMask = 1; % Allows to plot the final mask, as it can be a combination
 %  -Principal screen: MATLAB scrnIdx(1); Windows(2); AnyDesk(2)
 %  -Pluto screen: MATLAB scrnIdx(3); Windows(1); Anydesk(1)
 %  -LC2002 screen: MATLAB scrnIdx(2); Windows(3); Anydesk(0)
-slm = 'Pluto'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
+slm = 'LC2002'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
@@ -73,17 +73,17 @@ switch slm
 end 
 
 %% SLM positionining calibration, coordinates and type of truncation
-MaskPupil = 1; % Applies a pupil truncation to the mask: (0): no; (1): yes
+MaskPupil = 0; % Applies a pupil truncation to the mask: (0): no; (1): yes
 coordType = 2; % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
 %%%% For coordType = 1 (user custom-sized):
-    k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
+    k = 5; % Bits for grey levels; 2^k is the resolution (size of x and y)
            % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
            % Only works when coordType = 1
-%     sSize = 2^k-1;  % Spatial size: number of samples; odd number so that 
+    sSize = 2^k-1;  % Spatial size: number of samples; odd number so that 
                     % the vortex gets centered. ref: 2^k-1      
-    sSize = 100; % Instead of 2^k-1
+    % sSize = 500; % Instead of 2^k-1
     MaxMask = 2; % Defines if the mask should be maximized
     % 0: custom-size mask that depends on the variable sSize   
     % 1: maximizes the mask for coordType = 1 (elliptical-like pupil)
@@ -100,13 +100,11 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [0,0]; % [yshift,xshift], works when shiftBool = 1
+    shiftCart = [-2.5,0]; % [yshift,xshift], works when shiftBool = 1
                          % Percentages of movement of the total size of the
                          % mask (cartesian coordinates convention)
                          % Calibrated with: s = +1; ph0 = 0, tc = 1; 
-                         % Ranges per shift: [0,100] (percentage)   
-   % LC2002: [-3,0.1]
-   % Pluto
+                         % Ranges per shift: [0,100] (percentage)    
               
 %% Camera selection and parameters
 camera = 'DMK23U445';
@@ -147,7 +145,7 @@ imgformat = '.png'; % Format with period. mat, bmp, png, jpg
 %%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS PARAMETERS %%%%%%%%%%%%%%%%%%%%%%
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
-tc = 2; % Topological charge (integer bigger or equal to one)
+tc = 10; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
 s = +1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
@@ -171,12 +169,11 @@ WsizeRatio = 0.5; % Width of the modes; for LG; ref: [0,1]
          
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
-% f_FR = maxNumPix*pixSize^2/L; % Criterium to determine the MINIMUM f_FR
-f_FR = 20e6; % In um
+f_FR = maxNumPix*pixSize^2/L; % Criterium to determine the MINIMUM f_FR
 % From: 2_edgar_2015_Generation_Optical_Vortices_Binary_Vortex_Lenses.pdf
 
 %% Parameters: Elliptic Gaussian Vortex
-bcst = 0.6; % Ellipticity. cy/cx = 1/alpha. Ref: .1, .2, .4, .6, .8 and 1
+bcst = 0.1; % Ellipticity. cy/cx = 1/alpha. Ref: .1, .2, .4, .6, .8 and 1
             % Out of theory: when beta >> 1, the mask tends to be binary
             % When beta ~ 0, the mask tends to be trinary
 
@@ -204,8 +201,8 @@ Aalpha = pi; % Amplitude of the phase modulation. Ref: pi
 % forks, or subtracting one from the number of prongs.
 
 %%% Phase jump transition (phase filter)
-Angalp = pi/2; % Diffraction angle of horizontal direction (x) [radians]
-Angbet = 0; % Diffraction angle of vertical direction (y) [radians]
+Angalp = 0; % Diffraction angle of horizontal direction (x) [radians]
+Angbet = pi/2; % Diffraction angle of vertical direction (y) [radians]
 % Here, more than pi/2 seems not to work very well
 % Range: [-pi/2,pi/2]
 % The "*" items remarks in the 'Smooth transition' comments also apply here
@@ -233,7 +230,7 @@ switch discretization % Gray-level discretized azimuthal angle vector
   % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf 
   
  case 2 % 2: user-defined gl values
-  phaseValues = [0 64 128 255]; % Range: [0,255]
+  phaseValues = [1 20 10 100 200 255];
   % Custom gl vector: the mask will only have these levels
   phaseValues = phaseValues*2*pi/255; % Conversion from gray-levels to 
                                       % phase levels                  
@@ -298,8 +295,8 @@ simBool = 0; % Simulate: yes (1) or no (0)
 
 %% Parameters: Zernike
 %%%% For maskZernReconstr, maskSel = 5 and maskSel = 6:
-z_coeff = [0 0 0 0 0.9]; % Zernike coeffient vector (see f_ZernikeMask.m)
-a = 1; % Arbitrary constant; the bigger, the more intense; ref: a=20
+z_coeff = [0 4]; % Zernike coeffient vector (see f_ZernikeMask.m)
+a = 60; % Arbitrary constant; the bigger, the more intense; ref: a=20
 frac = 0.125; % To adjust the wrapped phase; ref: 0.125
 pupil = 1; % Pupil relative size: [0,1]; like a percentage
 disp_wrap = 1; % (0): Original; (1): wrapped mask on [-pi,pi] 
