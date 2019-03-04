@@ -77,10 +77,14 @@ if MaskPupil == 1
   idx = find(rMidVect == rMove); % finds the index or rMove to determine
                                  % if one should move in the x or the y 
                                  % direction
-  if idx == 1 % (for landscape monitors)
-        rMax = r(rMove,1); % The rMax is in the y direction 
-  else % idx == 2 % (for portrait monitors)
-        rMax = r(1,rMove); % The rMax is in the x direction
+  if isscalar(idx)
+    if idx == 1 % (for landscape monitors or square-sized figures)
+          rMax = r(rMove,1); % The rMax is in the y direction 
+    else % idx == 2 % (for portrait monitors)
+          rMax = r(1,rMove); % The rMax is in the x direction
+    end
+  else
+    rMax = r(1,rMove)/sqrt(2);
   end
   % if one has a unitary space, rMax = 1 always
   rSize = rMax; % Both rmax and rsize are equal
