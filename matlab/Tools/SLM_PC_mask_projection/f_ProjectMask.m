@@ -114,7 +114,7 @@ switch plotMask
   % https://blogs.mathworks.com/pick/2018/07/13/maximize-your-figures/
   
   %% Figure handler definitions
-  wrapMaskFig = figure('color','black','Visible','off','MenuBar','none',...
+  wrapMaskFig = figure('color','white','Visible','off','MenuBar','none',...
                       'Toolbar','none','NumberTitle','off');
   % Hide Menu bar and Tool bar
   % wrapMaskFig.Units = 'Pixels'; % 'color','black', NOT NEEDED FOR NOW
@@ -122,29 +122,30 @@ switch plotMask
   %% Figure size adjusting with a monitor/mask scaling for coordType = 1 or
   %%% a maximized figure for coordType = 2
   if coordType == 1 
-    maskSize = monitorSize; % As defined in f_DefineSpace (square-size)
+    
     % res = the real "monitorSize", taken on the "%% Monitor selection and 
     % resolution retrieval" Section   
     switch MaxMask 
-       case 0 % Custom-size mask that depends on the variable sSize
-         xMov = maskSize(1); % x movement
-         yMov = maskSize(2); % y movement
-         MidVectMonitor = ceil((res+1)/2); % SLM monitor mid vector
-         MidVectMask = ceil((size(wrapMask)+1)/2); % Mask mid vector        
-         offsetPixel = MidVectMonitor - MidVectMask; % Pixel position of 
-                                                     % the mask
-       case 1 % Maximizes the mask in a rectangular screen
-         xMov = res(1); % x movement
-         yMov = res(2); % y movement
-         offsetPixel = [0 0]; % left bottom part
+      case 0 % Custom-size mask that depends on the variable sSize
+        maskSize = monitorSize; % As defined in f_DefineSpace (square-size)
+        xMov = maskSize(1); % x movement
+        yMov = maskSize(2); % y movement
+        MidVectMonitor = ceil((res+1)/2); % SLM monitor mid vector
+        MidVectMask = ceil((size(wrapMask)+1)/2); % Mask mid vector        
+        offsetPixel = MidVectMonitor - MidVectMask; % Pixel position of 
+                                                    % the mask
+      case 1 % Maximizes the mask in a rectangular screen
+        xMov = res(1); % x movement
+        yMov = res(2); % y movement
+        offsetPixel = [0 0]; % left bottom part
          
-       case 2 % Maximizes the mask but keeping its rectangular fashion
-         xMov = min(res); % Smallest width of the screen's resolution
-         yMov = res(2); % y movement
-         MidVectMonitor = [ceil((max(res)+1)/2) 0];
-         MidVectMask = [ceil((max(xMov)+1)/2) 0];
-         offsetPixel = MidVectMonitor - MidVectMask; % Pixel position of 
-                                                     % the mask
+      case 2 % Maximizes the mask but keeping its rectangular fashion
+        xMov = min(res); % Smallest width of the screen's resolution
+        yMov = res(2); % y movement
+        MidVectMonitor = [ceil((max(res)+1)/2) 0];
+        MidVectMask = [ceil((max(xMov)+1)/2) 0];
+        offsetPixel = MidVectMonitor - MidVectMask; % Pixel position of 
+                                                    % the mask
     end 
   else % coordType = 2 
     xMov = monitorSize(1); % x movement

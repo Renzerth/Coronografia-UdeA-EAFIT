@@ -120,7 +120,7 @@ switch shiftBool
  case 1
   shiftCart = shiftCart/100; % Percentage w.r.t the half size 
   % old shift in cm: shiftCart = spaceSupport*shiftCart/100
-  shiftX = shiftCart(2); % Cartesian shift in x and y directions
+  shiftX = shiftCart(2); % Cartesian shift in x
   shiftY = shiftCart(1); % Cartesian shift in y
  
  case 2 % Self-centering algorithm

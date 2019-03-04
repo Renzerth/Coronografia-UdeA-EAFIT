@@ -36,9 +36,9 @@ n = ceil((-3+sqrt(9+8*j))/2); % Polynomial Order array
 m = 2*j-n.*(n+2); % Azimuthal Frequency array
 
 %% Integration element
-Delta = (2/m_size/apperture)^2; % Area element
+DeltaA = (2/m_size/apperture)^2; % Area element
 
-%% Meshgrids definition
+%% Meshgrids definition (added by Samuel Plazas)
 sizX = size(X); % Equals Y's.
 if sizX(1) ~= sizX(2) % Not a square matrix: then the screen coord's are
                       % being used
@@ -51,7 +51,7 @@ if sizX(1) ~= sizX(2) % Not a square matrix: then the screen coord's are
                                % a size determined by coordType
 end
 %% Space construction
-% [X,Y] = meshgrid(-1:2/(m_size-1):1); % Unitary space
+% [X,Y] = meshgrid(-1:2/(m_size-1):1); % OLD: Unitary space
 [Phi, Rho] = cart2pol(X,Y); % Polar
 
 %% Pupil creation
@@ -91,7 +91,7 @@ for i = 1:p % p polynomials are generated
 end
 
 %% Unit normalization
-Iprod = VZk.'* VZk*Delta; % Product of the polynomials, this is a "discrete
+Iprod = VZk.'* VZk*DeltaA; % Product of the polynomials, this is a "discrete
                           % integral", or better said, a dot product of the
                           % polynomials
 % A powerful function that avoids using a for:

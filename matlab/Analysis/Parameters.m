@@ -86,13 +86,13 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
     sSize = 2^k-1;  % Spatial size: number of samples; odd number so that 
                     % the vortex gets centered. ref: 2^k-1      
     % sSize = 100; % Instead of 2^k-1
-    MaxMask = 0; % Defines if the mask should be maximized
+    MaxMask = 2; % Defines if the mask should be maximized
     % 0: custom-size mask that depends on the variable sSize   
     % 1: maximizes the mask for coordType = 1
     % 2: maximized mask but keeping its rectangular fashion. MaxMask = 2 is
     %    analog to having circularMask = 1 for coordType = 1
 %%% For plotMask=2 (SLM plotting):
-    circularMask = 1; % Works either on coordType=2 or when MaxMask=1
+    circularMask = 0; % Works either on coordType=2 or when MaxMask=1
      % Won't work for maskSel = 5 or 6 (Zernike) and then use coordType=1,
      % and MaxMask = 2.
      % 0: The mask presents an elliptical form when in the full screen
@@ -102,7 +102,7 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [25,0]; % [yshift,xshift], works when shiftBool = 1
+    shiftCart = [0,25]; % [yshift,xshift], works when shiftBool = 1
                          % Percentages of movement of the total size of the
                          % mask (cartesian coordinates convention)
                          % Calibrated with: s = +1; ph0 = 0, tc = 1; 
