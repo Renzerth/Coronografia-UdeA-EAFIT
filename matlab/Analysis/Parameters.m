@@ -102,7 +102,7 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [0,25]; % [yshift,xshift], works when shiftBool = 1
+    shiftCart = [-25,25]; % [yshift,xshift], works when shiftBool = 1
                          % Percentages of movement of the total size of the
                          % mask (cartesian coordinates convention)
                          % Calibrated with: s = +1; ph0 = 0, tc = 1; 

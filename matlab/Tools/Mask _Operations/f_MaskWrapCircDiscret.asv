@@ -87,10 +87,10 @@ if MaskPupil == 1
 
   %% Test if the center of the mask is inside the truncation
   % (Optional feature)
-  %tol = 0.001; % Sometimes it it not fully 0
-  %[centY, centX] = find(0<=r<=tol); % [row,col]. Finds the center of the polar
+  tol = 0.005; % Sometimes it it not fully 0
+  [centY, centX] = find(r>=0 & r<=tol); % [row,col]. Finds the center of the polar
                             % radius so that the truncation is made on it
-                            % (r(:)<=0) && (r(:)<=tol)
+                            % (r(:)<=0) & (r(:)<=tol)
   if isempty(centY) || isempty(centX) % Error
     error(['The center of the mask is out of the boundaries of the ' ...
            'image, please select a smaller value for "shiftCart" ']);
