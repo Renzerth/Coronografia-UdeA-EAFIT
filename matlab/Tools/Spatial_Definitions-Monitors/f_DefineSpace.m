@@ -50,7 +50,7 @@ shiftBool,pixSize,scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
   [Xcoord2,Ycoord2,AspectRatio,monitorSize] = ...
   f_MakeScreenCoords(scrnIdx,enablechange); % Calculates the monitor size
 
-%% Zernike mask changes that affect coordType from 2 to 1
+%% Zernike mask changes coordType from 2 to 1
 % In order to apply circularMask for Zernike, coordType 1 is used with the
 % smallest size of the monitor
 if coordType == 2 && circularMask == 1 && (maskSel == 5 || maskSel == 6)
@@ -120,7 +120,7 @@ switch shiftBool
  case 1
   shiftCart = shiftCart/100; % Percentage w.r.t the half size 
   % old shift in cm: shiftCart = spaceSupport*shiftCart/100
-  shiftX = shiftCart(2); % Cartesian shift in x
+  shiftX = shiftCart(2); % Cartesian shift in x and y directions
   shiftY = shiftCart(1); % Cartesian shift in y
  
  case 2 % Self-centering algorithm

@@ -2,7 +2,9 @@
 %% Algorithm sections
 meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 1:
-    measDebug = 0; % Debugging before actually measuring. Displays the 
+    % Note: measDebug will be 0 if measSimulated = 1
+    % If meas = 1 -> all the figures will be closed before starting it
+    measDebug = 1; % Debugging before actually measuring. Displays the 
                    % default phase mask and shots a photo with the camera
     measSimulated = 1; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
@@ -27,7 +29,7 @@ maskSel = 0; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
+plotMask = 2; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -74,19 +76,19 @@ end
 
 %% SLM positionining calibration, coordinates and type of truncation
 MaskPupil = 1; % Applies a pupil truncation to the mask: (0): no; (1): yes
-coordType = 2; % Type of calculation of the spatial coordinates. def: 2 
+coordType = 1; % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
 %%%% For coordType = 1 (user custom-sized):
-    k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
+    k = 8; % Bits for grey levels; 2^k is the resolution (size of x and y)
            % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
            % Only works when coordType = 1
-%     sSize = 2^k-1;  % Spatial size: number of samples; odd number so that 
+    sSize = 2^k-1;  % Spatial size: number of samples; odd number so that 
                     % the vortex gets centered. ref: 2^k-1      
-    sSize = 100; % Instead of 2^k-1
-    MaxMask = 2; % Defines if the mask should be maximized
+    % sSize = 100; % Instead of 2^k-1
+    MaxMask = 0; % Defines if the mask should be maximized
     % 0: custom-size mask that depends on the variable sSize   
-    % 1: maximizes the mask for coordType = 1 (elliptical-like pupil)
+    % 1: maximizes the mask for coordType = 1
     % 2: maximized mask but keeping its rectangular fashion. MaxMask = 2 is
     %    analog to having circularMask = 1 for coordType = 1
 %%% For plotMask=2 (SLM plotting):
@@ -100,13 +102,13 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [0,0]; % [yshift,xshift], works when shiftBool = 1
+    shiftCart = [25,0]; % [yshift,xshift], works when shiftBool = 1
                          % Percentages of movement of the total size of the
                          % mask (cartesian coordinates convention)
                          % Calibrated with: s = +1; ph0 = 0, tc = 1; 
                          % Ranges per shift: [0,100] (percentage)   
    % LC2002: [-3,0.1]
-   % Pluto
+   % Pluto: []
               
 %% Camera selection and parameters
 camera = 'DMK23U445';
@@ -252,8 +254,8 @@ dataformat = '.bmp'; % Applies only for savetype = 2
 % glvect = [1 16 24 28 36 56 128 256]; % Dados por Juan Jose
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
                                   % with a good system phase response
-tcvect = [1,2,3]; % Topological charges to be measured
-glvect = [255,100]; % Gray level to be measured
+tcvect = [1,2]; % Topological charges to be measured
+glvect = [255]; % Gray level to be measured
 wait = 0; % 10 seconds before measuring as a safety measurement
           % RIGHT NOW 0 FOR DEBUGGING
 recordingDelay = 2; % Waits 5 seconds between each mask to be shown
