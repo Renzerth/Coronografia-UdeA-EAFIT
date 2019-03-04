@@ -101,10 +101,12 @@ end
   % the space)
   % Xrescaled: the spatial scaling is compensated and the circular mask is
   % drawn normally on the whole screen
+  a = 0; % Dummy variable
   if circularMask == 1 && plotMask == 2 && ...
      (MaxMask == 1 || coordType == 2) && (maskSel ~= 5 && maskSel ~= 6)
      Xrescaled = AspectRatio*X; % Used for the mask generation: X scaling
      X = Xrescaled; % Circular truncation in full screen
+     a = 1; % Dummy variable
   end % Otherwise X=X and one has the elliptical truncation in full screen
 
 %% Polar coordinates for the PC
@@ -118,6 +120,11 @@ switch shiftBool
   shiftX = 0; shiftY = 0; % Shift deactivated   
       
  case 1
+  % Test if the center of the mask is inside the truncation
+  if max(shiftCart) > 100
+    error(['The center of the mask is out of the boundaries of the ' ...
+           'image, please select a smaller value for "shiftCart" ']);
+  end
   shiftCart = shiftCart/100; % Percentage w.r.t the half size 
   % old shift in cm: shiftCart = spaceSupport*shiftCart/100
   shiftX = shiftCart(2); % Cartesian shift in x
@@ -130,7 +137,11 @@ end
 %% Polar coordinates for the SLM
 % X,Y variables redefined for being used in the EGV and Fork masks
 % The signs of the shifts account for the cartesian coordinates convention
-Xslm = X - shiftX; % Shifted X for the SLM
+if a == 0 % AspectRatio not applied
+  AspectRatio = 1;
+end % else, when a = 1, AspectRatio won't change
+
+Xslm = X - shiftX*AspectRatio; % Shifted X for the SLM
 Yslm = Y + shiftY; % Shifted Y for the SLM.
 [phiSLM,rSLM] = cart2pol(Xslm,Yslm); % Polar coordinates with an added
                                      % shift. The signs compensate the 
@@ -140,4 +151,16 @@ Yslm = Y + shiftY; % Shifted Y for the SLM.
 %% Zernike polynomials square size
 ZernikeSize = min(monitorSize); % Minumum size of the screen for the
                                 % square-size Zernike polynomials
+                                
+  %% Test if the center of the mask is inside the truncation
+  % (Optional feature)
+%   tol = 0.003; % Sometimes it it not fully 0
+%   [centY, centX] = find(r>=0 & r<=tol); % [row,col]. Finds the center of 
+%                  % the polar radius so that the truncation is made on it
+%                  % &: bitwise operator
+%   if isempty(centY) || isempty(centX) % Error
+%     error(['The center of the mask is out of the boundaries of the ' ...
+%            'image, please select a smaller value for "shiftCart" ']);
+%   end
+  
 end

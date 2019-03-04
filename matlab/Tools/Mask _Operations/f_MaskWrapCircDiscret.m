@@ -61,8 +61,8 @@ end
 if MaskPupil == 1
   %% Radius for the circular (or elliptical) pupil truncation
   % In both cases of the next if-else, rMax is found as the maximum radius
-  % that allows to circumscribe a circle inside an square for coordType == 1
-  % or inside a rectangle for coordType == 2
+  % that allows to circumscribe a circle inside an square or inside a 
+  % rectangle
   
   % if coordType == 1 % User-defined
   %     rMax = max(r(:));  % the maximum value of r (diagonal of the square)
@@ -71,34 +71,26 @@ if MaskPupil == 1
   % else % coordType == 2 % Screen-resolution defined
   % end
 
-  rSizeVect = size(r); % 2D vector with the size of r
-  rMidVect = floor((rSizeVect+1)/2); % mid points of the size of r
-  rMove = max(rMidVect); % Maximum midpoint in order to move here
-  idx = find(rMidVect == rMove); % finds the index or rMove to determine
-                                 % if one should move in the x or the y 
-                                 % direction
-  if isscalar(idx)
-    if idx == 1 % (for landscape monitors or square-sized figures)
-          rMax = r(rMove,1); % The rMax is in the y direction 
-    else % idx == 2 % (for portrait monitors)
-          rMax = r(1,rMove); % The rMax is in the x direction
-    end
-  else
-    rMax = r(1,rMove)/sqrt(2);
-  end
+%   rSizeVect = size(r); % 2D vector with the size of r
+%   rMidVect = floor((rSizeVect+1)/2); % mid points of the size of r
+%   rMove = max(rMidVect); % Maximum midpoint in order to move here
+%   idx = find(rMidVect == rMove); % finds the index or rMove to determine
+%                                  % if one should move in the x or the y 
+%                                  % direction
+%   if isscalar(idx)
+%     if idx == 1 % (for landscape monitors)
+%           rMax = r(rMove,1); % The rMax is in the y direction 
+%     else % idx == 2 % (for portrait monitors)
+%           rMax = r(1,rMove); % The rMax is in the x direction
+%     end
+%   else % idx is a two-row vector, meanning that one has square-sized figures
+%     rMax = r(1,rMove)/sqrt(2);
+%   end
   % if one has a unitary space, rMax = 1 always
-  rSize = rMax; % Both rmax and rsize are equal
-
-  %% Test if the center of the mask is inside the truncation
-  % (Optional feature)
-  tol = 0.003; % Sometimes it it not fully 0
-  [centY, centX] = find(r>=0 & r<=tol); % [row,col]. Finds the center of 
-                 % the polar radius so that the truncation is made on it
-                 % &: bitwise operator
-  if isempty(centY) || isempty(centX) % Error
-    error(['The center of the mask is out of the boundaries of the ' ...
-           'image, please select a smaller value for "shiftCart" ']);
-  end
+  rSizeVect = size(r);
+  rmin = min(rSizeVect);
+  rSize =  floor((rmin+1)/2);
+%   rSize = rMax; % Both rmax and rsize are equal
   
   %% Mask padarray with zeros if needed
   % Only used for Zernike masks (the only one assumed to be generated with a

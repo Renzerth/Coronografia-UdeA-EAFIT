@@ -76,7 +76,7 @@ end
 
 %% SLM positionining calibration, coordinates and type of truncation
 MaskPupil = 1; % Applies a pupil truncation to the mask: (0): no; (1): yes
-coordType = 1; % Type of calculation of the spatial coordinates. def: 2 
+coordType = 2; % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
 %%%% For coordType = 1 (user custom-sized):
@@ -92,7 +92,7 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
     % 2: maximized mask but keeping its rectangular fashion. MaxMask = 2 is
     %    analog to having circularMask = 1 for coordType = 1
 %%% For plotMask=2 (SLM plotting):
-    circularMask = 0; % Works either on coordType=2 or when MaxMask=1
+    circularMask = 1; % Works either on coordType=2 or when MaxMask=1
      % Won't work for maskSel = 5 or 6 (Zernike) and then use coordType=1,
      % and MaxMask = 2.
      % 0: The mask presents an elliptical form when in the full screen
@@ -102,7 +102,7 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [-25,25]; % [yshift,xshift], works when shiftBool = 1
+    shiftCart = [0,50]; % [yshift,xshift], works when shiftBool = 1
                          % Percentages of movement of the total size of the
                          % mask (cartesian coordinates convention)
                          % Calibrated with: s = +1; ph0 = 0, tc = 1; 
