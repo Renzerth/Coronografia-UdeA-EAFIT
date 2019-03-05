@@ -102,6 +102,7 @@ if MaskPupil == 1
   % takes into account both possible screen configurations
   figure; imagesc(r);
   rSize = 1;
+
   
   %% Mask padarray with zeros if needed
   % Only used for Zernike masks (the only one assumed to be generated with a
@@ -127,7 +128,7 @@ if MaskPupil == 1
   % Depends on the variable circularMask inside f_DefineSpace.m
   binCirc = double(r <= rSize); % Binary mask.
   wrapMask = wrapMask.*binCirc; % Binary mask. Range: [minMask,maxMask]
-  wrapMask(r > rSize) = nan; % Outside the circular (elliptical) mask
+  wrapMask(rtrun > rSize) = nan; % Outside the circular (elliptical) mask
   % OLD: wrappedMask(r > rSize) = minMask; % Outside the circular pupil puts
   % the smallest value of the phase mask
 end
