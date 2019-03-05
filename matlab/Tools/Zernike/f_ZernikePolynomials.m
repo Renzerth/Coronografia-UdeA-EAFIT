@@ -25,8 +25,12 @@ function [VZk,Pupil] = f_ZernikePolynomials(X,Y,p,apperture)
 % Commented by Samuel Plazas Escudero on 2018/04/03 and variables
 % shiftCart/shiftBool were added on 2019/02/27
 
+%% Spatial size of the polynomials
+sizX = size(X); % Equals Y's.
+spatialSize = min(sizX); % Minimum since that's the size of a square that
+                         % can fit inside the screen's rectangle
 %% Intializing
-Pupil = NaN(m_size); % m_size x m_size matrix
+Pupil = NaN(spatialSize); % m_size x m_size matrix
 Nnm = NaN(1,p); % NaN: Not a Number
 
 %% Index conversion
@@ -35,9 +39,6 @@ n = ceil((-3+sqrt(9+8*j))/2); % Polynomial Order array
 m = 2*j-n.*(n+2); % Azimuthal Frequency array
 
 %% Meshgrids definition (added by Samuel Plazas)
-sizX = size(X); % Equals Y's.
-spatialSize = min(sizX); % Minimum since that's the size of a square that
-                         % can fit inside the screen's rectangle
 if sizX(1) ~= sizX(2) % Not a square matrix: then the screen coord's are
                       % being used
 
@@ -102,8 +103,9 @@ VZk = bsxfun(@rdivide, VZk, sqrt(diag(Iprod).'));
 % polynomials aren't entirely orthogonal
 
 %% Kronecker Delta Plotting 
-% Ones on diagonal and zero outside: means they are correctly normalized 
-% (although they aren't fully orthogonal)
+% Ones on diagonal and zero outside (Kronecker's delta): means they are
+% correctly normalized (although they aren't fully orthogonal)
+% If outside there's not a zero -> not fully orthogonal
 zProdsNorm = VZk.' * VZk * DeltaA;
 figure, imagesc(zProdsNorm), colorbar;
 end

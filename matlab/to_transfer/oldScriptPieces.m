@@ -55,3 +55,14 @@
 %   figure; imagesc(r);
   
  % rSize = 1; % Works for CoordType = 2
+ 
+ %% Zernike mask changes coordType from 2 to 1
+% OLD DONT USE
+% In order to apply circularMask for Zernike, coordType 1 is used with the
+% smallest size of the monitor
+% if coordType == 2 && circularMask == 1 && (maskSel == 5 || maskSel == 6)
+%        sSize = min(monitorSize); % Minimum since that's the size of a 
+%                                  % square that can fit inside the screen's 
+%                                  % rectangle
+%        coordType = 1; % sSize will be used in this coordinate type
+% end

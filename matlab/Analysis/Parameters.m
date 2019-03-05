@@ -15,7 +15,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 2; % Phase mask selection:
+maskSel = 5; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -76,6 +76,7 @@ end
 
 %% SLM positionining calibration, coordinates and type of truncation
 MaskPupil = 1; % Applies a pupil truncation to the mask: (0): no; (1): yes
+% Won't work for maskSel = 5 or 6 (Zernike), as it has z_pupil
 coordType = 1; % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
@@ -94,8 +95,7 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
     %    analog to having circularMask = 1 for coordType = 1
 %%% For plotMask=2 (SLM plotting):
     circularMask = 1; % Works either on coordType=2 or when MaxMask=1
-     % Won't work for maskSel = 5 or 6 (Zernike) and then use coordType=1,
-     % and MaxMask = 2.
+     % Won't work for maskSel = 5 or 6 (Zernike)
      % 0: The mask presents an elliptical form when in the full screen
      % 1: The mask presents a circular form when in the full screen
      % On both cases full screen means that plotMask = 2
@@ -175,7 +175,7 @@ WsizeRatio = 0.5; % Width of the modes; for LG; ref: [0,1]
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
 %f_FR = maxNumPix*pixSize^2/L; % Criterium to determine the MINIMUM f_FR
-% f_FR = 2e5; % In um
+f_FR = 2e5; % In um
 % From: 2_edgar_2015_Generation_Optical_Vortices_Binary_Vortex_Lenses.pdf
 
 %% Parameters: Elliptic Gaussian Vortex
@@ -212,6 +212,16 @@ Angbet = 0; % Diffraction angle of vertical direction (y) [radians]
 % Here, more than pi/2 seems not to work very well
 % Range: [-pi/2,pi/2]
 % The "*" items remarks in the 'Smooth transition' comments also apply here
+
+%% Parameters: Zernike polynomials with Noll's convention
+%%%% For maskSel = 5 or 6:
+z_coeff = [0 0 0 0 0.5 0 0 0 0 0 0 ]; % Zernike coeffient vector (see f_ZernikeMask.m)
+z_a = 20; % Arbitrary constant; the bigger, the more intense; ref: a=20
+z_frac = 0.125; % To adjust the wrapped phase; ref: 0.125
+z_pupil = 0.5; % Pupil relative size: [0,1]; like a percentage
+z_disp_wrap = 1; % (0): Original; (1): wrapped mask on [-pi,pi] 
+z_plot = 0; % plot with Zernike builder: yes(1); no(0)
+% L and gl are also used with Zernike
 
 %% Gray levels (discretization levels of the mask)
 
@@ -289,7 +299,8 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
               
 
 %%%%%%%%%%%%%%%%%%%%%%% PART 5: ACADEMIC-PURPOSE ASPECTS %%%%%%%%%%%%%%%%%%
-% Zernike, FT, simulation in the free space that is not very depured
+% Zernike reconstruction, FT, gradient and a simulation in the free space that
+% is not very depured
 %% Optional plots and procedures
 FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
 %%% For FTmask = 1:
@@ -299,18 +310,10 @@ maskZernReconstr = 0; % Reconstructs the mask with Zernike polynomials and
                       % plots the error  
 simBool = 0; % Simulate: yes (1) or no (0)                      
 
-%% Parameters: Zernike
-%%%% For maskZernReconstr, maskSel = 5 and maskSel = 6:
-z_coeff = [0 0 0 0 0.5 0 0 0 0 0 0 ]; % Zernike coeffient vector (see f_ZernikeMask.m)
-a = 20; % Arbitrary constant; the bigger, the more intense; ref: a=20
-frac = 0.125; % To adjust the wrapped phase; ref: 0.125
-pupil = 0.5; % Pupil relative size: [0,1]; like a percentage
-disp_wrap = 1; % (0): Original; (1): wrapped mask on [-pi,pi] 
-plot_z = 0; % plot with Zernike builder: yes(1); no(0)
-ReconstrNumb = 14; % Number of polynomials to use for the reconstruction
-% ZernikeSize is defined in f_DefineSpace.m
-% L and gl are also used with Zernike
-               
+%% Zernike reconstruction parameters
+z_ReconstrNumb = 14; % Number of polynomials to use for the reconstruction
+% z_pupil: defined in "Zernike polynomials with Noll's convention"               
+
 if simBool == 1
  %% Simulation parameters
  starAmplitude = 1; % ref: 1

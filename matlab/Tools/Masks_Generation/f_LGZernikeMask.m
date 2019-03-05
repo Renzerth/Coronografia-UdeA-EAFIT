@@ -1,7 +1,7 @@
 %% Laguerre Gauss Binary masks + Zernike Phases
 function [mask,wrapMask,wrapMaskFig] = f_LGZernikeMask(X,Y,r,phi,gl,phaseValues, ...
-mingl,maxgl,levShft,tc,s,ph0,p,WsizeRatio,z_coeff,a,frac,L,pupil,ZernikeSize,disp_wrap,...
-plot_z,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMask)
+mingl,maxgl,levShft,tc,s,ph0,p,WsizeRatio,z_coeff,z_a,z_frac,L,z_pupil,disp_wrap,...
+z_plot,normMag,binMask,binv,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 % Generates and plots a Laguerre Gauss + Zernike mask
 %
 % Inputs: 
@@ -32,18 +32,16 @@ plot_z,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_an
 %     A) z_coeff = -1 (just that)
 %     B) z_coeff = [0.1 -0.13 0.15 0 -1 0.78]' (transposed)
 %     C) z_coeff = [2 3 1 5 7] (normal)
-%  a: arbitrary constant; the bigger, the more intense; ref: a=20
-%  frac: to adjust the wrapped phase; ref: 0.125
+%  z_a: arbitrary constant; the bigger, the more intense the mask;ref: a=20
+%  z_frac: to adjust the wrapped phase; ref: 0.125
 %  L: laser wavelength [um]
-%  pupil: defines pupil relative size (w.r.t. sSize), like a percentage
-%  ZernikeSize: screen size for the Zernike polynomials generation
+%  z_pupil: defines pupil relative size (w.r.t. sSize), like a percentage
 %  disp_wrap: original (0) or wrapped mask (1)
 %  plot_z: plot (1); no plot (0)
 %  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
-%  MaskPupil: applies a pupil truncation to the mask: (0): no; (1): yes
 %  rSize: radius for the circular (or elliptical) pupil truncation
 %  monitorSize: size of the selected screen for coordType = 2 or of the 
 %  grid (sSize) for coordType = 1 
@@ -67,8 +65,8 @@ plot_z,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_an
 
 showEachMask = 0; % 0: so that not all of the individual masks are shown
                   % during the measurements. Same as plotMask
-[maskZ,~,~]= f_ZernikeMask(X,Y,r,z_coeff,a,frac,L,gl,phaseValues,mingl, ...
-maxgl,levShft,pupil,ZernikeSize,disp_wrap,plot_z,normMag,binMask,binv,MaskPupil,rSize, ...
+[maskZ,~,~]= f_ZernikeMask(X,Y,r,z_coeff,z_a,z_frac,L,gl,phaseValues,mingl, ...
+maxgl,levShft,z_pupil,ZernikeSize,disp_wrap,z_plot,normMag,binMask,binv,MaskPupil,rSize, ...
 monitorSize,scrnIdx,coordType,MaxMask,showEachMask);
 [maskLG,~,~] = f_LGMask(r,phi,gl,phaseValues,mingl, ...
 maxgl,levShft,tc,s,ph0,p,WsizeRatio,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx, ...
@@ -92,7 +90,8 @@ mask = maskZ.*maskLG; % Combined mask. It is recommended to use binary
 tit = strcat('LG phase mask with topological charge',{' '},num2str(tc), ...
              {' '},'and radial node',{' '},num2str(p),{' '}, ...
              '+ Zernike mask');
-str = ''; % Empty, it only works for abs_ang = 0         
+str = ''; % Empty, it only works for abs_ang = 0
+MaskPupil = 0; % Always, since Zernike has its own pupil
 [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
 maxgl,levShft,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit, ...
 str,coordType,abs_ang,MaxMask,plotMask);

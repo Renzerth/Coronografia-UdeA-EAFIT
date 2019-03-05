@@ -1,4 +1,4 @@
-function [RZS,RMS] = f_ZernikeBuilder(X,Y,a,A,sSize,varargin)
+function [RZS,RMS] = f_ZernikeBuilder(X,Y,a,apperture,varargin)
 % Zernike_Reconstruction is a function that computes 
 % a wavefront reconstruction using Zernike's Polynomials
 % and by calculating the function expansion coefficients.
@@ -7,9 +7,8 @@ function [RZS,RMS] = f_ZernikeBuilder(X,Y,a,A,sSize,varargin)
 %  X,Y: A grid of the spatial vector: 2D Cartesian coordiantes. They
 %  may already have the shiftCart
 %  a: Zernike weight vector that contains the aberrations contributions
-%  A: float that defines pupil relative size (w.r.t. sSize), like a
+%  apperture: float that defines pupil relative size (w.r.t. sSize), like a
 %     percentage
-%  sSize: square matrix of the total size of the figure. Space Size
 %  varargin: (0) no plots; (1) plots
 % 
 % Outputs:
@@ -26,7 +25,7 @@ function [RZS,RMS] = f_ZernikeBuilder(X,Y,a,A,sSize,varargin)
 % shiftCart/shiftBool were added on 2019/02/27
 
 %% Settings
-if nargin == 6
+if nargin == 5
   plotsON = varargin{1};
 else
   plotsON = true;
@@ -34,12 +33,16 @@ end
 
 %% Initializing
 % RZS = NaN(spaceSize); % Initialization: SxS matrix
-RZS = zeros(sSize); % Initialization: SxS matrix
-M = length(a); % MxM matrix will be created
+sizX = size(X); % Equals Y's.
+spatialSize = min(sizX);  % Square matrix of the total size of the figure
+                          % Minimum since that's the size of a square that
+                          % can fit inside the screen's rectangle
+RZS = zeros(spatialSize); % Initialization: SxS matrix
+p = length(a); % MxM matrix will be created
                  % Correction in order to get correctly the polynomials
 
 %% Zernike polynomial calculation
-[VZk,Pupil] = f_ZernikePolynomials(X,Y,M,A,sSize); 
+[VZk,Pupil] = f_ZernikePolynomials(X,Y,p,apperture); 
 % Creates Z. polynomials
 
 %% Wavefront Reconstruction
@@ -60,12 +63,12 @@ RMS = sqrt(sum(a .^ 2));
   set(gca,'fontsize',15);
 
   figure;
-  bar((0:M-1),a(:)); % -1 corrects a deviation of one of the coefficients
+  bar((0:p-1),a(:)); % -1 corrects a deviation of one of the coefficients
   axis square;
   title('Zernike Expansion Coefficients','FontSize',20,'FontWeight','bold');
   xlabel('Polynomial number','FontSize',15,'FontWeight','bold');
   ylabel('Amplitude','FontSize',15,'FontWeight','bold');
-  set(gca,'fontsize',15); xlim([0 M-1])
+  set(gca,'fontsize',15); xlim([0 p-1])
   grid on
  end
 end
