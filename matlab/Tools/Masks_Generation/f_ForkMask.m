@@ -3,7 +3,7 @@
 
 function [mask,wrapMask,wrapMaskFig] = f_ForkMask(X,Y,r,phi,gl,phaseValues, ...
 mingl,maxgl,levShft,tc,s,ph0,L,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
-normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMask)
+normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
@@ -29,6 +29,7 @@ normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plo
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
 %  MaskPupil: applies a pupil truncation to the mask: (0): no; (1): yes
+%  rSize: radius for the circular (or elliptical) pupil truncation
 %  monitorSize: size of the selected screen for coordType = 2 or of the 
 %  grid (sSize) for coordType = 1 
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
@@ -86,7 +87,7 @@ tit = strcat('Fork mask with topological charge',{' '},num2str(tc), ...
              {' '},'and period =',{' '},num2str(period));
 str = ''; % Empty, it only works for abs_ang = 0
 [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
-maxgl,levShft,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,tit, ...
+maxgl,levShft,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit, ...
 str,coordType,abs_ang,MaxMask,plotMask);
 
 end

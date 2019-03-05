@@ -1,4 +1,4 @@
-function [VZk,Pupil] = f_ZernikePolynomials(X,Y,p,apperture,m_size)
+function [VZk,Pupil] = f_ZernikePolynomials(X,Y,p,apperture)
 % zernikes is a function that computes the Zernike
 % expansion base polynomials. This program features
 % p-th polynomial calculation using the Noll index 
@@ -13,7 +13,6 @@ function [VZk,Pupil] = f_ZernikePolynomials(X,Y,p,apperture,m_size)
 %  may already have the shiftCart
 %  p: positive integer with the number of polynomials.
 %  apperture: float that defines pupil relative size (w.r.t. m_size)
-%  m_size: positive integer that defines the matrix size.
 %
 % Outputs: VZk -  Vector of Zernike's Polynomials
 %                 used for Coefficient decomposition.
@@ -35,21 +34,23 @@ j = (0:p)'; % Array with polynomials to be used in the representation
 n = ceil((-3+sqrt(9+8*j))/2); % Polynomial Order array
 m = 2*j-n.*(n+2); % Azimuthal Frequency array
 
-%% Integration element
-DeltaA = (2/m_size/apperture)^2; % Area element
-
 %% Meshgrids definition (added by Samuel Plazas)
 sizX = size(X); % Equals Y's.
+spatialSize = min(sizX); % Minimum since that's the size of a square that
+                         % can fit inside the screen's rectangle
 if sizX(1) ~= sizX(2) % Not a square matrix: then the screen coord's are
                       % being used
-  spatialSize = min(sizX); % Minimum since that's the size of a square that
-                           % can fit inside the screen's rectangle
+
   newx = linspace(min(X(:)),max(X(:)),spatialSize);
   newy = linspace(min(Y(:)),max(Y(:)),spatialSize);
   [X,Y] = meshgrid(newx,newy); % New square meshgrid that takes into
                                % account the shifts of the coordinates and
                                % a size determined by coordType
 end
+
+%% Integration element
+DeltaA = (2/spatialSize/apperture)^2; % Area element
+
 %% Space construction
 % [X,Y] = meshgrid(-1:2/(m_size-1):1); % OLD: Unitary space
 [Phi, Rho] = cart2pol(X,Y); % Polar
@@ -103,6 +104,6 @@ VZk = bsxfun(@rdivide, VZk, sqrt(diag(Iprod).'));
 %% Kronecker Delta Plotting 
 % Ones on diagonal and zero outside: means they are correctly normalized 
 % (although they aren't fully orthogonal)
-% zProdsNorm = VZk.' * VZk * Delta;
-% figure, imagesc(zProdsNorm), colorbar;
+zProdsNorm = VZk.' * VZk * DeltaA;
+figure, imagesc(zProdsNorm), colorbar;
 end

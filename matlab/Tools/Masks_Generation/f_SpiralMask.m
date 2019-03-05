@@ -19,6 +19,7 @@ coordType,abs_ang,MaxMask,plotMask)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
 %  MaskPupil: applies a pupil truncation to the mask: (0): no; (1): yes
+%  rSize: radius for the circular (or elliptical) pupil truncation
 %  monitorSize: size of the selected screen for coordType = 2 or of the 
 %  grid (sSize) for coordType = 1 
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen

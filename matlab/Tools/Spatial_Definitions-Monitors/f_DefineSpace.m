@@ -53,14 +53,15 @@ shiftBool,pixSize,scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
   f_MakeScreenCoords(scrnIdx,enablechange); % Calculates the monitor size
 
 %% Zernike mask changes coordType from 2 to 1
+% OLD DONT USE
 % In order to apply circularMask for Zernike, coordType 1 is used with the
 % smallest size of the monitor
-if coordType == 2 && circularMask == 1 && (maskSel == 5 || maskSel == 6)
-       sSize = min(monitorSize); % Minimum since that's the size of a 
-                                 % square that can fit inside the screen's 
-                                 % rectangle
-       coordType = 1; % sSize will be used in this coordinate type
-end
+% if coordType == 2 && circularMask == 1 && (maskSel == 5 || maskSel == 6)
+%        sSize = min(monitorSize); % Minimum since that's the size of a 
+%                                  % square that can fit inside the screen's 
+%                                  % rectangle
+%        coordType = 1; % sSize will be used in this coordinate type
+% end
 
 %% Coordinate type selection  
 switch coordType
@@ -68,6 +69,7 @@ switch coordType
   % This applies when one won't project a full screen mask and a desired 
   % image resolution is wanted 
   %% Spatial definitions (size is user defined)
+  % Physical size
   sSupport = sSupport/2; % Half support of the SLM window in cm
   spaceVector = -sSupport:2*sSupport/(sSize-1):sSupport; 
   % Symmetric space
@@ -103,12 +105,10 @@ end
   % the space)
   % Xrescaled: the spatial scaling is compensated and the circular mask is
   % drawn normally on the whole screen
-%   a = 0; % Dummy variable: flag used later
-  if circularMask == 1 && plotMask == 2 && ...
-     (MaxMask == 1 || coordType == 2) && (maskSel ~= 5 && maskSel ~= 6)
+  if circularMask == 1 && plotMask == 2 && (MaxMask == 1 || coordType == 2) 
+    % ULTRA OLD DONT USE && (maskSel ~= 5 && maskSel ~= 6)
      Xrescaled = AspectRatio*X; % Used for the mask generation: X scaling
      X = Xrescaled; % Circular truncation in full screen
-%      a = 1; % Dummy variable: flag used later
   end % Otherwise X=X and one has the elliptical truncation in full screen
 
 %% Polar coordinates for the PC
@@ -119,11 +119,12 @@ Xpc = X; Ypc = Y; % Needed for the PC coordinates later on
 %% Half support for the shift scalling and the mask truncation radius
 HalfSupportX = f_MatrixHalfSupport(X);
 HalfSupportY = f_MatrixHalfSupport(Y);
+% Both are 1 for coordType = 2
 
 %% Mask truncation radius
 % This is the radius for the circular (or elliptical) pupil truncation
 % The selected minimum takes into account both possible screen 
-% configurations: landscaped and portrait
+% configurations: landscape and portrait
 rSize = min(HalfSupportX,HalfSupportY);  
 % This is the maximum radius that allows to circumscribe a circle inside 
 % a square or inside a rectangle
@@ -165,9 +166,6 @@ Yslm = Y + shiftY; % Shifted Y for the SLM.
                                      % shift. The signs compensate the 
                                      % normal cartesian convention for 
                                      % displacing the phase mask
-                             
-%% Zernike polynomials square size
-ZernikeSize = min(monitorSize); % Minumum size of the screen for the
-                                % square-size Zernike polynomials
+                            
  
 end

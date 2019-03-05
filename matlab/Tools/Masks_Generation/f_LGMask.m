@@ -1,7 +1,7 @@
 %% Laguerre Gauss phase masks
 
 function [mask,wrapMask,wrapMaskFig] = f_LGMask(r,phi,gl,phaseValues,mingl, ...
-maxgl,levShft,tc,s,ph0,p,WsizeRatio,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx, ...
+maxgl,levShft,tc,s,ph0,p,WsizeRatio,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx, ...
 coordType,abs_ang,MaxMask,plotMask)
 % Inputs: 
 %  r,phi: polar coordinates for both the PC and SLM
@@ -23,6 +23,7 @@ coordType,abs_ang,MaxMask,plotMask)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
 %  MaskPupil: applies a pupil truncation to the mask: (0): no; (1): yes
+%  rSize: radius for the circular (or elliptical) pupil truncation
 %  monitorSize: size of the selected screen for coordType = 2 or of the 
 %  grid (sSize) for coordType = 1 
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
@@ -60,7 +61,7 @@ tit = strcat('LG phase mask with topological charge',{' '},num2str(tc), ...
                  ' and radial node',{' '},num2str(p));   
 str = ''; % Empty, it only works for abs_ang = 0
 [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
-maxgl,levShft,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,tit, ...
+maxgl,levShft,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit, ...
 str,coordType,abs_ang,MaxMask,plotMask);
 
 %% Mask in a bone colormap

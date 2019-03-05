@@ -15,7 +15,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 0; % Phase mask selection:
+maskSel = 2; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -50,7 +50,7 @@ switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
     % spaceSupport = 1; % Unitary space: spaceVector = -1:2/(Ssize-1):1;
-    sSupport = min([0.864 1.536]); % Size of the SLM window in cm:
+    sSupport = min([1.536 0.864]); % Size of the SLM window in cm:
                                    % 1.536cm x 0.864cm
     maxNumPix = max([1920 1080]); % Maximum number of pixels on the SLM 
                                   % (either horizontal or vertical); SLM's 
@@ -80,13 +80,14 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
 %%%% For coordType = 1 (user custom-sized):
-    k = 7; % Bits for grey levels; 2^k is the resolution (size of x and y)
+    k = 8; % Bits for grey levels; 2^k is the resolution (size of x and y)
            % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
+           % Usually try maximum k = 11
            % Only works when coordType = 1
     sSize = 2^k-1;  % Spatial size: number of samples; odd number so that 
                     % the vortex gets centered. ref: 2^k-1      
     % sSize = 100; % Instead of 2^k-1
-    MaxMask = 1; % Defines if the mask should be maximized
+    MaxMask = 2; % Defines if the mask should be maximized
     % 0: custom-size mask that depends on the variable sSize   
     % 1: maximizes the mask for coordType = 1
     % 2: maximized mask but keeping its rectangular fashion. MaxMask = 2 is
@@ -102,7 +103,7 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [0,-50]; % [yshift,xshift], works when shiftBool = 1
+    shiftCart = [25,25]; % [yshift,xshift], works when shiftBool = 1
                           % Percentages of movement of the total size of 
                           % the mask (cartesian coordinates convention)
                           % Calibrated with: s = +1; ph0 = 0, tc = 1; 
@@ -173,8 +174,8 @@ WsizeRatio = 0.5; % Width of the modes; for LG; ref: [0,1]
          
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
-% f_FR = maxNumPix*pixSize^2/L; % Criterium to determine the MINIMUM f_FR
-f_FR = 20e6; % In um
+%f_FR = maxNumPix*pixSize^2/L; % Criterium to determine the MINIMUM f_FR
+% f_FR = 2e5; % In um
 % From: 2_edgar_2015_Generation_Optical_Vortices_Binary_Vortex_Lenses.pdf
 
 %% Parameters: Elliptic Gaussian Vortex
@@ -300,10 +301,10 @@ simBool = 0; % Simulate: yes (1) or no (0)
 
 %% Parameters: Zernike
 %%%% For maskZernReconstr, maskSel = 5 and maskSel = 6:
-z_coeff = [0 0 0 0 0.9]; % Zernike coeffient vector (see f_ZernikeMask.m)
-a = 1; % Arbitrary constant; the bigger, the more intense; ref: a=20
+z_coeff = [0 0 0 0 0.5 0 0 0 0 0 0 ]; % Zernike coeffient vector (see f_ZernikeMask.m)
+a = 20; % Arbitrary constant; the bigger, the more intense; ref: a=20
 frac = 0.125; % To adjust the wrapped phase; ref: 0.125
-pupil = 1; % Pupil relative size: [0,1]; like a percentage
+pupil = 0.5; % Pupil relative size: [0,1]; like a percentage
 disp_wrap = 1; % (0): Original; (1): wrapped mask on [-pi,pi] 
 plot_z = 0; % plot with Zernike builder: yes(1); no(0)
 ReconstrNumb = 14; % Number of polynomials to use for the reconstruction

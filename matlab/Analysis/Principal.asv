@@ -9,15 +9,14 @@
 %  Processed vortex images (or plots)
 %
 % Notes:
-%  -Units: a.u (arbitrary units) and cm for lengths, radians for angles and
+%  Units: a.u (arbitrary units) and cm for lengths, radians for angles and
 %  um for wavelengths
-%  -Helicoidal phase masks are inside the Laguerre-Gauss beams category
-%  -The variable mask is complex and is wrappped: mask = exp(i*mask)
-%  -All wrappped phases are shown on [-pi,pi] 
-%  -Always execute the program whenver you are exactly inside its folder
-%  -The Zernike polynomials are always used with a square size and they 
-%   stop being almost-orthogonal if the pupil gets truncated (non-circular 
-%   anymore)
+%  Helicoidal phase masks are inside the Laguerre-Gauss beams category
+%  The variable mask is complex and is wrappped: mask = exp(i*mask)
+%  All wrappped phases are shown on [-pi,pi] 
+%  Always execute the program whenver you are exactly inside its folder
+% The Zernike polynomials are always used with a square size and they stop 
+% being almost-orthogonal
 %
 % Bugs:
 %  -When the ticks of -pi, ..., pi are shown, sometimes the may move
@@ -25,8 +24,8 @@
 %  -The algorithm shall only be executed inside the analysis folder
 %  - Algorithm not tested yet in Linux but in Windows 7 and 10
 %  -Simulations are not fully accurate with the calculations
-%  -Zernike polynomials are not fully wrapped and the "a" and "frac" 
-%   constants have not been fully understood
+%  -Zernike polynomials are not fully wrapped and the "a" constant has not
+%  been fully understood
 %  -If a camera is not recognized or even the screen index are not acting
 %  coherently, restart MATLAB
 %  -For high resolution monitors, sometimes the figure bar may appear but

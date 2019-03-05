@@ -8,7 +8,7 @@ function [RZS,RMS] = f_ZernikeBuilder(X,Y,a,A,sSize,varargin)
 %  may already have the shiftCart
 %  a: Zernike weight vector that contains the aberrations contributions
 %  A: float that defines pupil relative size (w.r.t. sSize), like a
-%                    percentage
+%     percentage
 %  sSize: square matrix of the total size of the figure. Space Size
 %  varargin: (0) no plots; (1) plots
 % 
