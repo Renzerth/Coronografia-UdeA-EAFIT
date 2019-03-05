@@ -1,6 +1,6 @@
 %% Plot Phase Mask either on the PC or on the SLM
 function [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
-maxgl,levShft,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,tit,str, ...
+maxgl,levShft,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit,str, ...
 coordType,abs_ang,MaxMask,plotMask)
 % Inputs:
 %  r: polar coordinate
@@ -66,7 +66,7 @@ switch abs_ang
   case 2 % Phase
    % Circular pupil and wrapping   
    [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask,phaseValues, ...
-   binMask,binv,MaskPupil,mingl,maxgl,levShft,coordType,plotMask);
+   binMask,binv,MaskPupil,rSize,mingl,maxgl,levShft,coordType,plotMask);
    figtit = 'Phase Mask';
    str = 'Wrapped phase value'; % Colorbar string
  end

@@ -1,5 +1,5 @@
 function [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask, ...
-phaseValues,binMask,binv,MaskPupil,mingl,maxgl,levShft,coordType,plotMask)
+phaseValues,binMask,binv,MaskPupil,rSize,mingl,maxgl,levShft,coordType,plotMask)
 % Multiplies the phase mask by the maximum circle size with its outer
 % borders containing the minimum value of the phase (normally -pi)
 % Wraps the phase with the function "angle"
@@ -61,7 +61,7 @@ end
 if MaskPupil == 1
   %% Radius for the circular (or elliptical) pupil truncation
   % In both cases of the next if-else, rMax is found as the maximum radius
-  % that allows to circumscribe a circle inside an square or inside a 
+  % that allows to circumscribe a circle inside a square or inside a 
   % rectangle
   
   % if coordType == 1 % User-defined
@@ -100,13 +100,9 @@ if MaskPupil == 1
 %   rSize = min(rtrunc(rSizeIdx,1),rtrunc(1,rSizeIdx)); 
   % Meaning: min(landscapeMonitor,portraitMonitor): the selected minimum
   % takes into account both possible screen configurations
-  figure; imagesc(r);
+%   figure; imagesc(r);
   
-  shiftCart
-  shiftX = shiftCart(2); % Cartesian shift in x
-  shiftY = shiftCart(1); % Cartesian shift in y
-  rNonshifted = 
-  rSize = 1;
+ % rSize = 1; % Works for CoordType = 2
   
   %% Mask padarray with zeros if needed
   % Only used for Zernike masks (the only one assumed to be generated with a

@@ -1,4 +1,4 @@
-function [x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,ZernikeSize, ...
+function [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,ZernikeSize, ...
 monitorSize,coordType] = f_DefineSpace(sSupport,sSize,shiftCart, ...
 shiftBool,pixSize,scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
 % Inputs:
@@ -35,10 +35,12 @@ shiftBool,pixSize,scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
 %  coordType: input and output since it can change for maskSel = 5 and 6
 %
 % Outputs:
+% rSize: radius for the circular (or elliptical) pupil truncation
 % x,y: cartesian coordinates
 % Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC: meshgrids of 2D cartesian and 
 %                                          polar coordinates of both the 
 %                                          SLM and the PC
+% slm: shifts possibly applied; pc: shifts are never applied
 % ZernikeSize: screen size for the Zernike polynomials generation
 % monitorSize: resolution of the monitor selected by the scrnIdx
 
@@ -113,7 +115,19 @@ end
 Xpc = X; Ypc = Y; % Needed for the PC coordinates later on
 [phiPC,rPC] = cart2pol(Xpc,Ypc); % Without shifts and no scaling: mask is 
                                  % always circular and centered
-                          
+                                 
+%% Half support for the shift scalling and the mask truncation radius
+HalfSupportX = f_MatrixHalfSupport(X);
+HalfSupportY = f_MatrixHalfSupport(Y);
+
+%% Mask truncation radius
+% This is the radius for the circular (or elliptical) pupil truncation
+% The selected minimum takes into account both possible screen 
+% configurations: landscaped and portrait
+rSize = min(HalfSupportX,HalfSupportY);  
+% This is the maximum radius that allows to circumscribe a circle inside 
+% a square or inside a rectangle
+          
 %% Shift of the mask (for the SLM)
 switch shiftBool 
  case 0
@@ -136,8 +150,6 @@ end
 
 %% Shift scalling so that it is a percentage
 % Takes into account the half support of X and Y
-HalfSupportX = f_MatrixHalfSupport(X);
-HalfSupportY = f_MatrixHalfSupport(Y);
 shiftX = shiftX*HalfSupportX;
 shiftY = shiftY*HalfSupportY;
 
@@ -157,19 +169,5 @@ Yslm = Y + shiftY; % Shifted Y for the SLM.
 %% Zernike polynomials square size
 ZernikeSize = min(monitorSize); % Minumum size of the screen for the
                                 % square-size Zernike polynomials
-                                
-  %% Test if the center of the mask is inside the truncation
-  % Optional feature for plotMask = 2:
-  if plotMask == 2
-    tol = 0.003; % Sometimes it it not fully 0
-    [centY, centX] = find(rSLM>=0 & rSLM<=tol); % [row,col]. Finds the center of 
-                   % the polar radius so that the truncation is made on it
-                   % &: bitwise operator
-    if isempty(centY) || isempty(centX) % Error
-      error(['The center of the mask is out of the boundaries of the ' ...
-             'image, please select a smaller value for "shiftCart" ' ...
-             '(values in [0,100])']);
-    end
-  end
-  
+ 
 end
