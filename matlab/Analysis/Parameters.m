@@ -80,13 +80,13 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
 %%%% For coordType = 1 (user custom-sized):
-    k = 8; % Bits for grey levels; 2^k is the resolution (size of x and y)
+    k = 11; % Bits for grey levels; 2^k is the resolution (size of x and y)
            % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
            % Only works when coordType = 1
     sSize = 2^k-1;  % Spatial size: number of samples; odd number so that 
                     % the vortex gets centered. ref: 2^k-1      
     % sSize = 100; % Instead of 2^k-1
-    MaxMask = 2; % Defines if the mask should be maximized
+    MaxMask = 0; % Defines if the mask should be maximized
     % 0: custom-size mask that depends on the variable sSize   
     % 1: maximizes the mask for coordType = 1
     % 2: maximized mask but keeping its rectangular fashion. MaxMask = 2 is
@@ -102,7 +102,7 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [-25,50]; % [yshift,xshift], works when shiftBool = 1
+    shiftCart = [0,50]; % [yshift,xshift], works when shiftBool = 1
                           % Percentages of movement of the total size of 
                           % the mask (cartesian coordinates convention)
                           % Calibrated with: s = +1; ph0 = 0, tc = 1; 

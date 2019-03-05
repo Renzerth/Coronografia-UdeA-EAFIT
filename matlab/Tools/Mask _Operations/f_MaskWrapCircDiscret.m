@@ -101,6 +101,11 @@ if MaskPupil == 1
   % Meaning: min(landscapeMonitor,portraitMonitor): the selected minimum
   % takes into account both possible screen configurations
   figure; imagesc(r);
+  
+  shiftCart
+  shiftX = shiftCart(2); % Cartesian shift in x
+  shiftY = shiftCart(1); % Cartesian shift in y
+  rNonshifted = 
   rSize = 1;
   
   %% Mask padarray with zeros if needed
@@ -115,11 +120,13 @@ if MaskPupil == 1
       method = 'replicate'; % For padding: 'replicate', 'symmetric',
                             % 'circular' or a scalar
       wrapMask = f_PadMatrix(wrapMask,r,method);
+      
     else % plotMask == 0 or 1 or 3 % PC
       %% r matrix truncation so that its size fits in wrappedMask
       [mXmid,mYmid] = f_ComputeMatrixMidPoints(wrapMask);
       [rXmid,rYmid] = f_ComputeMatrixMidPoints(r); 
       r = f_TruncateMatrix(wrapMask,mXmid,mYmid,r,rXmid,rYmid);
+     
     end
   end
 
