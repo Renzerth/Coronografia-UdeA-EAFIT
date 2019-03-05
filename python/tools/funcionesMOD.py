@@ -9,7 +9,8 @@ M boolean --> True: Returns spatial coords. and function value,
               """
 import numpy as np
 
-def rect(a,b,dx,w,M=False):    
+def rect(a,b,dx,w,M=False):
+    """1D rectangle function"""
     s = []
     X = []
     for x in np.arange(a,b,dx):
@@ -22,6 +23,7 @@ def rect(a,b,dx,w,M=False):
     if M == False: return s
 
 def triangle(a,b,dx,w,M=False):
+    """1D triangle function"""
     s = []
     X = []
     for x in np.arange(a,b,dx):
@@ -34,6 +36,7 @@ def triangle(a,b,dx,w,M=False):
 
 
 def gaussian(a,b,dx,w,M=False):
+    """1D gaussian function"""
     s = []
     X = []
     for x in np.arange(a,b,dx):
@@ -42,7 +45,8 @@ def gaussian(a,b,dx,w,M=False):
     if M == True: return X,s
     if M == False: return s
 
-def circ(a,b,dx,w,M=False):    
+def circ(a,b,dx,w,M=False):
+    """2D circ() function"""
 #    s,X,Y = [],[],[]
 #    L = int(np.fix(abs((b-a)/dx))) #shape de la matriz     
 #    #if int(L)==L: L=int(L)
@@ -79,12 +83,18 @@ def circ(a,b,dx,w,M=False):
 #    if M == False: return s
     
 #    x = np.linspace(a,b,L)
+
+    ###################################################
+    
     x = np.arange(a,b-dx,dx); # Substract dx in order to obtain L instead of L+1
     X,Y = np.meshgrid(x,x)
     rho = np.sqrt(X**2 + Y**2)
     circMask = rho/abs(w) <= 0.5 # Bool circular shape descrption
-    return circMask
+    if M == False: return circMask
+    if M == True: return X, Y, circMask
 
+    ####################################################
+    
     """
     #Another option to do it...  
 
