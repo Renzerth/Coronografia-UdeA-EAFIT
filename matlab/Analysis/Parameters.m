@@ -174,9 +174,8 @@ WsizeRatio = 0.5; % Width of the modes; for LG; ref: [0,1]
          
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
-
 f_FR = 10; % In m [the bigger, the more plane the phase is]
-%%% Fixed parameters:
+%%% Fixed parameters for the minimum focal length criteria:
 AreaSLM = maxNumPix*pixSize^2; % SLM's area of the longest dimension [um]
 minf_FRum = AreaSLM/L; % Criterium to determine the MINIMUM f_FR [um]
 scaleFactor = 1e-6; % um to m. Constant factor
@@ -185,7 +184,7 @@ if f_FR < minf_FR % f cannot be smaller than the criterium of the smallest
   error('VPL criterium not fulfilled');
 end
 % From: 2_edgar_2015_Generation_Optical_Vortices_Binary_Vortex_Lenses.pdf
-% minf_FR is used in meters in this paper and makes sense:
+% minf_FR is used in meters in this paper and uses reasonable scales:
 % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf
 % The scale for working with the SLMs is meters
 
