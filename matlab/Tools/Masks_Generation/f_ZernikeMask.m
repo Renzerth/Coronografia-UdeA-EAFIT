@@ -1,5 +1,5 @@
 %% Generate a Zernike phase mask (wavefront)
-function [mask,wrapMask,wrapMaskFig] = f_ZernikeMask(X,Y,r,z_coeff,z_a,z_frac, ...
+function [mask,wrapMask,wrapMaskFig] = f_ZernikeMask(X,Y,r,z_coeff,z_a, ...
 L,gl,phaseValues,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,rSize, ...
 monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 % Characterizes the aberrations of the system
@@ -12,15 +12,16 @@ monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 %     coefficients. ANSI standard. Zernike with desired weights.
 %     Put the aberration j-numbers: j = [0 1 2 3 4 ... 20]
 %     A) Random surface: -1; Zernike with random weights on [1,20]
-%     B) Column vector with normalized coefficients on [0,1]
+%     B) Column vector with normalized coefficients on [0,0.99]
+%        [NOll weight]
 %     C) Row vector with the j #s that one wants to plot (only integers)
+%        [Noll indices]
 %
 %     Examples:
 %     A) z_coeff = -1 (just that)
-%     B) z_coeff = [0.1 -0.13 0.15 0 -1 0.78]' (transposed)
+%     B) z_coeff = [0.1 -0.13 0.15 0 -0.99 0.78] 
 %     C) z_coeff = [2 3 1 5 7] (normal)
 %  z_a: arbitrary constant; the bigger, the more intense the mask;ref: a=20
-%  z_frac: to adjust the wrapped phase; ref: 0.125
 %  L: laser wavelength [um]
 %  gl: gray levels of Zernike. Normally 256
 %  phaseValues: discretized phi vector on [-pi,pi].
@@ -54,22 +55,25 @@ monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 % Missing:
 %  it still doesn't modulate on 2pi completely
 
+%% Constant
+C = 2*pi*z_a/L; % Phase units when multiplied by k
+
 %% Parameters (input z_coeff vector verification)
 o1 = size(z_coeff); % Dimensions of z_coeff
 o2 = abs(z_coeff) > ones(size(z_coeff)); % Ask if elemts are bigger than one
 o2 = sum(o2); % Sum all elements; zero if they are all smaller than one
 if z_coeff(1) == -1 && isscalar(z_coeff) == 1 % A); when z_coeff = -1
- z_vec = 2*pi*z_frac*z_a/L*randn(1,15)'; % Transposed random vector of integers
+ z_vec = C*randn(1,15)'; % Transposed random vector of integers
 elseif o1(1) == 1 &&  sum(mod(z_coeff,1))== 0 % [#s] and integers % C)
  z_vec = zeros(1,15)'; % Transposed vector
  z_coeff =  z_coeff + 1; % Correction in order to get correctly the
                          % polynomials (j-th)
- z_vec(z_coeff) = 2*pi*z_frac*z_a/L; % Zernike weight vect: characterizes
+ z_vec(z_coeff) = C; % Zernike weight vect: characterizes
                                  % the aberrations to be plotted
 elseif o1(1) == 1 &&  o2 == 0 % Column vector and #s less than 1 [#s]' % B)
  z_vec = zeros(1,15)'; % Transposed vector
  for i = 1:size(z_coeff,2)
-      z_vec(i) = 2*pi*z_frac*z_a*(z_coeff(i))/L;
+      z_vec(i) = C*(z_coeff(i));
  end
 else
   warning('Not valid input');

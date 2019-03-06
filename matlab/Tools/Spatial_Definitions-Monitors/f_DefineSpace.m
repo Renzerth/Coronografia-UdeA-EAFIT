@@ -59,9 +59,10 @@ switch coordType
   % image resolution is wanted 
   
   %% Spatial definitions (size is user defined)
-  % Physical size except for Zernike, as they have to be in a unitary space
-  if maskSel == 5 || maskSel == 6
-    sSupport = 2; % Unitary space
+  % Physical size except for Zernike and VPL, as they have to be in a 
+  % unitary space
+  if maskSel == 5 || maskSel == 6 || maskSel == 2
+    sSupport = 2; % Unitary space since one makes sSupport/2 = 1 here
   end
   sSupport = sSupport/2; % Half support of the SLM window in cm
   spaceVector = -sSupport:2*sSupport/(sSize-1):sSupport; 
@@ -86,6 +87,7 @@ switch coordType
   % x,y: vectors of SLM's physical size  
   x = linspace(-halfSizeX,halfSizeX,monitorSize(1));                                     
   y = linspace(-halfSizeY,halfSizeY,monitorSize(2)); 
+  % X,Y are not created with x,y. X,Y are on [-1,1]. x,y: physical size
   X = Xcoord2; Y = Ycoord2; % Screen coordinates
   
 end
@@ -179,7 +181,6 @@ Yslm = Y + shiftY; % Shifted Y for the SLM.
 
 %% Polar coordinates for the SLM
 % X,Y variables redefined for being used in the EGV and Fork masks
-
 [phiSLM,rSLM] = cart2pol(Xslm,Yslm); % Polar coordinates with an added
                                      % shift. The signs compensate the 
                                      % normal cartesian convention for 

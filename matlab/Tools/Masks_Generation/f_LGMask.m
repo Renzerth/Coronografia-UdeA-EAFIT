@@ -16,8 +16,8 @@ scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 %  p: number of radial nodes. If p=0, normal helicoid masks are obtained.
 %     If they are used and tc=0(m=0); binary masks are obtained.
 %     Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
-%  WsizeRatio: width of the modes: related with the radius of the phase and with the
-%     disks on the magnitude
+%  WsizeRatio: width of the modes: related with the radius of the phase and
+%              with the disks on the magnitude
 %  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 

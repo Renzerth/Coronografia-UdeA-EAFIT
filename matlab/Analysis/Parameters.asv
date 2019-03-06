@@ -15,7 +15,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 2; % Phase mask selection:
+maskSel = 5; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -175,12 +175,11 @@ WsizeRatio = 0.5; % Width of the modes; for LG; ref: [0,1]
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
 
-f_FR = 1; % In um
-%%% Fixed parameters:
+f_FR = 2e5; % In um
 minf_FR = maxNumPix*pixSize^2/L; % Criterium to determine the MINIMUM f_FR
-% if f_FR < minf_FR
-%   error('VPL criterium not fulfilled');
-% end
+if f_FR < minf_FR
+  error('VPL criterium not fulfilled');
+end
 % From: 2_edgar_2015_Generation_Optical_Vortices_Binary_Vortex_Lenses.pdf
 
 %% Parameters: Elliptic Gaussian Vortex
@@ -221,7 +220,7 @@ Angbet = 0; % Diffraction angle of vertical direction (y) [radians]
 
 %% Parameters: Zernike polynomials with Noll's convention
 %%%% For maskSel = 5 or 6:
-z_coeff = [0 0.5 0.8 0.88]; % Zernike coeffient vector (see f_ZernikeMask.m)
+z_coeff = [1 10]; % Zernike coeffient vector (see f_ZernikeMask.m)
 z_a = 2.5; % Arbitrary constant; the bigger, the more intense; ref: a=2.5
 z_pupil = 1; % Pupil relative size: [0,1]; like a percentage
 z_disp_wrap = 0; % (0): Original; (1): wrapped mask on [-pi,pi] 

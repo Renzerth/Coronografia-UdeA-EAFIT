@@ -39,7 +39,7 @@ spatialSize = min(sizX);  % Square matrix of the total size of the figure
                           % can fit inside the screen's rectangle
 RZS = zeros(spatialSize); % Initialization: SxS matrix
 p = length(a); % MxM matrix will be created
-                 % Correction in order to get correctly the polynomials
+               % Correction in order to get correctly the polynomials
 
 %% Zernike polynomial calculation
 [VZk,Pupil] = f_ZernikePolynomials(X,Y,p,apperture); 

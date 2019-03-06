@@ -1,6 +1,6 @@
 %% Laguerre Gauss Binary masks + Zernike Phases
 function [mask,wrapMask,wrapMaskFig] = f_LGZernikeMask(X,Y,r,phi,gl, ...
-phaseValues,tc,s,ph0,p,WsizeRatio,z_coeff,z_a,z_frac,L,z_pupil, ...
+phaseValues,tc,s,ph0,p,WsizeRatio,z_coeff,z_a,L,z_pupil, ...
 z_disp_wrap,z_plot,normMag,binMask,binv,rSize,monitorSize,scrnIdx, ...
 coordType,abs_ang,MaxMask,plotMask)
 % Generates and plots a Laguerre Gauss + Zernike mask
@@ -17,22 +17,23 @@ coordType,abs_ang,MaxMask,plotMask)
 %  p: number of radial nodes. If p=0, normal helicoid masks are obtained.
 %     If they are used and tc=0(m=0); binary masks are obtained.
 %     Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
-%  WsizeRatio: width of the modes: related with the radius of the phase and with the
-%     disks on the magnitude
+%  WsizeRatio: width of the modes: related with the radius of the phase and
+%              with the disks on the magnitude
 %  z_coeff: 
 %     selected aberrations: any combination on [1,20]; zernike
 %     coefficients. ANSI standard. Zernike with desired weights.
 %     Put the aberration j-numbers: j = [0 1 2 3 4 ... 20]
 %     A) Random surface: -1; Zernike with random weights on [1,20]
-%     B) Column vector with normalized coefficients on [0,1]
+%     B) Column vector with normalized coefficients on [0,0.99]
+%        [NOll weight]
 %     C) Row vector with the j #s that one wants to plot (only integers)
+%        [Noll indices]
 %
 %     Examples:
 %     A) z_coeff = -1 (just that)
-%     B) z_coeff = [0.1 -0.13 0.15 0 -1 0.78]' (transposed)
+%     B) z_coeff = [0.1 -0.13 0.15 0 -0.99 0.78] 
 %     C) z_coeff = [2 3 1 5 7] (normal)
 %  z_a: arbitrary constant; the bigger, the more intense the mask;ref: a=20
-%  z_frac: to adjust the wrapped phase; ref: 0.125
 %  L: laser wavelength [um]
 %  z_pupil: defines pupil relative size (w.r.t. sSize), like a percentage
 %  disp_wrap: original (0) or wrapped mask (1)
@@ -65,7 +66,7 @@ coordType,abs_ang,MaxMask,plotMask)
 showEachMask = 0; % 0: so that not all of the individual masks are shown
                   % during the measurements. Same as plotMask
 MaskPupil = 0; % Always, since Zernike has its own pupil
-[maskZ,~,~]= f_ZernikeMask(X,Y,r,z_coeff,z_a,z_frac,L,gl,phaseValues, ...
+[maskZ,~,~]= f_ZernikeMask(X,Y,r,z_coeff,z_a,L,gl,phaseValues, ...
 z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,rSize,monitorSize, ...
 scrnIdx,coordType,MaxMask,showEachMask);
 [maskLG,~,~] = f_LGMask(r,phi,gl,phaseValues,tc,s,ph0,p,WsizeRatio, ...
