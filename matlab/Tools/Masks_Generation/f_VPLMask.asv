@@ -53,8 +53,14 @@ maskSPP = m*(phi + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
 maskSPP = exp(1i*maskSPP); % Wrapped mask
 
 %% VPL Mask generation
-VPLfactor = -(pi*r.^2)/(L*f_FR);
-maskVPL = exp(1i*VPLfactor);
+% scaleFactor = 1e4; % cm to um. Constant factor
+scaleFactor = 1;
+% r2 = r - min(r(:));
+% r2 = r2/max(r2(:));
+r = r*scaleFactor; % r converted to um
+% VPLfactor = -(pi*r.^2)/(L*f_FR);
+maskVPL = exp(-1i*(2*pi/L)/(2*f_FR)*r.^2);
+figure; imagesc(angle(maskVPL));
 mask = maskSPP.*maskVPL; 
 % maskSPP*maskVPL; gives cool results as the Fresnel lens but in a linear
 % fashion: a chirp ramp for tc = 0. It is just a test without validity

@@ -150,11 +150,11 @@ imgformat = '.png'; % Format with period. mat, bmp, png, jpg
 %%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS PARAMETERS %%%%%%%%%%%%%%%%%%%%%%
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
-tc = 2; % Topological charge (integer bigger or equal to one)
+tc = 3; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
-s = +1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
-ph0 = 0; % Initial phase of the angle [radians]; reference +pi from
+s = 1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
+ph0 = pi; % Initial phase of the angle [radians]; reference +pi from
          % normal zero of trig circle and same rotation convention.
          % This corresponds to a normal rotation of the mask for stethic
          % reasons and shouldn't affect the results. Only affects if the
@@ -175,13 +175,19 @@ WsizeRatio = 0.5; % Width of the modes; for LG; ref: [0,1]
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
 
-f_FR = 1; % In um
+f_FR = 10; % In m [the bigger, the more plane the phase is]
 %%% Fixed parameters:
-minf_FR = maxNumPix*pixSize^2/L; % Criterium to determine the MINIMUM f_FR
-% if f_FR < minf_FR
-%   error('VPL criterium not fulfilled');
-% end
+AreaSLM = maxNumPix*pixSize^2; % SLM's area of the longest dimension [um]
+minf_FRum = AreaSLM/L; % Criterium to determine the MINIMUM f_FR [um]
+scaleFactor = 1e-6; % um to m. Constant factor
+minf_FR = minf_FRum*scaleFactor; % um to m
+if f_FR < minf_FR % f cannot be smaller than the criterium of the smallest
+  error('VPL criterium not fulfilled');
+end
 % From: 2_edgar_2015_Generation_Optical_Vortices_Binary_Vortex_Lenses.pdf
+% minf_FR is used in meters in this paper and makes sense:
+% 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf
+% The scale for working with the SLMs is meters
 
 %% Parameters: Elliptic Gaussian Vortex
 bcst = 0.6; % Ellipticity. cy/cx = 1/alpha. Ref: .1, .2, .4, .6, .8 and 1
