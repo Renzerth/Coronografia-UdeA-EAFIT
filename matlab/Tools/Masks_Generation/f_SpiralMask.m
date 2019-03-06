@@ -1,7 +1,7 @@
 %% Spiral Phase Mask
-function [mask,wrapMask,wrapMaskFig] = f_SpiralMask(r,phi,gl,phaseValues, ...
-mingl,maxgl,levShft,tc,s,ph0,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx, ...
-coordType,abs_ang,MaxMask,plotMask)
+function [mask,wrapMask,wrapMaskFig] = f_SpiralMask(r,phi,gl, ...
+phaseValues,tc,s,ph0,normMag,binMask,binv,MaskPupil,rSize,monitorSize, ...
+scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
@@ -9,8 +9,6 @@ coordType,abs_ang,MaxMask,plotMask)
 %  r,phi: polar coordinates for both the PC and SLM
 %  gl: number of grey levels (normally 256)
 %  phaseValues: discretized phi vector on [-pi,pi].
-%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
-%  levShft: corresponds to the brightness or constant shift of the gl's
 %  tc: Topological charge
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask
@@ -49,8 +47,8 @@ mask = exp(1i*mask); % Wrapped mask and complex
 tit = strcat('Spiral phase mask with topological charge',{' '}, ...
       num2str(tc));
 str = ''; % Empty, it only works for abs_ang = 0
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
-maxgl,levShft,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit, ...
-str,coordType,abs_ang,MaxMask,plotMask);
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,normMag, ...
+binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit,str,coordType, ...
+abs_ang,MaxMask,plotMask);
 
 end

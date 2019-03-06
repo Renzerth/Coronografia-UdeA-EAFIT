@@ -1,9 +1,10 @@
 %% Elliptic Gaussian Vortex (EGV)pi
 % Taken from: 2015_Vortex_CGH_Adjustable-SPP_Jain
 
-function [mask,wrapMask,wrapMaskFig] = f_ForkMask(X,Y,r,phi,gl,phaseValues, ...
-mingl,maxgl,levShft,tc,s,ph0,L,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
-normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMask)
+function [mask,wrapMask,wrapMaskFig] = f_ForkMask(X,Y,r,phi,gl, ...
+phaseValues,tc,s,ph0,period,T0,frkTyp,Aalpha,Angalp,Angbet,normMag, ...
+binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang, ...
+MaxMask,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
@@ -17,7 +18,6 @@ normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMa
 %  tc: Topological charge
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask
-%  L: Laser wavelength [um]
 %  period: of the grating (fringe spacing)
 %  T0: constant absorption coefficient of the hologram
 %  frkTyp: 1: smooth transition; 2: phase jump transition
@@ -86,8 +86,8 @@ end
 tit = strcat('Fork mask with topological charge',{' '},num2str(tc), ...
              {' '},'and period =',{' '},num2str(period));
 str = ''; % Empty, it only works for abs_ang = 0
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
-maxgl,levShft,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit, ...
-str,coordType,abs_ang,MaxMask,plotMask);
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,normMag, ...
+binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit,str,coordType, ...
+abs_ang,MaxMask,plotMask);
 
 end

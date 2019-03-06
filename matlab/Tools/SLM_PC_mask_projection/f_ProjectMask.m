@@ -1,6 +1,6 @@
 %% Plot Phase Mask either on the PC or on the SLM
-function [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
-maxgl,levShft,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit,str, ...
+function [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues, ...
+normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit,str, ...
 coordType,abs_ang,MaxMask,plotMask)
 % Inputs:
 %  r: polar coordinate
@@ -9,8 +9,6 @@ coordType,abs_ang,MaxMask,plotMask)
 %        mask = exp(i*UnwrappedMask)
 %  gl: number of grey levels (normally 256)
 %  phaseValues: discretized phi vector on [-pi,pi].
-%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
-%  levShft: corresponds to the brightness or constant shift of the gl's
 %  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
@@ -70,7 +68,7 @@ switch abs_ang
   case 2 % Phase
    % Circular pupil and wrapping   
    [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask,phaseValues, ...
-   binMask,binv,MaskPupil,rSize,mingl,maxgl,levShft,plotMask);
+   binMask,binv,MaskPupil,rSize,plotMask);
    figtit = 'Phase Mask';
    str = 'Wrapped phase value'; % Colorbar string
  end

@@ -1,7 +1,7 @@
 %% Generate a Zernike phase mask (wavefront)
 function [mask,wrapMask,wrapMaskFig] = f_ZernikeMask(X,Y,r,z_coeff,z_a,z_frac, ...
-L,gl,phaseValues,mingl,maxgl,levShft,z_pupil,z_disp_wrap,z_plot,normMag, ...
-binMask,binv,rSize,monitorSize,scrnIdx,coordType,MaxMask,plotMask)
+L,gl,phaseValues,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,rSize, ...
+monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 % Characterizes the aberrations of the system
 % Inputs:
 %  X,Y: A grid of the spatial vector: 2D Cartesian coordiantes. They
@@ -24,8 +24,6 @@ binMask,binv,rSize,monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 %  L: laser wavelength [um]
 %  gl: gray levels of Zernike. Normally 256
 %  phaseValues: discretized phi vector on [-pi,pi].
-%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
-%  levShft: corresponds to the brightness or constant shift of the gl's
 %  z_pupil: defines pupil relative size (w.r.t. sSize), like a percentage
 %  z_disp_wrap: unwrapped (0) or wrapped mask (1)
 %  z_plot: plot (1); no plot (0)
@@ -96,13 +94,13 @@ else % disp_wrap = 0
     str = 'Unwrapped phase value';
 end
 MaskPupil = 0; % Always, since Zernike has its own pupil
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
-maxgl,levShft,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit, ...
-str,coordType,abs_ang,MaxMask,plotMask);
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,normMag, ...
+binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit,str,coordType, ...
+abs_ang,MaxMask,plotMask);
 
 %% Phase wrapping (optional test for curiosity) 
 % The wrapped phase should do complete cycles of 2pi
-% min(b,[],'omitnan') % Negative
+% min(b(:),[],'omitnan') % Negative
 % min(cos(b(:)),[],'omitnan') % positive since the phase was wrapped 
                               % for intensity   
                               

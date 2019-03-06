@@ -1,5 +1,5 @@
 function [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask, ...
-phaseValues,binMask,binv,MaskPupil,rSize,mingl,maxgl,levShft,plotMask)
+phaseValues,binMask,binv,MaskPupil,rSize,plotMask)
 % Multiplies the phase mask by the maximum circle size with its outer
 % borders containing the minimum value of the phase (normally -pi)
 % Wraps the phase with the function "angle"
@@ -15,8 +15,6 @@ phaseValues,binMask,binv,MaskPupil,rSize,mingl,maxgl,levShft,plotMask)
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
 %  MaskPupil: applies a pupil truncation to the mask: (0): no; (1): yes
 %  rSize: radius for the circular (or elliptical) pupil truncation
-%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
-%  levShft: corresponds to the brightness or constant shift of the gl's
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use
 %    -2: size defined by the resolution of the selected screen    
@@ -37,8 +35,6 @@ wrapMask = angle(mask); % Phase of the mask on [-pi, pi]. Real-valued
 
 [wrapMask,customMap] = f_discretizeMask(phaseValues,wrapMask); % Mask 
                                                            % discretization
-% wrapMask = f_ScaleMatrixData(wrapMask,mingl,maxgl) + levShft; 
-% Scaling to uint8 values
 
 %% Mask Binarization and binary inversion
 % binarizes the mask w.r.t the max,mid and min of the phase (boolean)

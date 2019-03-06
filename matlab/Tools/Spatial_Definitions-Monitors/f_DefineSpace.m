@@ -140,6 +140,7 @@ switch shiftBool
  
  case 2 % Self-centering algorithm
   % Pending
+  
 end
 
 %% Check the shift for the Zernike polynomials

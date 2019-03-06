@@ -15,7 +15,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 0; % Phase mask selection:
+maskSel = 6; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -194,7 +194,8 @@ frkTyp = 2; % 1: smooth transition (amplitude);
 period = 0.1; % Period of the grating (fringe spacing). Ref: 0.1
               % Twice its inverse is the number of line dislocations
               % So the frequency is f = 2/period
-              
+              % Recommended: L or L/2 (close to a real diffraction grating)
+              % L: Laser wavelength [um]
 %%% Smooth transition (amplitude filter)
 T0 = 1; % Const. absorption coeff of the hologram; only affects amplitude. 
 Aalpha = pi; % Amplitude of the phase modulation. Ref: pi
@@ -232,22 +233,13 @@ z_plot = 0; % plot with Zernike builder: yes(1); no(0)
 % For coordType = 1, a low value of k (for example less than 8) can affect
 % the orthogonality
 
-%% Gray levels (discretization levels of the mask)
-
-% ----- MAYBE NOT USED ANYMORE:
-% Dynamic range = maxGrayDepth - minGrayDepth
-mingl = -pi; % Minimum gray level depth. Ref: 0
-maxgl = pi; % Maximum gray level depth. Ref: 255
-levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
-             % Corresponds to the brightness or constant shift of the gl's
-% -----        
-             
+%% Gray levels (discretization levels of the mask)        
 gl = 256; % Number of gray levels (normally 256). Must be smaller than
           % the dynamic range = maxGrayDepth-minGrayDepth. Default: 256             
 discretization = 1; % Variable for the next switch
 switch discretization % Gray-level discretized azimuthal angle vector
  case 1 % 1: Evenly-spaced gl phase values.
-  phaseValues = linspace(0,2*pi,gl); % Discretized phi vector on [-pi,pi].  
+  phaseValues = linspace(0,2*pi,gl); % Discretized phi vector on [0,2*pi].  
                                % The sampling interval consists on dividing 
                                % the range over the gray levels. Similar to 
                                % the VPL Edgar's discretization formula on 

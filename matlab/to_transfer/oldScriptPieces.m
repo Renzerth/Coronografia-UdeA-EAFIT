@@ -66,3 +66,15 @@
 %                                  % rectangle
 %        coordType = 1; % sSize will be used in this coordinate type
 % end
+
+%% Old matrix scalling
+% wrapMask = f_ScaleMatrixData(wrapMask,mingl,maxgl) + levShft; 
+% Scaling to uint8 values
+% Dynamic range = maxGrayDepth - minGrayDepth
+mingl = 99; % Minimum gray level depth. Ref: 0
+maxgl = 100; % Maximum gray level depth. Ref: 255
+levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
+             % Corresponds to the brightness or constant shift of the gl's
+%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
+%  levShft: corresponds to the brightness or constant shift of the gl's
+   
