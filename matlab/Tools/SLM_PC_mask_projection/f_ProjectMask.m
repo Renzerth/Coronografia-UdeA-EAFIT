@@ -70,7 +70,7 @@ switch abs_ang
   case 2 % Phase
    % Circular pupil and wrapping   
    [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask,phaseValues, ...
-   binMask,binv,MaskPupil,rSize,mingl,maxgl,levShft,coordType,plotMask);
+   binMask,binv,MaskPupil,rSize,mingl,maxgl,levShft,plotMask);
    figtit = 'Phase Mask';
    str = 'Wrapped phase value'; % Colorbar string
  end
@@ -125,9 +125,8 @@ switch plotMask
   
   %% Figure size adjusting with a monitor/mask scaling for coordType = 1 or
   %%% a maximized figure for coordType = 2
-  if coordType == 1 
-    
-    % res = the real "monitorSize", taken on the "%% Monitor selection and 
+  if coordType == 1   
+    % res: the real "monitorSize", taken on the "%% Monitor selection and 
     % resolution retrieval" Section   
     switch MaxMask 
       case 0 % Custom-size mask that depends on the variable sSize

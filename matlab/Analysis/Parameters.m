@@ -15,7 +15,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 5; % Phase mask selection:
+maskSel = 0; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -29,7 +29,7 @@ maskSel = 5; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 2; % Allows to plot the final mask, as it can be a combination 
+plotMask = 1; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -236,8 +236,8 @@ z_plot = 0; % plot with Zernike builder: yes(1); no(0)
 
 % ----- MAYBE NOT USED ANYMORE:
 % Dynamic range = maxGrayDepth - minGrayDepth
-mingl = 0; % Minimum gray level depth. Ref: 0
-maxgl = 255; % Maximum gray level depth. Ref: 255
+mingl = -pi; % Minimum gray level depth. Ref: 0
+maxgl = pi; % Maximum gray level depth. Ref: 255
 levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
              % Corresponds to the brightness or constant shift of the gl's
 % -----        
@@ -259,7 +259,9 @@ switch discretization % Gray-level discretized azimuthal angle vector
                                 % Example: [0 64 128 255]
   % Custom gl vector: the mask will only have these levels
   phaseValues = phaseValues*2*pi/255; % Conversion from gray-levels to 
-                                      % phase levels                  
+                                      % phase levels              
+  % phase values = gray level values * 2Pi/255. Current range: [0,2pi], but
+  % inside f_discretizeMask.m, the values are adjusted to be on [-Pi,Pi] 
 end
 
 

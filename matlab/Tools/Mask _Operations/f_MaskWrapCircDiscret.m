@@ -1,5 +1,5 @@
 function [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask, ...
-phaseValues,binMask,binv,MaskPupil,rSize,mingl,maxgl,levShft,coordType,plotMask)
+phaseValues,binMask,binv,MaskPupil,rSize,mingl,maxgl,levShft,plotMask)
 % Multiplies the phase mask by the maximum circle size with its outer
 % borders containing the minimum value of the phase (normally -pi)
 % Wraps the phase with the function "angle"
@@ -37,7 +37,7 @@ wrapMask = angle(mask); % Phase of the mask on [-pi, pi]. Real-valued
 
 [wrapMask,customMap] = f_discretizeMask(phaseValues,wrapMask); % Mask 
                                                            % discretization
-% wrappedMask = f_ScaleMatrixData(wrappedMask,mingl,maxgl) + levShft; 
+% wrapMask = f_ScaleMatrixData(wrapMask,mingl,maxgl) + levShft; 
 % Scaling to uint8 values
 
 %% Mask Binarization and binary inversion
