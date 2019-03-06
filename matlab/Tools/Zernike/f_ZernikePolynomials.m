@@ -107,5 +107,6 @@ VZk = bsxfun(@rdivide, VZk, sqrt(diag(Iprod).'));
 % correctly normalized (although they aren't fully orthogonal)
 % If outside there's not a zero -> not fully orthogonal
 zProdsNorm = VZk.' * VZk * DeltaA;
-figure, imagesc(zProdsNorm), colorbar;
+figure, imagesc(zProdsNorm), colorbar; 
+title('Orthogonality test for the Zernike polynomials');
 end

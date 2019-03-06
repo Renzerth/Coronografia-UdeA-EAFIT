@@ -232,6 +232,7 @@ z_plot = 0; % plot with Zernike builder: yes(1); no(0)
 % For coordType = 1, a low value of k (for example less than 8) can affect
 % the orthogonality
 
+
 %% Gray levels (discretization levels of the mask)
 
 % ----- MAYBE NOT USED ANYMORE:

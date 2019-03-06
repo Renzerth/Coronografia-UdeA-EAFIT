@@ -19,7 +19,6 @@ MaxMask,plotMask,maskSel)
 
 %% Mask selection
 switch maskSel 
-    
  case 0 % Spiral phase mask or mapa de fase espiral or máscara espiral
         % de fase or máscara helicoidal de fase 
   [mask,wrapMask,wrapMaskFig] = f_SpiralMask(r,phi,gl,phaseValues,mingl,maxgl,...

@@ -21,7 +21,8 @@ coordType,abs_ang,MaxMask,plotMask)
 %  grid (sSize) for coordType = 1 
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
 %  tit: plot title
-%  str: colorbar string when abs_ang = 0
+%  str: colorbar string when abs_ang = 0; otherwise str is defined for
+%       abs_ang = 1 or 2
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use
 %    -2: size defined by the resolution of the selected screen    
@@ -53,6 +54,8 @@ switch abs_ang
       wrapMask = real(mask);
     end
     % str: defined in the input
+    % Here, the customMap is defined but the mask is not wrapped
+    [~,customMap] = f_discretizeMask(phaseValues,wrapMask);
   case 1 % Amplitude
     wrapMask = abs(mask); % Actually, this is an amplitude filter
     figtit = 'Amplitude Mask';

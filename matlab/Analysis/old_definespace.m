@@ -144,28 +144,26 @@ end
 
 %% Check the shift for the Zernike polynomials
 % Right now, shiftX and shiftY are percentages but z_pupil scaled by the
-% half supports if it is applied above (so that flagAR = 1)
-if flagAR == 1
+% Half support if it is applied above (so that flagAR = 1)
+%if flagAR == 1
   z_pupilX = z_pupil/HalfSupportX; % Half support scaling in X
   z_pupilY = z_pupil/HalfSupportY; % Half support scaling in Y
-else
-   z_pupilX = z_pupil; % z_pupil is not scaled in X
-   z_pupilY = z_pupil; % z_pupil is not scaled in Y
-end 
+%end 
 
-cond1 = (abs(shiftX) + z_pupilX) > 1; % X shift percentage constraint
-cond2 = (abs(shiftY) + z_pupilY) > 1; % Y shift percentage constraint
+cond1 = (abs(shiftY) + z_pupilY) > 1; % Y shift percentage constraint
+cond2 = (abs(shiftX) + z_pupilX) > 1; % X shift percentage constraint
 if (cond1 || cond2) && (maskSel == 5 || maskSel == 6) 
   % Error for the SLM coordinates and Zernike masks
   % Zernike masks must always be circular and never truncated
-  disp(['For the selected z_pupil, shiftX should be at maximum ' ...
-      num2str((1-z_pupilX)*100) ' and shiftY ' num2str((1-z_pupilY)*100)]);
+  %disp(['For the scaled z_pupil: ' num2str(z_pupil/AspectRatio) ...
+  %      ', shiftX should be at maxmimum ' ...
+  %      num2str((1-z_pupil/AspectRatio)*100)])
   error(['Shifts out of bounds for the Zernike polynomials: the whole ' ...
         'pupil must lie inside the screen in order for them to be ' ...
         'almost orthogonal. Please set "shiftCart" or "z_pupil" smaller']); 
 end
   
-%% Shift scaling so that it is a percentage
+%% Shift scalling so that it is a percentage
 % Takes into account the half support of X and Y and a percentage of them
 % is taken
 shiftX = shiftX*HalfSupportX;

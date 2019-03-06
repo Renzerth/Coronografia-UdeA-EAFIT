@@ -76,8 +76,8 @@ MaxMask,plotMask,maskSel);
 if meas == 1
   close all; % Closes opened figures
  %% Folders and register creations on Data and Output    
-[DatalogDir,ltcvect,lglvect] = f_CreateFoldersRegisters(maskName,tcvect,...
-                               glvect,slm,dataDir,outDir,pathSep);
+ [DatalogDir,ltcvect,lglvect] = f_CreateFoldersRegisters(maskName, ...
+                                 tcvect,glvect,slm,dataDir,outDir,pathSep);
 
  %% Hardware initialization
  if measSimulated == 0 % When a real measurement will be performed

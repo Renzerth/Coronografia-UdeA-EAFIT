@@ -97,11 +97,11 @@ end
   % the space)
   % Xrescaled: the spatial scaling is compensated and the circular mask is
   % drawn normally on the whole screen
-  flagAR = 0; % Flag for the AspectRatio application (not applied)
+  flag = 0; % Flag for the AspectRatio application (not applied)
   if circularMask == 1 && plotMask == 2 && (MaxMask == 1 || coordType == 2) 
      Xrescaled = AspectRatio*X; % Used for the mask generation: X scaling
      X = Xrescaled; % Circular truncation in full screen
-     flagAR = 1; % Flag for the AspectRatio application
+     flag = 1; % Flag for the AspectRatio application
   end % Otherwise X=X and one has the elliptical truncation in full screen
 
 %% Polar coordinates for the PC
@@ -144,8 +144,8 @@ end
 
 %% Check the shift for the Zernike polynomials
 % Right now, shiftX and shiftY are percentages but z_pupil scaled by the
-% half supports if it is applied above (so that flagAR = 1)
-if flagAR == 1
+% Aspect Ratio (AR) if it is applied above (so that flagAR = 1)
+if flag == 1
   z_pupilX = z_pupil/HalfSupportX; % Half support scaling in X
   z_pupilY = z_pupil/HalfSupportY; % Half support scaling in Y
 else
