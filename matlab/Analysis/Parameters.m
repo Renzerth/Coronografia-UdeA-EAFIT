@@ -77,7 +77,7 @@ end
 %% SLM positionining calibration, coordinates and type of truncation
 MaskPupil = 1; % Applies a pupil truncation to the mask: (0): no; (1): yes
 % Won't work for maskSel = 5 or 6 (Zernike), as it has z_pupil
-coordType = 1; % Type of calculation of the spatial coordinates. def: 2 
+coordType = 2; % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
 %%%% For coordType = 1 (user custom-sized):
@@ -103,7 +103,7 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [25,25]; % [yshift,xshift], works when shiftBool = 1
+    shiftCart = [0,-43]; % [yshift,xshift], works when shiftBool = 1
                           % Percentages of movement of the total size of 
                           % the mask (cartesian coordinates convention)
                           % Calibrated with: s = +1; ph0 = 0, tc = 1; 
@@ -218,7 +218,7 @@ Angbet = 0; % Diffraction angle of vertical direction (y) [radians]
 z_coeff = [0 0 0 0 0.5 0 0 0 0 0 0 ]; % Zernike coeffient vector (see f_ZernikeMask.m)
 z_a = 20; % Arbitrary constant; the bigger, the more intense; ref: a=20
 z_frac = 0.125; % To adjust the wrapped phase; ref: 0.125
-z_pupil = 0.5; % Pupil relative size: [0,1]; like a percentage
+z_pupil = 1; % Pupil relative size: [0,1]; like a percentage
 z_disp_wrap = 1; % (0): Original; (1): wrapped mask on [-pi,pi] 
 z_plot = 0; % plot with Zernike builder: yes(1); no(0)
 % L and gl are also used with Zernike

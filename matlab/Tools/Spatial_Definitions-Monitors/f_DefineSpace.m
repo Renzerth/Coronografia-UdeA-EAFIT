@@ -66,7 +66,6 @@ switch coordType
                                              % Cartesian coordinates
   x = spaceVector; % Cartesian x-vector
   y = x; % Cartesian y-vector: square grid
-  % Xslm = X;
   monitorSize = size(Xcoord1); % Square coordinates: [sSize,sSize]
   X = Xcoord1; Y = Ycoord1;
   
@@ -94,9 +93,11 @@ end
   % the space)
   % Xrescaled: the spatial scaling is compensated and the circular mask is
   % drawn normally on the whole screen
+  flagAR = 0; % Flag for the AspectRatio application (not applied)
   if circularMask == 1 && plotMask == 2 && (MaxMask == 1 || coordType == 2) 
      Xrescaled = AspectRatio*X; % Used for the mask generation: X scaling
      X = Xrescaled; % Circular truncation in full screen
+     flagAR = 1; % Flag for the AspectRatio application
   end % Otherwise X=X and one has the elliptical truncation in full screen
 
 %% Polar coordinates for the PC
@@ -138,14 +139,27 @@ switch shiftBool
 end
 
 %% Check the shift for the Zernike polynomials
-% Right now, shiftX and shiftY are percentages
-if (shiftX+z_pupil)>100 && (maskSel == 5 || maskSel == 6)
-  error('Shifts out of bounds for the Zernike polynomials')
+% Right now, shiftX and shiftY are percentages but z_pupil scaled by the
+% Aspect Ratio (AR) if it is applied above (so that flagAR = 1)
+if flagAR == 1
+  z_pupilX = z_pupil/AspectRatio; % AR scaling
+else
+  z_pupilX = z_pupil; % z_pupil is not scaled with the AR
+end 
+
+cond1 = (abs(shiftY) + z_pupil) > 1; % Y shift percentage constraint
+cond2 = (abs(shiftX) + z_pupilX) > 1; % X shift percentage constraint
+if (cond1 || cond2) && (maskSel == 5 || maskSel == 6) 
+  % Error for the SLM coordinates and Zernike masks
+  % Zernike masks must always be circular and never truncated
+  error(['Shifts out of bounds for the Zernike polynomials: the whole ' ...
+        'pupil must lie inside the screen in order for them to be ' ...
+        'almost orthogonal. Please set "shiftCart" or "z_pupil" smaller']); 
 end
   
-
 %% Shift scalling so that it is a percentage
-% Takes into account the half support of X and Y
+% Takes into account the half support of X and Y and a percentage of them
+% is taken
 shiftX = shiftX*HalfSupportX;
 shiftY = shiftY*HalfSupportY;
 
