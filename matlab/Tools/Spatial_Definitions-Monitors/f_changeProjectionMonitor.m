@@ -36,7 +36,7 @@ locationShifts = availableMonitors(:,1:end/2);
 
 %% Verify available monitor
 if size(monitorsInformation,1) < screenIndex
-    warning('Selected monitor is not available. Maximum resolution will be selected.');
+    warning('The selected monitor is not available. The maximum resolution will be selected.');
     selectMaxRes = true;
 end
 

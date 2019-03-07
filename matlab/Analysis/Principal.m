@@ -44,7 +44,7 @@ Parameters; % Adds to the algorithm all the needed parameters
 % Adds initial functions
 addpath(strcat('..',pathSep,toolsFldr,pathSep,filemanag)); 
 [analysDir,toolsDir,dataDir,outDir] = ...
-f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd);
+f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
 % Adds all the directories to use in the algorithm
 
 %% Spatial definitions
@@ -70,7 +70,7 @@ MaxMask,plotMask,maskSel);
 % f_MaskWrapCircDiscret -> f_discretizeMask -> f_wrapToRange 
 %                       -> f_ScaleMatrixData       
 
-                           
+                           s
                            
 %%%%%%%%%%%%%%%%%%%%%%% MEASUREMENTS BY AN AUTOMATED PARAMETER VARIATION
 if meas == 1

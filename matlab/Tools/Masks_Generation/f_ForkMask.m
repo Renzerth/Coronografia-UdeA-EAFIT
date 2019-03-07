@@ -1,7 +1,7 @@
 %% Elliptic Gaussian Vortex (EGV)pi
 % Taken from: 2015_Vortex_CGH_Adjustable-SPP_Jain
 
-function [mask,wrapMask,wrapMaskFig] = f_ForkMask(X,Y,r,phi,gl, ...
+function [mask,wrapMask,wrapMaskFig] = f_ForkMask(X,Y,r,phi, ...
 phaseValues,tc,s,ph0,period,T0,frkTyp,Aalpha,Angalp,Angbet,normMag, ...
 binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang, ...
 MaxMask,plotMask)
@@ -13,8 +13,6 @@ MaxMask,plotMask)
 %  r,phi: polar coordinates (r in cm)
 %  gl: number of grey levels (normally 256)
 %  phaseValues: discretized phi vector on [-pi,pi].
-%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
-%  levShft: corresponds to the brightness or constant shift of the gl's
 %  tc: Topological charge
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask

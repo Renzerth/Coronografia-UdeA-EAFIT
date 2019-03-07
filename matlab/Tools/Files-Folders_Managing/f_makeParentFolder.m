@@ -1,4 +1,4 @@
-function [folderPath] = f_makeParentFolder(TGTParentLevel,targetFolder)
+function [folderPath] = f_makeParentFolder(TGTParentLevel,targetFolder,pathSep)
 % Retrieves the path of a specified folder name TGTParetLevel above
 % Inputs:
 %  -TGTParentLevel: folder to search with a level above the current one, i.e.
@@ -7,10 +7,10 @@ function [folderPath] = f_makeParentFolder(TGTParentLevel,targetFolder)
 
 %% Retrieve current folder jerarchy
 currentDirectory = pwd;
-directoryElements = strsplit(currentDirectory,'\');
-ResPath = strjoin(directoryElements(1:end-TGTParentLevel),'\');
+directoryElements = strsplit(currentDirectory,pathSep);
+ResPath = strjoin(directoryElements(1:end-TGTParentLevel),pathSep);
 %% Create folder if not present
-folderPath = strcat(ResPath,'\',targetFolder);
+folderPath = strcat(ResPath,pathSep,targetFolder);
 if exist(folderPath,'dir') == 0
   mkdir(ResPath,targetFolder);
 end

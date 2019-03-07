@@ -1,5 +1,5 @@
 %% Spiral Phase Mask
-function [mask,wrapMask,wrapMaskFig] = f_SpiralMask(r,phi,gl, ...
+function [mask,wrapMask,wrapMaskFig] = f_SpiralMask(r,phi, ...
 phaseValues,tc,s,ph0,normMag,binMask,binv,MaskPupil,rSize,monitorSize, ...
 scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
@@ -7,8 +7,8 @@ scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 %
 % Inputs:
 %  r,phi: polar coordinates for both the PC and SLM
-%  gl: number of grey levels (normally 256)
 %  phaseValues: discretized phi vector on [-pi,pi].
+%                       gl = length(PhaseValues): number of grey levels 
 %  tc: Topological charge
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask

@@ -1,12 +1,12 @@
 %% Laguerre Gauss phase masks
 
-function [mask,wrapMask,wrapMaskFig] = f_LGMask(r,phi,gl,phaseValues, ...
+function [mask,wrapMask,wrapMaskFig] = f_LGMask(r,phi,phaseValues, ...
 tc,s,ph0,p,WsizeRatio,normMag,binMask,binv,MaskPupil,rSize,monitorSize, ...
 scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 % Inputs: 
 %  r,phi: polar coordinates for both the PC and SLM
-%  gl: number of grey levels (normally 256)
 %  phaseValues: discretized phi vector on [-pi,pi].
+%                       gl = length(PhaseValues): number of grey levels 
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
 %  levShft: corresponds to the brightness or constant shift of the gl's
 %  tc: topological charge = m (azimuthal index). When tc = 0, the mask is
@@ -44,7 +44,7 @@ scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 %  wrapMask: truncation and angle operations on mask.
 %  wrapMaskFig: figure handler if needed outside the function
 %
-% Samuel Plazas Escudero - Juan José Cadavid - 2018 - Advanced Project 1
+% Samuel Plazas Escudero - Juan Josï¿½ Cadavid - 2018 - Advanced Project 1
 
 %% Parameters: Laguerre-Gauss
 m = tc; % Azimuthal index = topological charge

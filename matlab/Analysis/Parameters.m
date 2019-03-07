@@ -9,6 +9,7 @@ meas = 0; % Measure: yes (1) or no (0)
     measSimulated = 1; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
     beepSound = 1; % Beep sound when measurement finishes.
+    linuxwindows = 1; %  Linux (1) or Windows (0)
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
@@ -45,7 +46,7 @@ plotMask = 1; % Allows to plot the final mask, as it can be a combination
 %  -Principal screen: MATLAB scrnIdx(1); Windows(2); AnyDesk(2)
 %  -Pluto screen: MATLAB scrnIdx(3); Windows(1); Anydesk(1)
 %  -LC2002 screen: MATLAB scrnIdx(2); Windows(3); Anydesk(0)
-slm = 'Pluto'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
+slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
@@ -238,12 +239,11 @@ z_plot = 0; % plot with Zernike builder: yes(1); no(0)
 % For coordType = 1, a low value of k (for example less than 8) can affect
 % the orthogonality
 
-%% Gray levels (discretization levels of the mask)        
-gl = 256; % Number of gray levels (normally 256). Must be smaller than
-          % the dynamic range = maxGrayDepth-minGrayDepth. Default: 256             
+%% Gray levels (discretization levels of the mask)             
 discretization = 1; % Variable for the next switch
 switch discretization % Gray-level discretized azimuthal angle vector
  case 1 % 1: Evenly-spaced gl phase values.
+  gl = 256; % Number of gray levels . Default: 256         
   phaseValues = linspace(0,2*pi,gl); % Discretized phi vector on [0,2*pi].  
                                % The sampling interval consists on dividing 
                                % the range over the gray levels. Similar to 
@@ -252,7 +252,7 @@ switch discretization % Gray-level discretized azimuthal angle vector
   % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf 
   
  case 2 % 2: user-defined gl values
-  phaseValues = [0 64 128 255]; % Range: [0,255]
+  phaseValues = [0 64 128 255]; % Range of each value: [0,255]
                                 % Example: [0 64 128 255]
   % Custom gl vector: the mask will only have these levels
   phaseValues = phaseValues*2*pi/255; % Conversion from gray-levels to 
@@ -260,6 +260,8 @@ switch discretization % Gray-level discretized azimuthal angle vector
   % phase values = gray level values * 2Pi/255. Current range: [0,2pi], but
   % inside f_discretizeMask.m, the values are adjusted to be on [-Pi,Pi] 
 end
+% Number of gray levels gl = length(phaseValues): calculated inside the
+% functions
 
 
 
@@ -284,7 +286,11 @@ recordingDelay = 2; % Waits 5 seconds between each mask to be shown
                     % RIGHT NOW 1 FOR DEBUGGING
 
 %% Folder names
-pathSep = '\'; % Works for windows 7 and 10
+if linuxwindows == 1
+    pathSep = '/'; % Works for Linux
+else % linuxwindows == 0
+    pathSep = '\'; % Works for windows 7 and 10
+end
 analysFldr = 'Analysis'; % Folder name: scripts
 dataFlrd = 'Data'; % Folder name: input data  
 snapsfldr = 'TestSnapshots'; % Snapshot tests folder (inside dataFlrd)

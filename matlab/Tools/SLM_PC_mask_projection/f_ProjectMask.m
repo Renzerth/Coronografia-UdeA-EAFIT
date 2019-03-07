@@ -1,5 +1,5 @@
 %% Plot Phase Mask either on the PC or on the SLM
-function [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues, ...
+function [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,phaseValues, ...
 normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit,str, ...
 coordType,abs_ang,MaxMask,plotMask)
 % Inputs:
@@ -7,8 +7,8 @@ coordType,abs_ang,MaxMask,plotMask)
 %  mask: function to be plotted. It is wrapped on [-pi,pi] if abs_ang = 2.
 %        Complex structure that has not been truncated.
 %        mask = exp(i*UnwrappedMask)
-%  gl: number of grey levels (normally 256)
 %  phaseValues: discretized phi vector on [-pi,pi].
+%                       gl = length(PhaseValues): number of grey levels 
 %  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
@@ -39,7 +39,7 @@ coordType,abs_ang,MaxMask,plotMask)
 %  wrapMaskFig: figure handler if needed outside the function
 %
 % Notes:
-%  Image is shown with gl gray levels
+%  Image is shown with gl = length(PhaseValues) gray levels
 
 %% Wrapping and Circular pupil Application
 switch abs_ang
@@ -173,7 +173,7 @@ switch plotMask
   wrapMaskFig = figure('color','white','Name',figtit);
   % 'units','normalized''position',[0 0 1 1],
   % 'outerposition',[5/10 1/10 1/2 3/4]
-  surf(wrapMask), colormap(gray(gl)), shading interp; % 3D Surface
+  surf(wrapMask), colormap(customMap), shading interp; % 3D Surface
   axis square; title(tit);
   cbh = colorbar; cbh.Label.String = str;
   pax = gca; pax.FontSize = 16; % Font size

@@ -3,17 +3,15 @@
 % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf
 % Equation 3, page 2
 
-function [mask,wrapMask,wrapMaskFig] = f_VPLMask(r,phi,gl,phaseValues, ...
+function [mask,wrapMask,wrapMaskFig] = f_VPLMask(r,phi,phaseValues, ...
 tc,s,ph0,L,f_FR,normMag,binMask,binv,MaskPupil,rSize,monitorSize, ...
 scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 % Generates and plots a VPL mask:  helicoidal mask + fresnel lens
 %
 % Inputs: 
 %  r,phi: polar coordinates for both the PC and SLM
-%  gl: number of grey levels (normally 256)
 %  phaseValues: discretized phi vector on [-pi,pi].
-%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
-%  levShft: corresponds to the brightness or constant shift of the gl's
+%                       gl = length(PhaseValues): number of grey levels 
 %  tc: Topological charge
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask
@@ -60,10 +58,11 @@ mask = maskSPP.*maskVPL;
 % fashion: a chirp ramp for tc = 0. It is just a test without validity
 
 %% Plot the mask
+gl = length(PhaseValues); % Number of grey levels 
 tit = strcat('VPL with topological charge',{' '},num2str(tc),{' '}, ...
              'and',{' '},num2str(gl),{' '},'gray levels');  
 str = ''; % Empty, it only works for abs_ang = 0
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,normMag, ...
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,phaseValues,normMag, ...
 binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit,str,coordType, ...
 abs_ang,MaxMask,plotMask);
 

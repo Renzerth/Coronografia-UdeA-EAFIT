@@ -1,7 +1,7 @@
 %% Elliptic Gaussian Vortex (EGV)
 % Taken from: 1_2017_IMP_Elliptic_Gaussian Optical Vortices_PRA_Kotlyar
 
-function [mask,wrapMask,wrapMaskFig] = f_EGVMask(X,Y,r,gl,phaseValues, ...
+function [mask,wrapMask,wrapMaskFig] = f_EGVMask(X,Y,r,phaseValues, ...
 tc,s,ph0,bcst,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx, ...
 coordType,abs_ang,MaxMask,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
@@ -12,15 +12,14 @@ coordType,abs_ang,MaxMask,plotMask)
 %  r: polar coordinate (in cm)
 %  gl: number of grey levels (normally 256)
 %  phaseValues: discretized phi vector on [-pi,pi].
-%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
-%  levShft: corresponds to the brightness or constant shift of the gl's
+%                       gl = length(PhaseValues): number of grey levels 
 %  tc: Topological charge
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask
 %  bcst (beta): Ellipticity.cy/cx = 1/alpha. Ref: .1, .2, .4, .6, .8 and 1
 %               alpha is a dimensionless parameter that defines the 
 %               ellipticity of the intensity null: if alpha < 1, the major 
-%               axis is on the x axis, if alpha > 1 – on the y axis, if 
+%               axis is on the x axis, if alpha > 1 ï¿½ on the y axis, if 
 %               alpha < 0, the vortex phase rotates clockwise, if alpha > 0
 %               then anticlockwise.
 %  normMag: normalize magnitude. yes(1); no(0)
