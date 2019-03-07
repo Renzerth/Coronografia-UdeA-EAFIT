@@ -11,8 +11,8 @@ MaxMask,plotMask)
 % Inputs: 
 %  X,Y: A grid of the spatial vector: 2D Cartesian coordiantes
 %  r,phi: polar coordinates (r in cm)
-%  gl: number of grey levels (normally 256)
 %  phaseValues: discretized phi vector on [-pi,pi].
+%                       gl = length(PhaseValues): number of grey levels 
 %  tc: Topological charge
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask
@@ -81,10 +81,11 @@ switch frkTyp
 end
 
 %% Plot the mask
-tit = strcat('Fork mask with topological charge',{' '},num2str(tc), ...
-             {' '},'and period =',{' '},num2str(period));
+gl = length(phaseValues); % Number of grey levels 
+tit = strcat('Fork mask with tc=',num2str(tc), ...
+             ', period=',num2str(period),{' '},'and',{' '},'gl=',num2str(gl));
 str = ''; % Empty, it only works for abs_ang = 0
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,normMag, ...
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,phaseValues,normMag, ...
 binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit,str,coordType, ...
 abs_ang,MaxMask,plotMask);
 

@@ -1,6 +1,6 @@
 %% Generate a Zernike phase mask (wavefront)
 function [mask,wrapMask,wrapMaskFig] = f_ZernikeMask(X,Y,r,z_coeff,z_a, ...
-L,gl,phaseValues,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,rSize, ...
+L,phaseValues,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,rSize, ...
 monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 % Characterizes the aberrations of the system
 % Inputs:
@@ -16,15 +16,14 @@ monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 %        [NOll weight]
 %     C) Row vector with the j #s that one wants to plot (only integers)
 %        [Noll indices]
-%
 %     Examples:
 %     A) z_coeff = -1 (just that)
 %     B) z_coeff = [0.1 -0.13 0.15 0 -0.99 0.78] 
 %     C) z_coeff = [2 3 1 5 7] (normal)
 %  z_a: arbitrary constant; the bigger, the more intense the mask;ref: a=20
 %  L: laser wavelength [um]
-%  gl: gray levels of Zernike. Normally 256
 %  phaseValues: discretized phi vector on [-pi,pi].
+%                       gl = length(PhaseValues): number of grey levels 
 %  z_pupil: defines pupil relative size (w.r.t. sSize), like a percentage
 %  z_disp_wrap: unwrapped (0) or wrapped mask (1)
 %  z_plot: plot (1); no plot (0)
@@ -95,10 +94,12 @@ else % disp_wrap = 0
     abs_ang = 0; % Custom input in order to not wrap the phase
     tit = 'Unwrapped phase mask'; % The amplitude title is replaced  
     mask = unwrapmask; % Unwrapped mask
-    str = 'Unwrapped phase value';
+    str = 'Unwrapped phase value'; % Colorbar string
 end
+gl = length(phaseValues); % Number of grey levels 
+tit = strcat(tit,{' '},'with',{' '},'gl=',num2str(gl));
 MaskPupil = 0; % Always, since Zernike has its own pupil
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,normMag, ...
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,phaseValues,normMag, ...
 binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit,str,coordType, ...
 abs_ang,MaxMask,plotMask);
 

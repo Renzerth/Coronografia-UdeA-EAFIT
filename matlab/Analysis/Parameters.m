@@ -16,7 +16,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
              % Zernike.
-maskSel = 2; % Phase mask selection:
+maskSel = 4; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -227,10 +227,10 @@ Angbet = 0; % Diffraction angle of vertical direction (y) [radians]
 
 %% Parameters: Zernike polynomials with Noll's convention
 %%%% For maskSel = 5 or 6:
-z_coeff = [0 0.5 0.8 0.88]; % Zernike coeffient vector (see f_ZernikeMask.m)
+z_coeff = -1; % Zernike coeffient vector (see f_ZernikeMask.m)
 z_a = 2.5; % Arbitrary constant; the bigger, the more intense; ref: a=2.5
 z_pupil = 1; % Pupil relative size: [0,1]; like a percentage
-z_disp_wrap = 0; % (0): Original; (1): wrapped mask on [-pi,pi] 
+z_disp_wrap = 1; % (0): Original; (1): wrapped mask on [-pi,pi] 
 z_plot = 0; % plot with Zernike builder: yes(1); no(0)
 % L and gl are also used with Zernike
 % Test orthogonality:
