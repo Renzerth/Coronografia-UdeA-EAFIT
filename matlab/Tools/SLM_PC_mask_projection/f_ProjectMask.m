@@ -77,7 +77,8 @@ switch abs_ang
 switch plotMask
  case 0 
   % Won't plot at all
-  wrapMaskFig = figure('Visible','off');
+  wrapMaskFig = []; % Empty, as this option is used for creating the figure
+                    % externally
  case 1 % PC Screen: normal plot
   % OLD:   
   % slmhfig = figure('color','white','units','normalized','position',...
@@ -178,7 +179,7 @@ switch plotMask
   cbh = colorbar; cbh.Label.String = str;
   pax = gca; pax.FontSize = 16; % Font size
   % No axis values:
-  set(gca,'xtick',[]); set(gca,'ytick',[]);  set(gca,'ztick',[]) 
+  set(gca,'xtick',[]); set(gca,'ytick',[]); set(gca,'ztick',[]) 
   axis off
 end % of switch MaxMask 
 end

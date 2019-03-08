@@ -18,7 +18,7 @@ monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 %        [Noll indices]
 %     Examples:
 %     A) z_coeff = -1 (just that)
-%     B) z_coeff = [0.1 -0.13 0.15 0 -0.99 0.78] 
+%     B) z_coeff = [0.1 -0.13 0.15 0 -0.99 0.78 1]' (transposed)
 %     C) z_coeff = [2 3 1 5 7] (normal)
 %  z_a: arbitrary constant; the bigger, the more intense the mask;ref: a=20
 %  L: laser wavelength [um]
@@ -55,24 +55,27 @@ monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 %  it still doesn't modulate on 2pi completely
 
 %% Constant
-C = 2*pi*z_a/L; % Phase units when multiplied by k
+Const = 2*pi*z_a/L; % Phase units when multiplied by k
 
-%% Parameters (input z_coeff vector verification)
-o1 = size(z_coeff); % Dimensions of z_coeff
-o2 = abs(z_coeff) > ones(size(z_coeff)); % Ask if elemts are bigger than one
-o2 = sum(o2); % Sum all elements; zero if they are all smaller than one
-if z_coeff(1) == -1 && isscalar(z_coeff) == 1 % A); when z_coeff = -1
- z_vec = C*randn(1,15)'; % Transposed random vector of integers
-elseif o1(1) == 1 &&  sum(mod(z_coeff,1))== 0 % [#s] and integers % C)
+%% Parameters for the input z_coeff vector verification
+sizeC = size(z_coeff); % Dimensions of z_coeff
+oneboolC = abs(z_coeff) > ones(size(z_coeff)); % Ask if elemts are bigger than one
+oneboolC = sum(oneboolC); % Sum all elements; zero if they are all smaller than one
+scalarC = isscalar(z_coeff);
+
+%% Input z_coeff vector verification
+if z_coeff(1) == -1 && scalarC == 1 % when z_coeff = -1 (A)
+ z_vec = Const*randn(1,15)'; % Transposed random vector of integers
+elseif sizeC(1) == 1 &&  sum(mod(z_coeff,1))== 0 % [#s] and integers (C)
  z_vec = zeros(1,15)'; % Transposed vector
  z_coeff =  z_coeff + 1; % Correction in order to get correctly the
                          % polynomials (j-th)
- z_vec(z_coeff) = C; % Zernike weight vect: characterizes
-                                 % the aberrations to be plotted
-elseif o1(1) == 1 &&  o2 == 0 % Column vector and #s less than 1 [#s]' % B)
+ z_vec(z_coeff) = Const; % Zernike weight vect: characterizes
+                         % the aberrations to be plotted
+elseif sizeC(2) == 1 &&  oneboolC == 0 % Column vector and #s less than 1 [#s]' (B)
  z_vec = zeros(1,15)'; % Transposed vector
  for i = 1:size(z_coeff,2)
-      z_vec(i) = C*(z_coeff(i));
+      z_vec(i) = Const*(z_coeff(i));
  end
 else
   warning('Not valid input');

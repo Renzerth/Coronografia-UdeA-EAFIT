@@ -1,10 +1,9 @@
 %% Elliptic Gaussian Vortex (EGV)pi
 % Taken from: 2015_Vortex_CGH_Adjustable-SPP_Jain
 
-function [mask,wrapMask,wrapMaskFig] = f_ForkMask(X,Y,r,phi, ...
-phaseValues,tc,s,ph0,period,T0,frkTyp,Aalpha,Angalp,Angbet,normMag, ...
-binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang, ...
-MaxMask,plotMask)
+function [mask,wrapMask,wrapMaskFig] = f_ForkMask(X,Y,r,phi,phaseValues,...
+tc,s,ph0,period,T0,frkTyp,Aalpha,Angalp,Angbet,normMag,binMask,binv, ...
+MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
@@ -70,14 +69,14 @@ switch frkTyp
         
         %% Double pitch fork hologram phase
         maskFork = (2*pi/period)*(sin(Angalp*X) + sin(Angbet*Y));
-        % Original: (2*pi/L)
-        
-        %% Fork Mask
-        mask = exp(1i*(maskFork+maskSPP));
-       
-        % Test of the unwrapped fork
+        % Original: (2*pi/L) as it should approximate the wavelength to
+        % have considerable effects of diffraction
+        % Test of the unwrapped fork:
         % figure, imagesc(maskFork);
         
+        %% Fork Mask
+        mask = exp(1i*(maskFork+maskSPP));      
+       
 end
 
 %% Plot the mask

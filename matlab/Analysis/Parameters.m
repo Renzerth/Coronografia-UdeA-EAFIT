@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 1:
     % Note: measDebug will be 0 if measSimulated = 1
     % If meas = 1 -> all the figures will be closed before starting it
@@ -14,9 +14,9 @@ meas = 1; % Measure: yes (1) or no (0)
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
-             % (1) or phase (2) plot. Doesn't apply for Zernike and LG +
-             % Zernike.
-maskSel = 0; % Phase mask selection:
+             % (1) or phase (2) plot. It doesn't apply for Zernike and LG +
+             % Zernike: instead use z_disp_wrap for phase wrapping or not.
+maskSel = 5; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -227,7 +227,7 @@ Angbet = 0; % Diffraction angle of vertical direction (y) [radians]
 
 %% Parameters: Zernike polynomials with Noll's convention
 %%%% For maskSel = 5 or 6:
-z_coeff = -1; % Zernike coeffient vector (see f_ZernikeMask.m)
+z_coeff = [1 2 3]; % Zernike coeffient vector (see f_ZernikeMask.m)
 z_a = 2.5; % Arbitrary constant; the bigger, the more intense; ref: a=2.5
 z_pupil = 1; % Pupil relative size: [0,1]; like a percentage
 z_disp_wrap = 1; % (0): Original; (1): wrapped mask on [-pi,pi] 
@@ -313,8 +313,8 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
               
 
 %%%%%%%%%%%%%%%%%%%%%%% PART 5: ACADEMIC-PURPOSE ASPECTS %%%%%%%%%%%%%%%%%%
-% Zernike reconstruction, FT, gradient and a simulation in the free space that
-% is not very depured
+% Zernike reconstruction, FT, gradient and a simulation in the free space 
+% that is not very depured
 %% Optional plots and procedures
 FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
 %%% For FTmask = 1:
