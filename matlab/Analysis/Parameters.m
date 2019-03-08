@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 0; % Measure: yes (1) or no (0)
+meas = 1; % Measure: yes (1) or no (0)
 %%% For meas = 1:
     % Note: measDebug will be 0 if measSimulated = 1
     % If meas = 1 -> all the figures will be closed before starting it
@@ -16,7 +16,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. It doesn't apply for Zernike and LG +
              % Zernike: instead use z_disp_wrap for phase wrapping or not.
-maskSel = 5; % Phase mask selection:
+maskSel = 0; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -86,9 +86,9 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
            % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
            % Usually try maximum k = 11
            % Only works when coordType = 1
-    sSize = 2^k;  % Spatial size: number of samples; odd number so that 
+%     sSize = 2^k;  % Spatial size: number of samples; odd number so that 
                     % the vortex gets centered. ref: 2^k-1      
-    % sSize = 100; % Instead of 2^k-1
+    sSize = 512; % Instead of 2^k-1
     MaxMask = 0; % Defines if the mask should be maximized
     % 0: custom-size mask that depends on the variable sSize   
     % 1: maximizes the mask for coordType = 1
@@ -227,7 +227,7 @@ Angbet = 0; % Diffraction angle of vertical direction (y) [radians]
 
 %% Parameters: Zernike polynomials with Noll's convention
 %%%% For maskSel = 5 or 6:
-z_coeff = [1 2 3]; % Zernike coeffient vector (see f_ZernikeMask.m)
+z_coeff = [1 0.7]'; % Zernike coeffient vector (see f_ZernikeMask.m)
 z_a = 2.5; % Arbitrary constant; the bigger, the more intense; ref: a=2.5
 z_pupil = 1; % Pupil relative size: [0,1]; like a percentage
 z_disp_wrap = 1; % (0): Original; (1): wrapped mask on [-pi,pi] 
@@ -268,6 +268,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%% PART 4: MEASUREMENT ADJUSTMENT %%%%%%%%%%%%%%%%%%%%
 %% Measurement
 % Always saves with the dataformat
+% Sweeps all the GL for one tc and then switches to the other ones
 % savetype = 1; % 1: as a .mat files or 
                 % 2: as dataformat files
 dataformat = '.bmp'; % Applies only for savetype = 2
@@ -275,8 +276,9 @@ dataformat = '.bmp'; % Applies only for savetype = 2
 % glvect = [1 16 24 28 36 56 128 256]; % Dados por Juan Jose
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
                                   % with a good system phase response
-tcvect = [1,10]; % Topological charges to be measured
-glvect = [20,255]; % Gray level to be measured
+tcvect = [1, 10]; % Topological charges to be measured
+glvect = [20,100,255]; % Gray level to be measured
+% glvect = linspace(2,18,9)
 wait = 0; % 10 seconds before measuring as a safety measurement
           % RIGHT NOW 0 FOR DEBUGGING
 recordingDelay = 2; % Waits 5 seconds between each mask to be shown

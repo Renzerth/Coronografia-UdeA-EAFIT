@@ -70,8 +70,9 @@ MaxMask,plotMask,maskSel);
 % f_MaskWrapCircDiscret -> f_discretizeMask -> f_wrapToRange 
 %                       -> f_ScaleMatrixData       
 
-                           s
-                           
+              
+
+
 %%%%%%%%%%%%%%%%%%%%%%% MEASUREMENTS BY AN AUTOMATED PARAMETER VARIATION
 if meas == 1
   close all; % Closes opened figures

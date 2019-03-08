@@ -117,6 +117,9 @@ class vortexProfiler:
         elif plotType in 'intensity':
             for index, ax in enumerate(axes.flat,0):
                 ax.imshow((np.abs(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])**2),cmap='gray')
+        elif plotType in 'log':
+            for index, ax in enumerate(axes.flat,0):
+                ax.imshow((20.0*np.log10(np.abs(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])**2)))
         
         f.tight_layout()
         f.subplots_adjust(left=0.15, top=0.95)
