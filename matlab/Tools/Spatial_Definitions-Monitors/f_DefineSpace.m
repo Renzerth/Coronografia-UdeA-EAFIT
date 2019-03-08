@@ -1,6 +1,6 @@
 function [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC, ...
 monitorSize] = f_DefineSpace(sSupport,sSize,shiftCart, ...
-shiftBool,pixSize,scrnIdx,circularMask,z_pupil,coordType,MaxMask,plotMask,maskSel)
+shiftMask,pixSize,scrnIdx,circularMask,z_pupil,coordType,MaxMask,plotMask,maskSel)
 % Inputs:
 %  sSupport: full side-length of the SLMs (or unitary without an SLM)
 %  sSize: bits for grey levels; 2^k is the resolution (size of x and y)
@@ -10,7 +10,7 @@ shiftBool,pixSize,scrnIdx,circularMask,z_pupil,coordType,MaxMask,plotMask,maskSe
 %             Percentages of movement of the total size of the mask 
 %             (cartesian coordinates convention). Calibrated with: s = +1;
 %             ph0 = 0, tc = 1. Ranges per shift: [0,100] (percentage)  
-%  shiftBool: only shifts when plotMask = 2
+%  shiftMask: only shifts when plotMask = 2
 %             0: shift deactivated [for exporting masks]
 %             1: shift activated [SLM displaying]
 %             2: self-centering algorithm
@@ -61,7 +61,7 @@ switch coordType
   %% Spatial definitions (size is user defined)
   % Physical size except for Zernike and VPL, as they have to be in a 
   % unitary space
-  if maskSel == 5 || maskSel == 6 || maskSel == 2
+  if ismember(maskSel,[2,5,6])
     sSupport = 2; % Unitary space since one makes sSupport/2 = 1 here
   end
   sSupport = sSupport/2; % Half support of the SLM window in cm
@@ -125,7 +125,7 @@ rSize = min(HalfSupportX,HalfSupportY);
 % a square or inside a rectangle
           
 %% Shift of the mask (for the SLM)
-switch shiftBool 
+switch shiftMask 
  case 0
   shiftX = 0; shiftY = 0; % Shift deactivated   
       
