@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 1:
     % Note: measDebug will be 0 if measSimulated = 1
     % If meas = 1 -> all the figures will be closed before starting it
@@ -16,7 +16,7 @@ precision = 3; % Precision of displayed results: significative digits (3)
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. It doesn't apply for Zernike and LG +
              % Zernike: instead use z_disp_wrap for phase wrapping or not.
-maskSel = 0; % Phase mask selection:
+maskSel = 5; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -227,7 +227,7 @@ Angbet = 0; % Diffraction angle of vertical direction (y) [radians]
 
 %% Parameters: Zernike polynomials with Noll's convention
 %%%% For maskSel = 5 or 6:
-z_coeff = [1 0.7]'; % Zernike coeffient vector (see f_ZernikeMask.m)
+z_coeff = [-1 0.1 0.5]'; % Zernike coeffient vector (see f_ZernikeMask.m)
 z_a = 2.5; % Arbitrary constant; the bigger, the more intense; ref: a=2.5
 z_pupil = 1; % Pupil relative size: [0,1]; like a percentage
 z_disp_wrap = 1; % (0): Original; (1): wrapped mask on [-pi,pi] 

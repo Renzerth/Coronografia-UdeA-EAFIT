@@ -18,8 +18,8 @@ monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 %        [Noll indices]
 %     Examples:
 %     A) z_coeff = -1 (just that)
-%     B) z_coeff = [0.1 -0.13 0.15 0 -0.99 0.78 1]' (transposed)
-%     C) z_coeff = [2 3 1 5 7] (normal)
+%     B) z_coeff = [0.1 -1 0.15 0 -0.99 0.78 1]' (transposed)
+%     C) z_coeff = [0 2 3 5 7 6] (normal)
 %  z_a: arbitrary constant; the bigger, the more intense the mask;ref: a=20
 %  L: laser wavelength [um]
 %  phaseValues: discretized phi vector on [-pi,pi].
@@ -59,22 +59,29 @@ Const = 2*pi*z_a/L; % Phase units when multiplied by k
 
 %% Parameters for the input z_coeff vector verification
 sizeC = size(z_coeff); % Dimensions of z_coeff
-oneboolC = abs(z_coeff) > ones(size(z_coeff)); % Ask if elemts are bigger than one
-oneboolC = sum(oneboolC); % Sum all elements; zero if they are all smaller than one
+oneboolC = abs(z_coeff) > ones(size(z_coeff)); % Ask if the elements are 
+                                               % bigger than 1 in magnitude
+oneboolC = sum(oneboolC); % Sum all elements; zero if they are all smaller
+                          % or equal to one
+zeroboolC = z_coeff < zeros(size(z_coeff)); % Asks if the elements are
+                                             % bigger than 0 (positive)
+zeroboolC = sum(zeroboolC); % Sum all elements; zero if they are positive
 scalarC = isscalar(z_coeff);
 
 %% Input z_coeff vector verification
 if z_coeff(1) == -1 && scalarC == 1 % when z_coeff = -1 (A)
  z_vec = Const*randn(1,15)'; % Transposed random vector of integers
-elseif sizeC(1) == 1 &&  sum(mod(z_coeff,1))== 0 % [#s] and integers (C)
+elseif sizeC(1) == 1 &&  sum(mod(z_coeff,1))== 0 && zeroboolC == 0 % [#s]
+                                                         % and integers (C)
  z_vec = zeros(1,15)'; % Transposed vector
  z_coeff =  z_coeff + 1; % Correction in order to get correctly the
                          % polynomials (j-th)
  z_vec(z_coeff) = Const; % Zernike weight vect: characterizes
                          % the aberrations to be plotted
-elseif sizeC(2) == 1 &&  oneboolC == 0 % Column vector and #s less than 1 [#s]' (B)
+elseif sizeC(2) == 1 &&  oneboolC == 0 % Column vector [#s]' and #s less or
+                                       %  equal to 1  (B)
  z_vec = zeros(1,15)'; % Transposed vector
- for i = 1:size(z_coeff,2)
+ for i = 1:size(z_coeff,1) % enters as a transosed vector
       z_vec(i) = Const*(z_coeff(i));
  end
 else
