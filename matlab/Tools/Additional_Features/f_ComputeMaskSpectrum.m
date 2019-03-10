@@ -16,15 +16,20 @@ end
  %% Fourier transform
  FFT2D = @(s) ifftshift((fft2(fftshift(s)))); % 2D Fourier Transform
  maskFFT = FFT2D(mask); % FT of the mask (not wrapped)
- maskFFT = abs(maskFFT); % Magnitude of the FT
- if maskFTlog == 1
-   logmask = 20*log10(maskFFT); % Magnitude squared of the FT in log scale
-   mask = logmask; % Logarithm of the magnitude squared 
-   tit = 'Log of the FT of the Mask';
- else
-   mask = maskFFT; % Magnitude
-   tit = 'FT of the Mask';
- end
+ switch abs_ang
+     case 0
+     case 1
+     case 2
+     maskFFT = abs(maskFFT); % Magnitude of the FT
+     if maskFTlog == 1
+       logmask = 20*log10(maskFFT); % Magnitude squared of the FT in log scale
+       mask = logmask; % Logarithm of the magnitude squared 
+       tit = 'Log of the FT of the Mask';
+     else
+       mask = maskFFT; % Magnitude
+       tit = 'FT of the Mask';
+     end
+ end    
  figure; imagesc(mask); title(tit); % colormap(hot);
 
  %% Mid and max points of the mask
