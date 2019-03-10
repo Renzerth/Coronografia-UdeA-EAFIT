@@ -6,10 +6,9 @@ shiftMask,pixSize,scrnIdx,circularMask,z_pupil,coordType,MaxMask,plotMask,maskSe
 %  sSize: bits for grey levels; 2^k is the resolution (size of x and y)
 %     Default: 10. Size is calculated as 2^k - 1
 %     Only works when coordType = 1
-%  shiftCart: [yshift,xshift], works when shiftBool = 1
-%             Percentages of movement of the total size of the mask 
-%             (cartesian coordinates convention). Calibrated with: s = +1;
-%             ph0 = 0, tc = 1. Ranges per shift: [0,100] (percentage)  
+%  shiftCart: [yshift,xshift], works when shiftMask = 1. Percentages of
+%             movement of the total size of the mask (cartesian coordinates
+%             convention). Ranges per shift: [0,100] (percentage)  
 %  shiftMask: only shifts when plotMask = 2
 %             0: shift deactivated [for exporting masks]
 %             1: shift activated [SLM displaying]
@@ -177,7 +176,7 @@ shiftY = shiftY*HalfSupportY;
 %% Shift application
 % The signs of the shifts account for the cartesian coordinates convention
 Xslm = X - shiftX; % Shifted X for the SLM 
-Yslm = Y + shiftY; % Shifted Y for the SLM.
+Yslm = Y + shiftY; % Shifted Y for the SLM
 
 %% Polar coordinates for the SLM
 % X,Y variables redefined for being used in the EGV and Fork masks

@@ -107,11 +107,10 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [0,0]; % [yshift,xshift], works when shiftBool = 1
-                        % Percentages of movement of the total size of 
-                        % the mask (cartesian coordinates convention)
-                        % Calibrated with: s = +1; ph0 = 0, tc = 1; 
-                        % Ranges per shift: [0,100] (percentage) 
+    shiftCart = [0,0]; % shiftCart: [yshift,xshift], works when 
+                       % shiftMask = 1. Percentages of movement of the
+                       % total size of the mask (cartesian coordinates 
+                       % convention). Ranges per shift: [0,100] (percentge)  
                           
    % LC2002: [-3,0.1]
    % Pluto: []
@@ -316,9 +315,16 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 %  are
 
 
-              
 
-%%%%%%%%%%%%%%%%%%%%%%% PART 5: ACADEMIC-PURPOSE ASPECTS %%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%% PART 5: PROCESSING & METRICS %%%%%%%%%%%%%%%%%%%%%%
+metricSel = 1; % 
+metricProfile = 1; % 1: vertical profile; 2: horizontal profile
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%% PART 6: ACADEMIC-PURPOSE ASPECTS %%%%%%%%%%%%%%%%%%
 % Zernike reconstruction, FT, gradient and a simulation in the free space 
 % that is not very depured
 %% Optional plots and procedures

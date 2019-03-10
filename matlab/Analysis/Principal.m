@@ -120,6 +120,10 @@ if meas == 1
   %% Post-processing of the data and saving
   %ProcessData; % Metric of the degree of extintion applied
                 % Saves plot(s) of the applied metrics
+  switch metricSel        
+      case 1
+          [energy,radialIntensity] = f_calculateEEF(distribution,shiftCart,metricProfile);
+  end
  end
 
  %% Termination

@@ -49,10 +49,10 @@ end
  end
  
 %% Plot the mask and take a horizontal and a vertical profile
-plotData = 1; % Plots the mask
-plotH = 1; % Plot the horizontal profile
-plotV = 1; % Plot the vertical profile
-oneSideProfile = 0; % Two-sided profile
+plotData = 1; % 1: plots the mask
+plotH = 1; % 1: plot the horizontal profile
+plotV = 1; % 1: plot the vertical profile
+oneSideProfile = 0; % 0: two-sided profile
 f_makeImageProfile(x,y,mask,tol,tit,plotData,plotH,plotV,oneSideProfile);
 
 end
