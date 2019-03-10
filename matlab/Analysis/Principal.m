@@ -145,7 +145,7 @@ end % End of measurements
 %% Fourier transform of the mask
 % Executed if desired on the parameters
 % Performs the FFT of the mask and shows x and y profiles
-f_ComputeMaskSpectrum(x,y,mask,maskFTlog,FTmask);
+f_ComputeMaskSpectrum(x,y,mask,abs_ang,maskFTlog,FTmask);
 
 %% Gradient of the mask
 % Executed if desired on the parameters
