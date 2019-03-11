@@ -20,7 +20,7 @@ function [VZk,Pupil] = f_ZernikePolynomials(X,Y,p,apperture)
 %
 % Version: 1.2 for Matlab
 %
-% Author: Juan José Cadavid Muñoz. EAFIT University
+% Author: Juan Jose Cadavid Munoz. EAFIT University
 % Date: 14/03/2015
 % Commented by Samuel Plazas Escudero on 2018/04/03 and variables
 % shiftCart/shiftBool were added on 2019/02/27
@@ -106,7 +106,10 @@ VZk = bsxfun(@rdivide, VZk, sqrt(diag(Iprod).'));
 % Ones on diagonal and zero outside (Kronecker's delta): means they are
 % correctly normalized (although they aren't fully orthogonal)
 % If outside there's not a zero -> not fully orthogonal
-zProdsNorm = VZk.' * VZk * DeltaA;
-figure, imagesc(zProdsNorm), colorbar; 
-title('Orthogonality test for the Zernike polynomials');
+commentKronecker = 1;
+if commentKronecker == 0
+    zProdsNorm = VZk.' * VZk * DeltaA;
+    figure, imagesc(zProdsNorm), colorbar; 
+    title('Orthogonality test for the Zernike polynomials');
+end
 end

@@ -53,6 +53,7 @@ plotData = 1; % 1: plots the mask
 plotH = 1; % 1: plot the horizontal profile
 plotV = 1; % 1: plot the vertical profile
 oneSideProfile = 0; % 0: two-sided profile
-f_makeImageProfile(x,y,mask,tol,tit,plotData,plotH,plotV,oneSideProfile);
-
+shiftCart = [0,0]; % No shift here
+f_makeImageProfile(x,y,mask,tol,shiftCart,tit,plotData,plotH,plotV, ...
+                                oneSideProfile);
 end

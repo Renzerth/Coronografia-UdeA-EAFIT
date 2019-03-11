@@ -19,10 +19,11 @@ function [RZS,RMS] = f_ZernikeBuilder(X,Y,a,apperture,varargin)
 %
 % Dependencies: f_zernikes.m - J.J.Cadavid.
 %
-% Author: Juan José Cadavid Muñoz - Eafit University
+% Author: Juan Jose Cadavid Munoz - Eafit University
 % Date - 2014/03/08
+%
 % Commented by Samuel Plazas Escudero on 2018/04/03 and variables
-% shiftCart/shiftBool were added on 2019/02/27
+% X,Y were added on 2019/02/27
 
 %% Settings
 if nargin == 5

@@ -121,20 +121,23 @@ camera = 'DMK23U445';
 % Format: 'Y800 (1280x960)' [best]; 'RGB24 (1024x768)' [another option]
 
 switch camera
-  case 'DMK23U445' % PSF plane
+  case 'DMK23U445' % PSF plane % CMOS
     exposure = 1/1e3; % Range: [,]
     format = 'Y800 (1280x960)'; 
     cameraPlane =  'PSF';
+    PP = 3.75; % Pixel pitch in um
     
-  case 'DMK42BUC03' % Lyot plane
+  case 'DMK42BUC03' % Lyot plane % CCD
     exposure = 1/1e3; % Range: [1/1e4,1]
     format = 'Y800 (1280x960)';
     cameraPlane =  'Lyot';
+    PP = 3.75; % Pixel pitch in um
     
-  case 'DMK41BU02.H' % not used here
+  case 'DMK41BU02.H' % not used here % CCD
     exposure = 1/1e3; % Range: [,]
     format = 'Y800 (1280x960)';    
     cameraPlane = 'notusedhere';
+    PP = 4.65; % Pixel pitch in um
 end
 
 % For 'DMK42BUC03' [Delete]:
@@ -321,7 +324,11 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 metricSel = 1; % 
 metricProfile = 1; % 1: vertical profile; 2: horizontal profile
 
-
+%% Diffraction angle units
+n = 1; % Air's refractive index
+% PP: used with the "camera" variable
+M = 1; % No microscope objective is used and there's no magnification
+f = 100; % focal length of the lens before the camera [mm]
 
 
 %%%%%%%%%%%%%%%%%%%%%%% PART 6: ACADEMIC-PURPOSE ASPECTS %%%%%%%%%%%%%%%%%%

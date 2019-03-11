@@ -1,4 +1,4 @@
-function [energy,radialIntensity] = f_calculateEEF(distribution,shiftCart,metricProfile)
+function [energy,radialIntensity] = f_calculateEEF(distribution,n,PP,M,f,shiftCart,metricProfile,tit)
 %
 % Inputs:
 %  distribution: either a simulated 2D image or a camera-taken 2D image
@@ -18,16 +18,31 @@ function [energy,radialIntensity] = f_calculateEEF(distribution,shiftCart,metric
 % midX = round((maxX+1)/2) + mod(maxX,2);
 % midY = round((maxY+1)/2) + mod(maxY,2);
 
+tol = 0; % 0: no need to symmetrically truncate the profile
+plotData = 0; % Not needed for the metric
+plotH = 0; % Not needed for the metric
+plotV = 0; % Not needed for the metric
+oneSideProfile = 1; % Specifically needed for this metric
+
+%% Cartesian coordinates
+[ySize, xSize] = size(distribution);
+xpix = 1:xSize;
+ypix = 1:ySize;
+xang = f_scalePix2DiffAng(xpix,n,PP,M,f);
+yang = f_scalePix2DiffAng(ypix,n,PP,M,f);
+
 %% Profile
-[Hprof,Vprof] = f_makeImageProfile(x,y,distribution,tol,shiftCart,tit, ...
+[Hprof,Vprof,~,~,midX,midY] = f_makeImageProfile(xang,yang,distribution,tol,shiftCart,tit, ...
                                    plotData,plotH,plotV,oneSideProfile);
                      
 %% Profile choosing
 switch metricProfile
     case 1 % Vertical profile
-        radialIntensity = Vprof;
+        radialIntensity = Vprof; % One-sided
+        midCart = midY;
     case 2 % Horizontal profile
-        radialIntensity = Hprof;
+        radialIntensity = Hprof; % One-sided
+        midCart = midX;
     otherwise
         error('metricProfile must be either 1 or 2');
 end
@@ -37,13 +52,13 @@ end
 % radialIntensityOneside = radialIntensity(fix(end/2):end);
 
 %% Enclosed Energy Factor
-energy = cumsum(radialIntensityOneside ); % Discrete integration
+energy = cumsum(radialIntensity); % Discrete integration
 energy  = energy/energy(end); % Same as normalizing with the max
-normIntensity = radialIntensityOneside./max(radialIntensityOneside);
+normIntensity = radialIntensity./max(radialIntensity);
 
 figure('color','white');
-plot(1:midX,energy'); hold on
-plot(1:midX,normIntensity); hold off
+plot(1:midCart,energy'); hold on
+plot(1:midCart,normIntensity); hold off
 title('Encircled Energy Distribution of Intensity'); grid on;
 xlabel('\lambda/D'); ylabel('Relative throughput')
 legend({'Encircled Energy Factor', 'Intensity'});
