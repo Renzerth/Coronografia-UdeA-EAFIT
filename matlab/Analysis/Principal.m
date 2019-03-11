@@ -74,7 +74,7 @@ MaxMask,plotMask,maskSel);
 
 
 %%%%%%%%%%%%%%%%%%%%%%% MEASUREMENTS BY AN AUTOMATED PARAMETER VARIATION
-if meas == 1
+if meas
   close all; % Closes opened figures
  %% Folders and register creations on Data and Output    
  [DatalogDir,ltcvect,lglvect] = f_CreateFoldersRegisters(maskName, ...
@@ -133,14 +133,15 @@ if meas == 1
 end % End of measurements
 
 %% Post-processing of the data and saving
-%ProcessData; % Metric of the degree of extintion applied
-           % Saves plot(s) of the applied metrics
-switch metricSel        
- case 1
-     tit = 'Encircled Energy Factor metric';
-     [energy,radialIntensity] = f_calculateEEF(angle(mask),n,PP,M,f,shiftCart,metricProfile,tit);
+if proc
+  %ProcessData; % Metric of the degree of extintion applied
+             % Saves plot(s) of the applied metrics
+  switch metricSel        
+   case 1
+       tit = 'Encircled Energy Factor metric';
+       [energy,radialIntensity] = f_calculateEEF(angle(mask),n,PP,M,f,shiftCart,metricProfile,tit);
+  end
 end
-
 
 %%%%%%%%%%%%%%%%%%%%%%% ACADEMIC PURPOSES: Zernike, simulation
 % abs(mask): should always be 1, meaning that it is normalized

@@ -1,4 +1,4 @@
-function [ LG ] = f_LaguerreGauss(r, phi, m, s, ph0, p, W)
+function [ LG ] = f_LaguerreGauss(r,phi,m,s,ph0,p,W)
 % On axis plot of the Laguerre-Gauss or Optical Vortex Beam
 %
 % Inputs
