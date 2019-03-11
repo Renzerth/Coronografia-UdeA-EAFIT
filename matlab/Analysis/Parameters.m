@@ -103,11 +103,11 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
      % 0: The mask presents an elliptical form when in the full screen
      % 1: The mask presents a circular form when in the full screen
      % On both cases full screen means that plotMask = 2
-    shiftMask = 1; % Shift for all masks
+    shiftMask = 0; % Shift for all masks
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [0,0]; % shiftCart: [yshift,xshift], works when 
+    shiftCart = [100,100]; % shiftCart: [yshift,xshift], works when 
                        % shiftMask = 1. Percentages of movement of the
                        % total size of the mask (cartesian coordinates 
                        % convention). Ranges per shift: [0,100] (percentge)  
@@ -233,7 +233,7 @@ Angbet = 0; % Diffraction angle of vertical direction (y) [radians]
 
 %% Parameters: Zernike polynomials with Noll's convention
 %%%% For maskSel = 5 or 6:
-z_coeff = [0 0 0.1 0.5]'; % Zernike coeffient vector (see f_ZernikeMask.m)
+z_coeff = [0 1 1 1]'; % Zernike coeffient vector (see f_ZernikeMask.m)
 z_a = 2.5; % Arbitrary constant; the bigger, the more intense; ref: a=2.5
 z_pupil = 1; % Pupil relative size: [0,1]; like a percentage
 z_disp_wrap = 1; % (0): Original; (1): wrapped mask on [-pi,pi] 
@@ -335,7 +335,7 @@ f = 100; % focal length of the lens before the camera [mm]
 % Zernike reconstruction, FT, gradient and a simulation in the free space 
 % that is not very depured
 %% Optional plots and procedures
-FTmask = 1; % Finds the FFT of the mask and plots it: yes(1); no(0)
+FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
 %%% For FTmask = 1 and abs_ang = 1:
    maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum                
 gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)

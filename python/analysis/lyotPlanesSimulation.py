@@ -66,14 +66,14 @@ for grayIndex in range(0,GLSize):
         
 allocatedMatrixSLM[:] = SLMPlanes
 allocatedMatrixOPT[:] = vortexTools.propagateField(allocatedMatrixSLM,'forward') # Lyot's Plane Response
-allocatedMatrixOPT[:] = tensordot(aperture, allocatedMatrixOPT, axes=[1,1]).swapaxes(0,1);
+#allocatedMatrixOPT2[:] = tensordot(aperture, allocatedMatrixOPT, axes=[1,1]).swapaxes(0,1);
 outputField = vortexTools.propagateField(allocatedMatrixOPT,'backward') # PSF response
 #%%---
 #Plots
 #-----
 
 if plotsEnabled:
-    scaleRange = 0.125
+    scaleRange = 0.5
     pixelShift = 1-(vortexTools.spaceSamples % 2) # Center graph if even matrix size is used
     viewRangeN = int((1 - scaleRange)*vortexTools.halfSamples) + pixelShift
     viewRangeM = int((1 + scaleRange)*vortexTools.halfSamples) + pixelShift
@@ -81,4 +81,4 @@ if plotsEnabled:
     cols = ['TC: {}'.format(col) for col in TCRanges]
     rows = ['NG: {}'.format(row) for row in GLRanges]
     
-    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, outputField, 'log')
+    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixOPT, 'intensity')
