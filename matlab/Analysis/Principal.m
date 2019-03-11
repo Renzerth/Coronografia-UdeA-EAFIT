@@ -9,12 +9,15 @@
 %  Processed vortex images (or plots)
 %
 % Notes:
-%  Units: a.u (arbitrary units) and cm for lengths, radians for angles and
+%  -Units: a.u (arbitrary units) and cm for lengths, radians for angles and
 %  um for wavelengths
-%  Helicoidal phase masks are inside the Laguerre-Gauss beams category
-%  The variable mask is complex and is wrappped: mask = exp(i*mask)
-%  All wrappped phases are shown on [-pi,pi] 
-%  Always execute the program whenver you are exactly inside its folder
+%  -Helicoidal phase masks are inside the Laguerre-Gauss beams category
+%  -The variable mask is complex and is wrappped: mask = exp(i*mask)
+%  -All wrappped phases are shown on [-pi,pi] 
+%  -Always execute the program whenver you are exactly inside its folder
+%  -The Zernike polynomials are always used with a square size and they 
+%   stop being almost-orthogonal if the pupil gets truncated (non-circular 
+%   anymore)
 %
 % Bugs:
 %  -When the ticks of -pi, ..., pi are shown, sometimes the may move
@@ -22,8 +25,8 @@
 %  -The algorithm shall only be executed inside the analysis folder
 %  - Algorithm not tested yet in Linux but in Windows 7 and 10
 %  -Simulations are not fully accurate with the calculations
-%  -Zernike polynomials are not fully wrapped and the "a" constant has not
-%  been fully understood
+%  -Zernike polynomials are not fully wrapped and the "a" and "frac" 
+%   constants have not been fully understood
 %  -If a camera is not recognized or even the screen index are not acting
 %  coherently, restart MATLAB
 %  -For high resolution monitors, sometimes the figure bar may appear but
@@ -41,13 +44,13 @@ Parameters; % Adds to the algorithm all the needed parameters
 % Adds initial functions
 addpath(strcat('..',pathSep,toolsFldr,pathSep,filemanag)); 
 [analysDir,toolsDir,dataDir,outDir] = ...
-f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd);
+f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
 % Adds all the directories to use in the algorithm
 
 %% Spatial definitions
-[x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,ZernikeSize,monitorSize, ...
-coordType] = f_DefineSpace(sSupport,sSize,shiftCart,shiftBool,pixSize, ...
-scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel);
+[rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize] = ...
+f_DefineSpace(sSupport,sSize,shiftCart,shiftMask,pixSize, ...
+scrnIdx,circularMask,z_pupil,coordType,MaxMask,plotMask,maskSel);
 % Defines the cartesian/polar coordinates, its sampling interval and 
 % discretized angular part for gl
 %%% Coordinates selection:
@@ -57,24 +60,25 @@ scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel);
 % f_SelectCoordinates one just selects already-calculated variables
                 
 %% Phase mask selection and plot on the screen or on the SLM
-[mask,wrapMask,~,maskName] = f_PlotSelectedMask(X,Y, ...
-r,phi,gl,phaseValues,mingl,maxgl,levShft,tc,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0, ...
-frkTyp,Aalpha,Angalp,Angbet,z_coeff,a,frac,pupil,ZernikeSize,disp_wrap,...
-plot_z, normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,coordType,abs_ang, ...
+[mask,wrapMask,~,maskName] = f_PlotSelectedMask(X,Y,r,phi, ...
+phaseValues,tc,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha, ...
+Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag, ...
+binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang, ...
 MaxMask,plotMask,maskSel);      
 % Dependencies:
 % f_PlotSelectedMask -> f_SpiralMask (or any other) -> f_ProjectMask -> 
 % f_MaskWrapCircDiscret -> f_discretizeMask -> f_wrapToRange 
 %                       -> f_ScaleMatrixData       
 
-                           
-                           
+              
+
+
 %%%%%%%%%%%%%%%%%%%%%%% MEASUREMENTS BY AN AUTOMATED PARAMETER VARIATION
 if meas == 1
   close all; % Closes opened figures
  %% Folders and register creations on Data and Output    
-[DatalogDir,ltcvect,lglvect] = f_CreateFoldersRegisters(maskName,tcvect,...
-                               glvect,slm,dataDir,outDir,pathSep);
+ [DatalogDir,ltcvect,lglvect] = f_CreateFoldersRegisters(maskName, ...
+                                 tcvect,glvect,slm,dataDir,outDir,pathSep);
 
  %% Hardware initialization
  if measSimulated == 0 % When a real measurement will be performed
@@ -100,22 +104,18 @@ if meas == 1
   % disp(vid): displays acquisition information
   % imaqtool: toolbox for the camera
   % imaqreset: refresh image acquisition hardware by restoring the settings
- else
+ else % Real measurement
   %% Reference measurement
   % Still not sure if needed: null tc beam or a high tc beam(long radius)
 
   %% Automated measurement
-  f_AutomateMeasurement(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
-phiPC,phaseValues,mingl,maxgl,levShft,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0, ...
-frkTyp,Aalpha,Angalp,Angbet,z_coeff,a,frac,pupil,ZernikeSize,disp_wrap,...
-plot_z, normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,coordType,abs_ang, ...
-MaxMask,maskSel,ltcvect,lglvect,wait,DatalogDir,dataformat,pathSep,cameraPlane,...
-tcvect,glvect,measSimulated,recordingDelay); 
+  f_AutomateMeasurement(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,s,ph0, ...
+  p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha, Angalp,Angbet, ...
+  z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,MaskPupil,...
+  rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,maskSel,ltcvect, ...
+  lglvect,wait,DatalogDir,dataformat,pathSep,cameraPlane,tcvect,glvect, ...
+  measSimulated,recordingDelay); 
   % Performs measurements and stores them
-
-  %% Post-processing of the data and saving
-  %ProcessData; % Metric of the degree of extintion applied
-                % Saves plot(s) of the applied metrics
  end
 
  %% Termination
@@ -132,7 +132,14 @@ tcvect,glvect,measSimulated,recordingDelay);
  end
 end % End of measurements
 
-
+%% Post-processing of the data and saving
+%ProcessData; % Metric of the degree of extintion applied
+           % Saves plot(s) of the applied metrics
+switch metricSel        
+ case 1
+     tit = 'Encircled Energy Factor metric';
+     [energy,radialIntensity] = f_calculateEEF(angle(mask),n,PP,M,f,shiftCart,metricProfile,tit);
+end
 
 
 %%%%%%%%%%%%%%%%%%%%%%% ACADEMIC PURPOSES: Zernike, simulation
@@ -141,7 +148,7 @@ end % End of measurements
 %% Fourier transform of the mask
 % Executed if desired on the parameters
 % Performs the FFT of the mask and shows x and y profiles
-f_ComputeMaskSpectrum(x,y,mask,maskFTlog,FTmask);
+f_ComputeMaskSpectrum(x,y,mask,abs_ang,maskFTlog,FTmask);
 
 %% Gradient of the mask
 % Executed if desired on the parameters
@@ -153,7 +160,7 @@ f_ComputeMaskGradient(x,y,AngMask,gradMask);
 % Executed if desired on the parameters
 % Computes a wavefront reconstruction using Zernike's Polynomials and 
 % calculates the function expansion coefficients
-f_ZernikeReconstruction(14,wrapMask,1,maskZernReconstr);
+f_ZernikeReconstruction(z_ReconstrNumb,wrapMask,z_pupil,maskZernReconstr);
 
 %% Simulation
 % Executed if desired on the parameters

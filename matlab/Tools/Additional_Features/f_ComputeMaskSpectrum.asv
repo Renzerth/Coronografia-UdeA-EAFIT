@@ -16,7 +16,7 @@ function f_ComputeMaskSpectrum(x,y,mask,abs_ang,maskFTlog,FTmask)
 
 if FTmask == 1
 %% Inputs
-if maskFTlog == 1 && abs_ang ~= 0
+if maskFTlog == 1
  tol = 1; % Tolerance of each side when plotting the FFT profiles since 
           % some values may tend to -infinity when masFTlog = 1
 else
@@ -29,15 +29,21 @@ end
  maskFFT = FFT2D(mask); % FT of the mask (not wrapped)
  switch abs_ang
      case 0 % No operation, custom input (assumed to be non complex)  
-         warning(['abs_ang = 0 is not valid for FTmask = 1, plotting ' ... 
-                 'anyways its real part...']);
          mask = real(maskFFT); % Real part of the FT
-         tit = 'Real part of the FT of the Mask';
+         if maskFTlog == 1
+           logmask = 10*log10(mask); % Magnitude squared of the FT in
+                                     % log scale
+           mask = logmask; % Logarithm of the real part
+           tit = 'Log of the real part of the FT of the Mask';
+         else
+           tit = 'Real part of the FT of the Mask';
+         end
+         warning('abs_ang = 0 is not valid for FTmask = 1, plotting anyways its real part...');
      case 1 % Amplitude
          mask = abs(maskFFT); % Magnitude of the FT
          if maskFTlog == 1
            logmask = 20*log10(mask); % Magnitude squared of the FT in
-                                     % log scale
+                                        % log scale
            mask = logmask; % Logarithm of the magnitude squared 
            tit = 'Log of the FT of the Mask';
          else
@@ -49,11 +55,44 @@ end
  end
  
 %% Plot the mask and take a horizontal and a vertical profile
-plotData = 1; % 1: plots the mask
-plotH = 1; % 1: plot the horizontal profile
-plotV = 1; % 1: plot the vertical profile
-oneSideProfile = 0; % 0: two-sided profile
-shiftCart = [0,0]; % No shift here
-f_makeImageProfile(x,y,mask,tol,shiftCart,tit,plotData,plotH,plotV, ...
-                                oneSideProfile);
+plotData = 1; % Plots the mask
+plotH = 1; % Plot the horizontal profile
+plotV = 1; % Plot the vertical profile
+oneSideProfile = 0; % Two-sided profile
+[~,~] = f_makeImageProfile(x,y,mask,tol,tit,plotData,plotH,plotV,oneSideProfile);
+%  figure; imagesc(mask); title(tit); % colormap(hot);
+
+ %% Mid and max points of the mask
+%  [maxX, maxY] = size(mask);
+%  midX = round((maxX+1)/2) + mod(maxX,2);
+%  midY = round((maxY+1)/2) + mod(maxY,2);
+
+ %% Profiles of the 2D image
+%  hold on
+%  % Horizontal:
+%  line([1,maxY],[midX,midX],'LineWidth',3,'Color','blue','LineStyle','--'); 
+%  % Vertical:
+%  line([midY,midY],[1,maxX],'LineWidth',3,'Color','red','LineStyle','--'); 
+%  hold off
+
+ %% Horizontal profile
+%  figure;
+%  f = improfile(mask,[1,maxY],[midX,midX]);
+%  plot(x(1+tol:end-tol),f(1+tol:end-tol)); 
+%  title(['Horizontal profile of the' tit]); 
+
+ %% Vertical profile
+%  figure;
+%  g = improfile(mask,[midY,midY],[1,maxX]);
+%  plot(y(1+tol:end-tol),g(1+tol:end-tol)); 
+%  title(['Vertical profile of the' tit]);
+ 
+  %% OLD
+ % a = abs(FFT2D((exp(1*1i*phi))));
+ % b = 20*log10(a);
+ % figure;
+ % imagesc(b);
+ % figure;
+ % g = improfile(b,[1,1023],[512,512]);
+ % plot(g)
 end

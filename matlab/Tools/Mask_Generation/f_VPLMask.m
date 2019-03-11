@@ -3,17 +3,15 @@
 % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf
 % Equation 3, page 2
 
-function [mask,wrapMask,wrapMaskFig] = f_VPLMask(r,phi,gl,phaseValues,mingl, ...
-maxgl,levShft,tc,s,ph0,L,f_FR,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx, ...
+function [mask,wrapMask,wrapMaskFig] = f_VPLMask(r,phi,phaseValues,tc,s,...
+ph0,L,f_FR,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx, ...
 coordType,abs_ang,MaxMask,plotMask)
 % Generates and plots a VPL mask:  helicoidal mask + fresnel lens
 %
 % Inputs: 
 %  r,phi: polar coordinates for both the PC and SLM
-%  gl: number of grey levels (normally 256)
 %  phaseValues: discretized phi vector on [-pi,pi].
-%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
-%  levShft: corresponds to the brightness or constant shift of the gl's
+%                       gl = length(PhaseValues): number of grey levels 
 %  tc: Topological charge
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask
@@ -25,6 +23,7 @@ coordType,abs_ang,MaxMask,plotMask)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
 %  MaskPupil: applies a pupil truncation to the mask: (0): no; (1): yes
+%  rSize: radius for the circular (or elliptical) pupil truncation
 %  monitorSize: size of the selected screen for coordType = 2 or of the 
 %  grid (sSize) for coordType = 1 
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
@@ -52,8 +51,6 @@ maskSPP = m*(phi + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
 maskSPP = exp(1i*maskSPP); % Wrapped mask
 
 %% VPL Mask generation
-scaleFactor = 1e4; % cm to um. Constant factor
-r = r*scaleFactor; % r converted to um
 VPLfactor = -(pi*r.^2)/(L*f_FR);
 maskVPL = exp(1i*VPLfactor);
 mask = maskSPP.*maskVPL; 
@@ -61,11 +58,12 @@ mask = maskSPP.*maskVPL;
 % fashion: a chirp ramp for tc = 0. It is just a test without validity
 
 %% Plot the mask
-tit = strcat('VPL with topological charge',{' '},num2str(tc),{' '}, ...
-             'and',{' '},num2str(gl),{' '},'gray levels');  
+gl = length(phaseValues); % Number of grey levels 
+tit = strcat('VPL with tc=',num2str(tc),{' '}, ...
+            'and',{' '},'gl=',num2str(gl));
 str = ''; % Empty, it only works for abs_ang = 0
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
-maxgl,levShft,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,tit, ...
-str,coordType,abs_ang,MaxMask,plotMask);
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,phaseValues,normMag, ...
+binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit,str,coordType, ...
+abs_ang,MaxMask,plotMask);
 
 end

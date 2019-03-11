@@ -1,24 +1,33 @@
-%% Spiral Phase Mask
-function [mask,wrapMask,wrapMaskFig] = f_SpiralMask(r,phi,gl,phaseValues, ...
-mingl,maxgl,levShft,tc,s,ph0,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx, ...
+%% Elliptic Gaussian Vortex (EGV)
+% Taken from: 1_2017_IMP_Elliptic_Gaussian Optical Vortices_PRA_Kotlyar
+
+function [mask,wrapMask,wrapMaskFig] = f_EGVMask(X,Y,r,phaseValues,tc,s,...
+ph0,bcst,normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx, ...
 coordType,abs_ang,MaxMask,plotMask)
 % Plots a custom spiral phase mask with a specific topological charge
 % and an initial angle. Can be plotted on the SLM screen or normally
 %
-% Inputs:
-%  r,phi: polar coordinates for both the PC and SLM
+% Inputs: 
+%  X,Y: A meshgrid of the spatial vector: 2D Cartesian coordinates
+%  r: polar coordinate (in cm)
 %  gl: number of grey levels (normally 256)
 %  phaseValues: discretized phi vector on [-pi,pi].
-%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
-%  levShft: corresponds to the brightness or constant shift of the gl's
+%                       gl = length(PhaseValues): number of grey levels 
 %  tc: Topological charge
 %  s: Sign of mask (+1 or -1)
 %  ph0: initial phase of the spiral phase mask
+%  bcst (beta): Ellipticity.cy/cx = 1/alpha. Ref: .1, .2, .4, .6, .8 and 1
+%               alpha is a dimensionless parameter that defines the 
+%               ellipticity of the intensity null: if alpha < 1, the major 
+%               axis is on the x axis, if alpha > 1 � on the y axis, if 
+%               alpha < 0, the vortex phase rotates clockwise, if alpha > 0
+%               then anticlockwise.
 %  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
 %  MaskPupil: applies a pupil truncation to the mask: (0): no; (1): yes
+%  rSize: radius for the circular (or elliptical) pupil truncation
 %  monitorSize: size of the selected screen for coordType = 2 or of the 
 %  grid (sSize) for coordType = 1 
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
@@ -34,22 +43,27 @@ coordType,abs_ang,MaxMask,plotMask)
 %             a surface (3)
 %
 % Outputs:
-%  mask: spiral phase mask. Complex structure that has not been truncated 
-%  and is wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
+%  mask: Elliptic Gaussian Vortex (EGV). Complex structure that has not 
+%  been truncated and is wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
 %  wrapMask: truncation and angle operations on mask.
 %  wrapMaskFig: figure handler if needed outside the function
 
-%% Spiral phase mask generation
+%% Elliptic Gaussian beam phase mask: scalated azimuthal coordinate
+phi = atan2(bcst*Y,X); % Angle component with elliptic gaussian beam
+% atan2(beta^(0.5)*Y,beta^-(0.5)*X) % Works the same as above
+
+%% Spiral phase mask Generation
 m = s*tc; % tc with a sign
 mask = m*(phi + ph0); % General mask. Angle phi is wrapped on [-pi,pi]
-mask = exp(1i*mask); % Wrapped mask and complex
+mask = exp(1i*mask); % Wrapped mask
 
 %% Plot the mask
-tit = strcat('Spiral phase mask with topological charge',{' '}, ...
-      num2str(tc));
+gl = length(phaseValues); % Number of grey levels 
+tit = strcat('EGV with tc=',num2str(tc), ...
+             ', \beta= ',num2str(bcst),{' '}, 'and',{' '},'gl=',num2str(gl));
 str = ''; % Empty, it only works for abs_ang = 0
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
-maxgl,levShft,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,tit, ...
-str,coordType,abs_ang,MaxMask,plotMask);
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,phaseValues,normMag, ...
+binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit,str,coordType, ...
+abs_ang,MaxMask,plotMask);
 
 end

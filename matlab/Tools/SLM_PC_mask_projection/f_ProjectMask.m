@@ -1,26 +1,26 @@
 %% Plot Phase Mask either on the PC or on the SLM
-function [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
-maxgl,levShft,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,tit,str, ...
+function [wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,phaseValues, ...
+normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit,str, ...
 coordType,abs_ang,MaxMask,plotMask)
 % Inputs:
 %  r: polar coordinate
 %  mask: function to be plotted. It is wrapped on [-pi,pi] if abs_ang = 2.
 %        Complex structure that has not been truncated.
 %        mask = exp(i*UnwrappedMask)
-%  gl: number of grey levels (normally 256)
 %  phaseValues: discretized phi vector on [-pi,pi].
-%  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
-%  levShft: corresponds to the brightness or constant shift of the gl's
+%                       gl = length(PhaseValues): number of grey levels 
 %  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
 %  MaskPupil: applies a pupil truncation to the mask: (0): no; (1): yes
+%  rSize: radius for the circular (or elliptical) pupil truncation
 %  monitorSize: size of the selected screen for coordType = 2 or of the 
 %  grid (sSize) for coordType = 1 
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
 %  tit: plot title
-%  str: colorbar string when abs_ang = 0
+%  str: colorbar string when abs_ang = 0; otherwise str is defined for
+%       abs_ang = 1 or 2
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use
 %    -2: size defined by the resolution of the selected screen    
@@ -39,7 +39,7 @@ coordType,abs_ang,MaxMask,plotMask)
 %  wrapMaskFig: figure handler if needed outside the function
 %
 % Notes:
-%  Image is shown with gl gray levels
+%  Image is shown with gl = length(PhaseValues) gray levels
 
 %% Wrapping and Circular pupil Application
 switch abs_ang
@@ -52,6 +52,8 @@ switch abs_ang
       wrapMask = real(mask);
     end
     % str: defined in the input
+    % Here, the customMap is defined but the mask is not wrapped
+    [~,customMap] = f_discretizeMask(phaseValues,wrapMask);
   case 1 % Amplitude
     wrapMask = abs(mask); % Actually, this is an amplitude filter
     figtit = 'Amplitude Mask';
@@ -66,7 +68,7 @@ switch abs_ang
   case 2 % Phase
    % Circular pupil and wrapping   
    [wrapMask,customMap] = f_MaskWrapCircDiscret(r,mask,phaseValues, ...
-   binMask,binv,MaskPupil,mingl,maxgl,levShft,coordType,plotMask);
+   binMask,binv,MaskPupil,rSize,plotMask);
    figtit = 'Phase Mask';
    str = 'Wrapped phase value'; % Colorbar string
  end
@@ -75,7 +77,8 @@ switch abs_ang
 switch plotMask
  case 0 
   % Won't plot at all
-  wrapMaskFig = figure('Visible','off');
+  wrapMaskFig = []; % Empty, as this option is used for creating the figure
+                    % externally
  case 1 % PC Screen: normal plot
   % OLD:   
   % slmhfig = figure('color','white','units','normalized','position',...
@@ -121,9 +124,8 @@ switch plotMask
   
   %% Figure size adjusting with a monitor/mask scaling for coordType = 1 or
   %%% a maximized figure for coordType = 2
-  if coordType == 1 
-    
-    % res = the real "monitorSize", taken on the "%% Monitor selection and 
+  if coordType == 1   
+    % res: the real "monitorSize", taken on the "%% Monitor selection and 
     % resolution retrieval" Section   
     switch MaxMask 
       case 0 % Custom-size mask that depends on the variable sSize
@@ -172,12 +174,12 @@ switch plotMask
   wrapMaskFig = figure('color','white','Name',figtit);
   % 'units','normalized''position',[0 0 1 1],
   % 'outerposition',[5/10 1/10 1/2 3/4]
-  surf(wrapMask), colormap(gray(gl)), shading interp; % 3D Surface
+  surf(wrapMask), colormap(customMap), shading interp; % 3D Surface
   axis square; title(tit);
   cbh = colorbar; cbh.Label.String = str;
   pax = gca; pax.FontSize = 16; % Font size
   % No axis values:
-  set(gca,'xtick',[]); set(gca,'ytick',[]);  set(gca,'ztick',[]) 
+  set(gca,'xtick',[]); set(gca,'ytick',[]); set(gca,'ztick',[]) 
   axis off
 end % of switch MaxMask 
 end

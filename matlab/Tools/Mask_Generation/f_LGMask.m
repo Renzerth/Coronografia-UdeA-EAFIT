@@ -1,12 +1,12 @@
 %% Laguerre Gauss phase masks
 
-function [mask,wrapMask,wrapMaskFig] = f_LGMask(r,phi,gl,phaseValues,mingl, ...
-maxgl,levShft,tc,s,ph0,p,WsizeRatio,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx, ...
-coordType,abs_ang,MaxMask,plotMask)
+function [mask,wrapMask,wrapMaskFig] = f_LGMask(r,phi,phaseValues,tc,s, ...
+ph0,p,WsizeRatio,normMag,binMask,binv,MaskPupil,rSize,monitorSize, ...
+scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 % Inputs: 
 %  r,phi: polar coordinates for both the PC and SLM
-%  gl: number of grey levels (normally 256)
 %  phaseValues: discretized phi vector on [-pi,pi].
+%                       gl = length(PhaseValues): number of grey levels 
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
 %  levShft: corresponds to the brightness or constant shift of the gl's
 %  tc: topological charge = m (azimuthal index). When tc = 0, the mask is
@@ -16,13 +16,14 @@ coordType,abs_ang,MaxMask,plotMask)
 %  p: number of radial nodes. If p=0, normal helicoid masks are obtained.
 %     If they are used and tc=0(m=0); binary masks are obtained.
 %     Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
-%  WsizeRatio: width of the modes: related with the radius of the phase and with the
-%     disks on the magnitude
+%  WsizeRatio: width of the modes: related with the radius of the phase and
+%              with the disks on the magnitude
 %  normMag: normalize magnitude. yes(1); no(0)
 %  binMask: binarizes the mask w.r.t the max and min of the phase (boolean)
 %  binv: binary inversion of the mask: yes(1); no(0). Only applies when 
 %        binMask=1. It is usefull to be applied for odd p's on LG beams
 %  MaskPupil: applies a pupil truncation to the mask: (0): no; (1): yes
+%  rSize: radius for the circular (or elliptical) pupil truncation
 %  monitorSize: size of the selected screen for coordType = 2 or of the 
 %  grid (sSize) for coordType = 1 
 %  scrnIdx: screen number selector. In [1,N] with N the # of screen
@@ -43,7 +44,7 @@ coordType,abs_ang,MaxMask,plotMask)
 %  wrapMask: truncation and angle operations on mask.
 %  wrapMaskFig: figure handler if needed outside the function
 %
-% Samuel Plazas Escudero - Juan José Cadavid - 2018 - Advanced Project 1
+% Samuel Plazas Escudero - Juan Josï¿½ Cadavid - 2018 - Advanced Project 1
 
 %% Parameters: Laguerre-Gauss
 m = tc; % Azimuthal index = topological charge
@@ -56,12 +57,13 @@ mask = f_LaguerreGauss(r,phi,m,s,ph0,p,WsizeRatio); % Generates a Laguerre-Gauss
 % mask = abs(mask).*exp(1i*angle(mask))
 
 %% Plot the mask
-tit = strcat('LG phase mask with topological charge',{' '},num2str(tc), ...
-                 ' and radial node',{' '},num2str(p));   
+gl = length(phaseValues); % Number of grey levels 
+tit = strcat('LG phase mask with tc=',{' '},num2str(tc), ...
+                 ', p=',num2str(p),{' '},'and',{' '},'gl=',num2str(gl),{' '}); 
 str = ''; % Empty, it only works for abs_ang = 0
-[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,gl,phaseValues,mingl,...
-maxgl,levShft,normMag,binMask,binv,MaskPupil,monitorSize,scrnIdx,tit, ...
-str,coordType,abs_ang,MaxMask,plotMask);
+[wrapMask,wrapMaskFig] = f_ProjectMask(r,mask,phaseValues,normMag, ...
+binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,tit,str,coordType, ...
+abs_ang,MaxMask,plotMask);
 
 %% Mask in a bone colormap
 %   h = pcolor(x,y,mask); 

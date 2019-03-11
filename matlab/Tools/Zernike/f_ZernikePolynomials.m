@@ -1,4 +1,4 @@
-function [VZk,Pupil] = f_ZernikePolynomials(X,Y,p,apperture,m_size)
+function [VZk,Pupil] = f_ZernikePolynomials(X,Y,p,apperture)
 % zernikes is a function that computes the Zernike
 % expansion base polynomials. This program features
 % p-th polynomial calculation using the Noll index 
@@ -13,7 +13,6 @@ function [VZk,Pupil] = f_ZernikePolynomials(X,Y,p,apperture,m_size)
 %  may already have the shiftCart
 %  p: positive integer with the number of polynomials.
 %  apperture: float that defines pupil relative size (w.r.t. m_size)
-%  m_size: positive integer that defines the matrix size.
 %
 % Outputs: VZk -  Vector of Zernike's Polynomials
 %                 used for Coefficient decomposition.
@@ -21,13 +20,17 @@ function [VZk,Pupil] = f_ZernikePolynomials(X,Y,p,apperture,m_size)
 %
 % Version: 1.2 for Matlab
 %
-% Author: Juan José Cadavid Muñoz. EAFIT University
+% Author: Juan Jose Cadavid Munoz. EAFIT University
 % Date: 14/03/2015
 % Commented by Samuel Plazas Escudero on 2018/04/03 and variables
 % shiftCart/shiftBool were added on 2019/02/27
 
+%% Spatial size of the polynomials
+sizX = size(X); % Equals Y's.
+spatialSize = min(sizX); % Minimum since that's the size of a square that
+                         % can fit inside the screen's rectangle
 %% Intializing
-Pupil = NaN(m_size); % m_size x m_size matrix
+Pupil = NaN(spatialSize); % m_size x m_size matrix
 Nnm = NaN(1,p); % NaN: Not a Number
 
 %% Index conversion
@@ -35,21 +38,20 @@ j = (0:p)'; % Array with polynomials to be used in the representation
 n = ceil((-3+sqrt(9+8*j))/2); % Polynomial Order array
 m = 2*j-n.*(n+2); % Azimuthal Frequency array
 
-%% Integration element
-DeltaA = (2/m_size/apperture)^2; % Area element
-
 %% Meshgrids definition (added by Samuel Plazas)
-sizX = size(X); % Equals Y's.
 if sizX(1) ~= sizX(2) % Not a square matrix: then the screen coord's are
                       % being used
-  spatialSize = min(sizX); % Minimum since that's the size of a square that
-                           % can fit inside the screen's rectangle
+
   newx = linspace(min(X(:)),max(X(:)),spatialSize);
   newy = linspace(min(Y(:)),max(Y(:)),spatialSize);
   [X,Y] = meshgrid(newx,newy); % New square meshgrid that takes into
                                % account the shifts of the coordinates and
                                % a size determined by coordType
 end
+
+%% Integration element
+DeltaA = (2/spatialSize/apperture)^2; % Area element
+
 %% Space construction
 % [X,Y] = meshgrid(-1:2/(m_size-1):1); % OLD: Unitary space
 [Phi, Rho] = cart2pol(X,Y); % Polar
@@ -101,8 +103,13 @@ VZk = bsxfun(@rdivide, VZk, sqrt(diag(Iprod).'));
 % polynomials aren't entirely orthogonal
 
 %% Kronecker Delta Plotting 
-% Ones on diagonal and zero outside: means they are correctly normalized 
-% (although they aren't fully orthogonal)
-% zProdsNorm = VZk.' * VZk * Delta;
-% figure, imagesc(zProdsNorm), colorbar;
+% Ones on diagonal and zero outside (Kronecker's delta): means they are
+% correctly normalized (although they aren't fully orthogonal)
+% If outside there's not a zero -> not fully orthogonal
+commentKronecker = 1;
+if commentKronecker == 0
+    zProdsNorm = VZk.' * VZk * DeltaA;
+    figure, imagesc(zProdsNorm), colorbar; 
+    title('Orthogonality test for the Zernike polynomials');
+end
 end

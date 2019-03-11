@@ -1,16 +1,15 @@
-function [x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,ZernikeSize, ...
-monitorSize,coordType] = f_DefineSpace(sSupport,sSize,shiftCart, ...
-shiftBool,pixSize,scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
+function [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC, ...
+monitorSize] = f_DefineSpace(sSupport,sSize,shiftCart, ...
+shiftMask,pixSize,scrnIdx,circularMask,z_pupil,coordType,MaxMask,plotMask,maskSel)
 % Inputs:
 %  sSupport: full side-length of the SLMs (or unitary without an SLM)
 %  sSize: bits for grey levels; 2^k is the resolution (size of x and y)
 %     Default: 10. Size is calculated as 2^k - 1
 %     Only works when coordType = 1
-%  shiftCart: [yshift,xshift], works when shiftBool = 1
-%             Percentages of movement of the total size of the mask 
-%             (cartesian coordinates convention). Calibrated with: s = +1;
-%             ph0 = 0, tc = 1. Ranges per shift: [0,100] (percentage)  
-%  shiftBool: only shifts when plotMask = 2
+%  shiftCart: [yshift,xshift], works when shiftMask = 1. Percentages of
+%             movement of the total size of the mask (cartesian coordinates
+%             convention). Ranges per shift: [0,100] (percentage)  
+%  shiftMask: only shifts when plotMask = 2
 %             0: shift deactivated [for exporting masks]
 %             1: shift activated [SLM displaying]
 %             2: self-centering algorithm
@@ -22,6 +21,7 @@ shiftBool,pixSize,scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
 %           On both cases full screen means that plotMask = 2
 %           It is always applied for Zernike masks (maskSel=5,6) either for 
 %           the PC or for the SLM
+%  z_pupil: defines pupil relative size (w.r.t. sSize), like a percentage
 %  coordType: type of calculation of the spatial coordinates. def: 2 
 %    -1: size defined by the user, space support defined by the SLM to use
 %    -2: size defined by the resolution of the selected screen
@@ -32,13 +32,14 @@ shiftBool,pixSize,scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
 %  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
 %             a surface (3)
 %  maskSel: selects a specific mask
-%  coordType: input and output since it can change for maskSel = 5 and 6
 %
 % Outputs:
+% rSize: radius for the circular (or elliptical) pupil truncation
 % x,y: cartesian coordinates
 % Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC: meshgrids of 2D cartesian and 
 %                                          polar coordinates of both the 
 %                                          SLM and the PC
+% slm: shifts possibly applied; pc: shifts are never applied
 % ZernikeSize: screen size for the Zernike polynomials generation
 % monitorSize: resolution of the monitor selected by the scrnIdx
 
@@ -50,22 +51,18 @@ shiftBool,pixSize,scrnIdx,circularMask,coordType,MaxMask,plotMask,maskSel)
   [Xcoord2,Ycoord2,AspectRatio,monitorSize] = ...
   f_MakeScreenCoords(scrnIdx,enablechange); % Calculates the monitor size
 
-%% Zernike mask changes coordType from 2 to 1
-% In order to apply circularMask for Zernike, coordType 1 is used with the
-% smallest size of the monitor
-if coordType == 2 && circularMask == 1 && (maskSel == 5 || maskSel == 6)
-       sSize = min(monitorSize); % Minimum since that's the size of a 
-                                 % square that can fit inside the screen's 
-                                 % rectangle
-       coordType = 1; % sSize will be used in this coordinate type
-end
-
 %% Coordinate type selection  
 switch coordType
  case 1 % Size defined by the user, space support defined by the SLM to use
   % This applies when one won't project a full screen mask and a desired 
   % image resolution is wanted 
+  
   %% Spatial definitions (size is user defined)
+  % Physical size except for Zernike and VPL, as they have to be in a 
+  % unitary space
+  if ismember(maskSel,[2,5,6])
+    sSupport = 2; % Unitary space since one makes sSupport/2 = 1 here
+  end
   sSupport = sSupport/2; % Half support of the SLM window in cm
   spaceVector = -sSupport:2*sSupport/(sSize-1):sSupport; 
   % Symmetric space
@@ -73,7 +70,6 @@ switch coordType
                                              % Cartesian coordinates
   x = spaceVector; % Cartesian x-vector
   y = x; % Cartesian y-vector: square grid
-  % Xslm = X;
   monitorSize = size(Xcoord1); % Square coordinates: [sSize,sSize]
   X = Xcoord1; Y = Ycoord1;
   
@@ -90,6 +86,7 @@ switch coordType
   % x,y: vectors of SLM's physical size  
   x = linspace(-halfSizeX,halfSizeX,monitorSize(1));                                     
   y = linspace(-halfSizeY,halfSizeY,monitorSize(2)); 
+  % X,Y are not created with x,y. X,Y are on [-1,1]. x,y: physical size
   X = Xcoord2; Y = Ycoord2; % Screen coordinates
   
 end
@@ -101,21 +98,33 @@ end
   % the space)
   % Xrescaled: the spatial scaling is compensated and the circular mask is
   % drawn normally on the whole screen
-%   a = 0; % Dummy variable: flag used later
-  if circularMask == 1 && plotMask == 2 && ...
-     (MaxMask == 1 || coordType == 2) && (maskSel ~= 5 && maskSel ~= 6)
+  flagAR = 0; % Flag for the AspectRatio application (not applied)
+  if circularMask == 1 && plotMask == 2 && (MaxMask == 1 || coordType == 2) 
      Xrescaled = AspectRatio*X; % Used for the mask generation: X scaling
      X = Xrescaled; % Circular truncation in full screen
-%      a = 1; % Dummy variable: flag used later
+     flagAR = 1; % Flag for the AspectRatio application
   end % Otherwise X=X and one has the elliptical truncation in full screen
 
 %% Polar coordinates for the PC
 Xpc = X; Ypc = Y; % Needed for the PC coordinates later on
 [phiPC,rPC] = cart2pol(Xpc,Ypc); % Without shifts and no scaling: mask is 
                                  % always circular and centered
-                          
+                                 
+%% Half support for the shift scalling and the mask truncation radius
+HalfSupportX = f_MatrixHalfSupport(X);
+HalfSupportY = f_MatrixHalfSupport(Y);
+% Both are 1 for coordType = 2
+
+%% Mask truncation radius
+% This is the radius for the circular (or elliptical) pupil truncation
+% The selected minimum takes into account both possible screen 
+% configurations: landscape and portrait
+rSize = min(HalfSupportX,HalfSupportY);  
+% This is the maximum radius that allows to circumscribe a circle inside 
+% a square or inside a rectangle
+          
 %% Shift of the mask (for the SLM)
-switch shiftBool 
+switch shiftMask 
  case 0
   shiftX = 0; shiftY = 0; % Shift deactivated   
       
@@ -132,44 +141,48 @@ switch shiftBool
  
  case 2 % Self-centering algorithm
   % Pending
+  
 end
 
-%% Shift scalling so that it is a percentage
-% Takes into account the half support of X and Y
-HalfSupportX = f_MatrixHalfSupport(X);
-HalfSupportY = f_MatrixHalfSupport(Y);
+%% Check the shift for the Zernike polynomials
+% Right now, shiftX and shiftY are percentages but z_pupil scaled by the
+% half supports if it is applied above (so that flagAR = 1)
+if flagAR == 1
+  z_pupilX = z_pupil/HalfSupportX; % Half support scaling in X
+  z_pupilY = z_pupil/HalfSupportY; % Half support scaling in Y
+else
+   z_pupilX = z_pupil; % z_pupil is not scaled in X
+   z_pupilY = z_pupil; % z_pupil is not scaled in Y
+end 
+
+cond1 = (abs(shiftX) + z_pupilX) > 1; % X shift percentage constraint
+cond2 = (abs(shiftY) + z_pupilY) > 1; % Y shift percentage constraint
+if (cond1 || cond2) && (maskSel == 5 || maskSel == 6) 
+  % Error for the SLM coordinates and Zernike masks
+  % Zernike masks must always be circular and never truncated
+  disp(['For the selected z_pupil, shiftX should be at maximum ' ...
+      num2str((1-z_pupilX)*100) ' and shiftY ' num2str((1-z_pupilY)*100)]);
+  error(['Shifts out of bounds for the Zernike polynomials: the whole ' ...
+        'pupil must lie inside the screen in order for them to be ' ...
+        'almost orthogonal. Please set "shiftCart" or "z_pupil" smaller']); 
+end
+  
+%% Shift scaling so that it is a percentage
+% Takes into account the half support of X and Y and a percentage of them
+% is taken
 shiftX = shiftX*HalfSupportX;
 shiftY = shiftY*HalfSupportY;
 
 %% Shift application
 % The signs of the shifts account for the cartesian coordinates convention
 Xslm = X - shiftX; % Shifted X for the SLM 
-Yslm = Y + shiftY; % Shifted Y for the SLM.
+Yslm = Y + shiftY; % Shifted Y for the SLM
 
 %% Polar coordinates for the SLM
 % X,Y variables redefined for being used in the EGV and Fork masks
-
 [phiSLM,rSLM] = cart2pol(Xslm,Yslm); % Polar coordinates with an added
                                      % shift. The signs compensate the 
                                      % normal cartesian convention for 
                                      % displacing the phase mask
-                             
-%% Zernike polynomials square size
-ZernikeSize = min(monitorSize); % Minumum size of the screen for the
-                                % square-size Zernike polynomials
-                                
-  %% Test if the center of the mask is inside the truncation
-  % Optional feature for plotMask = 2:
-  if plotMask == 2
-    tol = 0.003; % Sometimes it it not fully 0
-    [centY, centX] = find(rSLM>=0 & rSLM<=tol); % [row,col]. Finds the center of 
-                   % the polar radius so that the truncation is made on it
-                   % &: bitwise operator
-    if isempty(centY) || isempty(centX) % Error
-      error(['The center of the mask is out of the boundaries of the ' ...
-             'image, please select a smaller value for "shiftCart" ' ...
-             '(values in [0,100])']);
-    end
-  end
-  
+                            
 end

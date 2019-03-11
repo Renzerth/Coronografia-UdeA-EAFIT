@@ -12,6 +12,7 @@ version into Object-Oriented Programming structure.
 import sys, os; 
 sys.path.insert(0, os.path.abspath('..'))
 from tools.vortexTools import vortexProfiler
+from scipy import tensordot
 
 import numpy as np
         
@@ -35,7 +36,7 @@ apertureRadius = 4.0 # Telescope - Lyot plane (mm)
 #Vortex Analyzer Tools
 #---------------------
 
-vortexTools = vortexProfiler(dx=spatialSampling,radius=apertureRadius)
+vortexTools = vortexProfiler(dx=spatialSampling,p=9,radius=apertureRadius)
 #%%---------------
 #Evaluation Ranges
 #-----------------
@@ -54,6 +55,7 @@ allocatedMatrixSLM,allocatedMatrixOPT = vortexTools.prepareFFTW(volumeSize)
 
 aperture = np.fft.fftshift(vortexTools.placeAperture())
 SLMInput = vortexTools.analyzeSpectrum(aperture)
+lyotAperture = aperture[:,:,np.newaxis]
 
 for grayIndex in range(0,GLSize):
     for TCIndex in range(0,TCSize):
@@ -63,14 +65,15 @@ for grayIndex in range(0,GLSize):
 #----------------
         
 allocatedMatrixSLM[:] = SLMPlanes
-allocatedMatrixOPT[:] = vortexTools.propagateField(allocatedMatrixSLM,'forward')
-outputField = vortexTools.propagateField(allocatedMatrixSLM,'backward')
+allocatedMatrixOPT[:] = vortexTools.propagateField(allocatedMatrixSLM,'forward') # Lyot's Plane Response
+allocatedMatrixOPT[:] = tensordot(aperture, allocatedMatrixOPT, axes=[1,1]).swapaxes(0,1);
+outputField = vortexTools.propagateField(allocatedMatrixOPT,'backward') # PSF response
 #%%---
 #Plots
 #-----
 
 if plotsEnabled:
-    scaleRange = 0.25
+    scaleRange = 0.125
     pixelShift = 1-(vortexTools.spaceSamples % 2) # Center graph if even matrix size is used
     viewRangeN = int((1 - scaleRange)*vortexTools.halfSamples) + pixelShift
     viewRangeM = int((1 + scaleRange)*vortexTools.halfSamples) + pixelShift
@@ -78,4 +81,4 @@ if plotsEnabled:
     cols = ['TC: {}'.format(col) for col in TCRanges]
     rows = ['NG: {}'.format(row) for row in GLRanges]
     
-    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixOPT, 'intensity')
+    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, outputField, 'log')
