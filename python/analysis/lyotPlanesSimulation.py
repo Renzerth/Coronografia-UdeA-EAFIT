@@ -48,7 +48,8 @@ GLSize = len(GLRanges)
 volumeSize = (TCSize)*(GLSize)
 
 SLMPlanes = np.zeros((vortexTools.spaceSamples,vortexTools.spaceSamples,volumeSize),dtype = 'complex128')
-allocatedMatrixSLM,allocatedMatrixOPT = vortexTools.prepareFFTW(volumeSize)
+SLMPMasks = np.zeros((vortexTools.spaceSamples,vortexTools.spaceSamples,volumeSize),dtype = 'complex128')
+allocatedMatrixSLM,allocatedMatrixLyot = vortexTools.prepareFFTW(volumeSize)
 #%%----------------------
 #Compute Field Properties
 #------------------------
@@ -59,21 +60,22 @@ lyotAperture = aperture[:,:,np.newaxis]
 
 for grayIndex in range(0,GLSize):
     for TCIndex in range(0,TCSize):
-        SLMPlanes[:,:,TCIndex + grayIndex*(TCSize)] = SLMInput*vortexTools.SPP(TCRanges[TCIndex],GLRanges[grayIndex])
+        SLMPMasks[:,:,TCIndex + grayIndex*(TCSize)] = vortexTools.SPP(TCRanges[TCIndex],GLRanges[grayIndex])
+        SLMPlanes[:,:,TCIndex + grayIndex*(TCSize)] = SLMInput*SLMPMasks[:,:,TCIndex + grayIndex*(TCSize)]
 #%%--------------
 #Propagate Fields
 #----------------
         
 allocatedMatrixSLM[:] = SLMPlanes
-allocatedMatrixOPT[:] = vortexTools.propagateField(allocatedMatrixSLM,'forward') # Lyot's Plane Response
-#allocatedMatrixOPT2[:] = tensordot(aperture, allocatedMatrixOPT, axes=[1,1]).swapaxes(0,1);
-outputField = vortexTools.propagateField(allocatedMatrixOPT,'backward') # PSF response
+allocatedMatrixLyot[:] = vortexTools.propagateField(allocatedMatrixSLM,'forward') # Lyot's Plane Response
+allocatedMatrixLyotTrunc = allocatedMatrixLyot*aperture[:,:,np.newaxis]
+PSFoutputFields = vortexTools.propagateField(allocatedMatrixLyotTrunc,'backward') # PSF response
 #%%---
 #Plots
 #-----
 
 if plotsEnabled:
-    scaleRange = 0.5
+    scaleRange = 0.35 # 1 for no zoom -> 0 for one pixel zoom
     pixelShift = 1-(vortexTools.spaceSamples % 2) # Center graph if even matrix size is used
     viewRangeN = int((1 - scaleRange)*vortexTools.halfSamples) + pixelShift
     viewRangeM = int((1 + scaleRange)*vortexTools.halfSamples) + pixelShift
@@ -81,4 +83,6 @@ if plotsEnabled:
     cols = ['TC: {}'.format(col) for col in TCRanges]
     rows = ['NG: {}'.format(row) for row in GLRanges]
     
-    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixOPT, 'intensity')
+    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, SLMPMasks, 'angle')
+    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixLyot, 'intensity')
+    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, PSFoutputFields, 'log')
