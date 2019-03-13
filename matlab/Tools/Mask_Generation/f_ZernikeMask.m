@@ -1,5 +1,5 @@
 %% Generate a Zernike phase mask (wavefront)
-function [mask,wrapMask,wrapMaskFig] = f_ZernikeMask(X,Y,r,z_coeff,z_a, ...
+function [mask,wrapMask,wrapMaskFig,Pupil] = f_ZernikeMask(X,Y,r,z_coeff,z_a, ...
 L,phaseValues,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,rSize, ...
 monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 % Characterizes the aberrations of the system
@@ -50,6 +50,9 @@ monitorSize,scrnIdx,coordType,MaxMask,plotMask)
 %  wrapped on [-pi,pi]. mask = exp(i*UnwrappedMask).
 %  wrapMask: truncation and angle operations on mask.
 %  wrapMaskFig: figure handler if needed outside the function
+%  Pupil: zeros inside the circle and outside with Nan's. The pupil has the
+%  size of "z_pupil" that equals the inner variable "apperture" of this
+%  function
 %
 % Missing:
 %  it still doesn't modulate on 2pi completely
@@ -90,7 +93,7 @@ else
 end
 
 %% Zernike Polynomials
-unwrapmask = f_ZernikeBuilder(X,Y,z_vec,z_pupil,z_plot); 
+[unwrapmask,~,Pupil] = f_ZernikeBuilder(X,Y,z_vec,z_pupil,z_plot); 
 % (vector, pupil size, Matrix size (zernike phase size), graph:1 or not:0)
 mask = exp(1i*unwrapmask); % Wrapped mask
 

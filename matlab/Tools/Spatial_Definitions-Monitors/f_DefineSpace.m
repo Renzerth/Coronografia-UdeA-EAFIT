@@ -58,7 +58,7 @@ switch coordType
   % image resolution is wanted 
   
   %% Spatial definitions (size is user defined)
-  % Physical size except for Zernike and VPL, as they have to be in a 
+  % Physical size except for VPL and Zernike, as they have to be in a 
   % unitary space
   if ismember(maskSel,[2,5,6])
     sSupport = 2; % Unitary space since one makes sSupport/2 = 1 here

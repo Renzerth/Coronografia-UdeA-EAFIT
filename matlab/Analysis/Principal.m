@@ -134,13 +134,8 @@ end % End of measurements
 
 %% Post-processing of the data and saving
 if proc
-  %ProcessData; % Metric of the degree of extintion applied
+  ProcessData; % Metric of the degree of extintion applied
              % Saves plot(s) of the applied metrics
-  switch metricSel        
-   case 1
-       tit = 'Encircled Energy Factor metric';
-       [energy,radialIntensity] = f_calculateEEF(angle(mask),n,PP,M,f,shiftCart,metricProfile,tit);
-  end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%% ACADEMIC PURPOSES: Zernike, simulation
