@@ -135,7 +135,7 @@ end % End of measurements
 %% Post-processing of the data and saving
 if proc
   ProcessData; % Metric of the degree of extintion applied
-             % Saves plot(s) of the applied metrics
+               % Saves plot(s) of the applied metrics
 end
 
 %%%%%%%%%%%%%%%%%%%%%%% ACADEMIC PURPOSES: Zernike, simulation
