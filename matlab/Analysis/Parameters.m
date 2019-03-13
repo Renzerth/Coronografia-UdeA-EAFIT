@@ -21,7 +21,7 @@ abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % phase, are noticed in the amplitude if the field is 
              % propagated. Consider using simBool = 1
              % abs_ang = 0 is not valid for FTmask = 1
-maskSel = 6; % Phase mask selection:
+maskSel = 1; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -175,7 +175,7 @@ binv = 0; % Binary inversion of the mask: yes(1); no(0). Only applies when
 normMag = 0; % Normalize magnitude. yes(1); no(0). 
           
 %% Parameters: Laguerre-Gauss
-p = 0; % Number of radial nodes. If p=0, normal helicoid masks are obtained
+p = 1; % Number of radial nodes. If p=0, normal helicoid masks are obtained
        % If they are used and tc=0(m=0); binary masks are obtained
        % Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
 WsizeRatio = 100; % Width of the modes; for LG; ref: [0,100] (percentage  
@@ -301,6 +301,10 @@ if ispc %  Linux (0) or Windows (1)
 else
     pathSep = '/'; % Works for Linux
 end
+infoDelim = '_'; % For the data and output folder information
+dirDelim= '-'; % "infoDelimiter" is established with the '_' and then
+                 % the delimiter for the folder counter should be different
+                 % "infoDelim" must always be different than "dirDelim"
 analysFldr = 'Analysis'; % Folder name: scripts
 dataFlrd = 'Data'; % Folder name: input data  
 snapsfldr = 'TestSnapshots'; % Snapshot tests folder (inside dataFlrd)
