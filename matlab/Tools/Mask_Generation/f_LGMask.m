@@ -44,7 +44,7 @@ scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 %  wrapMask: truncation and angle operations on mask.
 %  wrapMaskFig: figure handler if needed outside the function
 %
-% Samuel Plazas Escudero - Juan Jos� Cadavid - 2018 - Advanced Project 1
+% Samuel Plazas Escudero - Juan Jose Cadavid - 2018 - Advanced Project 1
 
 %% Parameters: Laguerre-Gauss
 m = tc; % Azimuthal index = topological charge
