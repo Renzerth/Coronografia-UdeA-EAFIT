@@ -1,4 +1,4 @@
-% [A] = f_DataProcessing(imgfullpath,savetype,pathSep,dataformat,cameraPlane,n,PP,M,f)
+% [A] = f_DataProcessing(imgfullpath,savetype,pathSep,dataformat,cameraPlane)
 %% Post-processing of the data (application of the metric of the degree of
 %%% extintion)
 
@@ -8,37 +8,31 @@ pause(wait) % Seconds before measuring as a safety measurement
 t1_dt = datetime; % store time
 disp('Processing started:'); disp(t1_dt)
 processedImgname = strcat(ProcessedDir,pathSep,'processed_', ...
-  cameraPlane,'_');
+                          cameraPlane,'_');
 
 % for idxgral = 1:totalImgs
-%% Loading
-% load(directory+filename,variables)
+ %% Loading   
+ % load(directory+filename,variables)
 
-A = load(imgfullpath,'expImgs'); % imgfullpath comes from AutomatMeasure
+ A = load(imgfullpath,'expImgs'); % imgfullpath comes from AutomatMeasure
+ 
+ %% Processsing
+ % Processing of the image. 
+ switch metricSel        
+   case 1
+       tit = 'Encircled Energy Factor metric';
+       [energy,radialIntensity] = f_calculateEEF(angle(mask),n,PP,M,f,shiftCart,metricProfile,tit);
+  end 
 
-%% Cartesian coordinates with the lambda/D scaling
-[ySize, xSize] = size(distribution);
-xpix = 1:xSize;
-ypix = 1:ySize;
-xang = f_scalePix2DiffAng(xpix,n,PP,M,f);
-yang = f_scalePix2DiffAng(ypix,n,PP,M,f);
-
-%% Processsing of the image
-switch metricSel
-  case 1
-    tit = 'Encircled Energy Factor metric';
-    [energy,radialIntensity] = f_calculateEEF(angle(mask),n,PP,M,f,shiftCart,metricProfile,tit);
-end
-
-%% Saving
-processedImgfullpath = strcat(processedImgname,MeasInfo{idxgral});
-%  if savetype == 1 % .mat format
+ %% Saving
+ processedImgfullpath = strcat(processedImgname,MeasInfo{idxgral});
+%  if savetype == 1 % .mat format   
 %   % save(directory+filename,variables)
 %   save(processedImgfullpath,'A'); % .mat
 %  else % savetype = 2. dataformat is used
 %   % imwrite(variables,directory+filename+extension)
-% imwrite(expImgs{idxgral}, strcat(processedImgfullpath,dataformat));
-%  end
+% imwrite(expImgs{idxgral}, strcat(processedImgfullpath,dataformat)); 
+%  end   
 %end
 
 %% End of the processing

@@ -48,13 +48,17 @@ scrnIdx,coordType,abs_ang,MaxMask,plotMask)
 
 %% Parameters: Laguerre-Gauss
 m = tc; % Azimuthal index = topological charge
-sSize = min(size(r)); % Addded but not fully sure
-WsizeRatio = sSize*WsizeRatio; % Normalization with number of samples
+wSize = max(r(:))/sqrt(2); % Equals this since twice rcircums^2 equals
+                           % rmax^2 (Pythagorean theorem) with rcircums the
+                           % max radius that allows a circle to be inside a
+                           % square
+wSize = wSize/100; % Conversion from percentage to a ratio in [0,1]                           
+WsizeRatio = wSize*WsizeRatio; % Normalization with number of samples
 
 %% Laguerre-Gauss mask
 mask = f_LaguerreGauss(r,phi,m,s,ph0,p,WsizeRatio); % Generates a Laguerre-Gauss 
-% mode: it has both magnitude and phase, meaning that:
-% mask = abs(mask).*exp(1i*angle(mask))
+% mode: it has both magnitude and phase, meaning that this is equivalente 
+% to: mask = abs(mask).*exp(1i*angle(mask))
 
 %% Plot the mask
 gl = length(phaseValues); % Number of grey levels 

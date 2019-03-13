@@ -66,7 +66,7 @@ MaxMask,plotMask)
 showEachMask = 0; % 0: so that not all of the individual masks are shown
                   % during the measurements. Same as plotMask
 MaskPupil = 0; % Always 0, since Zernike has its own pupil
-[maskZ,~,~]= f_ZernikeMask(X,Y,r,z_coeff,z_a,L,phaseValues, ...
+[maskZ,~,~,Pupil]= f_ZernikeMask(X,Y,r,z_coeff,z_a,L,phaseValues, ...
 z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,rSize,monitorSize, ...
 scrnIdx,coordType,MaxMask,showEachMask);
 [maskLG,~,~] = f_LGMask(r,phi,phaseValues,tc,s,ph0,p,WsizeRatio, ...
@@ -86,6 +86,8 @@ end
 %% Point-to-point masks product    
 mask = maskZ.*maskLG; % Combined mask. It is recommended to use binary
                       % masks on LG
+Pupil = Pupil + 1; % ones inside the pupil
+mask = mask.*Pupil; % Mask truncation                      
   
 %% Plot the combined LG + Z mask 
 gl = length(phaseValues); % Number of grey levels 

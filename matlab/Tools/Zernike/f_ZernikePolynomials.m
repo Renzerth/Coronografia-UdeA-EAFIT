@@ -76,10 +76,11 @@ VZk = NaN(size(Pupil(~isnan(Pupil)),1),p);
 %% Zernike Polynomials calculation
 % with line 28 (Index conversion), n(i)-abs(m(i)) is automatically not zero
 % for even results
+sizePupilNan = size(Pupil(~isnan(Pupil)));
 for i = 1:p % p polynomials are generated
     Nnm(i)= sqrt(2*(n(i)+1)/(1+(m(i)==0))); % Normalization constant
                               % m(i)==0: one for i = 0 and zero for i =~ 0
-    Radial = zeros(size(Pupil(~isnan(Pupil))));
+    Radial = zeros(sizePupilNan);
     for s = 0:0.5*(n(i)-abs(m(i)))    % Radial part calculation
         Radial = Radial + ((-1)^s.*factorial(n(i)-s).*(Rho).^(n(i)-2.*s)/...
         (factorial(s).*factorial(0.5*(n(i)+abs(m(i)))-s).*...

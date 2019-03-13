@@ -1,4 +1,4 @@
-function [RZS,RMS] = f_ZernikeBuilder(X,Y,a,apperture,varargin)
+function [RZS,RMS,Pupil] = f_ZernikeBuilder(X,Y,a,apperture,varargin)
 % Zernike_Reconstruction is a function that computes 
 % a wavefront reconstruction using Zernike's Polynomials
 % and by calculating the function expansion coefficients.
@@ -12,8 +12,11 @@ function [RZS,RMS] = f_ZernikeBuilder(X,Y,a,apperture,varargin)
 %  varargin: (0) no plots; (1) plots
 % 
 % Outputs:
-%         RZS - Reconstructed Zernike Surface,
-%         RMS - Root Mean Square
+%  RZS: Reconstructed Zernike Surface,
+%  RMS: Root Mean Square
+%  Pupil: zeros inside the circle and outside with Nan's. The pupil has the
+%  size of "z_pupil" that equals the inner variable "apperture" of this
+%  function
 %
 % Version: 2.0.
 %
@@ -45,10 +48,11 @@ p = length(a); % MxM matrix will be created
 %% Zernike polynomial calculation
 [VZk,Pupil] = f_ZernikePolynomials(X,Y,p,apperture); 
 % Creates Z. polynomials
+% Pupil: zeros inside the circle and outside with Nan's
 
 %% Wavefront Reconstruction
 RZSV = sum(bsxfun(@times, a.', VZk), 2); 
-RZS(~isnan(Pupil)) = RZSV;
+RZS(~isnan(Pupil)) = RZSV; % The things that aren't nan, receieve data
 
 %% RMS Calcuation
 RMS = sqrt(sum(a .^ 2));

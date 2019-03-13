@@ -111,7 +111,7 @@ class vortexProfiler:
                         size='large', ha='right', va='center')
         
         if plotType in 'angle':
-            for ax, index in enumerate(axes.flat,0):
+            for index, ax in enumerate(axes.flat,0):
                 ax.imshow((np.angle(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])),cmap='gray')
                 
         elif plotType in 'intensity':
