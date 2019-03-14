@@ -77,8 +77,8 @@ MaxMask,plotMask,maskSel);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% MEASUREMENT/PROCESSING BY AN AUTOMATED PARAMETER VARIATION
 %% Folders and register creations on Data and Output    
-[DatalogDir,numberedFolderMeas,ProcessedDir,numberedFolderProc,ltcvect,lglvect] = f_CreateFoldersRegisters( ...
-maskName,tcvect,glvect,slm,dataDir,outDir,pathSep,infoDelim,dirDelim,meas,proc);
+[DatalogDir,numberedFolderMeas,ProcessedDir,numberedFolderProc,ltcvect, ...
+lglvect] = f_CreateFoldersRegisters(maskName,tcvect,glvect,slm,dataDir,outDir,pathSep,infoDelim,dirDelim,meas,proc);
 
 %% Measurement
 if meas

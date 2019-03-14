@@ -86,7 +86,8 @@ for idxtc = 1:ltcvect
         imwrite(expImgs{idxgral}, strcat(imgfullpath,dataformat)); 
     else
 %         fig = gcf;
-        savefig(gcf,strcat(imgfullpath,'.bmp')); 
+%         savefig(gcf,strcat(imgfullpath,'.bmp')); 
+% CHANGE FOR SAVE AS
     end
      
     %% Preparation for a new measurement iteration          

@@ -8,7 +8,7 @@ meas = 1; % Measure: yes (1) or no (0)
     measDebug = 0; % Debugging before actually measuring. Displays the 
                    % default phase mask and shots a photo with the camera
                    % Works if  measSimulated = 0
-    measSimulated = 0; % Saves the mask and does not involve the cameras: 
+    measSimulated = 1; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
                        % The mask saving is usefull for reports. Note: the
                        % figure that says Camera isn't saved but the other
@@ -18,6 +18,7 @@ proc = 0; % Processes the data
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
+               % vpa or sprintf ???
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. It doesn't apply for Zernike and LG +
              % Zernike: instead use z_disp_wrap for phase wrapping or not.

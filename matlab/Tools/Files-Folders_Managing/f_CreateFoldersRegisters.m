@@ -13,9 +13,12 @@ MeasSize = strcat(maskName,infoDelim,'mask',infoDelim,'tcs',infoDelim, ...
 % Folder name:
 Datalogfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize); 
 if meas
-  % Specific measurement folder:
-  numberedFolderMeas= f_createNextFolderName(dataDir,Datalogfldr,dirDelim,pathSep);       
+  createFoldMeas = 1;
+else
+  createFoldMeas = 0;
 end
+% Specific measurement folder:
+numberedFolderMeas= f_createNextFolderName(dataDir,Datalogfldr,dirDelim,pathSep,createFoldMeas);       
 DatalogDir = strcat(dataDir,pathSep,Datalogfldr); 
 
 %% Output folder creation (processed images)
@@ -23,8 +26,11 @@ DatalogDir = strcat(dataDir,pathSep,Datalogfldr);
 Procfldr = strcat(date,infoDelim,'processed',infoDelim,slm, ...
                      infoDelim,MeasSize); 
 if proc 
-  % Specific processing folder:
-  numberedFolderProc = f_createNextFolderName(outDir,Procfldr,dirDelim,pathSep); 
+  createFoldProc = 1;
+else
+  createFoldProc = 0;
 end
+% Specific processing folder:
+numberedFolderProc = f_createNextFolderName(outDir,Procfldr,dirDelim,pathSep,createFoldProc); 
 ProcessedDir = strcat(outDir,pathSep,Procfldr); 
 end 
