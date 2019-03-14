@@ -80,13 +80,13 @@ for idxtc = 1:ltcvect
     glstr = strcat('gl',infoDelim,num2str(glvect(idxgl)));
     MeasInfo{idxgral} = strcat(tcstr,infoDelim,glstr); % Dataname for each experimental
                                            % data
-    imgfullpath = strcat(imgPath,MeasInfo{idxgral},dataformat);
+    imgfullpath = strcat(imgPath,MeasInfo{idxgral});
     if measSimulated == 0
         % imwrite(variables,directory+filename+extension)
-        imwrite(expImgs{idxgral}, imgfullpath); 
+        imwrite(expImgs{idxgral}, strcat(imgfullpath,dataformat)); 
     else
 %         fig = gcf;
-        savefig(strcat(gcf,MeasInfo{idxgral},'.fig'),imgfullpath); 
+        savefig(gcf,strcat(imgfullpath,'.bmp')); 
     end
      
     %% Preparation for a new measurement iteration          

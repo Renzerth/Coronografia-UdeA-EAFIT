@@ -8,7 +8,7 @@ meas = 1; % Measure: yes (1) or no (0)
     measDebug = 0; % Debugging before actually measuring. Displays the 
                    % default phase mask and shots a photo with the camera
                    % Works if  measSimulated = 0
-    measSimulated = 1; % Saves the mask and does not involve the cameras: 
+    measSimulated = 0; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
                        % The mask saving is usefull for reports. Note: the
                        % figure that says Camera isn't saved but the other

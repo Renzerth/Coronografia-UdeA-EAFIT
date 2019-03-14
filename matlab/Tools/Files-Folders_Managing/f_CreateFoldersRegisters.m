@@ -1,4 +1,4 @@
-function [DatalogDir,ProcessedDir,ltcvect,lglvect] = ...
+function [DatalogDir,numberedFolderMeas,ProcessedDir,numberedFolderProc,ltcvect,lglvect] = ...
 f_CreateFoldersRegisters(maskName,tcvect,glvect,slm,dataDir,outDir,pathSep,infoDelim,dirDelim,meas,proc)
 
 %% General saving registers
@@ -14,7 +14,7 @@ MeasSize = strcat(maskName,infoDelim,'mask',infoDelim,'tcs',infoDelim, ...
 Datalogfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize); 
 if meas
   % Specific measurement folder:
-  f_createNextFolderName(dataDir,Datalogfldr,dirDelim,pathSep);       
+  numberedFolderMeas= f_createNextFolderName(dataDir,Datalogfldr,dirDelim,pathSep);       
 end
 DatalogDir = strcat(dataDir,pathSep,Datalogfldr); 
 
@@ -24,7 +24,7 @@ Procfldr = strcat(date,infoDelim,'processed',infoDelim,slm, ...
                      infoDelim,MeasSize); 
 if proc 
   % Specific processing folder:
-  f_createNextFolderName(outDir,Procfldr,dirDelim,pathSep); 
+  numberedFolderProc = f_createNextFolderName(outDir,Procfldr,dirDelim,pathSep); 
 end
 ProcessedDir = strcat(outDir,pathSep,Procfldr); 
 end 
