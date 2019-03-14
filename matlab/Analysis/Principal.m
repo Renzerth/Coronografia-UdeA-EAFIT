@@ -34,6 +34,7 @@
 %
 % Samuel Plazas(PA1/PA2/TG) - Juan Jose Cadavid(Master thesis) - 2018/2019
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%% PHASE MASK GENERATION ON THE SLM's 
 %% Parameters and initialization
 clc; clear; close all; % Initialization
@@ -73,18 +74,21 @@ MaxMask,plotMask,maskSel);
               
 
 
-%%%%%%%%%%%%%%%%%%%%%%% MEASUREMENTS BY AN AUTOMATED PARAMETER VARIATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% MEASUREMENT/PROCESSING BY AN AUTOMATED PARAMETER VARIATION
+%% Folders and register creations on Data and Output    
+[DatalogDir,numberedFolderMeas,ProcessedDir,numberedFolderProc,ltcvect,lglvect] = f_CreateFoldersRegisters( ...
+maskName,tcvect,glvect,slm,dataDir,outDir,pathSep,infoDelim,dirDelim,meas,proc);
+
+%% Measurement
 if meas
   close all; % Closes opened figures
- %% Folders and register creations on Data and Output    
- [DatalogDir,ltcvect,lglvect] = f_CreateFoldersRegisters(maskName, ...
-                                 tcvect,glvect,slm,dataDir,outDir,pathSep);
-
+  
  %% Hardware initialization
  if measSimulated == 0 % When a real measurement will be performed
   % InitializeHardware;
-               % Turns the camera on and create all the needed 
-                     % variables. Remember to leave the preview open
+  % Turns the camera on and create all the needed variables. Remember to 
+  % leave the preview open
   [vid,src] = f_selectCamera(camera,exposure,format);
  end
 
@@ -113,7 +117,7 @@ if meas
   p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha, Angalp,Angbet, ...
   z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,MaskPupil,...
   rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,maskSel,ltcvect, ...
-  lglvect,wait,DatalogDir,dataformat,pathSep,cameraPlane,tcvect,glvect, ...
+  lglvect,wait,DatalogDir,dataformat,pathSep,infoDelim,cameraPlane,tcvect,glvect, ...
   measSimulated,recordingDelay); 
   % Performs measurements and stores them
  end
@@ -138,7 +142,13 @@ if proc
                % Saves plot(s) of the applied metrics
 end
 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% ACADEMIC PURPOSES: Zernike, simulation
+
+%% Additional information
 % abs(mask): should always be 1, meaning that it is normalized
 
 %% Fourier transform of the mask

@@ -78,3 +78,9 @@ levShft = 0; % Ref: 0. Seems to be non-linear or better not to use it
 %  mingl,maxgl: minimum/maximum gray level depth. Ref: 0,255
 %  levShft: corresponds to the brightness or constant shift of the gl's
    
+%% Create folder if it doesn't exist
+% OLD:
+% ax = exist(DatalogDir, 'dir'); % 7 if folder exists, 0 if not
+% if ax ~= 7 % Create a folder if it doesn't exist
+%     mkdir(DatalogDir);
+% end

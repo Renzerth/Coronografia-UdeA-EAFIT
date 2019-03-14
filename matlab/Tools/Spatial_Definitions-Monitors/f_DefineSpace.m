@@ -91,7 +91,12 @@ switch coordType
   
 end
 
-%% Aspect ratio application for the scaling
+%% Polar coordinates for the PC (plotMask=1,3)
+Xpc = X; Ypc = Y; % Needed for the PC coordinates later on
+[phiPC,rPC] = cart2pol(Xpc,Ypc); % Without shifts and no scaling: mask is 
+                                 % always circular and centered
+
+%% Aspect ratio application for the scaling for the SLM (plotMask=2)
   % Regarding the drawing of the masks on the SLM screens:
   % Original X (output of f_MakeScreenCoords): the circular mask is drawn 
   % as an ellipse due to the screen transformation (elliptical scaling of 
@@ -99,16 +104,11 @@ end
   % Xrescaled: the spatial scaling is compensated and the circular mask is
   % drawn normally on the whole screen
   flagAR = 0; % Flag for the AspectRatio application (not applied)
-  if circularMask == 1 && plotMask == 2 && (MaxMask == 1 || coordType == 2) 
+  if circularMask == 1 && (MaxMask == 1 || coordType == 2) 
      Xrescaled = AspectRatio*X; % Used for the mask generation: X scaling
      X = Xrescaled; % Circular truncation in full screen
      flagAR = 1; % Flag for the AspectRatio application
   end % Otherwise X=X and one has the elliptical truncation in full screen
-
-%% Polar coordinates for the PC
-Xpc = X; Ypc = Y; % Needed for the PC coordinates later on
-[phiPC,rPC] = cart2pol(Xpc,Ypc); % Without shifts and no scaling: mask is 
-                                 % always circular and centered
                                  
 %% Half support for the shift scalling and the mask truncation radius
 HalfSupportX = f_MatrixHalfSupport(X);
@@ -123,7 +123,7 @@ rSize = min(HalfSupportX,HalfSupportY);
 % This is the maximum radius that allows to circumscribe a circle inside 
 % a square or inside a rectangle
           
-%% Shift of the mask (for the SLM)
+%% Shift of the mask (for the SLM: plotMask=2)
 switch shiftMask 
  case 0
   shiftX = 0; shiftY = 0; % Shift deactivated   

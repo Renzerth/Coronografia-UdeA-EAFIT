@@ -1,4 +1,4 @@
-% [A] = f_DataProcessing(imgfullpath,savetype,pathSep,dataformat,cameraPlane,n,PP,M,f)
+% [A] = f_DataProcessing(imgfullpath,savetype,pathSep,dataformat,cameraPlane,n,PP,M,f,ProcessedDir)
 %% Post-processing of the data (application of the metric of the degree of
 %%% extintion)
 
@@ -7,8 +7,8 @@
 pause(wait) % Seconds before measuring as a safety measurement
 t1_dt = datetime; % store time
 disp('Processing started:'); disp(t1_dt)
-processedImgname = strcat(ProcessedDir,pathSep,'processed_', ...
-  cameraPlane,'_');
+processedImgname = strcat(ProcessedDir,pathSep,'processed',infoDelim, ...
+  cameraPlane,infoDelim);
 
 % for idxgral = 1:totalImgs
 %% Loading
