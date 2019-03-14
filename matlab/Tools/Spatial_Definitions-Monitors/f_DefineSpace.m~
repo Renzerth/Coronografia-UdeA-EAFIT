@@ -96,7 +96,7 @@ Xpc = X; Ypc = Y; % Needed for the PC coordinates later on
 [phiPC,rPC] = cart2pol(Xpc,Ypc); % Without shifts and no scaling: mask is 
                                  % always circular and centered
 
-%% Aspect ratio application for the scaling for the SLM (plotMask=2)
+%% Aspect ratio application for the scaling for the SLM plotMask=2
   % Regarding the drawing of the masks on the SLM screens:
   % Original X (output of f_MakeScreenCoords): the circular mask is drawn 
   % as an ellipse due to the screen transformation (elliptical scaling of 

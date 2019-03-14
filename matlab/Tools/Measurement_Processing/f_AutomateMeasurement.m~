@@ -64,8 +64,7 @@ for idxtc = 1:ltcvect
     %% Displaying the camera on the PC
 % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium
     % The numbers after 'position' were empirically obtained
-    camfig = figure('units','normalized','position',[1/12 2/10 3/7 1/2]);
-                                                            % [left bottom width height]
+    camfig = figure('units','normalized','position',[1/10 2/10 1/3 1/2]);
     imagesc(snap); % normalized
     colorbar; title(strcat('Camera image: ',cameraPlane));
     pax = gca; pax.FontSize = 16; % Font size
@@ -80,7 +79,7 @@ for idxtc = 1:ltcvect
     z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
     MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
     plotMask,maskSel);     
-    set(pcfig,'units','normalized','position',[6/11 2/10 3/7 1/2]);
+    set(pcfig,'units','normalized','position',[5/10 2/10 1/3 1/2]);
      
     %% Preparation for a new measurement iteration          
     stridxgral = num2str(idxgral); strtotalImgs = num2str(totalImgs);

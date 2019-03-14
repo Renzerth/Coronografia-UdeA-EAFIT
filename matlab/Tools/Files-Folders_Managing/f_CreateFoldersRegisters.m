@@ -1,5 +1,5 @@
 function [DatalogDir,ProcessedDir,ltcvect,lglvect] = ...
-f_CreateFoldersRegisters(maskName,tcvect,glvect,slm,dataDir,outDir,pathSep,infoDelim,dirDelimiter,meas,proc)
+f_CreateFoldersRegisters(maskName,tcvect,glvect,slm,dataDir,outDir,pathSep,infoDelim,dirDelim,meas,proc)
 
 %% General saving registers
 ltcvect = length(tcvect); % Length of the tc vector
@@ -10,22 +10,21 @@ MeasSize = strcat(maskName,infoDelim,'mask',infoDelim,'tcs',infoDelim, ...
 % Datalog with the number of measurements for tc's and gl's
 
 %% Measurement folder creation (Datalog)
+% Folder name:
+Datalogfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize); 
 if meas
-  % Folder name:
-  Datalogfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize); 
   % Specific measurement folder:
-  f_createNextFolderName(dataDir,Datalogfldr,dirDelimiter);       
+  f_createNextFolderName(dataDir,Datalogfldr,dirDelim,pathSep);       
 end
 DatalogDir = strcat(dataDir,pathSep,Datalogfldr); 
 
 %% Output folder creation (processed images)
+% Folder name:
+Procfldr = strcat(date,infoDelim,'processed',infoDelim,slm, ...
+                     infoDelim,MeasSize); 
 if proc 
-  % Folder name:
-  Procfldr = strcat(date,infoDelim,'processed',infoDelim,slm, ...
-                       infoDelim,MeasSize); 
   % Specific processing folder:
-  f_createNextFolderName(outDir,Procfldr,dirDelimiter); 
+  f_createNextFolderName(outDir,Procfldr,dirDelim,pathSep); 
 end
-ProcessedDir = strcat(outDir,pathSep,Procfldr); % Specific processing
-                                                     % folder
+ProcessedDir = strcat(outDir,pathSep,Procfldr); 
 end 

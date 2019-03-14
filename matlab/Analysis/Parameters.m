@@ -36,7 +36,7 @@ maskSel = 1; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 2; % Allows to plot the final mask, as it can be a combination 
+plotMask = 1; % Allows to plot the final mask, as it can be a combination 
               % of the previous ones
               % 0: no plot;
               % 1: on the screen
@@ -53,7 +53,7 @@ plotMask = 2; % Allows to plot the final mask, as it can be a combination
 %  -Principal screen: MATLAB scrnIdx(1); Windows(2); AnyDesk(2)
 %  -Pluto screen: MATLAB scrnIdx(3); Windows(1); Anydesk(1)
 %  -LC2002 screen: MATLAB scrnIdx(2); Windows(3); Anydesk(0)
-slm = 'Pluto'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
+slm = 'LC2002'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
@@ -106,7 +106,7 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
      % 0: The mask presents an elliptical form when in the full screen
      % 1: The mask presents a circular form when in the full screen
      % On both cases full screen means that plotMask = 2
-    shiftMask = 0; % Shift for all masks
+    shiftMask = 1; % Shift for all masks
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
@@ -186,14 +186,14 @@ WsizeRatio = 100; % Width of the modes; for LG; ref: [0,100] (percentage
          
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
-f_FR = 1; % In m [the bigger, the more plane the phase is]
+f_FR = 1.3; % In m [the bigger, the more plane the phase is]
 %%% Fixed parameters for the minimum focal length criteria:
 AreaSLM = maxNumPix*pixSize^2; % SLM's area of the longest dimension [um]
 minf_FRum = AreaSLM/L; % Criterium to determine the MINIMUM f_FR [um]
 scaleFactor = 1e-6; % um to m. Constant factor
 minf_FR = minf_FRum*scaleFactor; % um to m
 if f_FR < minf_FR % f cannot be smaller than the criterium of the smallest
-  error('VPL criterium not fulfilled');
+  error(['VPL criterium not fulfilled, establish f_FR bigger than ' num2str(minf_FR)]);
 end
 % From: 2_edgar_2015_Generation_Optical_Vortices_Binary_Vortex_Lenses.pdf
 % minf_FR is used in meters in this paper and uses reasonable scales:
@@ -287,12 +287,12 @@ dataformat = '.bmp'; % Applies only for savetype = 2
 % glvect = [1 16 24 28 36 56 128 256]; % Dados por Juan Jose
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
                                   % with a good system phase response
-tcvect = [2, 3, 7, 10]; % Topological charges to be measured
-glvect = [20,100,255]; % Gray level to be measured
+tcvect = [2]; % Topological charges to be measured
+glvect = [2,5]; % Gray level to be measured
 % glvect = linspace(2,18,9)
 wait = 0; % 10 seconds before measuring as a safety measurement
           % RIGHT NOW 0 FOR DEBUGGING
-recordingDelay = 2; % Waits 5 seconds between each mask to be shown
+recordingDelay = 5; % Waits 5 seconds between each mask to be shown
                     % This time is also important so that the camera
                     % bus doesn't overload. Ref: 5
                     % RIGHT NOW 1 FOR DEBUGGING
@@ -303,8 +303,8 @@ if ispc %  Linux (0) or Windows (1)
 else
     pathSep = '/'; % Works for Linux
 end
-infoDelim = '_'; % For the data and output folder information
-dirDelim= '-'; % "infoDelimiter" is established with the '_' and then
+infoDelim = '-'; % For the data and output folder information
+dirDelim= '_'; % "infoDelimiter" is established with the '_' and then
                  % the delimiter for the folder counter should be different
                  % "infoDelim" must always be different than "dirDelim"
 analysFldr = 'Analysis'; % Folder name: scripts
