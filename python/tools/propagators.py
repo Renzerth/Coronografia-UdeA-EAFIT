@@ -41,7 +41,7 @@ def propTF(u1,dx,wl,z):
 
     L = dx/M   # L is source and observation plane side length
 
-    k  = 2*np.pi/wl
+    #k  = 2*np.pi/wl
 
     fx = np.arange(-1/(2*dx),1/(2*dx),1/L)
 
@@ -178,20 +178,21 @@ def propAS(u1, dx, wl, z):
     
     L = dx/M
     
-    x = np.arange(-L/2,L/2,dx)
+    #x = np.arange(-L/2,L/2,dx)
     fx = np.arange(-1/(2*dx),1/(2*dx),1/L)
     
     fX, fY = np.meshgrid(fx,fx)
     
-    fR = np.sqrt(fX**2+fY**2)
+    #fR = np.sqrt(fX**2+fY**2)
     
-    mask = fR < 1/wl
+    #mask = fR < 1/wl
     
-    k = 2*pi/wl
+    #k = 2*pi/wl
     
     A1 = np.fft.fftshift(np.fft.fft2(np.fft.fftshift(u1)))
     
-    A2 = A1*mask*np.exp(1j*k*z*np.sqrt(1-(wl*fX)**2-(wl*fY)**2))
+    #A2 = A1*mask*np.exp(1j*k*z*np.sqrt(1-(wl*fX)**2-(wl*fY)**2))
+    A2 = A1*np.exp(1j*k*z*np.sqrt(1-(wl*fX)**2-(wl*fY)**2))
     
     U2 = np.fft.fftshift(np.fft.ifft2(np.fft.ifftshift(A2)))
     

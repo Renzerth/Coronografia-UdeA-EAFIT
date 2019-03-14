@@ -132,10 +132,10 @@ for i in range(41):
 
 # some grid values in a 1m square
 
-L = 0.04
+L = 0.04 #
 M = 4000 # for memory reason, use less than 4000. It will take some time for high numbers
 dx = L/M
-lambda_ = 0.633e-6 # wavelength
+lambda_ = 0.633e-6 # wavelength (cm)
 
 x, y = np.arange(-L/2,L/2,dx), np.arange(-L/2,L/2,dx)
 X,Y = np.meshgrid(x,y)
