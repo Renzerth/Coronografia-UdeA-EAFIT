@@ -1,6 +1,7 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 0; % Measure: yes (1) or no (0)
+meas = 1; % Measure: yes (1) or no (0)
 %%% For meas = 1:
     % Note: measDebug will be 0 if measSimulated = 1
     % If meas = 1 -> all the figures will be closed before starting it
@@ -10,7 +11,7 @@ meas = 0; % Measure: yes (1) or no (0)
     measSimulated = 1; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 1; % Processes the data
+proc = 0; % Processes the data
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
@@ -45,6 +46,7 @@ plotMask = 2; % Allows to plot the final mask, as it can be a combination
                      
                      
               
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%              
 %%%%%%%%%%%%%%%%%%%%%%% PART 2: HARDWARE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % scrnIdx: screen number selector. In [1,N] with N the # of screens
 % Windows 7 PC used in 2019 (according to):
@@ -154,7 +156,7 @@ imgformat = '.png'; % Format with period. mat, bmp, png, jpg
 
                     
                     
-          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          
 %%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS PARAMETERS %%%%%%%%%%%%%%%%%%%%%%
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
@@ -273,7 +275,7 @@ end
 
 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 4: MEASUREMENT ADJUSTMENT %%%%%%%%%%%%%%%%%%%%
 %% Measurement
 % Always saves with the dataformat
@@ -326,8 +328,8 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%% PART 5: PROCESSING & METRICS %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%% PART 5: PROCESSING WITH METRICS %%%%%%%%%%%%%%%%%%%%%%
 metricSel = 1; % 
 metricProfile = 1; % 1: vertical profile; 2: horizontal profile
 
@@ -338,7 +340,11 @@ M = 1; % No microscope objective is used and there's no magnification
 f = 100; % focal length of the lens before the camera [mm]
 
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 6: ACADEMIC-PURPOSE ASPECTS %%%%%%%%%%%%%%%%%%
+
 % Zernike reconstruction, FT, gradient and a simulation in the free space 
 % that is not very depured
 %% Optional plots and procedures

@@ -1,4 +1,4 @@
-% [A] = f_DataProcessing(imgfullpath,savetype,pathSep,dataformat,cameraPlane,n,PP,M,f)
+% [A] = f_DataProcessing(imgfullpath,savetype,pathSep,dataformat,cameraPlane,n,PP,M,f,ProcessedDir)
 %% Post-processing of the data (application of the metric of the degree of
 %%% extintion)
 
