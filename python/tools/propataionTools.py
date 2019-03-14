@@ -37,7 +37,7 @@ class propagators:
         # COMMON
         self.spaceSamples = M # Space samples
         self.halfSamples = M/2 # Hald space samples
-        self.spaceSize = dx/M # Source and observation plane side lenght.
+        self.spaceSize = dx*M # Source and observation plane side lenght.
         self.halfSize = self.spaceSize/2 # Source and observation plane half side lenght.
         self.spatialStep = dx # Modulator's pixel size in mm ???    
         self.waveLenght = wl
