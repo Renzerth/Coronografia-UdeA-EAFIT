@@ -10,6 +10,9 @@ meas = 1; % Measure: yes (1) or no (0)
                    % Works if  measSimulated = 0
     measSimulated = 1; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
+                       % The mask saving is usefull for reports. Note: the
+                       % figure that says Camera isn't saved but the other
+                       % one that shows the mask in a gray scale fashion
     beepSound = 1; % Beep sound when the measurement finishes.
 proc = 0; % Processes the data
 
@@ -303,10 +306,10 @@ if ispc %  Linux (0) or Windows (1)
 else
     pathSep = '/'; % Works for Linux
 end
+% Both info/dir-Delim should be left as they are, since "date" is used and
+% has the symbol '-'
 infoDelim = '-'; % For the data and output folder information
-dirDelim= '_'; % "infoDelimiter" is established with the '_' and then
-                 % the delimiter for the folder counter should be different
-                 % "infoDelim" must always be different than "dirDelim"
+dirDelim= '_'; % For the repeated folder or snapshot creation "infoDelim" must always be different than "dirDelim"
 analysFldr = 'Analysis'; % Folder name: scripts
 dataFlrd = 'Data'; % Folder name: input data  
 snapsfldr = 'TestSnapshots'; % Snapshot tests folder (inside dataFlrd)

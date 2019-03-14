@@ -1,4 +1,3 @@
-
 function f_AutomateMeasurement(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC, ...
 s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
 z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,MaskPupil, ...
@@ -30,39 +29,27 @@ imgPath = strcat(DatalogDir,pathSep,cameraPlane,'_'); % More information
 for idxtc = 1:ltcvect 
   for idxgl = 1:lglvect
       
-    %% Generate the phase mask and display it on the SLM
+   %% Generate the phase mask and display it on the SLM
     tc = tcvect(idxtc); % Specific tc for this iteration
     phaseValues = glvect(idxgl); % Specific phase values for this iteration
     phaseValues = linspace(0,2*pi,phaseValues);
     plotMask = 2; % Select SLM for plotting
     [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
                                       phiPC,plotMask);
-    [~,wrapMask,slmfig] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc, ...
+    [~,wrapMask,slmfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc, ...
     s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
     Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
     MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
     plotMask,maskSel);      
   
-    %% Record a snapshot
+   %% Record a snapshot
     if measSimulated == 0
         snap = getsnapshot(vid); % Real measurements
     else % measSimulated = 1
         snap = wrapMask; % "Simulated" measurements (the mask is saved)
     end
-    expImgs{idxgral} = snap; % An extructure for future use (?)
-    % A = expImgs{idxgral}; % A variable for the save function
-
-    %% Saving the measurement
-    tcstr = strcat('tc',infoDelim,num2str(tcvect(idxtc))); 
-    glstr = strcat('gl',infoDelim,num2str(glvect(idxgl)));
-    MeasInfo{idxgral} = strcat(tcstr,infoDelim,glstr); % Dataname for each experimental
-                                           % data
-    imgfullpath = strcat(imgPath,MeasInfo{idxgral},dataformat);
-    % imwrite(variables,directory+filename+extension)
-    imwrite(expImgs{idxgral}, imgfullpath); 
-        
-    %% Displaying the camera on the PC
-% Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium
+   
+   %% Displaying the camera on the PC
     % The numbers after 'position' were empirically obtained
     camfig = figure('units','normalized','position',[1/12 2/10 3/7 1/2]);
                                                             % [left bottom width height]
@@ -75,12 +62,32 @@ for idxtc = 1:ltcvect
     plotMask = 1; % Select PC
     [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
                                       phiPC,plotMask);                             
-    [~,~,pcfig] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc,s,ph0, ...
+    [~,wrapMask,pcfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc,s,ph0, ...
     p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
     z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
     MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
     plotMask,maskSel);     
     set(pcfig,'units','normalized','position',[6/11 2/10 3/7 1/2]);
+    
+   %% Saving the measurement
+    if measSimulated == 0
+         expImgs{idxgral} = snap; % An extructure with all the images
+    else % measSimulated = 1
+         expImgs{idxgral} = wrapMask; % Saves the mask
+    end
+    
+    tcstr = strcat('tc',infoDelim,num2str(tcvect(idxtc))); 
+    glstr = strcat('gl',infoDelim,num2str(glvect(idxgl)));
+    MeasInfo{idxgral} = strcat(tcstr,infoDelim,glstr); % Dataname for each experimental
+                                           % data
+    imgfullpath = strcat(imgPath,MeasInfo{idxgral},dataformat);
+    if measSimulated == 0
+        % imwrite(variables,directory+filename+extension)
+        imwrite(expImgs{idxgral}, imgfullpath); 
+    else
+%         fig = gcf;
+        savefig(strcat(gcf,MeasInfo{idxgral},'.fig'),imgfullpath); 
+    end
      
     %% Preparation for a new measurement iteration          
     stridxgral = num2str(idxgral); strtotalImgs = num2str(totalImgs);
@@ -91,6 +98,8 @@ for idxtc = 1:ltcvect
                            % This time is also important so that the camera
                            % bus doesn't overload 
     close(pcfig); close(camfig); close(slmfig); % Close the displayed figures
+    
+    
   end
 end
 % MATLAB 2018b: disp(newline); MATLAB 2016: disp(char(10)) 
