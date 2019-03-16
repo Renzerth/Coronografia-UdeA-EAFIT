@@ -54,7 +54,7 @@ for idxtc = 1:ltcvect
     camfig = figure('units','normalized','position',[1/12 2/10 3/7 1/2]);
                                                             % [left bottom width height]
     imagesc(snap); % normalized
-    colorbar; title(strcat('Camera image:',{' '},cameraPlane));
+    colorbar; title(strcat('Camera image: ',cameraPlane));
     pax = gca; pax.FontSize = 16; % Font size
     % The numbers after 'position' were empirically obtained
     
@@ -62,9 +62,9 @@ for idxtc = 1:ltcvect
     plotMask = 1; % Select PC
     [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
                                       phiPC,plotMask);                             
-    [~,wrapMask,pcfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc, ...
-    s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
-    Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
+    [~,wrapMask,pcfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc,s,ph0, ...
+    p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
+    z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
     MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
     plotMask,maskSel);     
     set(pcfig,'units','normalized','position',[6/11 2/10 3/7 1/2]);
@@ -85,7 +85,6 @@ for idxtc = 1:ltcvect
         % imwrite(variables,directory+filename+extension)
         imwrite(expImgs{idxgral}, strcat(imgfullpath,dataformat)); 
     else
-        saveas(gcf,imgfullpath,'png');
 %         fig = gcf;
 %         savefig(gcf,strcat(imgfullpath,'.bmp')); 
 % CHANGE FOR SAVE AS

@@ -1,4 +1,4 @@
-% [A] = f_DataProcessing(imgfullpath,savetype,pathSep,dataformat,cameraPlane,n,PP,M,f,ProcessedDir)
+[A] = f_ProcessData(imgfullpath,savetype,pathSep,dataformat,cameraPlane,n,PP,M,f,ProcessedDir)
 %% Post-processing of the data (application of the metric of the degree of
 %%% extintion)
 
@@ -49,4 +49,4 @@ disp('Processing finished:'); disp(t2_dt)
 time = t2_dt - t1_dt;
 disp('Processing took: '); % datestr(time,'SS') ' seconds'])
 disp(time)
-% end
+end

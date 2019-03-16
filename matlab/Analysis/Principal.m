@@ -77,8 +77,9 @@ MaxMask,plotMask,maskSel);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% MEASUREMENT/PROCESSING BY AN AUTOMATED PARAMETER VARIATION
 %% Folders and register creations on Data and Output    
-[DatalogDir,numberedFolderMeas,ProcessedDir,numberedFolderProc,ltcvect, ...
-lglvect] = f_CreateFoldersRegisters(maskName,tcvect,glvect,slm,dataDir,outDir,pathSep,infoDelim,dirDelim,meas,proc);
+[MeasDir,ProcessedDir,ltcvect,lglvect] = f_CreateFoldersRegisters( ...
+maskName,tcvect,glvect,slm,dataDir,outDir,pathSep,infoDelim,dirDelim, ...
+meas,proc);
 
 %% Measurement
 if meas
@@ -117,8 +118,8 @@ if meas
   p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha, Angalp,Angbet, ...
   z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,MaskPupil,...
   rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,maskSel,ltcvect, ...
-  lglvect,wait,DatalogDir,dataformat,pathSep,infoDelim,cameraPlane,tcvect,glvect, ...
-  measSimulated,recordingDelay); 
+  lglvect,wait,MeasDir,dataformat,pathSep,infoDelim,cameraPlane,tcvect, ...
+  glvect,measSimulated,recordingDelay); 
   % Performs measurements and stores them
  end
 
@@ -138,7 +139,7 @@ end % End of measurements
 
 %% Post-processing of the data and saving
 if proc
-  ProcessData; % Metric of the degree of extintion applied
+  f_ProcessData; % Metric of the degree of extintion applied
                % Saves plot(s) of the applied metrics
 end
 
@@ -171,7 +172,7 @@ f_ZernikeReconstruction(z_ReconstrNumb,wrapMask,z_pupil,maskZernReconstr);
 %% Simulation
 % Executed if desired on the parameters
 if simBool
-  f_SimulateFreeSpace(x,y,Xpc,Ypc,rPC,mask,starAmplitude,planetAmplitude, ...
-  pixelSeparation,w1,w2,rPupilSize,showIin,showPupilin,showFPmag, ...
-  logscale,showFPphas,showPhasout,showMagout,showIout)
+ f_SimulateFreeSpace(x,y,Xpc,Ypc,rPC,mask,starAmplitude,planetAmplitude,...
+ pixelSeparation,w1,w2,rPupilSize,showIin,showPupilin,showFPmag, ...
+ logscale,showFPphas,showPhasout,showMagout,showIout)
 end

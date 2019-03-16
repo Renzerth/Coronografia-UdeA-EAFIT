@@ -57,7 +57,7 @@ plotMask = 1; % Allows to plot the final mask, as it can be a combination
 %  -Principal screen: MATLAB scrnIdx(1); Windows(2); AnyDesk(2)
 %  -Pluto screen: MATLAB scrnIdx(3); Windows(1); Anydesk(1)
 %  -LC2002 screen: MATLAB scrnIdx(2); Windows(3); Anydesk(0)
-slm = 'LC2002'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
+slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
@@ -292,7 +292,7 @@ dataformat = '.bmp'; % Applies only for savetype = 2
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
                                   % with a good system phase response
 tcvect = [2]; % Topological charges to be measured
-glvect = [2,5]; % Gray level to be measured
+glvect = [20]; % Gray level to be measured
 % glvect = linspace(2,18,9)
 wait = 0; % 10 seconds before measuring as a safety measurement
           % RIGHT NOW 0 FOR DEBUGGING
