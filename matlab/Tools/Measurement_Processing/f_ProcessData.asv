@@ -17,13 +17,14 @@ MeasInfo = []; % Variable initialization
 imgfullpath = strcat(imgpartPath,'allmeas'); % Saved cell of images
 A = load(imgfullpath,'expImgs'); % imgfullpath comes from AutomatMeasure
 
-%% Cartesian coordinates with the lambda/D scaling
+%% Cartesian coordinates with the lambda/D scaling (diffraction angle)
 [ySize, xSize] = size(distribution);
 xpix = 1:xSize;
 ypix = 1:ySize;
 xangLD = f_scalePix2DiffAng(xpix,n,PP,M,f);
 yangLD = f_scalePix2DiffAng(ypix,n,PP,M,f);
 
+%% Cartesian coordinates with the arcsecond scaling (diffraction angle)
 xangArcs = f_LambdaDToarcsec(xangLD);
 yangArcs = f_LambdaDToarcsec(yangLD);
 
@@ -31,8 +32,8 @@ yangArcs = f_LambdaDToarcsec(yangLD);
 switch metricSel
   case 1
     tit = 'Encircled Energy Factor metric';
-    [energy,radialIntensity] = f_calculateEEF(angle(mask),n,PP,M,f, ...
-                                              shiftCart,metricProfile,tit);
+    [energy,radialIntensity] = f_calculateEEF(angle(mask),shiftCart, ...
+                                              metricProfile,tit);
 end
 
 %% Saving

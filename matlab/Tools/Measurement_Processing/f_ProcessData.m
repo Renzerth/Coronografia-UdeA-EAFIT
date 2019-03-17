@@ -1,4 +1,4 @@
-function [A] = f_ProcessData(imgpartPath,pathSep,cameraPlane,savetype,dataformat,n,PP,M,f,ProcessedDir,wait,infoDelim)
+function [A] = f_ProcessData(measfullpath,pathSep,cameraPlane,dataformat,n,PP,M,f,ProcessedDir,wait,infoDelim)
 %% Post-processing of the data (application of the metric of the degree of
 %%% extintion)
 
@@ -13,17 +13,17 @@ processedImgname = strcat(ProcessedDir,pathSep,'processed',infoDelim, ...
 % for idxgral = 1:totalImgs
 %% Loading
 % load(directory+filename,variables)
-MeasInfo = []; % Variable initialization
-imgfullpath = strcat(imgpartPath,'allmeas'); % Saved cell of images
-A = load(imgfullpath,'expImgs'); % imgfullpath comes from AutomatMeasure
+expImgs = []; % Variable initialization
+A = load(measfullpath,'expImgs'); % imgfullpath comes from AutomatMeasure
 
-%% Cartesian coordinates with the lambda/D scaling
+%% Cartesian coordinates with the lambda/D scaling (diffraction angle)
 [ySize, xSize] = size(distribution);
 xpix = 1:xSize;
 ypix = 1:ySize;
 xangLD = f_scalePix2DiffAng(xpix,n,PP,M,f);
 yangLD = f_scalePix2DiffAng(ypix,n,PP,M,f);
 
+%% Cartesian coordinates with the arcsecond scaling (diffraction angle)
 xangArcs = f_LambdaDToarcsec(xangLD);
 yangArcs = f_LambdaDToarcsec(yangLD);
 
@@ -31,16 +31,12 @@ yangArcs = f_LambdaDToarcsec(yangLD);
 switch metricSel
   case 1
     tit = 'Encircled Energy Factor metric';
-    [energy,radialIntensity] = f_calculateEEF(angle(mask),n,PP,M,f, ...
-                                              shiftCart,metricProfile,tit);
+    [energy,radialIntensity] = f_calculateEEF(angle(mask),shiftCart, ...
+                                              metricProfile,tit);
 end
 
 %% Saving
 processedImgfullpath = strcat(processedImgname,MeasInfo{idxgral});
-if savetype == 1 % .mat format
-    % save(directory+filename,variables)
-    save(processedImgfullpath,'A'); % .mat
-else % savetype = 2. dataformat is used
     % imwrite(variables,directory+filename+extension)
     imwrite(expImgs{idxgral}, strcat(processedImgfullpath,dataformat));
 end

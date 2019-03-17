@@ -2,13 +2,13 @@ function f_AutomateMeasurement(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC, ...
 s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
 z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,MaskPupil, ...
 rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,maskSel,ltcvect, ...
-lglvect,wait,imgpartPath,dataformat,infoDelim,cameraPlane,tcvect, ...
-glvect,measSimulated,recordingDelay)
+lglvect,totalImgs,wait,imgpartPath,dataformat,measfullpath,infoDelim, ...
+cameraPlane,tcvect,glvect,measSimulated,recordingDelay)
 % Plots phase masks on the Fourier plane of the vortex coronagraph and
 % takes images of either its Lyot or PSF plane
 
 %% Automated measurements
-totalImgs = ltcvect*lglvect; % Number of images to be taken
+
 expImgs = cell(1,totalImgs); % Cell with the experimental images
 MeasInfo = cell(1,totalImgs); % Same initialization as expImgs
 idxgral = 1; % Initialization of the general index that runs 
@@ -16,7 +16,7 @@ idxgral = 1; % Initialization of the general index that runs
 
 %% Measurements initialization
 % Copyright PhD student Jens de Pelsmaeker VUB B-PHOT 2018,Brussels,Belgium
-pause(wait) % Seconds before measuring as a safety measurement
+pause(wait); % Seconds before measuring as a safety measurement
 t1_dt = datetime; % store time
 disp('Measurement started'); disp(t1_dt)
 
@@ -103,9 +103,8 @@ end
 % Aeasthetic reasons: Not needed in MATLAB 2016
 
 %% Store all measurements in a .mat file
-imgfullpath = strcat(imgpartPath,'allmeas'); % Saves the cell
 % save(directory+filename,variables) % ,'-append'
-save(imgfullpath,'expImgs'); % Save as .mat
+save(measfullpath,'expImgs'); % Save as .mat
 
 %% End of the measurements
 % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium

@@ -1,4 +1,4 @@
-function [energy,radialIntensity] = f_calculateEEF(distribution,n,PP,M,f,shiftCart,metricProfile,tit)
+function [energy,radialIntensity] = f_calculateEEF(distribution,shiftCart,metricProfile,tit)
 %
 % Inputs:
 %  distribution: either a simulated 2D image or a camera-taken 2D image
