@@ -13,11 +13,12 @@ end
 SingleFrame = getsnapshot(vid); % Take a picture
 % isfile(filename) MATLAB 2017
 % imwrite(variables,directory+filename+extension)
-fullFramePath = [snapsdir pathSep filename imgformat]; % Snapshot path
+fullFramePath = strcat(snapsdir,pathSep,filename,'.',imgformat); % Snapshot
+                                                                 % path
 if exist(fullFramePath, 'file') == 2 
   newfileName = inputdlg(['The file name already exists, try another ' ...
   'one (otherwise, the file may be overwritten): ']);
-  imwrite(SingleFrame,[snapsdir pathSep newfileName{1} imgformat]);
+  imwrite(SingleFrame,strcat(snapsdir,pathSep,newfileName{1},'.',imgformat));
 else
   imwrite(SingleFrame,fullFramePath); % File does not exist yet and will be
                                       % written.

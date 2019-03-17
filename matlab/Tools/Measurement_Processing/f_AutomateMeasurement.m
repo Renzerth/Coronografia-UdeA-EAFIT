@@ -2,7 +2,7 @@ function f_AutomateMeasurement(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC, ...
 s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
 z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,MaskPupil, ...
 rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,maskSel,ltcvect, ...
-lglvect,totalImgs,wait,imgpartPath,dataformat,measfullpath,infoDelim, ...
+lglvect,totalImgs,wait,imgpartPath,dataformat,imgformat,measfullpath,infoDelim, ...
 cameraPlane,tcvect,glvect,measSimulated,recordingDelay)
 % Plots phase masks on the Fourier plane of the vortex coronagraph and
 % takes images of either its Lyot or PSF plane
@@ -77,13 +77,12 @@ for idxtc = 1:ltcvect
                                            % data
     imgfullpath = strcat(imgpartPath,MeasInfo{idxgral});
     if measSimulated == 0
-        % imwrite(variables,directory+filename+extension)
+        % Explanation: imwrite(variables,directory+filename+extension)
         imwrite(expImgs{idxgral}, strcat(imgfullpath,dataformat)); 
     else
-        saveas(gcf,imgfullpath,'png');
-%         fig = gcf;
-%         savefig(gcf,strcat(imgfullpath,'.bmp')); 
-% CHANGE FOR SAVE AS
+        % Explanation: saveas(variable,directory+filename,extension)
+        saveas(gcf,imgfullpath,imgformat); % Saves the last shown figure
+        % Other options: savefig and print.
     end
      
     %% Preparation for a new measurement iteration          
@@ -96,15 +95,14 @@ for idxtc = 1:ltcvect
                            % bus doesn't overload 
     close(pcfig); close(camfig); close(slmfig); % Close the displayed figures
     
-    
   end
 end
 % MATLAB 2018b: disp(newline); MATLAB 2016: disp(char(10)) 
 % Aeasthetic reasons: Not needed in MATLAB 2016
 
 %% Store all measurements in a .mat file
-% save(directory+filename,variables) % ,'-append'
-save(measfullpath,'expImgs'); % Save as .mat
+% Explanation: save(directory+filename,variables) % ,'-append'
+save(measfullpath,'expImgs','MeasInfo'); % Save as .mat
 
 %% End of the measurements
 % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium

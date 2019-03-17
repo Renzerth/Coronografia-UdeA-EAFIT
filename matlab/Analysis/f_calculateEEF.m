@@ -26,8 +26,8 @@ oneSideProfile = 1; % Specifically needed for this metric
 
 % shiftCart = [100,100]; % delete
 %% Profile
-[Hprof,Vprof,~,~,midX,midY] = f_makeImageProfile(xang,yang,distribution,tol,shiftCart,tit, ...
-                                   plotData,plotH,plotV,oneSideProfile);
+[Hprof,Vprof,~,~,midX,midY] = f_makeImageProfile(xang,yang, ...
+distribution,tol,shiftCart,tit,plotData,plotH,plotV,oneSideProfile);
                      
 %% Profile choosing
 switch metricProfile

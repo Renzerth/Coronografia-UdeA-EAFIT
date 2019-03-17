@@ -74,16 +74,16 @@ switch slm
     %% SLM parameters (transmision)
     sSupport = min([2.66 2.00]); % Same as the reflection SLM
     maxNumPix = max([800 600]); % Same as the reflection SLM
-    pixSize = 32; % Same as the reflection SLM in [um/pixel]
+    pixSize = 32; % Same as the reflection SLM in um
     scrnIdx = 2; % Screen number selector. Default: 2
     
   case 'No-SLM'
    sSupport = 1; % A unitary space can be created when coordType=1
    maxNumPix = max([1920 1080]); % As the Pluto SLM
-   pixSize = 8; % Same as the reflection SLM in [um/pixel]
-   scrnIdx = 1; % PC screen
+   pixSize = 8; % As the Pluto SLM
+   scrnIdx = 1; % PC screem
   otherwise
-    warning('Please select a valid SLM');
+    warning('Please select an SLM');
 end 
 
 %% SLM positionining calibration, coordinates and type of truncation
@@ -355,7 +355,7 @@ AiryFactor = n*PP*M/f; % Used to convert from pixels to the diffraction
 % Zernike reconstruction, FT, gradient and a simulation in the free space 
 % that is not very depured
 %% Optional plots and procedures
-FTmask = 1; % Finds the FFT of the mask and plots it: yes(1); no(0)
+FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
 %%% For FTmask = 1 and abs_ang = 1:
    maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum                
 gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)
