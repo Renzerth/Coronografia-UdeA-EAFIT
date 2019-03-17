@@ -77,7 +77,7 @@ MaxMask,plotMask,maskSel);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% MEASUREMENT/PROCESSING BY AN AUTOMATED PARAMETER VARIATION
 %% Folders and register creations on Data and Output    
-[MeasDir,ProcessedDir,ltcvect,lglvect] = f_CreateFoldersRegisters( ...
+[imgpartPath,ProcessedDir,ltcvect,lglvect] = f_CreateFoldersRegisters( ...
 maskName,tcvect,glvect,slm,dataDir,outDir,pathSep,infoDelim,dirDelim, ...
 meas,proc);
 
@@ -118,7 +118,7 @@ if meas
   p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha, Angalp,Angbet, ...
   z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,MaskPupil,...
   rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,maskSel,ltcvect, ...
-  lglvect,wait,MeasDir,dataformat,pathSep,infoDelim,cameraPlane,tcvect, ...
+  lglvect,wait,imgpartPath,dataformat,infoDelim,cameraPlane,tcvect, ...
   glvect,measSimulated,recordingDelay); 
   % Performs measurements and stores them
  end
@@ -139,7 +139,7 @@ end % End of measurements
 
 %% Post-processing of the data and saving
 if proc
-  f_ProcessData; % Metric of the degree of extintion applied
+  A = f_ProcessData(imgpartPath,savetype,pathSep,dataformat,cameraPlane,n,PP,M,f,ProcessedDir,wait,infoDelim); % Metric of the degree of extintion applied
                % Saves plot(s) of the applied metrics
 end
 

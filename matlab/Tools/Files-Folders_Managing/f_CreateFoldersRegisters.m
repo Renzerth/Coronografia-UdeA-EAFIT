@@ -1,4 +1,4 @@
-function [MeasDir,ProcessedDir,ltcvect,lglvect] = ...
+function [imgpartPath,ProcessedDir,ltcvect,lglvect] = ...
 f_CreateFoldersRegisters(maskName,tcvect,glvect,slm,dataDir,outDir, ...
 pathSep,infoDelim,dirDelim,meas,proc)
 
@@ -23,6 +23,10 @@ numberedFolderMeas = f_createNextFolderName(dataDir,Measfldr, ...
                                           dirDelim,pathSep,createFoldMeas);                        
 MeasDir = strcat(dataDir,pathSep,numberedFolderMeas); % Datalog folder that
 % takes into account if the folder alraedy exists (numbered folder)
+imgpartPath = strcat(MeasDir,pathSep,cameraPlane,'_'); % Partial path. More 
+% information will be concatenated for a full path of the measured images
+% inside the two "for" loops in f_AutomateMeasurement. As well, the
+% variable "imgfullpath" is created inside this function
 
 %% Output folder creation (processed images)
 % Folder name:

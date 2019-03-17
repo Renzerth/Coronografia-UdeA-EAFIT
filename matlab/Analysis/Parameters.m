@@ -14,7 +14,7 @@ meas = 1; % Measure: yes (1) or no (0)
                        % figure that says Camera isn't saved but the other
                        % one that shows the mask in a gray scale fashion
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 0; % Processes the data
+proc = 1; % Processes the data
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
