@@ -5,7 +5,7 @@ function angleAiry = f_scalePix2DiffAng(x,AiryFactor)
 % with m*sin(theta) ~ m*theta =  m*L/D [m=1 is the first diffraction order]
 % 
 % Inputs:
-%  AiryFactor = n*PP*M/f; The calculation were explained above
+%  AiryFactor = n*PP*M/f; The calculation were explained above [Lambda/D]
 %  x: vector of a pixel distance that comes from a camera image
 %  n: refractive index of the medium
 %  PP: pixel pitch of the camera [um]
@@ -18,6 +18,6 @@ function angleAiry = f_scalePix2DiffAng(x,AiryFactor)
 %
 BesselFirstZero = 1.22; % First zero of the cylindrical Bessel function of 
                         % first kind and zeroth order
-angleAiry = (AiryFactor/BesselFirstZero)*x;
+angleAiry = (AiryFactor/BesselFirstZero)*x; % [Lambda/D] Units
 end
 

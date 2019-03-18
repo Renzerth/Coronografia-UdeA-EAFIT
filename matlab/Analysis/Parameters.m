@@ -19,7 +19,7 @@ proc = 1; % Processes the data
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
                % vpa or sprintf ???
-abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
+abs_ang = 1; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. It doesn't apply for Zernike and LG +
              % Zernike: instead use z_disp_wrap for phase wrapping or not.
              % This is done since the aberration effects observed in the 
@@ -110,7 +110,7 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
      % 0: The mask presents an elliptical form when in the full screen
      % 1: The mask presents a circular form when in the full screen
      % On both cases full screen means that plotMask = 2
-    shiftMask = 1; % Shift for all masks
+    shiftMask = 0; % Shift for all masks
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
@@ -178,10 +178,10 @@ binMask = 0; % Binarizes the mask w.r.t the max/min of the phase (boolean)
 binv = 0; % Binary inversion of the mask: yes(1); no(0). Only applies when 
           % binMask=1. It is usefull to be applied for odd p's on LG beams
 % For abs_ang = 1:
-normMag = 0; % Normalize magnitude. yes(1); no(0). 
+normMag = 1; % Normalize magnitude. yes(1); no(0). 
           
 %% Parameters: Laguerre-Gauss
-p = 1; % Number of radial nodes. If p=0, normal helicoid masks are obtained
+p = 0; % Number of radial nodes. If p=0, normal helicoid masks are obtained
        % If they are used and tc=0(m=0); binary masks are obtained
        % Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
 WsizeRatio = 100; % Width of the modes; for LG; ref: [0,100] (percentage  
@@ -355,7 +355,7 @@ AiryFactor = n*PP*M/f; % Used to convert from pixels to the diffraction
 % Zernike reconstruction, FT, gradient and a simulation in the free space 
 % that is not very depured
 %% Optional plots and procedures
-FTmask = 1; % Finds the FFT of the mask and plots it: yes(1); no(0)
+FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
 %%% For FTmask = 1 and abs_ang = 1:
    maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum                
 gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)

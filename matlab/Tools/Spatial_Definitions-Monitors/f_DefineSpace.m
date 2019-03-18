@@ -1,6 +1,6 @@
 function [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC, ...
-monitorSize] = f_DefineSpace(sSupport,sSize,shiftCart, ...
-shiftMask,pixSize,scrnIdx,circularMask,z_pupil,coordType,MaxMask,plotMask,maskSel)
+monitorSize,shiftCart] = f_DefineSpace(sSupport,sSize,shiftCart, ...
+shiftMask,pixSize,scrnIdx,circularMask,z_pupil,coordType,MaxMask,maskSel)
 % Inputs:
 %  sSupport: full side-length of the SLMs (or unitary without an SLM)
 %  sSize: bits for grey levels; 2^k is the resolution (size of x and y)
@@ -29,8 +29,6 @@ shiftMask,pixSize,scrnIdx,circularMask,z_pupil,coordType,MaxMask,plotMask,maskSe
 %           -0: custom-size mask that depends on the variable sSize   
 %           -1: maximizes the mask for coordType = 1
 %           -2: maximized mask but keeping its rectangular fashion
-%  plotMask:  no (0); on the screen (1); on the SLM (2); on the screen, but
-%             a surface (3)
 %  maskSel: selects a specific mask
 %
 % Outputs:
@@ -127,7 +125,8 @@ rSize = min(HalfSupportX,HalfSupportY);
 switch shiftMask 
  case 0
   shiftX = 0; shiftY = 0; % Shift deactivated   
-      
+  shiftCart = [shiftX shiftY];    
+  
  case 1
   % Test if the center of the mask is inside the truncation
   if max(shiftCart) > 100
@@ -138,9 +137,10 @@ switch shiftMask
   % old shift in cm: shiftCart = spaceSupport*shiftCart/100
   shiftX = shiftCart(2); % Cartesian shift in x
   shiftY = shiftCart(1); % Cartesian shift in y
- 
+  
  case 2 % Self-centering algorithm
   % Pending
+  % shiftCart = shiftCart;
   
 end
 

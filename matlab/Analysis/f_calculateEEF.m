@@ -1,4 +1,7 @@
-function [energy,radialIntensity] = f_calculateEEF(distribution,shiftCart,metricProfile,tit)
+function [energy,radialIntensity] = f_calculateEEF(x,y,distribution, ...
+                                               shiftCart,metricProfile,tit)
+% Plots the Enclosed Energy Factor (EEF) along with its respective
+% intensity distribution
 %
 % Inputs:
 %  distribution: either a simulated 2D image or a camera-taken 2D image
@@ -7,53 +10,55 @@ function [energy,radialIntensity] = f_calculateEEF(distribution,shiftCart,metric
 %             convention). Ranges per shift: [0,100] (percentage)  
 %  metricProfile: 1: vertical profile; 2: horizontal profile
 % Outputs:
+%  energy
+%  radialIntensity
 %
+%% Metric-specific default parameters
+tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
+plotData = 1; % Shows the profile lines. Ref: 1
+plotH = 0; % Not needed for the metric. Ref: 0
+plotV = 0; % Not needed for the metric. Ref: 0
+oneSideProfile = 1; % Specifically needed for this metric. Ref: 1
 
-%% Mid and max points of the mask (with the shift application)
-% The signs of the shifts account for the cartesian coordinates convention
-% [maxX, maxY] = size(distribution);
-% maxX = maxX - shiftCart(1); % Shifted X for the SLM 
-% maxY = maxY + shiftCart(2); % Shifted Y for the SLM
-
-% midX = round((maxX+1)/2) + mod(maxX,2);
-% midY = round((maxY+1)/2) + mod(maxY,2);
-
-tol = 0; % 0: no need to symmetrically truncate the profile
-plotData = 1; % Not needed for the metric
-plotH = 0; % Not needed for the metric
-plotV = 0; % Not needed for the metric
-oneSideProfile = 1; % Specifically needed for this metric
-
-% shiftCart = [100,100]; % delete
 %% Profile
-[Hprof,Vprof,~,~,midX,midY] = f_makeImageProfile(xang,yang, ...
-distribution,tol,shiftCart,tit,plotData,plotH,plotV,oneSideProfile);
+[Hprof,Vprof,~,~,midX,midY] = f_makeImageProfile(x,y,distribution,...
+tol,shiftCart,tit,plotData,plotH,plotV,oneSideProfile);
                      
 %% Profile choosing
 switch metricProfile
     case 1 % Vertical profile
         radialIntensity = Vprof; % One-sided
         midCart = midY;
+%         maxCart = maxY; OLD
+        titprof = '(vertical profile)';
     case 2 % Horizontal profile
         radialIntensity = Hprof; % One-sided
         midCart = midX;
+%         maxCart = maxX; OLD
+        titprof = '(horizontal profile)';
     otherwise
-        error('metricProfile must be either 1 or 2');
+        error('"metricProfile" must be either 1 or 2');
 end
 
 
 % radialIntensity = improfile(distribution,[1,maxY],[midX,midX]);
 % radialIntensityOneside = radialIntensity(fix(end/2):end);
 
-%% Enclosed Energy Factor
+%% Enclosed Energy Factor (EEF)
 energy = cumsum(radialIntensity); % Discrete integration
 energy  = energy/energy(end); % Same as normalizing with the max
 normIntensity = radialIntensity./max(radialIntensity);
 
+%% Plot of the
 figure('color','white');
-plot(1:midCart,energy'); hold on
-plot(1:midCart,normIntensity); hold off
-title('Encircled Energy Distribution of Intensity'); grid on;
+plot(x(1:midCart+1),energy); hold on
+plot(x(1:midCart+1),normIntensity); hold off; 
+title(strcat(tit,{' '},titprof)); grid on;
 xlabel('\lambda/D'); ylabel('Relative throughput')
 legend({'Encircled Energy Factor', 'Intensity'});
+
+% Old:
+% plot(x(midCart-1:maxCart),energy); hold on
+% plot(x(midCart-1:maxCart),normIntensity); hold off; 
+
 end
