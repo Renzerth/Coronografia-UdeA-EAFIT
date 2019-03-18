@@ -50,20 +50,20 @@ end
 
 %% Profile coordinates
 % The plus one takes into account that we deal with indices
-% if shiftX <= 0
+if shiftX <= 0
     Hx = [1,maxX]; % Horizontal x components: (xi,xf)
-% else
-%     Hx = [shiftX+1,maxX]; % Horizontal x components: (xi,xf)
-% end
+else
+    Hx = [shiftX+1,maxX]; % Horizontal x components: (xi,xf)
+end
 
-% if shiftY <= 0
+if shiftY >= 0
     Vy = [1,maxY]; % Vertical y components: (yi,yf)
-% else
-%     Vy = [shiftY+1,maxY]; % Vertical y components: (yi,yf)
-% end
+else
+    Vy = [shiftY+1,maxY]; % Vertical y components: (yi,yf)
+end
 
-Hy = [midY,midY+shiftY]; % Horizontal y components: (yi,yf)
-Vx = [midX,midX+shiftX]; % Vertical x components: (xi,xf)
+Hy = [midY,midY]; % Horizontal y components: (yi,yf)
+Vx = [midX,midX]; % Vertical x components: (xi,xf)
 
 %% Profiles of the 2D array drawn on the dataArray 
 if plotData

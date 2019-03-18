@@ -19,10 +19,11 @@ plotData = 1; % Shows the profile lines. Ref: 1
 plotH = 0; % Not needed for the metric. Ref: 0
 plotV = 0; % Not needed for the metric. Ref: 0
 oneSideProfile = 1; % Specifically needed for this metric. Ref: 1
+dcShift = 0; % Only used for spectra (Fourier analysis)
 
 %% Profile
 [Hprof,Vprof,~,~,midX,midY] = f_makeImageProfile(x,y,distribution,...
-tol,shiftCart,tit,plotData,plotH,plotV,oneSideProfile);
+tol,shiftCart,tit,plotData,plotH,plotV,oneSideProfile,dcShift);
                      
 %% Profile choosing
 switch metricProfile

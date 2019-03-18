@@ -36,7 +36,7 @@ for idxgral = 1:totalImgs
     case 1
       tit = 'Encircled Energy Distribution of Intensity';
       % old: tit = 'Encircled Energy Factor metric';
-      [~,~] = f_calculateEEF(xangL_D,yangL_D,I.expImgs{idxgral}, ...
+      [~,~] = f_calculateEEF(xpix,ypix,I.expImgs{idxgral}, ...
                              shiftCart,metricProfile,tit);
   end
 

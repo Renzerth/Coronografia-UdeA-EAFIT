@@ -23,7 +23,7 @@ xpix = 1:xSize; % Pixels start in 1
 ypix = 1:ySize; % Pixels start in 1
 
 %% Cartesian coordinates with the lambda/D scaling (diffraction angle)
-xangL_D = f_scalePix2DiffAng(xpix,AiryFactor);
+xangL_D = f_scalePix2DiffAng(xpix,AiryFactor);  
 yangL_D = f_scalePix2DiffAng(ypix,AiryFactor);
 
 %% Cartesian coordinates with the arcsecond scaling (diffraction angle)
@@ -36,7 +36,7 @@ for idxgral = 1:totalImgs
     case 1
       tit = 'Encircled Energy Distribution of Intensity';
       % old: tit = 'Encircled Energy Factor metric';
-      [~,~] = f_calculateEEF(xangL_D,yangL_D,I.expImgs{idxgral}, ...
+      [~,~] = f_calculateEEF(xpix,ypix,I.expImgs{idxgral}, ...
                              shiftCart,metricProfile,tit);
   end
 
