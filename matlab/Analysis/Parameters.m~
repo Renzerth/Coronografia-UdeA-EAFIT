@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 1:
     % Note: measDebug will be 0 if measSimulated = 1
     % If meas = 1 -> all the figures will be closed before starting it
@@ -14,21 +14,20 @@ meas = 1; % Measure: yes (1) or no (0)
                        % figure that says Camera isn't saved but the other
                        % one that shows the mask in a gray scale fashion
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 1; % Processes the data
+proc = 0; % Processes the data
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
                % vpa or sprintf ???
-abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
-             % (1) or phase (2) plot. abs_ang=1 is normally used for
-             % maskSel=1
+abs_ang = 0; % Custom(0)[str has to be defined for this case], magnitude
+             % (1) or phase (2) plot. abs_ang=1 is normally used for 
              % It doesn't apply for Zernike and LG +
              % Zernike (maskSel = 5 or 6): instead use z_disp_wrap for phase wrapping or not.
              % This is done since the aberration effects observed in the 
              % phase, are noticed in the amplitude if the field is 
              % propagated. Consider using simBool = 1
              % abs_ang = 0 is not valid for FTmask = 1
-maskSel = 0; % Phase mask selection:
+maskSel = 5; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -351,7 +350,6 @@ AiryFactor = n*PP*M/f; % Used to convert from pixels to the diffraction
 
 
 
-                       
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 6: ACADEMIC-PURPOSE ASPECTS %%%%%%%%%%%%%%%%%%
 

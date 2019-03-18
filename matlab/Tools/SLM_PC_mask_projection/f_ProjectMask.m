@@ -48,22 +48,26 @@ switch abs_ang
     figtit = 'Mask';
     if isreal(mask) == false
       warning(['When you choose abs_ang = 0, mask must be selected to be' ...
-        'real-valued. Selecting the real part...']);
+        ' real-valued. Selecting the real part...']);
       wrapMask = real(mask);
     end
     % str: defined in the input
     % Here, the customMap is defined but the mask is not wrapped
-    [~,customMap] = f_discretizeMask(phaseValues,wrapMask);
+    [~,customMap] = f_discretizeMask(phaseValues,wrapMask); 
+    % The first output is only valid for phase masks
+    
   case 1 % Amplitude
     wrapMask = abs(mask); % Actually, this is an amplitude filter
     figtit = 'Amplitude Mask';
     str = 'Value of amplitude'; % Colorbar string
+    
     %% Normalization constants (amplitude)
     if normMag == 1 % Phase is not changed
       norm = max(wrapMask(:)); % Max value
       wrapMask = wrapMask/norm; % Normalization of the magnitude
     end
-    [wrapMask,customMap] = f_discretizeMask(phaseValues,wrapMask);
+    [~,customMap] = f_discretizeMask(phaseValues,wrapMask);
+    % The first output is only valid for phase masks
   
   case 2 % Phase
    % Circular pupil and wrapping   
@@ -71,6 +75,7 @@ switch abs_ang
    binMask,binv,MaskPupil,rSize,plotMask);
    figtit = 'Phase Mask';
    str = 'Wrapped phase value'; % Colorbar string
+   
  end
 
 %% Plot
@@ -93,7 +98,7 @@ switch plotMask
   cbh = colorbar; cbh.Label.String = str;
   pax = gca; pax.FontSize = 16; % Font size   
   
-  %% Add the -pi -> +pi ticks
+  %% Adds the -pi -> +pi ticks
   if abs_ang == 2
     % Next, pi ticks are added to the colorbar if the phase value extreme
     % points are near -pi and pi; otherwise the default colorbar is shown

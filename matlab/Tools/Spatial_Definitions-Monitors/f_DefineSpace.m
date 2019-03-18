@@ -134,7 +134,6 @@ switch shiftMask
            'image, please select a smaller value for "shiftCart" ']);
   end
   shiftCart = shiftCart/100; % Percentage w.r.t the half size 
-  % old shift in cm: shiftCart = spaceSupport*shiftCart/100
   shiftX = shiftCart(2); % Cartesian shift in x
   shiftY = shiftCart(1); % Cartesian shift in y
   
@@ -170,8 +169,8 @@ end
 %% Shift scaling so that it is a percentage
 % Takes into account the half support of X and Y and a percentage of them
 % is taken
-shiftX = shiftX*HalfSupportX;
-shiftY = shiftY*HalfSupportY;
+shiftX = shiftX*HalfSupportX; % Shift converted to the HalfSupport's units
+shiftY = shiftY*HalfSupportY; % Shift converted to the HalfSupport's units
 
 %% Shift application
 % The signs of the shifts account for the cartesian coordinates convention
