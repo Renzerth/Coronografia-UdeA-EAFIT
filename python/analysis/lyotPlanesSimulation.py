@@ -12,7 +12,6 @@ version into Object-Oriented Programming structure.
 import sys, os; 
 sys.path.insert(0, os.path.abspath('..'))
 from tools.vortexTools import vortexProfiler
-from scipy import tensordot
 
 import numpy as np
         
