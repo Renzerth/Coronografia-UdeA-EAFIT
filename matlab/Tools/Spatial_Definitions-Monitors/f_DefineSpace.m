@@ -30,6 +30,9 @@ shiftMask,pixSize,scrnIdx,circularMask,z_pupil,coordType,MaxMask,maskSel)
 %           -1: maximizes the mask for coordType = 1
 %           -2: maximized mask but keeping its rectangular fashion
 %  maskSel: selects a specific mask
+%  shiftCart: same as input but over 100 and filled with zeros when
+%                 shiftMask=0 or with the camera-compensated shift when 
+%                 shiftMask=2 (units for all cases: percentage in [0,1])
 %
 % Outputs:
 % rSize: radius for the circular (or elliptical) pupil truncation
@@ -139,9 +142,11 @@ switch shiftMask
   
  case 2 % Self-centering algorithm
   % Pending
+  % Remember to output it as a percentage
   % shiftCart = shiftCart;
   
 end
+% After this switch, shiftCart is taken as the output
 
 %% Check the shift for the Zernike polynomials
 % Right now, shiftX and shiftY are percentages but z_pupil scaled by the
