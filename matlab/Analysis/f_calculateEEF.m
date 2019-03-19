@@ -20,10 +20,12 @@ plotH = 0; % Not needed for the metric. Ref: 0
 plotV = 0; % Not needed for the metric. Ref: 0
 oneSideProfile = 1; % Specifically needed for this metric. Ref: 1
 dcShift = 0; % Only used for spectra (Fourier analysis)
+xlab = 'Angular position [\lambda/D]';
+ylab = 'Angular position [\lambda/D]';
 
 %% Profile
 [x,y,Hprof,Vprof,~,~,~,~] = f_makeImageProfile(x,y,distribution,...
-tol,shiftCart,tit,plotData,plotH,plotV,oneSideProfile,dcShift);
+tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift);
                      
 %% Profile choosing
 switch metricProfile
@@ -49,7 +51,7 @@ figure('color','white');
 plot(cartcoord,energy); hold on
 plot(cartcoord,normIntensity); hold off; 
 title(strcat(tit,{' '},titprof)); grid on;
-xlabel('\lambda/D'); ylabel('Relative throughput')
+xlabel('Angular position [\lambda/D]'); ylabel('Relative throughput')
 legend({'Encircled Energy Factor', 'Intensity'});
 
 end

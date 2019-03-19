@@ -56,6 +56,8 @@ oneSideProfile = 0; % 0: two-sided profile
 shiftCart = [0,0]; % No shift here
 dcShift = 1; % Accounts one pixel movement for the dc component. This is 
              % caused by the fftshift
+xlab = '';
+ylab = '';
 [~,~,~,~,~,~,~,~] = f_makeImageProfile(x,y,mask,tol,shiftCart,tit, ...
-                              plotData,plotH,plotV,oneSideProfile,dcShift);
+                              xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift);
 end

@@ -44,11 +44,19 @@ yangArcs = f_LambdaDToarcsec(yangL_D);
 for idxgral = 1:totalImgs
   %% Processsing of the image
   switch metricSel
-    case 1
+    case 1 % Throughput: Encircled Energy Factor metric
+      % Camera: PSF.
       tit = 'Encircled Energy Distribution of Intensity';
-      % old: tit = 'Encircled Energy Factor metric';
       [~,~] = f_calculateEEF(xangL_D,yangL_D,I.expImgs{idxgral}, ...
                              shiftCart,metricProfile,tit);
+      case 2 % Throughput gradient
+        tit = 'Throughput gradient';  
+      case 3 % Power suppresion in the airy disk
+        tit ='Power suppresion in the airy disk';    
+      case 4 % SNR
+        tit = 'Signal-to-Noise Ratio';
+      case 5 % MSE
+        tit = 'Mean Squared Error';
       otherwise
           error('Select a valid metric');
   end

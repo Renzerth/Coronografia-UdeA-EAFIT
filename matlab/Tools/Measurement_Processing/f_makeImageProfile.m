@@ -1,5 +1,5 @@
 function [x,y,Hprof,Vprof,maxX,maxY,midX,midY] = f_makeImageProfile(x,y, ...
-           dataArray,tol,shiftCart,tit,plotData,plotH,plotV,oneSideProfile,dcShift)
+           dataArray,tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift)
 % returns the profiles of a 2D data array (or matrix), i.e., an image or a
 % 2D map. These profiles are horizontal and vertical
 %
@@ -10,6 +10,7 @@ function [x,y,Hprof,Vprof,maxX,maxY,midX,midY] = f_makeImageProfile(x,y, ...
 %  size of the profile
 %  shiftCart:
 %  tit: title for dataArray
+%  xlab,ylab: x and y labels (strings)
 %  plotData: plots dataArray and lines of the profiles
 %  plotH,plotV: booleans to plot the horizontal and the vertical profiles
 %  oneSideProfile:
@@ -49,6 +50,8 @@ Vx = [midX,midX]; % Vertical x components: (xi,xf)
 %% Profiles of the 2D array drawn on the dataArray 
 if plotData
     figure; imagesc(x,y,dataArray); title(tit); % colormap(hot)
+    xlabel(xlab);
+    ylabel(ylab);
     hold on
     % Horizontal:
     line(x(Hx),y(Hy),'LineWidth',3,'Color','blue','LineStyle','--'); 

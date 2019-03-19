@@ -152,8 +152,9 @@ switch shiftMask
   %   snap = 20*log10(snap);
   snap = double(snap);
   mode = 'single'; % 'single' or 'vortex'
-  [rowCoord,~] = f_getValleyLocation(snap,'single');
-  [~,colCoord] = f_getValleyLocation(snap{2},'single');
+   f_computeCenterFromImageMin()
+%   [rowCoord,~] = f_getValleyLocation(snap,'single');
+%   [~,colCoord] = f_getValleyLocation(snap{2},'single');
 
 end
 % After this switch, shiftCart is taken as the output
