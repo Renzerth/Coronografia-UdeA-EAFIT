@@ -1,4 +1,8 @@
 function [vid,src] = f_selectCamera(camera,exposure,format)
+% Inputs:
+% Outputs:
+%   vid: video input object
+%   src: currently selected video source object
 %% Select camera for predefined settings
 try
 switch camera

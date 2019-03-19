@@ -1,8 +1,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
-%%% For meas = 1:
+meas = 0; % Measure: yes (1) or no (0)
+%%% For meas = 0:  the workspace
+    useLastMeas = 0; % 1: Loads the last made measurement
+                                  % 0: 
+     %%% For useLastMeas = 0:
+         measFoldName = '19-Mar-2019-No-SLM-LG-mask-tcs-1-gls-1';
+%%% For meas = 1: the whole workspace is saved
     % Note: measDebug will be 0 if measSimulated = 1
     % If meas = 1 -> all the figures will be closed before starting it
     measDebug = 0; % Debugging before actually measuring. Displays the 
@@ -116,7 +121,7 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [5,20]; % shiftCart: [yshift,xshift], works when 
+    shiftCart = [-100,50]; % shiftCart: [yshift,xshift], works when 
                        % shiftMask = 1. Percentages of movement of the
                        % total size of the mask (cartesian coordinates 
                        % convention). Ranges per shift: [0,100] (percentge)  
@@ -295,7 +300,7 @@ dataformat = '.bmp'; % Applies only for savetype = 2
 % glvect = [1 16 24 28 36 56 128 256]; % Dados por Juan Jose
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
                                   % with a good system phase response
-tcvect = [1]; % Topological charges to be measured [integers] 
+tcvect = [1 2]; % Topological charges to be measured [integers] 
 glvect = [255]; % Gray level to be measured [0,255]
 % glvect = linspace(2,18,9)
 wait = 0; % 10 seconds before measuring as a safety measurement
@@ -360,7 +365,7 @@ AiryFactor = n*PP*M/f; % Used to convert from pixels to the diffraction
 % Zernike reconstruction, FT, gradient and a simulation in the free space 
 % that is not very depured
 %% Optional plots and procedures
-FTmask = 1; % Finds the FFT of the mask and plots it: yes(1); no(0)
+FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
 abs_angFT = 1; % Same definition as abs_ang
 %%% For FTmask = 1 and abs_angFT = 1:
    maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum                

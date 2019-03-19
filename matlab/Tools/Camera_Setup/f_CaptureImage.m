@@ -8,7 +8,6 @@ if ax ~= 7 % Create a folder if it doesn't exist
     mkdir(snapsfldr);
 end
 
-
 %% Get frame data
 SingleFrame = getsnapshot(vid); % Take a picture
 % isfile(filename) MATLAB 2017

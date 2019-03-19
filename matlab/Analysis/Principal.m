@@ -48,9 +48,21 @@ addpath(strcat('..',pathSep,toolsFldr,pathSep,filemanag));
 f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
 % Adds all the directories to use in the algorithm
 
+ %% Hardware initialization
+ % This is here because the camera is needed for the self-centering
+ % algorithm inside "f_DefineSpace"
+ if measSimulated == 0 && meas == 1 % When a real measurement will be performed
+  % InitializeHardware;
+  % Turns the camera on and create all the needed variables. Remember to 
+  % leave the preview open
+  [vid,~] = f_selectCamera(camera,exposure,format);
+ else
+     vid = [];
+ end
+
 %% Spatial definitions
 [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize, ...
-shiftCart] = f_DefineSpace(sSupport,sSize,shiftCart,shiftMask,pixSize, ...
+shiftCart] = f_DefineSpace(vid,sSupport,sSize,shiftCart,shiftMask,pixSize, ...
 scrnIdx,circularMask,z_pupil,coordType,MaxMask,maskSel);
 % Defines the cartesian/polar coordinates, its sampling interval and 
 % discretized angular part for gl
@@ -77,22 +89,18 @@ MaxMask,plotMask,maskSel);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% MEASUREMENT/PROCESSING BY AN AUTOMATED PARAMETER VARIATION
 %% Folders and register creations on Data and Output    
-[imgpartPath,measfullpath,ProcessedDir,ltcvect,lglvect,totalImgs] = ...
+[imgpartPath,measfullpath,ProcessedDir,ltcvect,lglvect,totalImgs, numberedFolderMeas] = ...
 f_CreateFoldersRegisters(maskName,tcvect,glvect,slm,cameraPlane,dataDir,...
 outDir,pathSep,infoDelim,dirDelim,meas,proc);
 
 %% Measurement
 if meas
-  close all; % Closes opened figures
+ close all; % Closes opened figures
   
- %% Hardware initialization
- if measSimulated == 0 % When a real measurement will be performed
-  % InitializeHardware;
-  % Turns the camera on and create all the needed variables. Remember to 
-  % leave the preview open
-  [vid,src] = f_selectCamera(camera,exposure,format);
- end
-
+ %% Save the whole workspace 
+ % Performed every time a measurement is made
+ save(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
+  
  %% Measurement debugging
  % Usefull for aligning the vortex and adjusting exposure parameters
  if measDebug == 1 && measSimulated == 0
@@ -114,7 +122,7 @@ if meas
   % Still not sure if needed: null tc beam or a high tc beam(long radius)
 
   %% Automated measurement
-  f_AutomateMeasurement(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,s,ph0,p,...
+  f_AutomateMeasurement(vid,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,s,ph0,p,...
   WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp,Angbet,z_coeff, ...
   z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,MaskPupil,rSize, ...
   monitorSize,scrnIdx,coordType,abs_ang,MaxMask,maskSel,ltcvect,lglvect,...
@@ -135,7 +143,19 @@ if meas
          pause(0.2); % Time between the beeps
      end
  end
+ 
+else
+    
+ %% Load the whole workspace 
+ if useLastMeas % Loads the last measurement
+      clearvars -except dataDir pathSep numberedFolderMeas;
+      load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
+ else % Loads a user-defined measurement
+     clearvars -except dataDir pathSep measFoldName;
+     load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));
+ end
 end % End of measurements
+
 
 %% Post-processing of the data and saving
 if proc

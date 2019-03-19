@@ -22,6 +22,17 @@ I = load(measfullpath); % Loads all the measured images and their info
 xpix = 1:xSize; % Pixels start in 1
 ypix = 1:ySize; % Pixels start in 1
 
+%% Airy radius
+airyBool = 1;
+switch airyBool
+    case 1 % Theoretical
+       Rairy = 1;
+    case 2 % Measured from the reference image
+        NA = 0.1;
+        L = 0.6328;
+        Rairy = 1.22*L/NA;
+end
+
 %% Cartesian coordinates with the lambda/D scaling (diffraction angle)
 xangL_D = f_scalePix2DiffAng(xpix,AiryFactor);  
 yangL_D = f_scalePix2DiffAng(ypix,AiryFactor);
@@ -38,6 +49,8 @@ for idxgral = 1:totalImgs
       % old: tit = 'Encircled Energy Factor metric';
       [~,~] = f_calculateEEF(xangL_D,yangL_D,I.expImgs{idxgral}, ...
                              shiftCart,metricProfile,tit);
+      otherwise
+          error('Select a valid metric');
   end
 
   %% Saving

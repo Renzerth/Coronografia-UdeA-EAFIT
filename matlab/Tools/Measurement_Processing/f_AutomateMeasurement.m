@@ -1,4 +1,4 @@
-function f_AutomateMeasurement(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC, ...
+function f_AutomateMeasurement(vid,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC, ...
 s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
 z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,MaskPupil, ...
 rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,maskSel,ltcvect, ...
@@ -6,6 +6,11 @@ lglvect,totalImgs,wait,imgpartPath,dataformat,imgformat,measfullpath,infoDelim, 
 cameraPlane,tcvect,glvect,measSimulated,recordingDelay)
 % Plots phase masks on the Fourier plane of the vortex coronagraph and
 % takes images of either its Lyot or PSF plane
+%
+% Inputs:
+%  vid: video input object
+%
+% Ouputs:
 
 %% Automated measurements
 
@@ -31,7 +36,7 @@ for idxtc = 1:ltcvect
     plotMask = 2; % Select SLM for plotting
     [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
                                       phiPC,plotMask);
-    [~,wrapMask,slmfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc, ...
+    [~,wrapMaskslm,slmfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc, ...
     s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
     Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
     MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
@@ -41,7 +46,7 @@ for idxtc = 1:ltcvect
     if measSimulated == 0
         snap = getsnapshot(vid); % Real measurements
     else % measSimulated = 1
-        snap = wrapMask; % "Simulated" measurements (the mask is saved)
+        snap = wrapMaskslm; % "Simulated" measurements (the mask is saved)
     end
    
    %% Displaying the camera on the PC
@@ -57,19 +62,20 @@ for idxtc = 1:ltcvect
     plotMask = 1; % Select PC
     [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
                                       phiPC,plotMask);                             
-    [~,wrapMask,pcfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc, ... 
+    [~,wrapMaskpc,pcfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc, ... 
     s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
     Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
     MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
     plotMask,maskSel);     
     set(pcfig,'units','normalized','position',[6/11 2/10 3/7 1/2]);
-    % If you want to simulate with the shifted mask, put: [~,~,pcfig,~]       
+
     
    %% Saving the measurement
     if measSimulated == 0
          expImgs{idxgral} = snap; % An extructure with all the images
     else % measSimulated = 1
-         expImgs{idxgral} = wrapMask; % Saves the mask
+         % If you want to simulate with the shifted mask, put wrapMaskslm
+         expImgs{idxgral} = wrapMaskpc; % Saves the mask
     end
     
     tcstr = strcat('tc',infoDelim,num2str(tcvect(idxtc))); 

@@ -1,7 +1,8 @@
 function [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC, ...
-monitorSize,shiftCart] = f_DefineSpace(sSupport,sSize,shiftCart, ...
+monitorSize,shiftCart] = f_DefineSpace(vid,sSupport,sSize,shiftCart, ...
 shiftMask,pixSize,scrnIdx,circularMask,z_pupil,coordType,MaxMask,maskSel)
 % Inputs:
+%  vid: video input object
 %  sSupport: full side-length of the SLMs (or unitary without an SLM)
 %  sSize: bits for grey levels; 2^k is the resolution (size of x and y)
 %     Default: 10. Size is calculated as 2^k - 1
@@ -143,8 +144,17 @@ switch shiftMask
  case 2 % Self-centering algorithm
   % Pending
   % Remember to output it as a percentage
-  % shiftCart = shiftCart;
-  
+  % DEFINE shiftCart 
+  %   snap = getsnapshot(vid); % PROBLEM: NOTHING IS SHOW IN THE SLM, SO ASSURE YOU HAVE A WHITE BACKGROUND ON YOUR PC
+  %       snap = imread();
+  %    [~,relativeCoord] = f_computeCenterFromImageMin();
+  %   snap = snap/max(snap(:));
+  %   snap = 20*log10(snap);
+  snap = double(snap);
+  mode = 'single'; % 'single' or 'vortex'
+  [rowCoord,~] = f_getValleyLocation(snap,'single');
+  [~,colCoord] = f_getValleyLocation(snap{2},'single');
+
 end
 % After this switch, shiftCart is taken as the output
 
