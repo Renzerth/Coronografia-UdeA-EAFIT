@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 0; % Measure: yes (1) or no (0)
+meas = 1; % Measure: yes (1) or no (0)
 %%% For meas = 1:
     % Note: measDebug will be 0 if measSimulated = 1
     % If meas = 1 -> all the figures will be closed before starting it
@@ -176,11 +176,13 @@ ph0 = pi; % Initial phase of the angle [radians]; reference +pi from
          % reasons and shouldn't affect the results. Only affects if the
          % vortex is no fully centered
 % For abs_ang = 2:
-binMask = 0; % Binarizes the mask w.r.t the max/min of the phase (boolean)
-binv = 0; % Binary inversion of the mask: yes(1); no(0). Only applies when 
-          % binMask=1. It is usefull to be applied for odd p's on LG beams
+    binMask = 0; % Binarizes the mask w.r.t the max/min of the phase 
+                 % (boolean)
+    binv = 0; % Binary inversion of the mask: yes(1); no(0). Only applies 
+              % when binMask=1. It is usefull to be applied for odd p's on 
+              % LG beams
 % For abs_ang = 1:
-normMag = 1; % Normalize magnitude. yes(1); no(0). 
+    normMag = 1; % Normalize magnitude. yes(1); no(0). 
           
 %% Parameters: Laguerre-Gauss
 p = 5; % Number of radial nodes. If p=0, normal helicoid masks are obtained

@@ -57,12 +57,13 @@ for idxtc = 1:ltcvect
     plotMask = 1; % Select PC
     [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
                                       phiPC,plotMask);                             
-    [~,~,pcfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc, ... %       [~,wrapMask,pcfig,~] 
+    [~,wrapMask,pcfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc, ... 
     s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
     Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
     MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
     plotMask,maskSel);     
     set(pcfig,'units','normalized','position',[6/11 2/10 3/7 1/2]);
+    % If you want to simulate with the shifted mask, put: [~,~,pcfig,~]       
     
    %% Saving the measurement
     if measSimulated == 0
@@ -73,8 +74,8 @@ for idxtc = 1:ltcvect
     
     tcstr = strcat('tc',infoDelim,num2str(tcvect(idxtc))); 
     glstr = strcat('gl',infoDelim,num2str(glvect(idxgl)));
-    MeasInfo{idxgral} = strcat(tcstr,infoDelim,glstr); % Dataname for each experimental
-                                           % data
+    MeasInfo{idxgral} = strcat(tcstr,infoDelim,glstr); % Dataname for each 
+                                           % experimental data
     imgfullpath = strcat(imgpartPath,MeasInfo{idxgral});
     if measSimulated == 0
         % Explanation: imwrite(variables,directory+filename+extension)
