@@ -145,7 +145,7 @@ if meas
      end
  end
  
-else
+elseif proc == 1 % 
     
  %% Load the whole workspace 
  if useLastMeas % Loads the last measurement

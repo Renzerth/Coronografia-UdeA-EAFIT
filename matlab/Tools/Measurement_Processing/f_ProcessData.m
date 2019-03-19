@@ -44,6 +44,16 @@ yangL_D = f_scalePix2DiffAng(ypix,AiryFactor);
 xangArcs = f_LambdaDToarcsec(xangL_D);
 yangArcs = f_LambdaDToarcsec(yangL_D);
 
+%% Metric-specific default parameters
+xlab = 'Angular position [\lambda/D]';
+ylab = 'Angular position [\lambda/D]';
+plotData = 1; % Shows the profile lines. Ref: 1
+plotH = 0; % Not needed for the metric. Ref: 0
+plotV = 0; % Not needed for the metric. Ref: 0
+oneSideProfile = 2; % Specifically needed for this metric. Ref: 1
+dcShift = 0; % Only used for spectra (Fourier analysis)
+tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
+
 for idxgral = 1:totalImgs
   %% Processsing of the image
   switch metricSel
@@ -51,9 +61,11 @@ for idxgral = 1:totalImgs
       % Camera: PSF.
       tit = 'Encircled Energy Distribution of Intensity';
       [~,~] = f_calculateEEF(xangL_D,yangL_D,I.expImgs{idxgral}, ...
-                             shiftCart,metricProfile,tit);
+      shiftCart,metricProfile,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift,tol);
       case 2 % Throughput gradient
-        tit = 'Throughput gradient';  
+        tit = 'Throughput gradient'; 
+        [~,~] = f_calculateSNR(x,y,distribution, refdistribution, ...
+                                               shiftCart,metricProfile,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift,tol);
       case 3 % Power suppresion in the airy disk
         tit ='Power suppresion in the airy disk';    
       case 4 % SNR

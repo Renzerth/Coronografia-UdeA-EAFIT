@@ -13,7 +13,9 @@ function [x,y,Hprof,Vprof,maxX,maxY,midX,midY] = f_makeImageProfile(x,y, ...
 %  xlab,ylab: x and y labels (strings)
 %  plotData: plots dataArray and lines of the profiles
 %  plotH,plotV: booleans to plot the horizontal and the vertical profiles
-%  oneSideProfile: 0 (no); 1(1st and 4th quadrants); 2(2nd and 3rd quadrants)
+%  oneSideProfile: 0 (no); 1(1st and 4th quadrants); 2(2nd and 3rd
+%  quadrants). For cases 1 and 2, the origin is always on the center of the
+%  image (determined by shiftCart)
 %  dcShift: Modulus applied for Fourier mask since the fftshift moves one
 %  pixel the dc component. Only used for spectra (Fourier analysis)
 %
@@ -73,11 +75,11 @@ switch oneSideProfile
         Vprof = Vprof(midY:end); % From the middle to the end
         x = x(midX:end); % From the middle to the end
         y = y(midY:end); % From the middle to the end
-    case 2% Profiles in the 2nd and 3rd quadrants
-        Hprof = Hprof(1:midX); % From the middle to the end
-        Vprof = Vprof(1:midY); % From the middle to the end
-        x = x(1:midX); % From the middle to the end
-        y = y(1:midY); % From the middle to the end        
+    case 2 % Profiles in the 2nd and 3rd quadrants
+        Hprof = fliplr(Hprof(midX:1)); % From the middle to the end
+        Vprof = fliplr(Vprof(1:midY)); % From the middle to the end
+        x = fliplr(x(1:midX)); % From the middle to the end
+        y = fliplr(y(1:midY)); % From the middle to the end        
 end 
 
 %% Plot of each profiles
