@@ -1,4 +1,4 @@
-function [Hprof,Vprof,maxX,maxY,midX,midY] = f_makeImageProfile(x,y, ...
+function [x,y,Hprof,Vprof,maxX,maxY,midX,midY] = f_makeImageProfile(x,y, ...
            dataArray,tol,shiftCart,tit,plotData,plotH,plotV,oneSideProfile,dcShift)
 % returns the profiles of a 2D data array (or matrix), i.e., an image or a
 % 2D map. These profiles are horizontal and vertical
@@ -21,13 +21,11 @@ function [Hprof,Vprof,maxX,maxY,midX,midY] = f_makeImageProfile(x,y, ...
 
 %% Max points of the array (with the shift application)
 % Takes into account an even/odd size of the size of dataArray
-[maxX, maxY] = size(dataArray); % Size of the array
-
+[maxY, maxX] = size(dataArray); % Size of the array
 
 %% Mid points of the array
 midX = round((maxX+1)/2) + dcShift*mod(maxX,2); % x mid point
 midY = round((maxY+1)/2) + dcShift*mod(maxY,2); % y mid point
-
 
 %% Shift of the mask scaling
 shiftX = shiftCart(2); % Cartesian shift in x
@@ -36,32 +34,15 @@ shiftX = round(midX*shiftX); % Percentage of the half support of the mask
 shiftY = round(midY*shiftY); % Percentage of the half support of the mask
 
 %% Mid points of the array (with the shift application)
+% The extreme parts of the profile are conserved and the midpoints shift
+% The signs here are the opposite of the Shift application section of the
+% function "f_DefineSpace" since they compensate this shift
 midX = midX + shiftX; % Shifted X for the SLM 
 midY = midY - shiftY; % Shifted Y for the SLM
 
-%% Max points of the array (with the shift application)
-if shiftX <= 0 % To avoid it to be out of bounds
-    maxX = maxX + shiftX; % Shifted X for the SLM 
-end
-
-if shiftY <= 0 % To avoid it to be out of bounds
-    maxY = maxY + shiftY; % Shifted Y for the SLM  
-end
-
 %% Profile coordinates
-% The plus one takes into account that we deal with indices
-% if shiftX <= 0
-    Hx = [1,maxX]; % Horizontal x components: (xi,xf)
-% else
-%     Hx = [shiftX+1,maxX]; % Horizontal x components: (xi,xf)
-% end
-
-% if shiftY <= 0
-    Vy = [1,maxY]; % Vertical y components: (yi,yf)
-% else
-%     Vy = [shiftY+1,maxY]; % Vertical y components: (yi,yf)
-% end
-
+Hx = [1,maxX]; % Horizontal x components: (xi,xf)
+Vy = [1,maxY]; % Vertical y components: (yi,yf)
 Hy = [midY,midY]; % Horizontal y components: (yi,yf)
 Vx = [midX,midX]; % Vertical x components: (xi,xf)
 
@@ -70,9 +51,9 @@ if plotData
     figure; imagesc(x,y,dataArray); title(tit); % colormap(hot)
     hold on
     % Horizontal:
-    line(x(Hx),x(Hy),'LineWidth',3,'Color','blue','LineStyle','--'); 
+    line(x(Hx),y(Hy),'LineWidth',3,'Color','blue','LineStyle','--'); 
     % Vertical:
-    line(y(Vx),y(Vy),'LineWidth',3,'Color','red','LineStyle','--'); 
+    line(x(Vx),y(Vy),'LineWidth',3,'Color','red','LineStyle','--'); 
     hold off
 end
 
@@ -82,10 +63,14 @@ Vprof = improfile(dataArray,Vx,Vy); % Vertical profile
 
 %% One side profile extraction
 if oneSideProfile
-    Hprof = Hprof(fix(end/2):end); % From the middle to the end
-    Vprof = Vprof(fix(end/2):end); % From the middle to the end
-    x = x(fix(end/2):end); % From the middle to the end
-    y = y(fix(end/2):end); % From the middle to the end
+%     Hprof = Hprof(fix(end/2):end); % From the middle to the end
+%     Vprof = Vprof(fix(end/2):end); % From the middle to the end
+%     x = x(fix(end/2):end); % From the middle to the end
+%     y = y(fix(end/2):end); % From the middle to the end
+      Hprof = Hprof(midX:end); % From the middle to the end
+      Vprof = Vprof(midY:end); % From the middle to the end
+      x = x(midX:end); % From the middle to the end
+      y = y(midY:end); % From the middle to the end
 end 
 
 %% Plot of each profiles

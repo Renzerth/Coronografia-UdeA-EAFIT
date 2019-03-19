@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 1:
     % Note: measDebug will be 0 if measSimulated = 1
     % If meas = 1 -> all the figures will be closed before starting it
@@ -19,7 +19,7 @@ proc = 1; % Processes the data
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
                % vpa or sprintf ???
-abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
+abs_ang = 1; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. abs_ang=1 is normally used for
              % maskSel=1
              % It doesn't apply for Zernike and LG +
@@ -28,7 +28,7 @@ abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % phase, are noticed in the amplitude if the field is 
              % propagated. Consider using simBool = 1
              % abs_ang = 0 is not valid for FTmask = 1
-maskSel = 0; % Phase mask selection:
+maskSel = 1; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -91,7 +91,7 @@ end
 %% SLM positionining calibration, coordinates and type of truncation
 MaskPupil = 1; % Applies a pupil truncation to the mask: (0): no; (1): yes
 % Won't work for maskSel = 5 or 6 (Zernike), as it has z_pupil
-coordType = 1; % Type of calculation of the spatial coordinates. def: 2 
+coordType = 2; % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % 2: size defined by the resolution of the selected screen    
 %%%% For coordType = 1 (user custom-sized):
@@ -116,7 +116,7 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [-25,-50]; % shiftCart: [yshift,xshift], works when 
+    shiftCart = [5,20]; % shiftCart: [yshift,xshift], works when 
                        % shiftMask = 1. Percentages of movement of the
                        % total size of the mask (cartesian coordinates 
                        % convention). Ranges per shift: [0,100] (percentge)  
@@ -166,7 +166,7 @@ imgformat = 'png'; % Format with period. mat, bmp, png, jpg
 %%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS PARAMETERS %%%%%%%%%%%%%%%%%%%%%%
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
-tc = 1; % Topological charge (integer bigger or equal to one)
+tc = 3; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
 s = 1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
