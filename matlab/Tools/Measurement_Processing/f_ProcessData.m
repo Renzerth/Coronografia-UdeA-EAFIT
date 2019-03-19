@@ -1,4 +1,4 @@
-function f_ProcessData(measfullpath,ProcessedDir,pathSep,infoDelim, ...
+function f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,pathSep,infoDelim, ...
 dataformat,cameraPlane,totalImgs,AiryFactor,metricSel,metricProfile, ...
 shiftCart)
 %% Post-processing of the data (application of the metric of the degree of
@@ -11,11 +11,14 @@ disp('Processing started:'); disp(t1_dt)
 processedImgname = strcat(ProcessedDir,pathSep,'processed',infoDelim, ...
                           cameraPlane,infoDelim);
 
-%% Loading
+%% Loading all the measurements
 % Explanation: load(directory+filename,variables)
 I = load(measfullpath); % Loads all the measured images and their info
                         % Two variables are loaded in the structure: 
                         % "expImgs" and "MeasInfo"
+                        
+%%  Loading the reference measurement
+refmeas = imread(refmeasfullpath);                        
                         
 %% Cartesian coordinates with pixel units
 [ySize, xSize] = size(I.expImgs{1}); % All images assumed of the same size
@@ -55,6 +58,7 @@ for idxgral = 1:totalImgs
         tit ='Power suppresion in the airy disk';    
       case 4 % SNR
         tit = 'Signal-to-Noise Ratio';
+        % refmeas
       case 5 % MSE
         tit = 'Mean Squared Error';
       otherwise

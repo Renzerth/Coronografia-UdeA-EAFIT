@@ -1,4 +1,4 @@
-function f_AutomateMeasurement(vid,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC, ...
+function [refmeasfullpath] = f_AutomateMeasurement(vid,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC, ...
 s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
 z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,MaskPupil, ...
 rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,maskSel,ltcvect, ...
@@ -75,7 +75,7 @@ for idxtc = 1:ltcvect
          expImgs{idxgral} = snap; % An extructure with all the images
     else % measSimulated = 1
          % If you want to simulate with the shifted mask, put wrapMaskslm
-         expImgs{idxgral} = wrapMaskpc; % Saves the mask
+         expImgs{idxgral} = wrapMaskslm; % Saves the mask
     end
     
     tcstr = strcat('tc',infoDelim,num2str(tcvect(idxtc))); 
@@ -101,7 +101,6 @@ for idxtc = 1:ltcvect
                            % This time is also important so that the camera
                            % bus doesn't overload 
     close(pcfig); close(camfig); close(slmfig); % Close the displayed figures
-    
   end
 end
 % MATLAB 2018b: disp(newline); MATLAB 2016: disp(char(10)) 
@@ -110,6 +109,21 @@ end
 %% Store all measurements in a .mat file
 % Explanation: save(directory+filename,variables) % ,'-append'
 save(measfullpath,'expImgs','MeasInfo'); % Save as .mat
+
+%% Reference measurement
+% Without tc and for 256 gray levels
+% Register the reference:
+ if measSimulated == 0
+    snap = getsnapshot(vid); % Real measurements
+else % measSimulated = 1
+    snap = wrapMaskslm; % "Simulated" measurements (the mask is saved)
+ end
+ 
+% Save the reference:
+refImgPath = strcat(imgpartPath,'Reference_tc0_gl256');
+refmeasfullpath =  strcat(refImgPath,dataformat);
+% Explanation: imwrite(variables,directory+filename+extension)
+imwrite(snap,refmeasfullpath); 
 
 %% End of the measurements
 % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium

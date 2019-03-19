@@ -144,7 +144,6 @@ switch shiftMask
  case 2 % Self-centering algorithm
   % Pending
   % Remember to output it as a percentage
-  % DEFINE shiftCart 
   %   snap = getsnapshot(vid); % PROBLEM: NOTHING IS SHOW IN THE SLM, SO ASSURE YOU HAVE A WHITE BACKGROUND ON YOUR PC
   %       snap = imread();
   %    [~,relativeCoord] = f_computeCenterFromImageMin();
@@ -155,7 +154,7 @@ switch shiftMask
    f_computeCenterFromImageMin()
 %   [rowCoord,~] = f_getValleyLocation(snap,'single');
 %   [~,colCoord] = f_getValleyLocation(snap{2},'single');
-
+shiftCart = [shiftY shiftX]
 end
 % After this switch, shiftCart is taken as the output
 

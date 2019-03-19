@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 0; % Measure: yes (1) or no (0)
+meas = 1; % Measure: yes (1) or no (0)
 %%% For meas = 0:  the workspace
     useLastMeas = 0; % 1: Loads the last made measurement
                                   % 0: 
@@ -121,10 +121,13 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [-100,50]; % shiftCart: [yshift,xshift], works when 
+    shiftCart = [-99,-99]; % shiftCart: [shiftY,shiftX], works when 
                        % shiftMask = 1. Percentages of movement of the
                        % total size of the mask (cartesian coordinates 
-                       % convention). Ranges per shift: [0,100] (percentge)  
+                       % convention). Ranges per shift: [0,99] (percentge)
+                       % 100 is allowed if no profile will be made. Smaller
+                       % values are restricted if the Zernike masks are
+                       % used.
                           
    % LC2002: [-3,0.1]
    % Pluto: [31.5,-1.8]
