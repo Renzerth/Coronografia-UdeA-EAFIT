@@ -62,8 +62,8 @@ end
 %     Vy = [shiftY+1,maxY]; % Vertical y components: (yi,yf)
 % end
 
-Hy = [midY,midY+shiftY]; % Horizontal y components: (yi,yf)
-Vx = [midX,midX+shiftX]; % Vertical x components: (xi,xf)
+Hy = [midY,midY]; % Horizontal y components: (yi,yf)
+Vx = [midX,midX]; % Vertical x components: (xi,xf)
 
 %% Profiles of the 2D array drawn on the dataArray 
 if plotData
