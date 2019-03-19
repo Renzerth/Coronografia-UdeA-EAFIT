@@ -3,7 +3,7 @@
 %% Algorithm sections
 meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 0:  the workspace
-    useLastMeas = 0; % 1: Loads the last made measurement
+    useLastMeas = 1; % 1: Loads the last made measurement
                                   % 0: 
      %%% For useLastMeas = 0:
          measFoldName = '19-Mar-2019-No-SLM-LG-mask-tcs-1-gls-1';
@@ -19,7 +19,7 @@ meas = 0; % Measure: yes (1) or no (0)
                        % figure that says Camera isn't saved but the other
                        % one that shows the mask in a gray scale fashion
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 0; % Processes the data
+proc = 1; % Processes the data
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
@@ -346,7 +346,7 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%% PART 5: PROCESSING WITH METRICS %%%%%%%%%%%%%%%%%%%%%%
-metricSel = 1; % 
+metricSel = 4; % 
 metricProfile = 1; % 1: vertical profile; 2: horizontal profile
 
 %% Diffraction angle units
@@ -368,7 +368,7 @@ AiryFactor = n*PP*M/f; % Used to convert from pixels to the diffraction
 % Zernike reconstruction, FT, gradient and a simulation in the free space 
 % that is not very depured
 %% Optional plots and procedures
-FTmask = 1; % Finds the FFT of the mask and plots it: yes(1); no(0)
+FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
 abs_angFT = 1; % Same definition as abs_ang
 %%% For FTmask = 1 and abs_angFT = 1:
    maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum                

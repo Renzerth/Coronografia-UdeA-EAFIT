@@ -1,4 +1,4 @@
-function [energy,radialIntensity] = f_calculateSNR(x,y,distribution, refdistribution, ...
+function [energy,Measurement] = f_calculateSNR(x,y,distribution, refdistribution, ...
                                                shiftCart,metricProfile,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift,tol)
 % Plots the SNR between a signal and its reference 
 %
@@ -19,28 +19,31 @@ tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift);
 %% Profile choosing
 switch metricProfile
     case 1 % Vertical profile
-        radialIntensity = Vprof; % One-sided
+        Measurement = Vprof; % One-sided
         cartcoord = y;
         titprof = '(vertical profile)';
     case 2 % Horizontal profile
-        radialIntensity = Hprof; % One-sided
+        Measurement = Hprof; % One-sided
         cartcoord =x;
         titprof = '(horizontal profile)';
     otherwise
         error('"metricProfile" must be either 1 or 2');
 end
 
-%% Enclosed Energy Factor (EEF)
-energy = cumsum(radialIntensity); % Discrete integration
-energy  = energy/energy(end); % Same as normalizing with the max
-normIntensity = radialIntensity./max(radialIntensity);
+%% SNR
 
-%% Plot of the
+%% Plot of each intensity in log scale
 figure('color','white');
-plot(cartcoord,energy); hold on
-plot(cartcoord,normIntensity); hold off; 
+semilogy(cartcoord,Measurement); hold on
+semilogy(cartcoord,refdistribution); hold off; 
 title(strcat(tit,{' '},titprof)); grid on;
-xlabel('Angular position [\lambda/D]'); ylabel('Relative throughput')
-legend({'Encircled Energy Factor', 'Intensity'});
+xlabel('Angular position [\lambda/D]'); ylabel('Relative contrast (logscale) [Radial intensity]')
+legend({'Measurement', 'Reference'});
 
+%% Plot of the SNR
+
+SNR = log(Measurement) - 0.5*log(refdistribution);
+plot(cartcoord,SNR);
+xlabel('Angular position [\lambda/D]'); ylabel('SNR')
+title('SNR')); grid on;
 end

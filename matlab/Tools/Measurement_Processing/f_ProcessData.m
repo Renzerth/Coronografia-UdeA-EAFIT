@@ -64,15 +64,17 @@ for idxgral = 1:totalImgs
       shiftCart,metricProfile,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift,tol);
       case 2 % Throughput gradient
         tit = 'Throughput gradient'; 
-        [~,~] = f_calculateSNR(x,y,distribution, refdistribution, ...
-                                               shiftCart,metricProfile,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift,tol);
+       
       case 3 % Power suppresion in the airy disk
         tit ='Power suppresion in the airy disk';    
+        
       case 4 % SNR
         tit = 'Signal-to-Noise Ratio';
-        % refmeas
+         [~,~] = f_calculateSNR(x,y,I.expImgs{idxgral}, refmeas, ...
+                                               shiftCart,metricProfile,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift,tol);
       case 5 % MSE
         tit = 'Mean Squared Error';
+        
       otherwise
           error('Select a valid metric');
   end
