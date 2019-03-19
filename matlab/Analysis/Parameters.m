@@ -121,7 +121,7 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm
-    shiftCart = [-99,-99]; % shiftCart: [shiftY,shiftX], works when 
+    shiftCart = [-100,-99]; % shiftCart: [shiftY,shiftX], works when 
                        % shiftMask = 1. Percentages of movement of the
                        % total size of the mask (cartesian coordinates 
                        % convention). Ranges per shift: [0,99] (percentge)

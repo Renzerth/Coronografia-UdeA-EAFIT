@@ -13,9 +13,9 @@ function [x,y,Hprof,Vprof,maxX,maxY,midX,midY] = f_makeImageProfile(x,y, ...
 %  xlab,ylab: x and y labels (strings)
 %  plotData: plots dataArray and lines of the profiles
 %  plotH,plotV: booleans to plot the horizontal and the vertical profiles
-%  oneSideProfile:
+%  oneSideProfile: 0 (no); 1(1st and 4th quadrants); 2(2nd and 3rd quadrants)
 %  dcShift: Modulus applied for Fourier mask since the fftshift moves one
-% pixel the dc component. Only used for spectra (Fourier analysis)
+%  pixel the dc component. Only used for spectra (Fourier analysis)
 %
 % Outputs:
 %  [Hprof,Vprof]: array of the profiles
@@ -65,15 +65,19 @@ Hprof = improfile(dataArray,Hx,Hy); % Horizontal profile
 Vprof = improfile(dataArray,Vx,Vy); % Vertical profile
 
 %% One side profile extraction
-if oneSideProfile
-%     Hprof = Hprof(fix(end/2):end); % From the middle to the end
-%     Vprof = Vprof(fix(end/2):end); % From the middle to the end
-%     x = x(fix(end/2):end); % From the middle to the end
-%     y = y(fix(end/2):end); % From the middle to the end
-      Hprof = Hprof(midX:end); % From the middle to the end
-      Vprof = Vprof(midY:end); % From the middle to the end
-      x = x(midX:end); % From the middle to the end
-      y = y(midY:end); % From the middle to the end
+switch oneSideProfile
+    case 0
+        % No change
+    case 1 %  Profiles in the 1st and 4th quadrants
+        Hprof = Hprof(midX:end); % From the middle to the end
+        Vprof = Vprof(midY:end); % From the middle to the end
+        x = x(midX:end); % From the middle to the end
+        y = y(midY:end); % From the middle to the end
+    case 2% Profiles in the 2nd and 3rd quadrants
+        Hprof = Hprof(1:midX); % From the middle to the end
+        Vprof = Vprof(1:midY); % From the middle to the end
+        x = x(1:midX); % From the middle to the end
+        y = y(1:midY); % From the middle to the end        
 end 
 
 %% Plot of each profiles
