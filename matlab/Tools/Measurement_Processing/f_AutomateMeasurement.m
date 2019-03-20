@@ -4,7 +4,7 @@ frkTyp,Aalpha,Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot, ...
 normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType, ...
 abs_ang,MaxMask,maskSel,ltcvect,lglvect,totalImgs,wait,imgpartPath, ...
 dataformat,imgformat,measfullpath,infoDelim,cameraPlane,tcvect,glvect, ...
-measSimulated,recordingDelay)
+measSimulated,recordingDelay,whiteblackref)
 % Plots phase masks on the Fourier plane of the vortex coronagraph and
 % takes images of either its Lyot or PSF plane
 %
@@ -75,8 +75,8 @@ for idxtc = 1:ltcvect
          expImgs{idxgral} = snap; % An extructure with all the images
     else % measSimulated = 1
          % If you want to simulate with the shifted mask, put wrapMaskslm
-         expImgs{idxgral} = wrapMaskslm; % Saves the mask
-    end
+         expImgs{idxgral} = wrapMaskslm; % Saves the mask                          % TEMPORARLY BEING USED
+    end 
     
     tcstr = strcat('tc',infoDelim,num2str(tcvect(idxtc))); 
     glstr = strcat('gl',infoDelim,num2str(glvect(idxgl)));
@@ -109,41 +109,51 @@ end
 save(measfullpath,'expImgs','MeasInfo'); % Save as .mat
 
 %% Reference measurement
-% Without tc and for 256 gray levels (white background)
+% For tc=0 and for a gray level of 0 (black) or 256 (white)
 % This is the non-coronagraphic PSF reference: the system response without
-% phase masks
+% a phase mask
 
 %%% Generate reference mask:
-tcref = 0;
-phaseValuesref = [0 255]; % [0 255]: white; [0 1]: black
+tcref = 0; % Always null: no OAM
+switch whiteblackref
+    case 0
+         glref = 0;
+         phaseValuesref = [0 1]; % Black
+    case 1
+         glref = 256;
+         phaseValuesref = [0 255]; % White 
+end
 phaseValuesref = phaseValuesref*2*pi/255; % Conversion from gray-levels to 
                                  % phase levels      
-pref = 0;
-binMaskref = 1;
+pref = 0; % 0: No radial nodes
+binMaskref = 1; % 1: mask is binarized
 maskSelref = 1; % LG mask
 plotMaskref = 2; % Select SLM for plotting
-WsizeRatioref = 100;
+WsizeRatioref = 100; % Radial nodes' width of 100
 [Xref,Yref,rref,phiref] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
                                   phiPC,plotMaskref);
-[~,wrapMaskslmref,~] = f_PlotSelectedMask(Xref,Yref,rref,phiref,phaseValuesref,tcref, ...
+[~,wrapMaskslmref,reffig,~] = f_PlotSelectedMask(Xref,Yref,rref,phiref,phaseValuesref,tcref, ... % TEMPORARLY NOT BEING USED
 s,ph0,pref,WsizeRatioref,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
 Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMaskref,binv, ...
 MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
 plotMaskref,maskSelref);      
 
-%%% Register the reference:
+ %%% Register the reference:
  if measSimulated == 0
     snap = getsnapshot(vid); % Real measurements
-else % measSimulated = 1
-    snap = wrapMaskslmref; % "Simulated" measurements (the mask is saved)
+ else % measSimulated = 1
+    snap = wrapMaskslm; % "Simulated" measurements (the mask is saved) % TEMPORARLY BEING USED
  end
-close(gcf); % Closes the reference mask
  
-% Save the reference:
-refImgPath = strcat(imgpartPath,'reference',infoDelim,'tc',num2str(tcref),infoDelim,'gl,',num2str(256));
+%%% Save the reference:
+refImgPath = strcat(imgpartPath,'reference',infoDelim,'tc',num2str(tcref),infoDelim,'gl',num2str(glref));
 refmeasfullpath =  strcat(refImgPath,dataformat);
 % Explanation: imwrite(variables,directory+filename+extension)
 imwrite(snap,refmeasfullpath); 
+
+%%% Wait and close the figure:
+pause(recordingDelay); % Displays the mask for "recordingDelay" seconds  
+close(reffig); % Closes the reference mask
 
 %% End of the measurements
 % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium
@@ -153,4 +163,4 @@ disp('Measurement finished'); disp(t2_dt)
 time = t2_dt - t1_dt; % Relative difference between start and stop
 disp('Measurement took:'); % datestr(time,'SS') ' seconds'])
 disp(time)
-% end
+end

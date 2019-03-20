@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 0 and proc = 1:  the workspace is loaded
     useLastMeas = 1; % In order to load a previous workspace:
     % 0: doesn't load anything: not recommended in general
@@ -21,12 +21,13 @@ meas = 1; % Measure: yes (1) or no (0)
                        % figure that says Camera isn't saved but the other
                        % one that shows the mask in a gray scale fashion
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 0; % Processes the data
+proc = 1; % Processes the data
+% NOTE: if meas and proc are both zero, then a unique phase mask is plotted
+% with "plotMask"
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
-precision = 3; % Precision of displayed results: significative digits (3)
-               % vpa or sprintf ???
-abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
+precision = 3; % Precision of displayed results: significative digits (3)           
+abs_ang = 1; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. abs_ang=1 is normally used for
              % maskSel=1
              % It doesn't apply for Zernike and LG +
@@ -49,8 +50,7 @@ maskSel = 1; % Phase mask selection:
              % 9: Sum of spiral phase masks NOT DONE
              % 10: Gerchberg-Saxton NOT DONE
              % otherwise: Unitary
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
-              % of the previous ones
+plotMask = 1; % Allows to plot the mask:
               % 0: no plot;
               % 1: on the screen
               % 2: on the SLM
@@ -176,7 +176,7 @@ imgformat = 'png'; % Format with period. mat, bmp, png, jpg
 %%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS PARAMETERS %%%%%%%%%%%%%%%%%%%%%%
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
-tc =0; % Topological charge (integer bigger or equal to one)
+tc =1; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
 s = 1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
@@ -186,7 +186,7 @@ ph0 = pi; % Initial phase of the angle [radians]; reference +pi from
          % reasons and shouldn't affect the results. Only affects if the
          % vortex is no fully centered
 % For abs_ang = 2:
-    binMask = 1; % Binarizes the mask w.r.t the max/min of the phase 
+    binMask = 0; % Binarizes the mask w.r.t the max/min of the phase 
                  % (boolean). Sometimes it won't work as expected for
                  % constant-valued masks
     binv = 0; % Binary inversion of the mask: yes(1); no(0). Only applies 
@@ -196,7 +196,7 @@ ph0 = pi; % Initial phase of the angle [radians]; reference +pi from
     normMag = 1; % Normalize magnitude. yes(1); no(0). 
           
 %% Parameters: Laguerre-Gauss
-p = 0; % Number of radial nodes. If p=0, normal helicoid masks are obtained
+p = 5; % Number of radial nodes. If p=0, normal helicoid masks are obtained
        % If they are used and tc=0(m=0); binary masks are obtained
        % Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
 WsizeRatio = 100; % Width of the modes; for LG; ref: [0,100] (percentage  
@@ -271,7 +271,7 @@ z_plot = 0; % plot with Zernike builder: yes(1); no(0)
 % the orthogonality
 
 %% Gray levels (discretization levels of the mask)             
-discretization = 2; % Variable for the next switch
+discretization = 1; % Variable for the next switch
 % Example of equivalence: gl = 2 <-> phaseValues = [0 255]
 switch discretization % Gray-level discretized azimuthal angle vector
  case 1 % 1: Evenly-spaced gl phase values.
@@ -315,10 +315,16 @@ glvect = [255]; % Gray level to be measured [0,255]
 % glvect = linspace(2,18,9)
 wait = 0; % 10 seconds before measuring as a safety measurement
           % RIGHT NOW 0 FOR DEBUGGING
-recordingDelay = 0; % Waits 5 seconds between each mask to be shown
+recordingDelay = 1; % Waits X seconds between each mask to be shown
                     % This time is also important so that the camera
                     % bus doesn't overload. Ref: 5
-                    % RIGHT NOW 1 FOR DEBUGGING
+
+%% Reference measurement     
+% For tc=0 and for a gray level of 0 (black) or 256 (white)
+% This is the non-coronagraphic PSF reference: the system response without
+% a phase mask
+whiteblackref = 1; % 1: white; 0: black background
+% The rest of parameters should not be chagned and are inside the function
 
 %% Folder names
 if ispc %  Linux (0) or Windows (1)

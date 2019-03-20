@@ -12,20 +12,20 @@ MeasSize = strcat(maskName,infoDelim,'mask',infoDelim,'tcs',infoDelim, ...
 % Datalog with the number of measurements for tc's and gl's
 
 %% Measurement folder creation (Datalog)
-% Folder name:
+%%% Folder name:
 Measfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize); 
 if meas
   createFoldMeas = 1;
 else
   createFoldMeas = 0;
 end
-% Specific measurement folder:
+%%% Specific measurement folder:
 numberedFolderMeas = f_createNextFolderName(dataDir,Measfldr, ...
                                           dirDelim,pathSep,createFoldMeas);                        
 MeasDir = strcat(dataDir,pathSep,numberedFolderMeas); % Datalog folder that
 % takes into account if the folder alraedy exists (numbered folder)
 imgpartPath = strcat(MeasDir,pathSep,cameraPlane,infoDelim); % Partial path. More 
-
+%%% Path of the cell with all the measurements
 measfullpath = strcat(imgpartPath,'allmeas'); % Name of the saved cell of 
 % images. More information will be concatenated for a full path of the 
 % measured images inside the two "for" loops in f_AutomateMeasurement. As 

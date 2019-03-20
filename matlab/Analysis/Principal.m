@@ -74,6 +74,10 @@ scrnIdx,circularMask,z_pupil,coordType,MaxMask,maskSel);
 % f_SelectCoordinates one just selects already-calculated variables
                 
 %% Phase mask selection and plot on the screen or on the SLM
+% Don't plot the mask if one will process or measure
+if proc == 1 || meas == 1
+    plotMask = 0;
+end
 [mask,wrapMask,~,maskName] = f_PlotSelectedMask(X,Y,r,phi, ...
 phaseValues,tc,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha, ...
 Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag, ...
@@ -96,7 +100,6 @@ slm,cameraPlane,dataDir,outDir,pathSep,infoDelim,dirDelim,meas,proc);
 
 %% Measurement
 if meas
- close all; % Closes opened figures
 
  %% Measurement debugging
  % Usefull for aligning the vortex and adjusting exposure parameters
@@ -106,7 +109,7 @@ if meas
   % Takes a camera shot,shows a figure and saves it   
   figure; imhist(SingleFrame); % Shows a histogram of the snapshot
 
-  % Get some hardware/software/tools info:
+  %%% Get some hardware/software/tools info:
   % get(vid): displays the general parameters of the camera
   % getselectedsource(vid): an existing variable (src). Similar to get(vid)
   % imaqhwinfo(vid): displays the driver connection with MATLAB
@@ -123,7 +126,7 @@ if meas
   binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang, ...
   MaxMask,maskSel,ltcvect,lglvect,totalImgs,wait,imgpartPath, ...
   dataformat,imgformat,measfullpath,infoDelim,cameraPlane,tcvect, ...
-  glvect,measSimulated,recordingDelay); 
+  glvect,measSimulated,recordingDelay,whiteblackref); 
   % Performs measurements and stores them
  end
 
@@ -147,15 +150,16 @@ if meas
 elseif proc == 1 % Else from the if meas  == 1
     
  %% Load the whole workspace 
+ % regexp: match regular expression (case sensitive)
  switch useLastMeas 
      case 0 % Doesn't load anything
           warning('useLastMeas=0 will not load things for proc=1')
      case 1 % Loads the last measurement
-        clearvars -except dataDir pathSep numberedFolderMeas;
-        load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
+        clearvars -except dataDir pathSep numberedFolderMeas ProcessedDir; % These variables are used on the next load and then they are replaced by the new ones that are loaded
+        load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'),'-regexp','^(?!ProcessedDir$)');
      case 2 % Loads a user-defined measurement
-        clearvars -except dataDir pathSep measFoldName;
-        load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));
+        clearvars -except dataDir pathSep measFoldName ProcessedDir;  % These variables are used on the next load and then they are replaced by the new ones that are loaded
+        load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'),'-regexp','^(?!ProcessedDir$)');
  end
  proc = 1; % In order to maintain its intended value (the program only enters to the 
                 % switch if proc=1 and if by loading its value is changed, it gets restored to 1 here)

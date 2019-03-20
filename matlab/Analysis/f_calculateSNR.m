@@ -48,6 +48,7 @@ legend({'Measurement', 'Reference'});
 SNR = log(Measurement) - 0.5*log(RefMeasurement);
 
 %% Plot of the SNR
+figure('color','white');
 plot(cartcoord,SNR);
 xlabel('Angular position [\lambda/D]'); ylabel('SNR')
 title('SNR'); grid on;
