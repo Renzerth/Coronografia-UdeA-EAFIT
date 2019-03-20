@@ -1,14 +1,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 0; % Measure: yes (1) or no (0)
+meas = 1; % Measure: yes (1) or no (0)
 %%% For meas = 0 and proc = 1:  the workspace is loaded
     useLastMeas = 1; % In order to load a previous workspace:
     % 0: doesn't load anything: not recommended in general
     % 1: loads the last measurement
     % 2: loads a user-defined measurement                            
     %%% For useLastMeas = 2:
-         measFoldName = '19-Mar-2019-No-SLM-LG-mask-tcs-1-gls-1';
+%          measFoldName = uigetdir; % The user will select the directory TO CORRECT
 %%% For meas = 1: the whole workspace is saved
     % if measSimulated = 1 -> measDebug will be 0 
     % If meas = 1 -> all the figures will be closed before starting it
@@ -323,7 +323,8 @@ recordingDelay = 1; % Waits X seconds between each mask to be shown
 % For tc=0 and for a gray level of 0 (black) or 256 (white)
 % This is the non-coronagraphic PSF reference: the system response without
 % a phase mask
-whiteblackref = 1; % 1: white; 0: black background
+whiteblackref = 0; % 1: white; 0: black background
+% White adds a piston of 2*Pi
 % The rest of parameters should not be chagned and are inside the function
 
 %% Folder names
