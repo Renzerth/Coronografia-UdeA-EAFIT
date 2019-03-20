@@ -115,28 +115,32 @@ save(measfullpath,'expImgs','MeasInfo'); % Save as .mat
 
 %%% Generate reference mask:
 tcref = 0;
-phaseValuesref = 255;
-maskSelref = 0; % Helicoidal phase
-plotMask = 2; % Select SLM for plotting
-    [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
-                                      phiPC,plotMask);
-    [~,wrapMaskslm,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValuesref,tcref, ...
-    s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
-    Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
-    MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
-    plotMask,maskSelref);      
+phaseValuesref = [0 255]; % [0 255]: white; [0 1]: black
+phaseValuesref = phaseValuesref*2*pi/255; % Conversion from gray-levels to 
+                                 % phase levels      
+pref = 0;
+binMaskref = 1;
+maskSelref = 1; % LG mask
+plotMaskref = 2; % Select SLM for plotting
+WsizeRatioref = 100;
+[Xref,Yref,rref,phiref] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
+                                  phiPC,plotMaskref);
+[~,wrapMaskslmref,~] = f_PlotSelectedMask(Xref,Yref,rref,phiref,phaseValuesref,tcref, ...
+s,ph0,pref,WsizeRatioref,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
+Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMaskref,binv, ...
+MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
+plotMaskref,maskSelref);      
 
-% Register the reference:
+%%% Register the reference:
  if measSimulated == 0
     snap = getsnapshot(vid); % Real measurements
 else % measSimulated = 1
-    snap = wrapMaskslm; % "Simulated" measurements (the mask is saved)
+    snap = wrapMaskslmref; % "Simulated" measurements (the mask is saved)
  end
- 
- % close(gcf) ?????
+close(gcf); % Closes the reference mask
  
 % Save the reference:
-refImgPath = strcat(imgpartPath,'Reference_tc0_gl256');
+refImgPath = strcat(imgpartPath,'reference',infoDelim,'tc',num2str(tcref),infoDelim,'gl,',num2str(256));
 refmeasfullpath =  strcat(refImgPath,dataformat);
 % Explanation: imwrite(variables,directory+filename+extension)
 imwrite(snap,refmeasfullpath); 

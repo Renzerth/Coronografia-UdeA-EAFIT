@@ -24,7 +24,7 @@ numberedFolderMeas = f_createNextFolderName(dataDir,Measfldr, ...
                                           dirDelim,pathSep,createFoldMeas);                        
 MeasDir = strcat(dataDir,pathSep,numberedFolderMeas); % Datalog folder that
 % takes into account if the folder alraedy exists (numbered folder)
-imgpartPath = strcat(MeasDir,pathSep,cameraPlane,'_'); % Partial path. More 
+imgpartPath = strcat(MeasDir,pathSep,cameraPlane,infoDelim); % Partial path. More 
 
 measfullpath = strcat(imgpartPath,'allmeas'); % Name of the saved cell of 
 % images. More information will be concatenated for a full path of the 
