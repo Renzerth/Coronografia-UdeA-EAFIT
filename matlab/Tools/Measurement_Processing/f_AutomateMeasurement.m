@@ -109,15 +109,31 @@ end
 save(measfullpath,'expImgs','MeasInfo'); % Save as .mat
 
 %% Reference measurement
-% Without tc and for 256 gray levels
+% Without tc and for 256 gray levels (white background)
 % This is the non-coronagraphic PSF reference: the system response without
 % phase masks
+
+%%% Generate reference mask:
+tcref = 0;
+phaseValuesref = 255;
+maskSelref = 0; % Helicoidal phase
+plotMask = 2; % Select SLM for plotting
+    [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
+                                      phiPC,plotMask);
+    [~,wrapMaskslm,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValuesref,tcref, ...
+    s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
+    Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
+    MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
+    plotMask,maskSelref);      
+
 % Register the reference:
  if measSimulated == 0
     snap = getsnapshot(vid); % Real measurements
 else % measSimulated = 1
     snap = wrapMaskslm; % "Simulated" measurements (the mask is saved)
  end
+ 
+ % close(gcf) ?????
  
 % Save the reference:
 refImgPath = strcat(imgpartPath,'Reference_tc0_gl256');

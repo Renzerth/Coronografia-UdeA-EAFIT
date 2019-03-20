@@ -97,11 +97,7 @@ slm,cameraPlane,dataDir,outDir,pathSep,infoDelim,dirDelim,meas,proc);
 %% Measurement
 if meas
  close all; % Closes opened figures
-  
- %% Save the whole workspace 
- % Performed every time a measurement is made
- save(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
-  
+
  %% Measurement debugging
  % Usefull for aligning the vortex and adjusting exposure parameters
  if measDebug == 1 && measSimulated == 0
@@ -144,18 +140,26 @@ if meas
      end
  end
  
+ %% Save the whole workspace 
+ % Performed every time a measurement is made
+ save(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
+ 
 elseif proc == 1 % Else from the if meas  == 1
     
  %% Load the whole workspace 
- if useLastMeas % Loads the last measurement
-  clearvars -except dataDir pathSep numberedFolderMeas;
-  load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
- else % Loads a user-defined measurement
-  clearvars -except dataDir pathSep measFoldName;
-  load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));
+ switch useLastMeas 
+     case 0 % Doesn't load anything
+          warning('useLastMeas=0 will not load things for proc=1')
+     case 1 % Loads the last measurement
+        clearvars -except dataDir pathSep numberedFolderMeas;
+        load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
+     case 2 % Loads a user-defined measurement
+        clearvars -except dataDir pathSep measFoldName;
+        load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));
  end
+ proc = 1; % In order to maintain its intended value (the program only enters to the 
+                % switch if proc=1 and if by loading its value is changed, it gets restored to 1 here)
 end % End of measurements
-
 
 %% Post-processing of the data and saving
 if proc

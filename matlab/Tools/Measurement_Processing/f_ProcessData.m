@@ -18,7 +18,8 @@ I = load(measfullpath); % Loads all the measured images and their info
                         % "expImgs" and "MeasInfo"
                         
 %%  Loading the reference measurement
-refmeas = imread(refmeasfullpath);                        
+refmeas = imread(refmeasfullpath);          
+refmeas = double(refmeas);
                         
 %% Cartesian coordinates with pixel units
 [ySize, xSize] = size(I.expImgs{1}); % All images assumed of the same size
@@ -71,7 +72,7 @@ for idxgral = 1:totalImgs
        
     case 4 % SNR
       tit = 'Signal-to-Noise Ratio';
-      [~,~] = f_calculateSNR(x,y,I.expImgs{idxgral},refmeas,shiftCart, ...
+      [~] = f_calculateSNR(xangL_D,yangL_D,I.expImgs{idxgral},refmeas,shiftCart, ...
       metricProfile,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile, ...
       dcShift,tol);
     case 5 % MSE

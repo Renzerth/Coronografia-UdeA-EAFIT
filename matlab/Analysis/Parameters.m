@@ -1,14 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
-%%% For meas = 0:  the workspace
-    useLastMeas = 1; % 1: Loads the last made measurement
-                                  % 0: 
-     %%% For useLastMeas = 0:
+meas = 0; % Measure: yes (1) or no (0)
+%%% For meas = 0 and proc = 1:  the workspace is loaded
+    useLastMeas = 1; % In order to load a previous workspace:
+    % 0: doesn't load anything: not recommended in general
+    % 1: loads the last measurement
+    % 2: loads a user-defined measurement                            
+    %%% For useLastMeas = 2:
          measFoldName = '19-Mar-2019-No-SLM-LG-mask-tcs-1-gls-1';
 %%% For meas = 1: the whole workspace is saved
-    % Note: measDebug will be 0 if measSimulated = 1
+    % if measSimulated = 1 -> measDebug will be 0 
     % If meas = 1 -> all the figures will be closed before starting it
     measDebug = 0; % Debugging before actually measuring. Displays the 
                    % default phase mask and shots a photo with the camera
@@ -19,7 +21,7 @@ meas = 1; % Measure: yes (1) or no (0)
                        % figure that says Camera isn't saved but the other
                        % one that shows the mask in a gray scale fashion
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 0; % Processes the data
+proc = 1; % Processes the data
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)
@@ -346,7 +348,12 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%% PART 5: PROCESSING WITH METRICS %%%%%%%%%%%%%%%%%%%%%%
-metricSel = 4; % 
+metricSel = 4; % Type of metric:
+% 1: throughput (Encircled Energy Factor)
+% 2: throughput gradient
+% 3: power suppresion in the airy disk
+% 4: SNR
+% 5: MSE
 metricProfile = 1; % 1: vertical profile; 2: horizontal profile
 
 %% Diffraction angle units
