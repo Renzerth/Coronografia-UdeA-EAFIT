@@ -1,3 +1,7 @@
+%% New line
+% MATLAB 2018b: disp(newline); MATLAB 2016: disp(char(10)) 
+% Aeasthetic reasons: Not needed now
+
 %% Test if the center of the mask is inside the truncation
 %   if plotMask == 2
 %     tol = 0.003; % Sometimes it it not fully 0

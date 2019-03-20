@@ -32,8 +32,8 @@ switch airyBool
        Rairy = 1;
     case 2 % Measured from the reference image
         NA = 0.1;
-        L = 0.6328;
-        Rairy = 1.22*L/NA;
+        L = 0.6328; % um
+        Rairy = 1.22*L/NA; % um
 end
 
 %% Cartesian coordinates with the lambda/D scaling (diffraction angle)
@@ -61,22 +61,24 @@ for idxgral = 1:totalImgs
       % Camera: PSF.
       tit = 'Encircled Energy Distribution of Intensity';
       [~,~] = f_calculateEEF(xangL_D,yangL_D,I.expImgs{idxgral}, ...
-      shiftCart,metricProfile,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift,tol);
-      case 2 % Throughput gradient
-        tit = 'Throughput gradient'; 
+      shiftCart,metricProfile,tit,xlab,ylab,plotData,plotH,plotV, ...
+      oneSideProfile,dcShift,tol);
+    case 2 % Throughput gradient
+      tit = 'Throughput gradient'; 
        
-      case 3 % Power suppresion in the airy disk
-        tit ='Power suppresion in the airy disk';    
+    case 3 % Power suppresion in the airy disk
+      tit ='Power suppresion in the airy disk';    
+       
+    case 4 % SNR
+      tit = 'Signal-to-Noise Ratio';
+      [~,~] = f_calculateSNR(x,y,I.expImgs{idxgral},refmeas,shiftCart, ...
+      metricProfile,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile, ...
+      dcShift,tol);
+    case 5 % MSE
+      tit = 'Mean Squared Error';
         
-      case 4 % SNR
-        tit = 'Signal-to-Noise Ratio';
-         [~,~] = f_calculateSNR(x,y,I.expImgs{idxgral}, refmeas, ...
-                                               shiftCart,metricProfile,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift,tol);
-      case 5 % MSE
-        tit = 'Mean Squared Error';
-        
-      otherwise
-          error('Select a valid metric');
+    otherwise
+      error('Select a valid metric');
   end
 
   %% Saving

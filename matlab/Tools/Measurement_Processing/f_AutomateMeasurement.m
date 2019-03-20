@@ -1,9 +1,10 @@
-function [refmeasfullpath] = f_AutomateMeasurement(vid,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC, ...
-s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
-z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,MaskPupil, ...
-rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask,maskSel,ltcvect, ...
-lglvect,totalImgs,wait,imgpartPath,dataformat,imgformat,measfullpath,infoDelim, ...
-cameraPlane,tcvect,glvect,measSimulated,recordingDelay)
+function [refmeasfullpath] = f_AutomateMeasurement(vid,Xslm,Yslm,rSLM, ...
+phiSLM,Xpc,Ypc,rPC,phiPC,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0, ...
+frkTyp,Aalpha,Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot, ...
+normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType, ...
+abs_ang,MaxMask,maskSel,ltcvect,lglvect,totalImgs,wait,imgpartPath, ...
+dataformat,imgformat,measfullpath,infoDelim,cameraPlane,tcvect,glvect, ...
+measSimulated,recordingDelay)
 % Plots phase masks on the Fourier plane of the vortex coronagraph and
 % takes images of either its Lyot or PSF plane
 %
@@ -13,7 +14,6 @@ cameraPlane,tcvect,glvect,measSimulated,recordingDelay)
 % Ouputs:
 
 %% Automated measurements
-
 expImgs = cell(1,totalImgs); % Cell with the experimental images
 MeasInfo = cell(1,totalImgs); % Same initialization as expImgs
 idxgral = 1; % Initialization of the general index that runs 
@@ -52,7 +52,7 @@ for idxtc = 1:ltcvect
    %% Displaying the camera on the PC
     % The numbers after 'position' were empirically obtained
     camfig = figure('units','normalized','position',[1/12 2/10 3/7 1/2]);
-                                                            % [left bottom width height]
+                                               % [left bottom width height]
     imagesc(snap); % normalized
     colorbar; title(strcat('Camera image:',{' '},cameraPlane));
     pax = gca; pax.FontSize = 16; % Font size
@@ -62,8 +62,8 @@ for idxtc = 1:ltcvect
     plotMask = 1; % Select PC
     [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
                                       phiPC,plotMask);                             
-    [~,wrapMaskpc,pcfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc, ... 
-    s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
+    [~,wrapMaskpc,pcfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues, ...  % TEMPORARLY NOT BEING USED
+    tc,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
     Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
     MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
     plotMask,maskSel);     
@@ -100,11 +100,9 @@ for idxtc = 1:ltcvect
     pause(recordingDelay); % Displays the mask for "recordingDelay" seconds   
                            % This time is also important so that the camera
                            % bus doesn't overload 
-    close(pcfig); close(camfig); close(slmfig); % Close the displayed figures
+    close(pcfig); close(camfig); close(slmfig); % Close the shown figures
   end
 end
-% MATLAB 2018b: disp(newline); MATLAB 2016: disp(char(10)) 
-% Aeasthetic reasons: Not needed in MATLAB 2016
 
 %% Store all measurements in a .mat file
 % Explanation: save(directory+filename,variables) % ,'-append'
@@ -112,6 +110,8 @@ save(measfullpath,'expImgs','MeasInfo'); % Save as .mat
 
 %% Reference measurement
 % Without tc and for 256 gray levels
+% This is the non-coronagraphic PSF reference: the system response without
+% phase masks
 % Register the reference:
  if measSimulated == 0
     snap = getsnapshot(vid); % Real measurements

@@ -90,9 +90,9 @@ MaxMask,plotMask,maskSel);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% MEASUREMENT/PROCESSING BY AN AUTOMATED PARAMETER VARIATION
 %% Folders and register creations on Data and Output    
-[imgpartPath,measfullpath,ProcessedDir,ltcvect,lglvect,totalImgs, numberedFolderMeas] = ...
-f_CreateFoldersRegisters(maskName,tcvect,glvect,slm,cameraPlane,dataDir,...
-outDir,pathSep,infoDelim,dirDelim,meas,proc);
+[imgpartPath,measfullpath,ProcessedDir,ltcvect,lglvect,totalImgs, ...
+numberedFolderMeas] = f_CreateFoldersRegisters(maskName,tcvect,glvect, ...
+slm,cameraPlane,dataDir,outDir,pathSep,infoDelim,dirDelim,meas,proc);
 
 %% Measurement
 if meas
@@ -119,16 +119,15 @@ if meas
   % imaqtool: toolbox for the camera
   % imaqreset: refresh image acquisition hardware by restoring the settings
  else % Real measurement
-  %% Reference measurement
-  % Still not sure if needed: null tc beam or a high tc beam(long radius)
 
   %% Automated measurement
-  [refmeasfullpath] = f_AutomateMeasurement(vid,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,s,ph0,p,...
-  WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp,Angbet,z_coeff, ...
-  z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv,MaskPupil,rSize, ...
-  monitorSize,scrnIdx,coordType,abs_ang,MaxMask,maskSel,ltcvect,lglvect,...
-  totalImgs,wait,imgpartPath,dataformat,imgformat,measfullpath, ...
-  infoDelim,cameraPlane,tcvect,glvect,measSimulated,recordingDelay); 
+  [refmeasfullpath] = f_AutomateMeasurement(vid,Xslm,Yslm,rSLM,phiSLM, ...
+  Xpc,Ypc,rPC,phiPC,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp, ...
+  Aalpha,Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag, ...
+  binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang, ...
+  MaxMask,maskSel,ltcvect,lglvect,totalImgs,wait,imgpartPath, ...
+  dataformat,imgformat,measfullpath,infoDelim,cameraPlane,tcvect, ...
+  glvect,measSimulated,recordingDelay); 
   % Performs measurements and stores them
  end
 
@@ -149,20 +148,20 @@ elseif proc == 1 % Else from the if meas  == 1
     
  %% Load the whole workspace 
  if useLastMeas % Loads the last measurement
-      clearvars -except dataDir pathSep numberedFolderMeas;
-      load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
+  clearvars -except dataDir pathSep numberedFolderMeas;
+  load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
  else % Loads a user-defined measurement
-     clearvars -except dataDir pathSep measFoldName;
-     load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));
+  clearvars -except dataDir pathSep measFoldName;
+  load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));
  end
 end % End of measurements
 
 
 %% Post-processing of the data and saving
 if proc
-    f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,pathSep,infoDelim, ...
-    dataformat,cameraPlane,totalImgs,AiryFactor,metricSel,metricProfile, ...
-    shiftCart);
+    f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,pathSep, ...
+    infoDelim,dataformat,cameraPlane,totalImgs,AiryFactor,metricSel, ...
+    metricProfile,shiftCart);
   % Metric of the degree of extintion applied. Saves 1 plot per image
 end
 
