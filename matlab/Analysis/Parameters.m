@@ -1,14 +1,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 0 and proc = 1:  the workspace is loaded
     useLastMeas = 1; % In order to load a previous workspace:
     % 0: doesn't load anything: not recommended in general
     % 1: loads the last measurement
-    % 2: loads a user-defined measurement                            
+    % 2: loads a user-defined measurement folder
+    % 3: select the folder you want to process (inside Data)
     %%% For useLastMeas = 2:
-%          measFoldName = uigetdir; % The user will select the directory TO CORRECT
+    measFoldName = '20-Mar-2019-No-SLM-LG-mask-tcs-2-gls-1_1';
+    %%% For useLastMeas = 3:
+    if useLastMeas == 3
+     measFoldName = uigetdir; % The user will select the directory 
+     [~,measFoldName] = fileparts(measFoldName); % Selects the folder only
+    end
 %%% For meas = 1: the whole workspace is saved
     % if measSimulated = 1 -> measDebug will be 0 
     % If meas = 1 -> all the figures will be closed before starting it

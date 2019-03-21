@@ -144,26 +144,32 @@ if meas
  end
  
  %% Save the whole workspace 
- % Performed every time a measurement is made
- clear ProcessedDir; % Since a new one will be used each time the workspace is loaded
- save(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
- 
-elseif proc == 1 % Else from the if meas  == 1
-    
- %% Load the whole workspace 
+ % Performed every time a measurement is made   
+ % ProcessedDir is not saved since a new one will be used each time the 
+ % workspace is loaded
  % regexp: match regular expression (case sensitive)
+ save(strcat(dataDir,pathSep,numberedFolderMeas,pathSep, ...
+      'workspace.mat'),'-regexp','^(?!(ProcessedDir)$).');
+  
+elseif proc == 1 %  meas == 0 always in order to enter here
+    
+ %% Load previous measurement (whole workspace)
+ % clearvars: these variables are used on the next load and then they are
+ % replaced by the new ones that are loaded
  switch useLastMeas 
-     case 0 % Doesn't load anything
-          warning('useLastMeas=0 will not load things for proc=1')
-     case 1 % Loads the last measurement
-        clearvars -except dataDir pathSep numberedFolderMeas ProcessedDir; % These variables are used on the next load and then they are replaced by the new ones that are loaded
-        load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
-     case 2 % Loads a user-defined measurement
-        clearvars -except dataDir pathSep measFoldName ProcessedDir;  % These variables are used on the next load and then they are replaced by the new ones that are loaded
-        load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));
+  case 0 % Doesn't load anything
+     warning('useLastMeas=0 will not load things for proc=1')
+  case 1 % Loads the last measurement
+     clearvars -except dataDir pathSep numberedFolderMeas ProcessedDir; 
+     load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
+  case 2 % Loads a user-defined measurement
+     clearvars -except dataDir pathSep measFoldName ProcessedDir; 
+     load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));
  end
  proc = 1; % In order to maintain its intended value (the program only enters to the 
-                % switch if proc=1 and if by loading its value is changed, it gets restored to 1 here)
+           % switch if proc=1 and if by loading its value is changed, it gets restored to 1 here)
+ meas = 0; % Same reason as above
+ 
 end % End of measurements
 
 %% Post-processing of the data and saving

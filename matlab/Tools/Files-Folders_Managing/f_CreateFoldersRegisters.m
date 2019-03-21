@@ -16,7 +16,7 @@ MeasSize = strcat(maskName,infoDelim,'mask',infoDelim,'tcs',infoDelim, ...
 Measfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize); 
 if meas
   createFoldMeas = 1;
-else
+else % meas == 0
   createFoldMeas = 0;
 end
 %%% Specific measurement folder:
