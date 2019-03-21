@@ -3,18 +3,13 @@
 %% Algorithm sections
 meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 0 and proc = 1:  the workspace is loaded
-    useLastMeas = 1; % In order to load a previous workspace:
+    useLastMeas = 3; % In order to load a previous workspace:
     % 0: doesn't load anything: not recommended in general
     % 1: loads the last measurement
     % 2: loads a user-defined measurement folder
     % 3: select the folder you want to process (inside Data)
     %%% For useLastMeas = 2:
     measFoldName = '20-Mar-2019-No-SLM-LG-mask-tcs-2-gls-1_1';
-    %%% For useLastMeas = 3:
-    if useLastMeas == 3
-     measFoldName = uigetdir; % The user will select the directory 
-     [~,measFoldName] = fileparts(measFoldName); % Selects the folder only
-    end
 %%% For meas = 1: the whole workspace is saved
     % if measSimulated = 1 -> measDebug will be 0 
     % If meas = 1 -> all the figures will be closed before starting it
@@ -27,7 +22,7 @@ meas = 0; % Measure: yes (1) or no (0)
                        % figure that says Camera isn't saved but the other
                        % one that shows the mask in a gray scale fashion
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 1; % Processes the data
+proc = 0; % Processes the data
 % NOTE: if meas and proc are both zero, then a unique phase mask is plotted
 % with "plotMask"
 
@@ -181,8 +176,8 @@ imgformat = 'png'; % Format with period. mat, bmp, png, jpg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          
 %%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS PARAMETERS %%%%%%%%%%%%%%%%%%%%%%
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
-L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
-tc =1; % Topological charge (integer bigger or equal to one)
+L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks (also used in the data processing)
+tc =0; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
 s = 1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
@@ -202,10 +197,10 @@ ph0 = pi; % Initial phase of the angle [radians]; reference +pi from
     normMag = 1; % Normalize magnitude. yes(1); no(0). 
           
 %% Parameters: Laguerre-Gauss
-p = 5; % Number of radial nodes. If p=0, normal helicoid masks are obtained
+p = 1; % Number of radial nodes. If p=0, normal helicoid masks are obtained
        % If they are used and tc=0(m=0); binary masks are obtained
        % Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
-WsizeRatio = 100; % Width of the modes; for LG; ref: [0,100] (percentage  
+WsizeRatio = 20; % Width of the modes; for LG; ref: [0,100] (percentage  
                 % that has as reference the first ring p=1 and tc>=1). Other
                 % values may fractionate this percentage
                 % When smaller than 3, the size of the mask decreases (this is a bug)
@@ -383,7 +378,7 @@ scaleFactor = 1e3; % mm to um. Constant factor
 f = f*scaleFactor; % Focal length in um
 AiryFactor = n*PP*M/f; % Used to convert from pixels to the diffraction 
                        % angle in Lamda/D units
-
+NA = 0.1; % Numerical aperture: here, of the lens
 
 
                        

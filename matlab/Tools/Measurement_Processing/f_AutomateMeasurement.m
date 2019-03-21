@@ -4,7 +4,7 @@ frkTyp,Aalpha,Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot, ...
 normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType, ...
 abs_ang,MaxMask,maskSel,ltcvect,lglvect,totalImgs,wait,imgpartPath, ...
 dataformat,imgformat,measfullpath,infoDelim,cameraPlane,tcvect,glvect, ...
-measSimulated,recordingDelay,whiteblackref)
+measSimulated,recordingDelay,whiteblackref,beepSound)
 % Plots phase masks on the Fourier plane of the vortex coronagraph and
 % takes images of either its Lyot or PSF plane
 %
@@ -163,4 +163,13 @@ disp('Measurement finished'); disp(t2_dt)
 time = t2_dt - t1_dt; % Relative difference between start and stop
 disp('Measurement took:'); % datestr(time,'SS') ' seconds'])
 disp(time)
+
+%% Termination
+% TerminateSettings; % Future script % Clears variables, closes all and
+                   % deactivates the cameras
+% delete(vid); % Clean up the camera
+
+%% End notification
+N = 3; % Number of beeps
+f_EndBeeps(N,beepSound);
 end

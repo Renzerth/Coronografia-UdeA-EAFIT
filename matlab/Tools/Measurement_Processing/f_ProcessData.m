@@ -1,6 +1,6 @@
 function f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,pathSep,infoDelim, ...
 dataformat,cameraPlane,totalImgs,AiryFactor,metricSel,metricProfile, ...
-shiftCart)
+shiftCart,beepSound,L,NA)
 %% Post-processing of the data (application of the metric of the degree of
 %%% extintion)
 
@@ -23,23 +23,45 @@ refmeas = double(refmeas);
                         
 %% Cartesian coordinates with pixel units
 [ySize, xSize] = size(I.expImgs{1}); % All images assumed of the same size
-xpix = 1:xSize; % Pixels start in 1
-ypix = 1:ySize; % Pixels start in 1
+% xpix = 1:xSize; % Pixels start in 1
+% ypix = 1:ySize; % Pixels start in 1
 
-%% Airy radius
+%% Airy radius calculation
 airyBool = 1;
 switch airyBool
-    case 1 % Theoretical
-       Rairy = 1;
-    case 2 % Measured from the reference image
-        NA = 0.1;
-        L = 0.6328; % um
-        Rairy = 1.22*L/NA; % um
+    case 1 % Measured from the reference image
+       AiryDiskPixX = 123; % Just an example
+       AiryDiskPixY= 79; % Just an example
+       
+%        AiryDiskSpatialX = AiryDiskPixX*PP; % PP: camera's pixel pitch
+%        AiryDiskSpatialY = AiryDiskPixY*PP;
+    case 2 % Theoretical: diffraction-limited systems
+       % NA: numerical aperture of the lens
+        % L: wavelength in um
+        AiryDiskSpatial = 0.61*L/NA; % um
+        AiryDiskSpatialX = AiryDiskSpatial;
+        AiryDiskSpatialY = AiryDiskSpatial;
+        
+        AiryDiskPixX = AiryDiskSpatialX/PP; % PP: camera's pixel pitch
+        AiryDiskPixY = AiryDiskSpatialY/PP;
+    case 3 % From the EEC factor
+        % When it is the 70%
 end
 
+%% Pixel airy radius
+
+AiryMultiplicityX = xSize/AiryDiskPixX; % NUmber of airy disks 
+AiryMultiplicityY = ySize/AiryDiskPixY;
+
+xpix = -xSize/2 : 1 : xSize/2 - 1; % pixels
+ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels                   % MAYBE USE MIDX,MIDY
+
+xangL_D = xpix/(AiryMultiplicityX*8);
+yangL_D =  ypix/(AiryMultiplicityY*8);
+
 %% Cartesian coordinates with the lambda/D scaling (diffraction angle)
-xangL_D = f_scalePix2DiffAng(xpix,AiryFactor);  
-yangL_D = f_scalePix2DiffAng(ypix,AiryFactor);
+% xangL_D = f_scalePix2DiffAng(xpix,AiryFactor);  
+% yangL_D = f_scalePix2DiffAng(ypix,AiryFactor);
 
 %% Cartesian coordinates with the arcsecond scaling (diffraction angle)
 xangArcs = f_LambdaDToarcsec(xangL_D);
@@ -96,4 +118,14 @@ disp('Processing finished:'); disp(t2_dt)
 time = t2_dt - t1_dt;
 disp('Processing took: '); % datestr(time,'SS') ' seconds'])
 disp(time);
+
+%% End notification
+N = 4; % Number of beeps
+f_EndBeeps(N,beepSound);
+
+%% Ask to leave figures open or not
+answer = questdlg('Do you want to close all the figures?','Processing finished','yes','no','no');
+if strcmp(answer,'yes') % Compare string
+     close all;         
+end
 end

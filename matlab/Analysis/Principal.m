@@ -120,29 +120,17 @@ if meas
  else % Real measurement
 
   %% Automated measurement
+  % Performs the measurements and stores them:
   [refmeasfullpath] = f_AutomateMeasurement(vid,Xslm,Yslm,rSLM,phiSLM, ...
   Xpc,Ypc,rPC,phiPC,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp, ...
   Aalpha,Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag, ...
   binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang, ...
   MaxMask,maskSel,ltcvect,lglvect,totalImgs,wait,imgpartPath, ...
   dataformat,imgformat,measfullpath,infoDelim,cameraPlane,tcvect, ...
-  glvect,measSimulated,recordingDelay,whiteblackref); 
-  % Performs measurements and stores them
+  glvect,measSimulated,recordingDelay,whiteblackref,beepSound); 
+  
  end
 
- %% Termination
- % TerminateSettings; % Future script % Clears variables, closes all and
-                       % deactivates the cameras
- % delete(vid); % Clean up the camera
-
- %% End notification
- if beepSound == 1
-     for beepTimes = 1:3 % Numbe of beeps
-         beep();
-         pause(0.2); % Time between the beeps
-     end
- end
- 
  %% Save the whole workspace 
  % Performed every time a measurement is made   
  % ProcessedDir is not saved since a new one will be used each time the 
@@ -152,6 +140,12 @@ if meas
       'workspace.mat'),'-regexp','^(?!(ProcessedDir)$).');
   
 elseif proc == 1 %  meas == 0 always in order to enter here
+  
+  %%  Select a custom measure folder
+  if useLastMeas == 3 
+   usermeasFoldName = uigetdir; % The user will select the directory 
+   [~,usermeasFoldName] = fileparts(usermeasFoldName); % Selects the folder only
+ end
     
  %% Load previous measurement (whole workspace)
  % clearvars: these variables are used on the next load and then they are
@@ -162,10 +156,14 @@ elseif proc == 1 %  meas == 0 always in order to enter here
   case 1 % Loads the last measurement
      clearvars -except dataDir pathSep numberedFolderMeas ProcessedDir; 
      load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
-  case 2 % Loads a user-defined measurement
+  case 2 % Loads a manually-put folder name (2) or a user-defined measurement (3)
      clearvars -except dataDir pathSep measFoldName ProcessedDir; 
-     load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));
+     load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));    
+  case 3
+     clearvars -except dataDir pathSep usermeasFoldName ProcessedDir; 
+     load(strcat(dataDir,pathSep,usermeasFoldName,pathSep,'workspace.mat'));    
  end
+ %%% Keep some input variables default:
  proc = 1; % In order to maintain its intended value (the program only enters to the 
            % switch if proc=1 and if by loading its value is changed, it gets restored to 1 here)
  meas = 0; % Same reason as above
@@ -174,10 +172,10 @@ end % End of measurements
 
 %% Post-processing of the data and saving
 if proc
+    % Metric of the degree of extintion applied
     f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,pathSep, ...
     infoDelim,dataformat,cameraPlane,totalImgs,AiryFactor,metricSel, ...
-    metricProfile,shiftCart);
-  % Metric of the degree of extintion applied. Saves 1 plot per image
+    metricProfile,shiftCart,N,beepSound,L,NA);
 end
 
 
