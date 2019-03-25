@@ -1,5 +1,5 @@
-%%  Phase mask SLM display for the digital vortex coronagraphy and 
-%%  free-space simulation of two stars
+%%  Phase mask SLM displaying for the digital vortex coronagraphy technique
+%% aand free-space simulation of two stars
 % Inputs:
 % See "Paramters.m"
 %
@@ -42,6 +42,9 @@
 clc; clear; close all; % Initialization
 Parameters; % Adds to the algorithm all the needed parameters
 % open Parameters; % Keep open always
+
+% Default parameters for measuring: IN PROGRESS
+% ParametersMeasuring
 
 %% Directories and add functions
 % Adds initial functions

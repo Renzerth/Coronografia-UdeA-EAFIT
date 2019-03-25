@@ -1,5 +1,7 @@
-%%  Phase mask SLM displaying for the digital vortex coronagraphy technique
-%% and free-space simulation of two stars
+%% Phase mask SLM displaying for the digital vortex coronagraphy technique
+%% vortex images acquisition and processing.
+% free-space simulation of two stars is also included optionally
+%
 % Inputs:
 % See "Paramters.m"
 %
