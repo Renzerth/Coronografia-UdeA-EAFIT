@@ -126,6 +126,12 @@ rSize = min(HalfSupportX,HalfSupportY);
 % a square or inside a rectangle
           
 %% Shift of the mask (for the SLM: plotMask=2)
+% Check first if vid exists, otherwise set shiftMask to zero
+if isempty(vid)
+    shiftMask = 0;
+    warning(['Set measSimulated = 0 and meas = 1 in order to use' ...
+             ' shiftMask = 2. shiftMask was set to zero.']);
+end 
 switch shiftMask 
  case 0
   shiftX = 0; shiftY = 0; % Shift deactivated   
@@ -142,9 +148,11 @@ switch shiftMask
   shiftY = shiftCart(1); % Cartesian shift in y
   
  case 2 % Self-centering algorithm
+  % WARNING: Nothing is show on the SLM, so assure you have a black
+  % background on your pc
   % Pending
   % Remember to output it as a percentage
-  %   snap = getsnapshot(vid); % PROBLEM: NOTHING IS SHOW IN THE SLM, SO ASSURE YOU HAVE A WHITE BACKGROUND ON YOUR PC
+  %   snap = getsnapshot(vid); 
   %       snap = imread();
   %    [~,relativeCoord] = f_computeCenterFromImageMin();
   %   snap = snap/max(snap(:));
@@ -154,7 +162,7 @@ switch shiftMask
    f_computeCenterFromImageMin()
 %   [rowCoord,~] = f_getValleyLocation(snap,'single');
 %   [~,colCoord] = f_getValleyLocation(snap{2},'single');
-shiftCart = [shiftY shiftX]
+shiftCart = [shiftY shiftX];
 end
 % After this switch, shiftCart is taken as the output
 

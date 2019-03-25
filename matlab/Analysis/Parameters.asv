@@ -323,16 +323,15 @@ glvect = [255]; % Gray level to be measured [0,255]
 wait = 0; % Seconds before measuring as a safety measurement. Default: 10
 recordingDelay = 1; % Seconds between each mask to be shown. This time is
                     % also important so that the camera bus port doesn't 
-                    % overload. Ref: 5
+                    %overload. Ref: 5
 
 %% Reference measurement     
 % For tc=0 and for a gray level of 0 (black) or 256 (white)
 % This is the non-coronagraphic PSF reference: the system response without
 % a phase mask
-whiteblackref = 0; % 1: white; 0: black background. Default: 0
-% White adds a piston pase of 2*Pi
-% The rest of parameters regarding this reference measurement should not be
-% changed and are inside the function
+whiteblackref = 0; % 1: white; 0: black background
+% White adds a piston of 2*Pi
+% The rest of parameters should not be chagned and are inside the function
 
 %% Folder names
 if ispc %  Linux (0) or Windows (1)
