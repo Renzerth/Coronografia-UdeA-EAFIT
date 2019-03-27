@@ -1,4 +1,4 @@
-function regionCentroid = temporal(cdata)
+function regionCentroid = f_approximateSpotSize(cdata)
 %% Estimación del tamaño en pixeles del disco de Airy
 binaryData = im2bw(cdata,0.01);
 regionInfo = regionprops(binaryData,'Centroid','area','MajorAxisLength','MinorAxisLength');

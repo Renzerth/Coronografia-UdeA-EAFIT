@@ -1,6 +1,8 @@
 function angleAiry = f_scalePix2DiffAng(x,AiryFactor)
 % Cconverts from pixels to the diffraction angle in Lamda/D units
 %
+% This function only converts pixels to L/D. Applies only on one Airy disk
+%
 % R = 1.22*L/(2*NA) = 1.22*L*f/(n*D) = x*PP*M -> L/D = (n*PP*M)/(1.22*f)*x, 
 % with m*sin(theta) ~ m*theta =  m*L/D [m=1 is the first diffraction order]
 % 
