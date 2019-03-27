@@ -1,11 +1,16 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 """
 Author: Juan Pablo Carvajal.
-Last update in 29-01-2019.
+Last update in 26-03-2019.
 For GOF - UdeA.
 
 Programm description: Basically, simulates the propagation of a Gaussian beam through a simple coronograph. 
 Small variations have been done to simulate different situations. 
 The current version was used to animate the evolution of the results while changing the topological charge (fractionary and integer).
+
+En la última modificación dejé el programa muy desordenado. No tengo intención de ordenarlo por ahora.
 """
 
 
@@ -13,8 +18,8 @@ The current version was used to animate the evolution of the results while chang
 
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy.interpolate as itp
 
+#%%
 # PROPAGATION FUNCS
 
 # TF propagation func
@@ -25,7 +30,7 @@ def propTF(u1,L,lambd,z):
 
     dx = L/M   # L is source and observation plane side length
 
-    k  = 2*np.pi/lambd
+    #k  = 2*np.pi/lambd
 
     fx = np.arange(-1/(2*dx),1/(2*dx),1/L)
 
@@ -52,7 +57,7 @@ def propTF(u1,L,lambd,z):
 
 def propIR(u1,L,lambd,z):
 
-    M, N = len(u1),len(u1)
+    M = len(u1)
 
     dx = L/M   # L is source and observation plane side length
 
@@ -97,6 +102,8 @@ def clens(U, X, Y, f_lens, r_lens, wl): # wl: wavelenght
     
     LF = np.exp(-(1j*np.pi)/(wl*f_lens)*X**2)
     
+    return U*LF
+    
 # continuous spp pass-by
 
 def sppc(U,X,Y,m):
@@ -112,6 +119,8 @@ def sppd(U, X, Y, m, l):
     
     return vortex*U
 
+#%%
+
 # SYSTEM PROPIERTIES
 
 # entrance stop
@@ -122,9 +131,9 @@ r_l1 = r_e
 f_l1 = 0.3 #meters
 
 # SPP
-spp = []
-for i in range(41):
-    spp.append([float(i)/20. + 1.,256])
+spp = [1,2]
+#for i in range(1):
+#    spp.append([float(i)/20. + 1.,256])
 
 # Generating some field.
 
@@ -155,7 +164,44 @@ U1 = U1*UC # U1 is the field at entry stop
 
 
 # ENTIRE OPTICAL SYSTEM FUNCTION FOR AN INITIAL FIELD AND DETERMINED SPP
+#%%
 
+# lens1
+# lens(U, X, Y, f_lens, r_lens, wl)
+U1 = lens(U1, X, Y, f_l1, r_l1, lambda_)*UC # post lens1
+
+plt.imshow(np.abs(U1))
+#%%
+
+plt.imshow(np.abs(U1))
+#%%
+
+plt.imshow(np.angle(U1))
+#%%
+# prop1
+# propTF(u1,L,lambd,z)
+U1 = propTF(U1, L, lambda_, f_l1)*UC # pre spp
+#%%
+# spp1
+# sppd(U, X, Y, m, l)
+U1 = sppd(U1,X,Y,spp[0],spp[1])*UC # spp
+#%%    
+# vortex lens
+U1 = lens(U1,X,Y,f_l1,r_l1, lambda_)*UC # lens
+#%%
+# prop to lens 2
+# propTF(u1,L,lambd,z)
+U1 = propTF(U1, L, lambda_, f_l1)*UC # post spp
+#%%
+# lens2
+# lens(U, X, Y, f_lens, r_lens, wl)
+U1 = lens(U1, X, Y, f_l1, r_l1, lambda_)*UC
+#%%
+# prop to output stop
+U1 = propTF(U1,L,lambda_,f_l1)*UC
+
+
+#%%
 def os(U1, sppm):
     # lens1
     # lens(U, X, Y, f_lens, r_lens, wl)
@@ -185,8 +231,11 @@ def os(U1, sppm):
     
     return U1
 
+#%%
 
-for i in range(41):
+
+
+for i in range(1):
 
     U2 = os(U1,spp[i])
 

@@ -101,7 +101,6 @@ class propagators:
         self.x2 = []
         self.X2 = []
         self.Y2 = []
-        return []
         
     def lens(self,f_lens):
         """
