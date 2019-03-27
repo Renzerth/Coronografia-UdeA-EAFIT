@@ -19,7 +19,10 @@ I = load(measfullpath); % Loads all the measured images and their info
                         
 %%  Loading the reference measurement
 refmeas = imread(refmeasfullpath);          
-refmeas = double(refmeas);
+refmeas = im2double(refmeas);
+
+%% Find center of the PSF or the Lyot image
+
                         
 %% Cartesian coordinates with pixel units
 [ySize, xSize] = size(I.expImgs{1}); % All images assumed of the same size
@@ -31,7 +34,8 @@ airyBool = 1;
 switch airyBool
     case 1 % Measured from the reference image
        AiryDiskPixX = 123; % Just an example
-       AiryDiskPixY= 79; % Just an example
+       AiryDiskPixY= 79; % Just an example                                  % ORG WITH TEMPORAL.m
+       % Leer, binarizar, erode
        
 %        AiryDiskSpatialX = AiryDiskPixX*PP; % PP: camera's pixel pitch
 %        AiryDiskSpatialY = AiryDiskPixY*PP;
@@ -44,12 +48,14 @@ switch airyBool
         
         AiryDiskPixX = AiryDiskSpatialX/PP; % PP: camera's pixel pitch
         AiryDiskPixY = AiryDiskSpatialY/PP;
+        
+        % In reality, there are aberrations and the real radius can be of
+        % about 60 times the theoretical one
     case 3 % From the EEC factor
         % When it is the 70%
 end
 
 %% Pixel airy radius
-
 AiryMultiplicityX = xSize/AiryDiskPixX; % NUmber of airy disks 
 AiryMultiplicityY = ySize/AiryDiskPixY;
 
@@ -79,6 +85,9 @@ tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 
 for idxgral = 1:totalImgs
   %% Processsing of the image
+  
+  % ACTUALLY, CALCULATE ALL THE METRICS BUT ONLY PLOT THE WANTED ONES
+  
   switch metricSel
     case 1 % Throughput: Encircled Energy Factor metric
       % Camera: PSF.
@@ -88,10 +97,12 @@ for idxgral = 1:totalImgs
       oneSideProfile,dcShift,tol);
     case 2 % Throughput gradient
       tit = 'Throughput gradient'; 
+      % gradient [returns n elements] or diff [returns n-1 elements]
        
     case 3 % Power suppresion in the airy disk
       tit ='Power suppresion in the airy disk';    
-       
+      % Needs case 1 as input
+      
     case 4 % SNR
       tit = 'Signal-to-Noise Ratio';
       [~] = f_calculateSNR(xangL_D,yangL_D,I.expImgs{idxgral},refmeas,shiftCart, ...

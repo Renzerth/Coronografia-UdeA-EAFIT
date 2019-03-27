@@ -174,8 +174,8 @@ elseif proc == 1 %  meas == 0 always in order to enter here
  %%% Keep some input variables default:
  proc = 1; % In order to maintain its intended value (the program only 
            % enters to the switch if proc=1 and if by loading its value is 
-           % changed, it gets restored to 1 here)
- meas = 0; % Same reason as above
+           % changed, it gets restored to 1 here). proc = 1
+ meas = 0; % Same reason as above. meas = 0
  
 end % End of measurements
 
@@ -184,7 +184,7 @@ if proc
     % Metric of the degree of extintion applied
     f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,pathSep, ...
     infoDelim,dataformat,cameraPlane,totalImgs,AiryFactor,metricSel, ...
-    metricProfile,shiftCart,N,beepSound,L,NA);
+    metricProfile,shiftCart,beepSound,L,NA);
 end
 
 
