@@ -13,7 +13,7 @@ processedImgname = strcat(ProcessedDir,pathSep,'processed',infoDelim, ...
 
 %% Loading all the measurements
 % Explanation: load(directory+filename,variables)
-I = load(measfullpath); % Loads all the measured images and their info
+struct = load(measfullpath); % Loads all the measured images and their info
                         % Two variables are loaded in the structure: 
                         % "expImgs" and "MeasInfo"
                         
@@ -25,7 +25,7 @@ refmeas = im2double(refmeas);
 
                         
 %% Cartesian coordinates with pixel units
-[ySize, xSize] = size(I.expImgs{1}); % All images assumed of the same size
+[ySize, xSize] = size(struct.expImgs{1}); % All images assumed of the same size
 % xpix = 1:xSize; % Pixels start in 1
 % ypix = 1:ySize; % Pixels start in 1
 
@@ -92,7 +92,7 @@ for idxgral = 1:totalImgs
     case 1 % Throughput: Encircled Energy Factor metric
       % Camera: PSF.
       tit = 'Encircled Energy Distribution of Intensity';
-      [~,~] = f_calculateEEF(xangL_D,yangL_D,I.expImgs{idxgral}, ...
+      [~,~] = f_calculateEEF(xangL_D,yangL_D,struct.expImgs{idxgral}, ...
       shiftCart,metricProfile,tit,xlab,ylab,plotData,plotH,plotV, ...
       oneSideProfile,dcShift,tol);
     case 2 % Throughput gradient
@@ -105,7 +105,7 @@ for idxgral = 1:totalImgs
       
     case 4 % SNR
       tit = 'Signal-to-Noise Ratio';
-      [~] = f_calculateSNR(xangL_D,yangL_D,I.expImgs{idxgral},refmeas,shiftCart, ...
+      [~] = f_calculateSNR(xangL_D,yangL_D,struct.expImgs{idxgral},refmeas,shiftCart, ...
       metricProfile,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile, ...
       dcShift,tol);
     case 5 % MSE
@@ -116,9 +116,9 @@ for idxgral = 1:totalImgs
   end
 
   %% Saving
-  processedImgfullpath = strcat(processedImgname,I.MeasInfo{idxgral});
+  processedImgfullpath = strcat(processedImgname,struct.MeasInfo{idxgral});
   % Explanation: imwrite(variables,directory+filename+extension)
-  imwrite(I.expImgs{idxgral}, strcat(processedImgfullpath,dataformat));
+  imwrite(struct.expImgs{idxgral}, strcat(processedImgfullpath,dataformat));
 end
 
 %% End of the processing

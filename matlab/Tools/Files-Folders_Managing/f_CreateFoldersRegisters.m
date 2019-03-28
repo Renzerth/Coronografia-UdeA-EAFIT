@@ -1,23 +1,34 @@
 function [imgpartPath,measfullpath,ProcessedDir,ltcvect,lglvect,totalImgs,numberedFolderMeas] = ...
 f_CreateFoldersRegisters(maskName,tcvect,glvect,slm,cameraPlane,dataDir,...
-outDir,pathSep,infoDelim,dirDelim,meas,proc)
+outDir,pathSep,infoDelim,dirDelim,lastmeasdate,meas,proc)
 
 %% General saving registers
 ltcvect = length(tcvect); % Length of the tc vector
 lglvect = length(glvect); % Length of the gl vector
 totalImgs = ltcvect*lglvect; % Number of images to be taken
-strDate = date; % Today's date is retrieved from the local machine
+strDate =date; % Today's date is retrieved from the local machine
 MeasSize = strcat(maskName,infoDelim,'mask',infoDelim,'tcs',infoDelim, ...
            num2str(ltcvect),infoDelim,'gls',infoDelim,num2str(lglvect));
 % Datalog with the number of measurements for tc's and gl's
 
 %% Measurement folder creation (Datalog)
-%%% Folder name:
-Measfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize); 
+%%% Last measurement's date directory
+lastmeasdateDir = strcat(dataDir,pathSep,lastmeasdate);
+
+%%% Asks if a measurement will be performed
 if meas
   createFoldMeas = 1;
+  % Explanation: save(directory,filename,variables) % ,'-append'
+  save(lastmeasdateDir,'strDate'); % Save as .mat
+  %%% Folder name:
+  Measfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize);  % Use today's date
+  
 else % meas == 0
   createFoldMeas = 0;
+  struct = load(strcat(lastmeasdateDir,'.mat'));
+  strDate = struct.strDate;
+  %%% Folder name:
+  Measfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize);  % Use last measurement's date
 end
 %%% Specific measurement folder:
 numberedFolderMeas = f_createNextFolderName(dataDir,Measfldr, ...
@@ -33,7 +44,7 @@ measfullpath = strcat(imgpartPath,'allmeas'); % Name of the saved cell of
 
 %% Output folder creation (processed images)
 % Folder name:
-Procfldr = strcat(date,infoDelim,'processed',infoDelim,slm, ...
+Procfldr = strcat(strDate,infoDelim,'processed',infoDelim,slm, ...
                   infoDelim,MeasSize); 
 if proc 
   createFoldProc = 1;

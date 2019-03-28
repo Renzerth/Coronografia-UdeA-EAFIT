@@ -350,6 +350,7 @@ dataFlrd = 'Data'; % Folder name: input data
 snapsfldr = 'TestSnapshots'; % Snapshot tests folder (inside dataFlrd)
 outFlrd = 'Output'; % Folder name: output data
 toolsFldr = 'Tools'; % Folder name: functions
+lastmeasdate = 'LastMeasDate'; % .mat's name of the last measurement date
 filemanag = 'Files-Folders_Managing'; % Folder with the function 
                                       % f_makeParentFolder, the 1st 
                                       % function that is used in the 

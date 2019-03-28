@@ -34,6 +34,8 @@
 %  coherently, restart MATLAB
 %  -For high resolution monitors, sometimes the figure bar may appear but
 %  this presents no problem for the mask projection
+%  -It is not possible to load previous measurements of windows in a linux
+%  MATLAB or vice versa, due to the incompatibility of the "pathSep"
 %
 % Samuel Plazas(PA1/PA2/TG) - Juan Jose Cadavid(Master thesis) - 2018/2019
 
@@ -103,7 +105,8 @@ MaxMask,plotMask,maskSel);
 %% Folders and register creations on Data and Output    
 [imgpartPath,measfullpath,ProcessedDir,ltcvect,lglvect,totalImgs, ...
 numberedFolderMeas] = f_CreateFoldersRegisters(maskName,tcvect,glvect, ...
-slm,cameraPlane,dataDir,outDir,pathSep,infoDelim,dirDelim,meas,proc);
+slm,cameraPlane,dataDir,outDir,pathSep,infoDelim,dirDelim,lastmeasdate, ...
+meas,proc);
 
 %% Measurement
 if meas
@@ -147,13 +150,6 @@ if meas
       'workspace.mat'),'-regexp','^(?!(ProcessedDir)$).');
   
 elseif proc == 1 %  meas == 0 always in order to enter here
-  
-  %%  Select a custom measure folder
-  if useLastMeas == 3 
-   usermeasFoldName = uigetdir; % The user will select the directory 
-   [~,usermeasFoldName] = fileparts(usermeasFoldName); 
-   % Selects only the folder from the full path
- end
     
  %% Load previous measurement (whole workspace)
  % clearvars: these variables are used on the next load and then they are
@@ -168,6 +164,10 @@ elseif proc == 1 %  meas == 0 always in order to enter here
      clearvars -except dataDir pathSep measFoldName ProcessedDir; 
      load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));    
   case 3 % Loads a user-defined measurement
+     %%%  Select a custom measurement folder 
+     usermeasFoldName = uigetdir; % The user will select the directory 
+     [~,usermeasFoldName] = fileparts(usermeasFoldName); 
+     % Selects only the folder from the full path 
      clearvars -except dataDir pathSep usermeasFoldName ProcessedDir; 
      load(strcat(dataDir,pathSep,usermeasFoldName,pathSep,'workspace.mat'));    
  end
