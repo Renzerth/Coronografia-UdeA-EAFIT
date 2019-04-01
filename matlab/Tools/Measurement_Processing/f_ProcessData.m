@@ -44,35 +44,37 @@ refmeas = im2double(refmeas);
 % xpix = 1:xSize; % Pixels start in 1
 % ypix = 1:ySize; % Pixels start in 1
 
-%% Airy radius calculation
-airyBool = 2;
-switch airyBool
-    case 1 % Measured from the reference image
-       AiryDiskPixX = aproxRadius; % Just an example
-       AiryDiskPixY= aproxRadius; % Just an example
-%        AiryDiskSpatialX = AiryDiskPixX*PP; % PP: camera's pixel pitch
-%        AiryDiskSpatialY = AiryDiskPixY*PP;
+%% Theoretical: diffraction-limited systems
+% NA: numerical aperture of the lens
+% L: wavelength in um
+AiryDiskSpatial = 0.61*L/NA; % um
+AiryDiskSpatialX = AiryDiskSpatial;
+AiryDiskSpatialY = AiryDiskSpatial;
+disp(strcat("Theoretical Airy's radius in um: ", num2str(AiryDiskSpatialX), ' (x) and ', num2str(AiryDiskSpatialY), ' (y)'));
 
-    case 2 % Theoretical: diffraction-limited systems
-       % NA: numerical aperture of the lens
-        % L: wavelength in um
-        AiryDiskSpatial = 0.61*L/NA; % um
-        AiryDiskSpatialX = AiryDiskSpatial;
-        AiryDiskSpatialY = AiryDiskSpatial;
-        
-        AiryDiskPixX = AiryDiskSpatialX/PP; % PP: camera's pixel pitch
-        AiryDiskPixY = AiryDiskSpatialY/PP;
-        
-        % In reality, there are aberrations and the real radius can be of
-        % about 60 times the theoretical one
-    case 3 % From the EEC factor
-        % When it is the 70%
-end
+AiryDiskPixX = AiryDiskSpatialX/PP; % PP: camera's pixel pitch
+AiryDiskPixY = AiryDiskSpatialY/PP;
+disp(strcat("Theoretical Airy's radius in pix: ", num2str(AiryDiskPixX), ' (x) and ', num2str(AiryDiskPixY), ' (y)'));
+
+% In reality, there are aberrations and the real radius can be of
+% about 60 times the theoretical one
+
+%% Airy radius measured from the reference image
+AiryDiskPixX = aproxRadius; % Just an example
+AiryDiskPixY= aproxRadius; % Just an example
+AiryDiskSpatialX = AiryDiskPixX*PP; % PP: camera's pixel pitch
+AiryDiskSpatialY = AiryDiskPixY*PP;
+disp(strcat("Estimated Airy's radius in um: ", num2str(AiryDiskSpatialX), ' (x) and ', num2str(AiryDiskSpatialY), ' (y)'));
+disp(strcat("Estimated Airy's radius in pix: ", num2str(AiryDiskPixX), ' (x) and ', num2str(AiryDiskPixY), ' (y)'));
+
+%% Airy radius from the EEC factor
+% When it is the 70%
 
 %% Pixel airy radius
-AiryMultiplicityX = xSize/AiryDiskPixX; % Number of airy disks 
-AiryMultiplicityY = ySize/AiryDiskPixY;
+% AiryMultiplicityX = xSize/AiryDiskPixX; % Number of airy disks 
+% AiryMultiplicityY = ySize/AiryDiskPixY;
 
+%% Symmetric pixels
 xpix = -xSize/2 : 1 : xSize/2 - 1; % pixels
 ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels                   % MAYBE USE MIDX,MIDY
 
@@ -115,15 +117,18 @@ for idxgral = 1:totalImgs
   % ACTUALLY, CALCULATE ALL THE METRICS BUT ONLY PLOT THE WANTED ONES
   
   switch metricSel
-    case 1 % Throughput: Encircled Energy Factor metric
+    case 1 
+     %% Throughput: Encircled Energy Factor metric
       % Camera: PSF.
       tit = 'Encircled Energy Distribution of Intensity';
-      [~,~] = f_calculateEEF(xangL_D,yangL_D,struct.expImgs{idxgral}, ...
+      [energy,~] = f_calculateEEF(xangL_D,yangL_D,struct.expImgs{idxgral}, ...
       shiftCart,metricProfile,tit,xlab,ylab,plotData,plotH,plotV, ...
       oneSideProfile,dcShift,tol);
-    case 2 % Throughput gradient
+     
+    %% Throughput gradient
       tit = 'Throughput gradient'; 
       % gradient [returns n elements] or diff [returns n-1 elements]
+      energy
        
     case 3 % Power suppresion in the airy disk
       tit ='Power suppresion in the airy disk';    

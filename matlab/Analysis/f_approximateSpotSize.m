@@ -4,7 +4,9 @@ function [x,y,regionCentroid,aproxRadius] = f_approximateSpotSize(cdata,varargin
 %
 % Inputs:
 % cdta: input image (2D matrix, already with the " im2double" previously applied)
-% threshold: optional number in [0,1] for the binarization
+% threshold: optional number in [0,1] for the binarization. It is a value
+% of sensitivity and is not directly associated to the intensity of the
+% image
 %
 % Outputs:
 % x,y: vectors with the lamda/D scaling
@@ -27,12 +29,12 @@ mainIndex = sortIndexes(1);
 %% Centroid of the spot
 regionCentroid = cat(1,regionInfo(mainIndex).Centroid);
 
-%% Radius stimative between the major and the minor axis of the elliptical spot
+%% Radius estimative between the major and the minor axis of the elliptical spot
 blobRadius = mean([regionInfo(mainIndex).MajorAxisLength, regionInfo(mainIndex).MinorAxisLength],2)/2;
 
 %% Morphological radius estimative from the total area of the spot: it assumes it is a perfect circle
 radiusArea = sqrt(max(regionInfo(mainIndex).Area)/pi); 
-aproxRadius = ceil(mean([blobRadius,radiusArea])); % Once a pixel is occupied, it is assumed to fill the whole pixel
+aproxRadius = ceil(mean([blobRadius,radiusArea])); % ceil once a pixel is occupied, it is assumed to fill the whole pixel
 
 %% Airy Disk - Image size ratio
 [p,q] = size(cdata);
