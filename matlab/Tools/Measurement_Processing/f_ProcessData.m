@@ -21,8 +21,10 @@ struct = load(measfullpath); % Loads all the measured images and their info
 refmeas = imread(refmeasfullpath);          
 refmeas = im2double(refmeas);
 
-%% Find center of the PSF or the Lyot image
+%% Find center of the Lyot image
 
+%% Find center of the PSF image
+[xangL_D,yangL_D,regionCentroid,aproxRadius] = f_approximateSpotSize(refmeas);
                         
 %% Cartesian coordinates with pixel units
 [ySize, xSize] = size(struct.expImgs{1}); % All images assumed of the same size
@@ -33,12 +35,11 @@ refmeas = im2double(refmeas);
 airyBool = 1;
 switch airyBool
     case 1 % Measured from the reference image
-       AiryDiskPixX = 123; % Just an example
-       AiryDiskPixY= 79; % Just an example                                  % ORG WITH TEMPORAL.m
-       % Leer, binarizar, erode
-       
+       AiryDiskPixX = aproxRadius; % Just an example
+       AiryDiskPixY= aproxRadius; % Just an example
 %        AiryDiskSpatialX = AiryDiskPixX*PP; % PP: camera's pixel pitch
 %        AiryDiskSpatialY = AiryDiskPixY*PP;
+
     case 2 % Theoretical: diffraction-limited systems
        % NA: numerical aperture of the lens
         % L: wavelength in um
@@ -56,14 +57,14 @@ switch airyBool
 end
 
 %% Pixel airy radius
-AiryMultiplicityX = xSize/AiryDiskPixX; % NUmber of airy disks 
+AiryMultiplicityX = xSize/AiryDiskPixX; % Number of airy disks 
 AiryMultiplicityY = ySize/AiryDiskPixY;
 
 xpix = -xSize/2 : 1 : xSize/2 - 1; % pixels
 ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels                   % MAYBE USE MIDX,MIDY
 
-xangL_D = xpix/(AiryMultiplicityX*8);
-yangL_D =  ypix/(AiryMultiplicityY*8);
+% xangL_D = xpix/(AiryMultiplicityX*8);
+% yangL_D =  ypix/(AiryMultiplicityY*8);
 
 %% Cartesian coordinates with the lambda/D scaling (diffraction angle)
 % xangL_D = f_scalePix2DiffAng(xpix,AiryFactor);  
