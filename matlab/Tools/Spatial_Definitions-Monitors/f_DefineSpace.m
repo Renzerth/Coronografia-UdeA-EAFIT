@@ -146,6 +146,7 @@ switch shiftMask
   shiftCart = shiftCart/100; % Percentage w.r.t the half size 
   shiftX = shiftCart(2); % Cartesian shift in x
   shiftY = shiftCart(1); % Cartesian shift in y
+  shiftCart = [shiftY shiftX];
   
  case 2 % Self-centering algorithm
   % WARNING: Nothing is show on the SLM, so assure you have a black

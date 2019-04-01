@@ -1,6 +1,6 @@
 function f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,pathSep,infoDelim, ...
 dataformat,cameraPlane,totalImgs,AiryFactor,metricSel,metricProfile, ...
-shiftCart,beepSound,L,NA)
+shiftCart,beepSound,L,NA,PP)
 %% Post-processing of the data (application of the metric of the degree of
 %%% extintion)
 
@@ -40,12 +40,12 @@ refmeas = im2double(refmeas);
 %% Find center of the PSF image (peaks)                                                  MISSING!!
                         
 %% Cartesian coordinates with pixel units
-[ySize, xSize] = size(struct.refmeas); % All images assumed of the same size as the refmeas
+[ySize, xSize] = size(refmeas); % All images assumed of the same size as the refmeas
 % xpix = 1:xSize; % Pixels start in 1
 % ypix = 1:ySize; % Pixels start in 1
 
 %% Airy radius calculation
-airyBool = 1;
+airyBool = 2;
 switch airyBool
     case 1 % Measured from the reference image
        AiryDiskPixX = aproxRadius; % Just an example
@@ -84,8 +84,8 @@ ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels                   % MAYBE USE MIDX,MI
 % yangL_D = f_scalePix2DiffAng(ypix,AiryFactor);
 
 %% Cartesian coordinates with the arcsecond scaling (diffraction angle)
-xangArcs = f_LambdaDToarcsec(xangL_D);
-yangArcs = f_LambdaDToarcsec(yangL_D);
+% xangArcs = f_LambdaDToarcsec(xangL_D);
+% yangArcs = f_LambdaDToarcsec(yangL_D);
 
 %%  lambda/D factor falco-matlab reference
 % It is scalled with respect to the jinc zeros

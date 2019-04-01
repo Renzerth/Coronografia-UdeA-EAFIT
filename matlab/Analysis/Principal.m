@@ -187,7 +187,7 @@ if proc
     % Metric of the degree of extintion applied
     f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,pathSep, ...
     infoDelim,dataformat,cameraPlane,totalImgs,AiryFactor,metricSel, ...
-    metricProfile,shiftCart,beepSound,L,NA);
+    metricProfile,shiftCart,beepSound,L,NA,PP);
 end
 
 

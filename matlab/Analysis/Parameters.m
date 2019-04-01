@@ -122,7 +122,7 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
      % 0: The mask presents an elliptical form when in the full screen
      % 1: The mask presents a circular form when in the full screen
      % On both cases full screen means that plotMask = 2
-    shiftMask = 1; % Shift for all masks
+    shiftMask = 0; % Shift for all masks
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm: Only works if
