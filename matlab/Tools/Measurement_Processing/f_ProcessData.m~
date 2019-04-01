@@ -21,20 +21,23 @@ struct = load(measfullpath); % Loads all the measured images and their info
 % The image is read in a uint8 format: integer with values that are
 % normally in [0,255] (8-bit depth or dynamic range)
 refmeas = imread(refmeasfullpath);       
+
+%% UINT8 format to Double for the image
 % im2double duplicates the precision of the exponent leaving intact the
 % mantisa. It as floating-point format that normalizes the images and this
 % operation is made on each RGB channel. rgb2gray does a similar operation
 % but scalling to a gray scale, where it  converts RGB values to grayscale values
 % by forming a weighted sum of the R, G, and B components:
 % 0.2989 * R + 0.5870 * G + 0.1140 * B 
-
 refmeas = im2double(refmeas);
 
 %% Find center of the Lyot image
-% This was already done in
+% This was already done in f_DefineSpace.m
 
-%% Find center of the PSF image
-[xangL_D,yangL_D,regionCentroid,aproxRadius] = f_approximateSpotSize(refmeas);
+%% Find center of the PSF image (binarization)
+% [xangL_D,yangL_D,regionCentroid,aproxRadius] = f_approximateSpotSize(refmeas);
+
+%% Find center of the PSF image (peaks)                                                  MISSING!!
                         
 %% Cartesian coordinates with pixel units
 [ySize, xSize] = size(struct.refmeas); % All images assumed of the same size as the refmeas
@@ -83,6 +86,13 @@ ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels                   % MAYBE USE MIDX,MI
 %% Cartesian coordinates with the arcsecond scaling (diffraction angle)
 xangArcs = f_LambdaDToarcsec(xangL_D);
 yangArcs = f_LambdaDToarcsec(yangL_D);
+
+%%  lambda/D factor falco-matlab reference
+% It is scalled with respect to the jinc zeros
+NpadX = xSize; % Camera's x pixel size
+NpadY = ySize; % Camera's y pixel size
+apRad = 2.54; % Aperture radius [cm]
+lamO
 
 %% Metric-specific default parameters
 xlab = 'Angular position [\lambda/D]';

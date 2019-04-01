@@ -34,8 +34,10 @@ refmeas = im2double(refmeas);
 %% Find center of the Lyot image
 % This was already done in f_DefineSpace.m
 
-%% Find center of the PSF image
-[xangL_D,yangL_D,regionCentroid,aproxRadius] = f_approximateSpotSize(refmeas);
+%% Find center of the PSF image (binarization)
+% [xangL_D,yangL_D,regionCentroid,aproxRadius] = f_approximateSpotSize(refmeas);
+
+%% Find center of the PSF image (peaks)                                                  MISSING!!
                         
 %% Cartesian coordinates with pixel units
 [ySize, xSize] = size(struct.refmeas); % All images assumed of the same size as the refmeas
@@ -85,6 +87,18 @@ ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels                   % MAYBE USE MIDX,MI
 xangArcs = f_LambdaDToarcsec(xangL_D);
 yangArcs = f_LambdaDToarcsec(yangL_D);
 
+%%  lambda/D factor falco-matlab reference
+% It is scalled with respect to the jinc zeros
+NpadX = xSize; % Camera's x pixel size
+NpadY = ySize; % Camera's y pixel size
+apRad = 2.54; % Aperture radius [cm]
+xlamOverD = NpadX/(2*apRad);
+ylamOverD = NpadY/(2*apRad);
+xvals_fp = -NpadX/2:NpadX/2-1;
+x_L_D = xvals_fp/xlamOverD;
+yvals_fp = -NpadX/2:NpadX/2-1;
+y_L_D = yvals_fp/ylamOverD;
+
 %% Metric-specific default parameters
 xlab = 'Angular position [\lambda/D]';
 ylab = 'Angular position [\lambda/D]';
@@ -117,7 +131,7 @@ for idxgral = 1:totalImgs
       
     case 4 % SNR
       tit = 'Signal-to-Noise Ratio';
-      [~] = f_calculateSNR(xangL_D,yangL_D,struct.expImgs{idxgral},refmeas,shiftCart, ...
+      [~] = f_calculateSNR(x_L_D,y_L_D,struct.expImgs{idxgral},refmeas,shiftCart, ...
       metricProfile,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile, ...
       dcShift,tol);
     case 5 % MSE

@@ -4,7 +4,7 @@ function [x,y,regionCentroid,aproxRadius] = f_approximateSpotSize(cdata,varargin
 %
 % Inputs:
 % cdta: input image (2D matrix, already with the " im2double" previously applied)
-%
+% threshold: optional number in [0,1] for the binarization
 %
 % Outputs:
 % x,y: vectors with the lamda/D scaling
