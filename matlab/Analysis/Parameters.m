@@ -143,13 +143,13 @@ camera = 'DMK23U445';
 % Format: 'Y800 (1280x960)' [best]; 'RGB24 (1024x768)' [another option]
 
 switch camera
-  case 'DMK23U445' % PSF plane % CMOS
+  case 'DMK23U445' % PSF plane % CCD 
     exposure = 1/1e3; % Range: [,]
     format = 'Y800 (1280x960)'; 
     cameraPlane =  'PSF';
     PP = 3.75; % Pixel pitch in [um/pixel]
     
-  case 'DMK42BUC03' % Lyot plane % CCD
+  case 'DMK42BUC03' % Lyot plane % CMOS
     exposure = 1/1e3; % Range: [1/1e4,1]
     format = 'Y800 (1280x960)';
     cameraPlane =  'Lyot';

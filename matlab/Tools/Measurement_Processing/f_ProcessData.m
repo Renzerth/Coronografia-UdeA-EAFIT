@@ -18,16 +18,27 @@ struct = load(measfullpath); % Loads all the measured images and their info
                         % "expImgs" and "MeasInfo"
                         
 %%  Loading the reference measurement
-refmeas = imread(refmeasfullpath);          
+% The image is read in a uint8 format: integer with values that are
+% normally in [0,255] (8-bit depth or dynamic range)
+refmeas = imread(refmeasfullpath);       
+
+%% UINT8 format to Double for the image
+% im2double duplicates the precision of the exponent leaving intact the
+% mantisa. It as floating-point format that normalizes the images and this
+% operation is made on each RGB channel. rgb2gray does a similar operation
+% but scalling to a gray scale, where it  converts RGB values to grayscale values
+% by forming a weighted sum of the R, G, and B components:
+% 0.2989 * R + 0.5870 * G + 0.1140 * B 
 refmeas = im2double(refmeas);
 
 %% Find center of the Lyot image
+% This was already done in f_DefineSpace.m
 
 %% Find center of the PSF image
 [xangL_D,yangL_D,regionCentroid,aproxRadius] = f_approximateSpotSize(refmeas);
                         
 %% Cartesian coordinates with pixel units
-[ySize, xSize] = size(struct.expImgs{1}); % All images assumed of the same size
+[ySize, xSize] = size(struct.refmeas); % All images assumed of the same size as the refmeas
 % xpix = 1:xSize; % Pixels start in 1
 % ypix = 1:ySize; % Pixels start in 1
 

@@ -36,6 +36,9 @@
 %  this presents no problem for the mask projection
 %  -It is not possible to load previous measurements of windows in a linux
 %  MATLAB or vice versa, due to the incompatibility of the "pathSep"
+%  -Errors or warnings may appear when you have for example a folder
+%  "date-meas_2", but you don't have the folder "date-meas_1" and
+%  "date-meas"; therefore, rename "date-meas_2" as "date-meas"
 %
 % Samuel Plazas(PA1/PA2/TG) - Juan Jose Cadavid(Master thesis) - 2018/2019
 
