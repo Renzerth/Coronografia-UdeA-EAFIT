@@ -17,11 +17,15 @@ function [x,y,regionCentroid,aproxRadius] = f_approximateSpotSize(cdata,varargin
 if nargin == 2
     Threshold = varargin{1}; % User input
 else
-    Threshold = 0.01; % From 0 to 1
+    Threshold = 0.3; % 70 percent of the energy  is considered. One only analyzes this energy since it is significative in
+                               % an Airy pattern. It is assumed that the central intensity defines the spot's axis or 
 end
+[sizeY,sizeX] = size(cdata);
+binaryData = false(sizeY,sizeX);
+binaryData(cdata>=Threshold) = true; % (1-Threshold) percent of the energy
+% OLD binaryData = im2bw(cdata,Threshold); % use imbinarize for newer MATLAB versions (2017 and further versions)
 
 %% Estimation of the pixel size of the Airy Disk 
-binaryData = im2bw(cdata,Threshold); % use imbinarize for newer MATLAB versions (2017 and further versions)
 regionInfo = regionprops(binaryData,'Centroid','area','MajorAxisLength','MinorAxisLength');
 [~, sortIndexes] = sort(cat(1,regionInfo.Area), 'descend');
 mainIndex = sortIndexes(1);
