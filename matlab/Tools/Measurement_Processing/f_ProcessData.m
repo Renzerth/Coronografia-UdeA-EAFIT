@@ -35,7 +35,7 @@ refmeas = im2double(refmeas);
 % This was already done in f_DefineSpace.m
 
 %% Find center of the PSF image (binarization)
-% [xangL_D,yangL_D,regionCentroid,aproxRadius] = f_approximateSpotSize(refmeas);
+[xangL_D,yangL_D,regionCentroid,aproxRadius] = f_approximateSpotSize(refmeas);
 
 %% Find center of the PSF image (peaks)                                                  MISSING!!
                         
@@ -54,7 +54,7 @@ disp(strcat("Theoretical Airy's radius in um: ", num2str(AiryDiskSpatialX), ' (x
 
 AiryDiskPixX = AiryDiskSpatialX/PP; % PP: camera's pixel pitch
 AiryDiskPixY = AiryDiskSpatialY/PP;
-disp(strcat("Theoretical Airy's radius in pix: ", num2str(AiryDiskPixX), ' (x) and ', num2str(AiryDiskPixY), ' (y)'));
+disp(strcat("Theoretical Airy's radius in pix: ", num2str(AiryDiskPixX), " (x) and ", num2str(AiryDiskPixY), ' (y)'));
 
 % In reality, there are aberrations and the real radius can be of
 % about 60 times the theoretical one
@@ -64,8 +64,8 @@ AiryDiskPixX = aproxRadius; % Just an example
 AiryDiskPixY= aproxRadius; % Just an example
 AiryDiskSpatialX = AiryDiskPixX*PP; % PP: camera's pixel pitch
 AiryDiskSpatialY = AiryDiskPixY*PP;
-disp(strcat("Estimated Airy's radius in um: ", num2str(AiryDiskSpatialX), ' (x) and ', num2str(AiryDiskSpatialY), ' (y)'));
-disp(strcat("Estimated Airy's radius in pix: ", num2str(AiryDiskPixX), ' (x) and ', num2str(AiryDiskPixY), ' (y)'));
+disp(strcat("Estimated Airy's radius in um: ", num2str(AiryDiskSpatialX), " (x) and ", num2str(AiryDiskSpatialY), ' (y)'));
+disp(strcat("Estimated Airy's radius in pix: ", num2str(AiryDiskPixX), " (x) and ", num2str(AiryDiskPixY), ' (y)'));
 
 %% Airy radius from the EEC factor
 % When it is the 70%
@@ -121,25 +121,44 @@ for idxgral = 1:totalImgs
      %% Throughput: Encircled Energy Factor metric
       % Camera: PSF.
       tit = 'Encircled Energy Distribution of Intensity';
-      [energy,~] = f_calculateEEF(xangL_D,yangL_D,struct.expImgs{idxgral}, ...
+      [energy,radialIntensity,cartcoord,titprof] = f_calculateEEF(xpix,ypix,struct.expImgs{idxgral}, ...
       shiftCart,metricProfile,tit,xlab,ylab,plotData,plotH,plotV, ...
       oneSideProfile,dcShift,tol);
      
-    %% Throughput gradient
+     %% Throughput gradient
       tit = 'Throughput gradient'; 
       % gradient [returns n elements] or diff [returns n-1 elements]
-      energy
-       
-    case 3 % Power suppresion in the airy disk
+      GradEnergy = gradient(energy);
+      
+      normIntensity = radialIntensity./max(radialIntensity);
+      
+     %% Plot of the gradient of the EEF and its corresponding intensity pattern
+%       yyaxis left
+%       h1 = plot(cartcoord,GradEnergy);
+%       yyaixs right
+%       h2 = plot(cartcoord,normIntensity);
+     
+      figure('color','white');
+      [hAxes,hLine1,hLine2] = plotyy(cartcoord,GradEnergy,cartcoord,normIntensity);
+      set(hLine1, 'Color','b','LineStyle','-'); set(hLine2, 'Color','r','LineStyle','-');
+      set(hAxes(1),'YColor','b'); set(hAxes(2),'YColor','r'); set(hAxes,'FontSize',12,'FontWeight','bold');
+      axis(hAxes(1), 'square'); axis(hAxes(2), 'square'); box(hAxes(1), 'on');
+      title(strcat(tit,{' '},titprof)); grid on;
+      xlabel('Angular position [\lambda/D]'); 
+      ylabel(hAxes(1),'Gradient of the relative throughput','FontSize',12,'FontWeight','bold');
+      ylabel(hAxes(2),'Intensity pattern','FontSize',14,'FontWeight','bold'); grid on;
+      lgdHandler = legend({'Gradient of the Encircled Energy Factor', 'Intensity'}); lgdHandler.FontSize = 10;
+      
+     %% Power suppresion in the airy disk
       tit ='Power suppresion in the airy disk';    
       % Needs case 1 as input
       
-    case 4 % SNR
+    case 2 % SNR
       tit = 'Signal-to-Noise Ratio';
       [~] = f_calculateSNR(xpix,ypix,struct.expImgs{idxgral},refmeas,shiftCart, ...
       metricProfile,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile, ...
       dcShift,tol);
-    case 5 % MSE
+    case 3 % MSE
       tit = 'Mean Squared Error';
         
     otherwise

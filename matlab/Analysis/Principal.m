@@ -147,10 +147,10 @@ if meas
  %% Save the whole workspace 
  % Performed every time a measurement is made   
  % ProcessedDir is not saved since a new one will be used each time the 
- % workspace is loaded
+ % workspace is loaded. This also applies for the other variables there
  % regexp: match regular expression (case sensitive)
  save(strcat(dataDir,pathSep,numberedFolderMeas,pathSep, ...
-      'workspace.mat'),'-regexp','^(?!(ProcessedDir)$).');
+      'workspace.mat'),'-regexp','^(?!(ProcessedDir|metricSel|metricProfile|AiryFactor|NA)$).');
   
 elseif proc == 1 %  meas == 0 always in order to enter here
     
@@ -161,17 +161,17 @@ elseif proc == 1 %  meas == 0 always in order to enter here
   case 0 % Doesn't load anything
      warning('useLastMeas=0 will not load things for proc=1')
   case 1 % Loads the last measurement
-     clearvars -except dataDir pathSep numberedFolderMeas ProcessedDir; 
+     clearvars -except dataDir pathSep numberedFolderMeas ProcessedDir metricSel metricProfile AiryFactor NA; 
      load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
   case 2 % Loads a manually-put folder name
-     clearvars -except dataDir pathSep measFoldName ProcessedDir; 
+     clearvars -except dataDir pathSep measFoldName ProcessedDir metricSel metricProfile AiryFactor NA; 
      load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));    
   case 3 % Loads a user-defined measurement
      %%%  Select a custom measurement folder 
      usermeasFoldName = uigetdir; % The user will select the directory 
      [~,usermeasFoldName] = fileparts(usermeasFoldName); 
      % Selects only the folder from the full path 
-     clearvars -except dataDir pathSep usermeasFoldName ProcessedDir; 
+     clearvars -except dataDir pathSep usermeasFoldName ProcessedDir metricSel metricProfile AiryFactor NA; 
      load(strcat(dataDir,pathSep,usermeasFoldName,pathSep,'workspace.mat'));    
  end
  %%% Keep some input variables default:

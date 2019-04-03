@@ -47,10 +47,10 @@ maskSel = 1; % Phase mask selection:
              % ---- NOT USED:
              % 5: Zernike (aberrations)
              % 6: Laguerre-Gauss + Zernike
-             % 7: Hermite-Gauss beams NOT DONE
-             % 8: Mutliple vortices NOT DONE
-             % 9: Sum of spiral phase masks NOT DONE
-             % 10: Gerchberg-Saxton NOT DONE
+             % 7: Hermite-Gauss beams (NOT DONE)
+             % 8: Mutliple vortices (NOT DONE)
+             % 9: Sum of spiral phase masks (NOT DONE)
+             % 10: Gerchberg-Saxton (NOT DONE)
              % otherwise: Unitary
 plotMask = 1; % Allows to plot the mask:
               % 0: no plot;
@@ -369,12 +369,13 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%% PART 5: PROCESSING WITH METRICS %%%%%%%%%%%%%%%%%%%%%%
-metricSel = 4; % Type of metric:
-% 1: throughput (Encircled Energy Factor)
-% 2: throughput gradient
-% 3: power suppresion in the airy disk
-% 4: SNR
-% 5: MSE
+metricSel = 1; % Type of metric:
+% 1:
+%     -throughput (Encircled Energy Factor)
+%     -throughput gradient
+%     -power suppresion in the airy disk
+% 2: SNR
+% 5: MSE (NOT DONE)
 metricProfile = 1; % 1: vertical profile; 2: horizontal profile
 
 %% Diffraction angle units
