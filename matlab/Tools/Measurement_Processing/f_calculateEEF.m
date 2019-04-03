@@ -49,5 +49,4 @@ ylabel(hAxes(1),'Relative throughput','FontSize',14,'FontWeight','bold');
 ylabel(hAxes(2),'Intensity pattern','FontSize',14,'FontWeight','bold'); grid on;
 lgdHandler = legend({'Encircled Energy Factor', 'Intensity'}); lgdHandler.FontSize = 10;
 
-
 end

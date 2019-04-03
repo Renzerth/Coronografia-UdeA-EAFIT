@@ -158,8 +158,8 @@ switch shiftMask
   %    [~,relativeCoord] = f_computeCenterFromImageMin();
   %   snap = snap/max(snap(:));
   %   snap = 20*log10(snap);
-  snap = double(snap);
-  mode = 'single'; % 'single' or 'vortex'
+%   snap = im2double(snap);
+%   mode = 'single'; % 'single' or 'vortex'
    f_computeCenterFromImageMin()
 %   [rowCoord,~] = f_getValleyLocation(snap,'single');
 %   [~,colCoord] = f_getValleyLocation(snap{2},'single');

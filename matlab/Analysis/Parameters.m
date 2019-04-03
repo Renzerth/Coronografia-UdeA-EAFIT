@@ -122,17 +122,18 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
      % 0: The mask presents an elliptical form when in the full screen
      % 1: The mask presents a circular form when in the full screen
      % On both cases full screen means that plotMask = 2
-    shiftMask = 0; % Shift for all masks
+    shiftMask = 1; % Shift for all masks
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm: Only works if
-    shiftCart = [-10,-20]; % shiftCart: [shiftY,shiftX], works when 
-                       % shiftMask = 1. Percentages of movement of the
-                       % total size of the mask (cartesian coordinates 
-                       % convention). Ranges per shift: [0,99] (percentge)
-                       % 100 is allowed if no profile will be made. Smaller
-                       % values are restricted if the Zernike masks are
-                       % used.
+     %%% For shiftMask=1 (SLM plotting):  
+     shiftCart = [-10,-20]; % shiftCart: [shiftY,shiftX]. Percentages of 
+                        % movement of the
+                        % total size of the mask (cartesian coordinates 
+                        % convention). Ranges per shift: [0,99] (percentge)
+                        % 100 is allowed if no profile will be made. Smaller
+                        % values are restricted if the Zernike masks are
+                        % used.
                           
    % LC2002: [-3,0.1]
    % Pluto: [31.5,-1.8]
@@ -202,7 +203,7 @@ ph0 = pi; % Initial phase of the angle [radians]; reference +pi from
     normMag = 1; % Normalize magnitude. yes(1); no(0). 
           
 %% Parameters: Laguerre-Gauss
-p = 1; % Number of radial nodes. If p=0, normal helicoid masks are obtained
+p = 4; % Number of radial nodes. If p=0, normal helicoid masks are obtained
        % If they are used and tc=0(m=0); binary masks are obtained
        % Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
 WsizeRatio = 20; % Width of the modes; for LG; ref: [0,100] (percentage  
@@ -317,7 +318,7 @@ dataformat = '.bmp'; % Default: .bmp (not too heavy)
 % glvect = [1 16 24 28 36 56 128 256]; % Given by por Juan Jose
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
                                   % with a good system phase response
-tcvect = [1 2]; % Topological charges to be measured [integers] 
+tcvect = [1]; % Topological charges to be measured [integers] 
 glvect = [255]; % Gray level to be measured [0,255]
 % glvect = linspace(2,18,9)
 wait = 0; % Seconds before measuring as a safety measurement. Default: 10
@@ -350,7 +351,7 @@ dataFlrd = 'Data'; % Folder name: input data
 snapsfldr = 'TestSnapshots'; % Snapshot tests folder (inside dataFlrd)
 outFlrd = 'Output'; % Folder name: output data
 toolsFldr = 'Tools'; % Folder name: functions
-lastmeasdate = 'LastMeasDate'; % .mat's name of the last measurement date
+lastmeas = 'LastMeasName'; % .mat's name of the last measurement date
 filemanag = 'Files-Folders_Managing'; % Folder with the function 
                                       % f_makeParentFolder, the 1st 
                                       % function that is used in the 
@@ -369,7 +370,7 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%% PART 5: PROCESSING WITH METRICS %%%%%%%%%%%%%%%%%%%%%%
-metricSel = 1; % Type of metric:
+metricSel = 2; % Type of metric:
 % 1:
 %     -throughput (Encircled Energy Factor)
 %     -throughput gradient

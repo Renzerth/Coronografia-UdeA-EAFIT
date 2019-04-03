@@ -89,17 +89,73 @@ ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels                   % MAYBE USE MIDX,MI
 % xangArcs = f_LambdaDToarcsec(xangL_D);
 % yangArcs = f_LambdaDToarcsec(yangL_D);
 
+%% Lyot's spot size (main radius)
+apRad = 2.54; % Aperture radius [cm]
+
+Lyotimg = imread('/home/labfisica/Dropbox/Coronógrafo_2018-1_Samuel/6_Photos/Project development/5-Measurement-Results/18_data_ref-self_centering/data_ref_2.bmp');
+Lyotimg = rgb2gray(Lyotimg);
+
+PSFimg = imread('/home/labfisica/Dropbox/Coronógrafo_2018-1_Samuel/two focal planes.bmp');
+
+
+[ySize, xSize] = size(PSFimg); 
+% xpix = -xSize/2 : 1 : xSize/2 - 1; % pixels
+xpix = 1:xSize;
+ypix= 1:ySize;
+% ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels   
+
+drawing = false;
+PP = PP*1e-6; % um to m
+apRad = apRad*1e-2; % cm to m
+[~,mainLyotRadius,~] = findCircleShapedIntensity(Lyotimg,drawing);
+[apRadpix] = computePupilPixelSize(mainLyotRadius, PP,apRad);
+
 %%  lambda/D factor falco-matlab reference
 % It is scalled with respect to the jinc zeros
+[ySize,xSize] = size(Lyotimg);
 NpadX = xSize; % Camera's x pixel size
 NpadY = ySize; % Camera's y pixel size
-apRad = 2.54; % Aperture radius [cm]
-xlamOverD = NpadX/(2*apRad);
-ylamOverD = NpadY/(2*apRad);
+xlamOverD = NpadX/(2*apRadpix);
+ylamOverD = NpadY/(2*apRadpix);
 xvals_fp = -NpadX/2:NpadX/2-1;
 x_L_D = xvals_fp/xlamOverD;
-yvals_fp = -NpadX/2:NpadX/2-1;
+yvals_fp = -NpadY/2:NpadY/2-1;
 y_L_D = yvals_fp/ylamOverD;
+
+%% Find center of the PSF image (binarization)
+[xangL_D,yangL_D,regionCentroid,aproxRadius] = f_approximateSpotSize(PSFimg);
+
+%% Profile
+plotData = 1; % Shows the profile lines. Ref: 1
+plotH = 0; % Not needed for the metric. Ref: 0
+plotV = 0; % Not needed for the metric. Ref: 0
+oneSideProfile = 1; % Specifically needed for this metric. Ref: 1
+dcShift = 0; % Only used for spectra (Fourier analysis)
+tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
+tit = 'tit';
+xlab = 'Angular position [\lambda/D]';
+ylab = 'Angular position [\lambda/D]';
+
+midX = round((xSize+1)/2); % x mid point
+midY = round((ySize+1)/2); % y mid point
+
+regionCentroid = round(regionCentroid);
+
+sX = regionCentroid(2);
+sY = regionCentroid(1);
+ 
+sX =sX- midX;
+sY = midY-sY;
+ 
+regionCentroid = [sY sX];
+
+regionCentroid =regionCentroid./(2*[ySize,xSize]); % Nearest pixel
+
+[x,y,Hprof,Vprof,~,~,~,~] = f_makeImageProfile(xpix,ypix,PSFimg,...
+tol,regionCentroid,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift);
+
+
+
 
 %% Metric-specific default parameters
 xlab = 'Angular position [\lambda/D]';
@@ -107,7 +163,7 @@ ylab = 'Angular position [\lambda/D]';
 plotData = 1; % Shows the profile lines. Ref: 1
 plotH = 0; % Not needed for the metric. Ref: 0
 plotV = 0; % Not needed for the metric. Ref: 0
-oneSideProfile = 2; % Specifically needed for this metric. Ref: 1
+oneSideProfile = 1; % Specifically needed for this metric. Ref: 1
 dcShift = 0; % Only used for spectra (Fourier analysis)
 tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 
@@ -128,9 +184,8 @@ for idxgral = 1:totalImgs
      %% Throughput gradient
       tit = 'Throughput gradient'; 
       % gradient [returns n elements] or diff [returns n-1 elements]
-      GradEnergy = gradient(energy);
-      
       normIntensity = radialIntensity./max(radialIntensity);
+      GradEnergy = gradient(normIntensity);
       
      %% Plot of the gradient of the EEF and its corresponding intensity pattern
 %       yyaxis left

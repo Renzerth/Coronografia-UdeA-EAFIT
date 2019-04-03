@@ -1,6 +1,6 @@
 function [imgpartPath,measfullpath,ProcessedDir,ltcvect,lglvect,totalImgs,numberedFolderMeas] = ...
 f_CreateFoldersRegisters(maskName,tcvect,glvect,slm,cameraPlane,dataDir,...
-outDir,pathSep,infoDelim,dirDelim,lastmeasdate,meas,proc)
+outDir,pathSep,infoDelim,dirDelim,lastmeas,meas,proc)
 
 %% General saving registers
 ltcvect = length(tcvect); % Length of the tc vector
@@ -13,22 +13,22 @@ MeasSize = strcat(maskName,infoDelim,'mask',infoDelim,'tcs',infoDelim, ...
 
 %% Measurement folder creation (Datalog)
 %%% Last measurement's date directory
-lastmeasdateDir = strcat(dataDir,pathSep,lastmeasdate);
+lastmeasDir = strcat(dataDir,pathSep,lastmeas);
 
 %%% Asks if a measurement will be performed
 if meas
   createFoldMeas = 1;
-  % Explanation: save(directory,filename,variables) % ,'-append'
-  save(lastmeasdateDir,'strDate'); % Save as .mat
   %%% Folder name:
-  Measfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize);  % Use today's date
+  Measfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize);  % Use the wanted measurement's name
+  % Explanation: save(directory,filename,variables) % ,'-append'
+  save(lastmeasDir,'Measfldr'); % Save as .mat
   
 else % meas == 0
   createFoldMeas = 0;
-  struct = load(strcat(lastmeasdateDir,'.mat'));
-  strDate = struct.strDate;
+  struct = load(strcat(lastmeasDir,'.mat'));  
+  Measfldr = struct.Measfldr; % Use last measurement's name
   %%% Folder name:
-  Measfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize);  % Use last measurement's date
+   
 end
 %%% Specific measurement folder:
 numberedFolderMeas = f_createNextFolderName(dataDir,Measfldr, ...

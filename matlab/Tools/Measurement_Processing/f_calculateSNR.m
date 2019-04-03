@@ -40,17 +40,17 @@ end
 figure('color','white');
 semilogy(cartcoord,Measurement); hold on
 semilogy(cartcoord,RefMeasurement); hold off; 
-title(strcat(tit,{' '},titprof)); grid on;
-xlabel('Angular position [\lambda/D]'); ylabel('Relative contrast (logscale) [Radial intensity]')
+title(strcat('Raw contrast',{' '},titprof)); grid on;
+xlabel('Angular position [\lambda/D]'); ylabel('Relative contrast of the radial intensities [logscale]')
 legend({'Measurement', 'Reference'});
 
 %% SNR
-SNR = log(Measurement) - 0.5*log(RefMeasurement);
+SNR = log10(Measurement) - 0.5*log10(RefMeasurement);
 
 %% Plot of the SNR
 figure('color','white');
 plot(cartcoord,SNR);
 xlabel('Angular position [\lambda/D]'); ylabel('SNR')
-title('SNR'); grid on;
+title(strcat(tit,{' '},titprof)); grid on;
 
 end

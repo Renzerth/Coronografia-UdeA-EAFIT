@@ -8,7 +8,7 @@ function [x,y,Hprof,Vprof,maxX,maxY,midX,midY] = f_makeImageProfile(x,y, ...
 %  dataArray: 2D numerical array (or matrix): image/mask for example
 %  tol: discrete index tolerance in order to symmetrically dicrease the
 %  size of the profile
-%  shiftCart:
+%  shiftCart: should only be in [-0.99 , 0.99]
 %  tit: title for dataArray
 %  xlab,ylab: x and y labels (strings)
 %  plotData: plots dataArray and lines of the profiles
@@ -35,6 +35,9 @@ shiftX = shiftCart(2); % Cartesian shift in x
 shiftY = shiftCart(1); % Cartesian shift in y
 shiftX = round(midX*shiftX); % Percentage of the half support of the mask
 shiftY = round(midY*shiftY); % Percentage of the half support of the mask
+% shiftX = round(shiftX); % Percentage of the half support of the mask
+% shiftY = round(shiftY); % Percentage of the half support of the mask
+
 
 %% Mid points of the array (with the shift application)
 % The extreme parts of the profile are conserved and the midpoints shift
@@ -69,17 +72,17 @@ Vprof = improfile(dataArray,Vx,Vy); % Vertical profile
 %% One side profile extraction
 switch oneSideProfile
     case 0
-        % No change
+        % No change: full-sided profile
     case 1 %  Profiles in the 1st and 4th quadrants
         Hprof = Hprof(midX:end); % From the middle to the end
         Vprof = Vprof(midY:end); % From the middle to the end
         x = x(midX:end); % From the middle to the end
         y = y(midY:end); % From the middle to the end
     case 2 % Profiles in the 2nd and 3rd quadrants
-        Hprof = fliplr(Hprof(midX:1)); % From the middle to the end
-        Vprof = fliplr(Vprof(1:midY)); % From the middle to the end
-        x = fliplr(x(1:midX)); % From the middle to the end
-        y = fliplr(y(1:midY)); % From the middle to the end        
+        Hprof = fliplr(Hprof(1:midX)'); % From the middle to the end
+        Vprof = fliplr(Vprof(1:midY)'); % From the middle to the end
+        x = x(1:midX); % From the middle to the end
+        y = y(1:midY); % From the middle to the end        
 end 
 
 %% Plot of each profiles
