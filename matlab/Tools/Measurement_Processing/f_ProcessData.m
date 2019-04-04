@@ -92,8 +92,10 @@ disp(strcat("Estimated Airy's radius in pix: ", num2str(AiryDiskPixX), " (x) and
 %% Lyot's spot size (main radius)
 apRad = 2.54; % Aperture radius [cm]
 
-PSFimg = imread('/home/labfisica/Dropbox/Coron贸grafo_2018-1_Samuel/two focal planes.bmp');
-Lyotimg = imread('/home/labfisica/Dropbox/Coron贸grafo_2018-1_Samuel/6_Photos/Project development/5-Measurement-Results/18_data_ref-self_centering/data_ref_2.bmp');
+PSFimg = imread('C:\Users\saple\Dropbox\DAVID-SAMUEL\2019-1\1_PA_Thesis\Coron骻rafo_Samuel_2018-2019\two focal planes.bmp');
+Lyotimg = imread('C:\Users\saple\Dropbox\DAVID-SAMUEL\2019-1\1_PA_Thesis\Coron骻rafo_Samuel_2018-2019\6_Photos\Project development\5-Measurement-Results\18_data_ref-self_centering\data_ref_2.bmp');;
+% PSFimg = imread('/home/labfisica/Dropbox/Coron贸grafo_2018-1_Samuel/two focal planes.bmp');
+% Lyotimg = imread('/home/labfisica/Dropbox/Coron贸grafo_2018-1_Samuel/6_Photos/Project development/5-Measurement-Results/18_data_ref-self_centering/data_ref_2.bmp');
 Lyotimg = rgb2gray(Lyotimg); 
 
 drawing = false;

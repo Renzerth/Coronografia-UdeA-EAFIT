@@ -109,7 +109,7 @@ MaxMask,plotMask,maskSel);
 [imgpartPath,measfullpath,ProcessedDir,ltcvect,lglvect,totalImgs, ...
 numberedFolderMeas] = f_CreateFoldersRegisters(maskName,tcvect,glvect, ...
 slm,cameraPlane,dataDir,outDir,pathSep,infoDelim,dirDelim,lastmeas, ...
-meas,proc);
+meas,proc,useLastMeas);
 
 %% Measurement
 if meas
@@ -150,7 +150,7 @@ if meas
  % workspace is loaded. This also applies for the other variables there
  % regexp: match regular expression (case sensitive)
  save(strcat(dataDir,pathSep,numberedFolderMeas,pathSep, ...
-      'workspace.mat'),'-regexp','^(?!(ProcessedDir|metricSel|metricProfile|AiryFactor|NA)$).');
+      'workspace.mat'),'-regexp','^(?!(numberedFolderMeas|ProcessedDir|metricSel|metricProfile|AiryFactor|NA|useLastMeas)$).');
   
 elseif proc == 1 %  meas == 0 always in order to enter here
     
@@ -161,17 +161,17 @@ elseif proc == 1 %  meas == 0 always in order to enter here
   case 0 % Doesn't load anything
      warning('useLastMeas=0 will not load things for proc=1')
   case 1 % Loads the last measurement
-     clearvars -except dataDir pathSep numberedFolderMeas ProcessedDir metricSel metricProfile AiryFactor NA; 
+     clearvars -except dataDir pathSep numberedFolderMeas ProcessedDir metricSel metricProfile AiryFactor NA useLastMeas; 
      load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep,'workspace.mat'));
   case 2 % Loads a manually-put folder name
-     clearvars -except dataDir pathSep measFoldName ProcessedDir metricSel metricProfile AiryFactor NA; 
+     clearvars -except dataDir pathSep measFoldName ProcessedDir metricSel metricProfile AiryFactor NA useLastMeas; 
      load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));    
   case 3 % Loads a user-defined measurement
      %%%  Select a custom measurement folder 
      usermeasFoldName = uigetdir; % The user will select the directory 
      [~,usermeasFoldName] = fileparts(usermeasFoldName); 
      % Selects only the folder from the full path 
-     clearvars -except dataDir pathSep usermeasFoldName ProcessedDir metricSel metricProfile AiryFactor NA; 
+     clearvars -except dataDir pathSep usermeasFoldName ProcessedDir metricSel metricProfile AiryFactor NA useLastMeas; 
      load(strcat(dataDir,pathSep,usermeasFoldName,pathSep,'workspace.mat'));    
  end
  %%% Keep some input variables default:
