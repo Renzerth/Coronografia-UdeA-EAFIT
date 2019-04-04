@@ -9,7 +9,7 @@ meas = 0; % Measure: yes (1) or no (0)
     % 2: loads a user-defined measurement folder
     % 3: select the folder you want to process (inside Data)
     %%% For useLastMeas = 2:
-    measFoldName = '03-Apr-2019-No-SLM-LG-mask-tcs-1-gls-1';
+    measFoldName = '04-Apr-2019-No-SLM-VPL-mask-tcs-1-gls-1';
 %%% For meas = 1: the whole workspace is saved
     % if measSimulated = 1 -> measDebug will be 0 
     % If meas = 1 -> all the figures will be closed before starting it
@@ -28,7 +28,7 @@ proc = 1; % Processes the data
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)           
-abs_ang = 1; % Custom(0)[str has to be defined for this case], magnitude
+abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. abs_ang=1 is normally used for
              % maskSel=1
              % It doesn't apply for Zernike and LG +
@@ -38,7 +38,7 @@ abs_ang = 1; % Custom(0)[str has to be defined for this case], magnitude
              % phase, are noticed in the amplitude if the field is 
              % propagated. Consider using simBool = 1
              % abs_ang = 0 is not valid for FTmask = 1
-maskSel = 1; % Phase mask selection:
+maskSel = 5; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -122,7 +122,7 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
      % 0: The mask presents an elliptical form when in the full screen
      % 1: The mask presents a circular form when in the full screen
      % On both cases full screen means that plotMask = 2
-    shiftMask = 1; % Shift for all masks
+    shiftMask = 0; % Shift for all masks
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm: Only works if
@@ -318,7 +318,7 @@ dataformat = '.bmp'; % Default: .bmp (not too heavy)
 % glvect = [1 16 24 28 36 56 128 256]; % Given by por Juan Jose
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
                                   % with a good system phase response
-tcvect = [1]; % Topological charges to be measured [integers] 
+tcvect = [1 2]; % Topological charges to be measured [integers] 
 glvect = [255]; % Gray level to be measured [0,255]
 % glvect = linspace(2,18,9)
 wait = 0; % Seconds before measuring as a safety measurement. Default: 10

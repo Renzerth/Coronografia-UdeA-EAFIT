@@ -92,18 +92,18 @@ disp(strcat("Estimated Airy's radius in pix: ", num2str(AiryDiskPixX), " (x) and
 %% Lyot's spot size (main radius)
 apRad = 2.54; % Aperture radius [cm]
 
-PSFimg = imread('C:\Users\saple\Dropbox\DAVID-SAMUEL\2019-1\1_PA_Thesis\Coron骻rafo_Samuel_2018-2019\two focal planes.bmp');
-Lyotimg = imread('C:\Users\saple\Dropbox\DAVID-SAMUEL\2019-1\1_PA_Thesis\Coron骻rafo_Samuel_2018-2019\6_Photos\Project development\5-Measurement-Results\18_data_ref-self_centering\data_ref_2.bmp');;
-% PSFimg = imread('/home/labfisica/Dropbox/Coron贸grafo_2018-1_Samuel/two focal planes.bmp');
-% Lyotimg = imread('/home/labfisica/Dropbox/Coron贸grafo_2018-1_Samuel/6_Photos/Project development/5-Measurement-Results/18_data_ref-self_centering/data_ref_2.bmp');
+% PSFimg = imread('C:\Users\saple\Dropbox\DAVID-SAMUEL\2019-1\1_PA_Thesis\Coron锟絞rafo_Samuel_2018-2019\two focal planes.bmp');
+% Lyotimg = imread('C:\Users\saple\Dropbox\DAVID-SAMUEL\2019-1\1_PA_Thesis\Coron锟絞rafo_Samuel_2018-2019\6_Photos\Project development\5-Measurement-Results\18_data_ref-self_centering\data_ref_2.bmp');;
+PSFimg = imread('/home/labfisica/Dropbox/Coron贸grafo_2018-1_Samuel/two focal planes.bmp');
+Lyotimg = imread('/home/labfisica/Dropbox/Coron贸grafo_2018-1_Samuel/6_Photos/Project development/5-Measurement-Results/18_data_ref-self_centering/data_ref_2.bmp');
 Lyotimg = rgb2gray(Lyotimg); 
 
 drawing = false;
 PP = PP*1e-6; % um to m
 apRad = apRad*1e-2; % cm to m
-[~,mainLyotRadius,~] = findCircleShapedIntensity(Lyotimg,drawing);
+[~,mainLyotRadius,~] = f_findCircleShapedIntensity(Lyotimg,drawing);
 mainLyotRadius = round(mainLyotRadius);
-[apRadpix] = computePupilPixelSize(mainLyotRadius, PP,apRad);
+[apRadpix] = f_computePupilPixelSize(mainLyotRadius, PP,apRad);
 
 %% Find center of the PSF image (binarization)
 [xangL_D,yangL_D,regionCentroid,aproxRadius] = f_approximateSpotSize(PSFimg);
