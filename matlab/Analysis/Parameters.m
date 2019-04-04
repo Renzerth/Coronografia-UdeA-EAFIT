@@ -3,7 +3,7 @@
 %% Algorithm sections
 meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 0 and proc = 1:  the workspace is loaded
-    useLastMeas = 3; % In order to load a previous workspace:
+    useLastMeas = 1; % In order to load a previous workspace:
     % 0: doesn't load anything: not recommended in general
     % 1: loads the last measurement
     % 2: loads a user-defined measurement folder

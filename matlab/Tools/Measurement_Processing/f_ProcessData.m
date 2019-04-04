@@ -75,8 +75,8 @@ disp(strcat("Estimated Airy's radius in pix: ", num2str(AiryDiskPixX), " (x) and
 % AiryMultiplicityY = ySize/AiryDiskPixY;
 
 %% Symmetric pixels
-% xpix = -xSize/2 : 1 : xSize/2 - 1; % pixels
-% ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels                   % MAYBE USE MIDX,MIDY
+xpix = -xSize/2 : 1 : xSize/2 - 1; % pixels
+ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels                   % MAYBE USE MIDX,MIDY
 
 % xangL_D = xpix/(AiryMultiplicityX*8);
 % yangL_D =  ypix/(AiryMultiplicityY*8);
@@ -146,18 +146,19 @@ tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 shiftCart = [0,0];
 tit = 'tit';
 
-[x,y,Hprofmeas,Vprofmeas,~,~] = f_makeImageProfile(xpix,ypix,midX,midY, ...
+%% Reference Profile
+[x,y,HprofRef,VprofRef,~,~] = f_makeImageProfile(xpix,ypix,midX,midY, ...
            PSFimg,tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile);
 
 %% Reference Profile choosing 
 switch metricProfile
     case 1 % Vertical profile
-        radialIntensityRef = Vprofmeas; % One-sided
+        radialIntensityRef = VprofRef; % One-sided
         cartcoord = y;
         titprof = '(vertical profile)';
         
     case 2 % Horizontal profile
-        radialIntensityRef = Hprofmeas; % One-sided
+        radialIntensityRef = HprofRef; % One-sided
         cartcoord =x;
         titprof = '(horizontal profile)';
         
@@ -167,8 +168,8 @@ end
 
 for idxgral = 1:totalImgs
 %% Profile of the measurements
-[xpix,ypix,Hprof,Vprof,~,~] = f_makeImageProfile(xpix,ypix,midX,midY, ...
-   struct.expImgs{idxgral},tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile);
+% [xpix,ypix,Hprofmeas,Vprofmeas,~,~] = f_makeImageProfile(xpix,ypix,midX,midY, ...
+%    struct.expImgs{idxgral},tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile);
        
 %% Profile choosing measurements
 switch metricProfile
@@ -183,9 +184,7 @@ switch metricProfile
 end
 
   %% Processsing of the image
-  
-  % ACTUALLY, CALCULATE ALL THE METRICS BUT ONLY PLOT THE WANTED ONES
-  
+                                                                                                                      % ACTUALLY, CALCULATE ALL THE METRICS BUT ONLY PLOT THE WANTED ONES
   switch metricSel
     case 1 
      %% Throughput: Encircled Energy Factor metric
@@ -194,12 +193,13 @@ end
       [energy] = f_calculateEEF(radialIntensityRef,cartcoord, tit,xlab);
      
      %% Throughput gradient
-      tit = 'Throughput gradient'; 
-      % gradient [returns n elements] or diff [returns n-1 elements]
+                                                                                                                                                                            % DO A FUNCTION ONLY IF THIS WILL BE USEFULL
+      tit = 'Throughput gradient';                                               
       normIntensity = radialIntensityMeas./max(radialIntensityMeas);
-      GradEnergy = gradient(normIntensity);
+      GradEnergy = gradient(normIntensity); % gradient [returns n elements] or diff [returns n-1 elements]                            % OR GRAD energy ?
       
-     %% Plot of the gradient of the EEF and its corresponding intensity pattern
+     %% Plot of the gradient of the EEF and its corresponding intensity pattern                                                                                                                                                    %
+                                                                                                                                                 
 %       yyaxis left
 %       h1 = plot(cartcoord,GradEnergy);
 %       yyaixs right
@@ -218,7 +218,8 @@ end
       
      %% Power suppresion in the airy disk
       tit ='Power suppresion in the airy disk';    
-      % Needs case 1 as input
+      % Needs case 1 as input, BUT FOR MULTIPLE GLs to do one cycle. A plot
+      % is done per TC !
       
     case 2 % SNR
       tit = 'Signal-to-Noise Ratio';
@@ -231,10 +232,16 @@ end
       error('Select a valid metric');
   end
 
-  %% Saving (FUTURE PLOT SAVING)
-%   processedImgfullpath = strcat(processedImgname,struct.MeasInfo{idxgral});
-%   Explanation: imwrite(variables,directory+filename+extension)
-%   imwrite(struct.expImgs{idxgral}, strcat(processedImgfullpath,dataformat));
+  %% Saving                                                                      
+  %                                                                                                                                             FUTURE PLOT SAVING
+  processedImgfullpath = strcat(processedImgname,struct.MeasInfo{idxgral});
+  % Explanation: saveas(variable,directory+filename,extension)
+  saveas(gcf,strcat(processedImgfullpath),imgformat); % Saves the last shown figure
+  
+  % OLD:
+  %   % Explanation: imwrite(variables,directory+filename+extension)
+  %   imwrite(struct.expImgs{idxgral}, strcat(processedImgfullpath,dataformat));
+  
 end
 
 %% End of the processing
@@ -247,7 +254,7 @@ disp('Processing took: '); % datestr(time,'SS') ' seconds'])
 disp(time);
 
 %% End notification
-N = 4; % Number of beeps
+N = 4; % Number of beeps for the processing
 f_EndBeeps(N,beepSound);
 
 %% Ask to leave figures open or not

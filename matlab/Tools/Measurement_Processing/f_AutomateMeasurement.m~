@@ -171,6 +171,6 @@ disp(time)
 % delete(vid); % Clean up the camera
 
 %% End notification
-N = 3; % Number of beeps for the measurement
+N = 3; % Number of beeps
 f_EndBeeps(N,beepSound);
 end
