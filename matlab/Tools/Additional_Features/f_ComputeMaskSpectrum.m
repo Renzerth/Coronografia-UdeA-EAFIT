@@ -55,9 +55,12 @@ plotV = 1; % 1: plot the vertical profile
 oneSideProfile = 0; % 0: two-sided profile
 shiftCart = [0,0]; % No shift here
 dcShift = 1; % Accounts one pixel movement for the dc component. This is 
-             % caused by the fftshift
+             % caused by the fftshift. ref: 1
 xlab = '';
 ylab = '';
-[~,~,~,~,~,~,~,~] = f_makeImageProfile(x,y,mask,tol,shiftCart,tit, ...
-                              xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift);
+midX = round((maxX+1)/2) + dcShift*mod(maxX,2); % x mid point
+midY = round((maxY+1)/2) + dcShift*mod(maxY,2); % y mid point
+
+[~,~,~,~,~,~] = f_makeImageProfile(x,y,midX,midY,mask,tol,shiftCart,tit, ...
+                              xlab,ylab,plotData,plotH,plotV,oneSideProfile);
 end

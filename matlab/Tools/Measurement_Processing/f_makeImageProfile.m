@@ -1,10 +1,12 @@
-function [x,y,Hprof,Vprof,maxX,maxY,midX,midY] = f_makeImageProfile(x,y, ...
-           dataArray,tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift)
+function [x,y,Hprof,Vprof,maxX,maxY] = f_makeImageProfile(x,y,midX,midY, ...
+           dataArray,tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile)
 % returns the profiles of a 2D data array (or matrix), i.e., an image or a
 % 2D map. These profiles are horizontal and vertical
 %
 % Inputs:
 %  x,y: cartesian coordinates for dataArray
+% midX:
+% midY:
 %  dataArray: 2D numerical array (or matrix): image/mask for example
 %  tol: discrete index tolerance in order to symmetrically dicrease the
 %  size of the profile
@@ -16,8 +18,6 @@ function [x,y,Hprof,Vprof,maxX,maxY,midX,midY] = f_makeImageProfile(x,y, ...
 %  oneSideProfile: 0 (no); 1(1st and 4th quadrants); 2(2nd and 3rd
 %  quadrants). For cases 1 and 2, the origin is always on the center of the
 %  image (determined by shiftCart)
-%  dcShift: Modulus applied for Fourier mask since the fftshift moves one
-%  pixel the dc component. Only used for spectra (Fourier analysis)
 %
 % Outputs:
 %  [Hprof,Vprof]: array of the profiles
@@ -27,17 +27,14 @@ function [x,y,Hprof,Vprof,maxX,maxY,midX,midY] = f_makeImageProfile(x,y, ...
 [maxY, maxX] = size(dataArray); % Size of the array
 
 %% Mid points of the array
-midX = round((maxX+1)/2) + dcShift*mod(maxX,2); % x mid point
-midY = round((maxY+1)/2) + dcShift*mod(maxY,2); % y mid point
+% midX = round((maxX+1)/2) + dcShift*mod(maxX,2); % x mid point
+% midY = round((maxY+1)/2) + dcShift*mod(maxY,2); % y mid point
 
 %% Shift of the mask scaling
 shiftX = shiftCart(2); % Cartesian shift in x
 shiftY = shiftCart(1); % Cartesian shift in y
-shiftX = round(midX*shiftX); % Percentage of the half support of the mask
-shiftY = round(midY*shiftY); % Percentage of the half support of the mask
-% shiftX = round(shiftX); % Percentage of the half support of the mask
-% shiftY = round(shiftY); % Percentage of the half support of the mask
-
+% shiftX = round(midX*shiftX); % Percentage of the half support of the mask
+% shiftY = round(midY*shiftY); % Percentage of the half support of the mask
 
 %% Mid points of the array (with the shift application)
 % The extreme parts of the profile are conserved and the midpoints shift
@@ -88,13 +85,13 @@ end
 %% Plot of each profiles
 if plotH
     %% Horizontal profile
-    figure;
+    figure();
     plot(x(1+tol:end-tol),Hprof(1+tol:end-tol)); 
     title(strcat('Horizontal profile of the',{' '},tit)); 
 end
 if plotV
     %% Vertical profile
-    figure;
+    figure();
     plot(y(1+tol:end-tol),Vprof(1+tol:end-tol)); 
     title(strcat('Vertical profile of the',{' '},tit));
 end 

@@ -40,7 +40,7 @@ refmeas = im2double(refmeas);
 %% Find center of the PSF image (peaks)                                                  MISSING!!
                         
 %% Cartesian coordinates with pixel units
-[ySize, xSize] = size(refmeas); % All images assumed of the same size as the refmeas
+% [ySize, xSize] = size(refmeas); % All images assumed of the same size as the refmeas
 % xpix = 1:xSize; % Pixels start in 1
 % ypix = 1:ySize; % Pixels start in 1
 
@@ -75,8 +75,8 @@ disp(strcat("Estimated Airy's radius in pix: ", num2str(AiryDiskPixX), " (x) and
 % AiryMultiplicityY = ySize/AiryDiskPixY;
 
 %% Symmetric pixels
-xpix = -xSize/2 : 1 : xSize/2 - 1; % pixels
-ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels                   % MAYBE USE MIDX,MIDY
+% xpix = -xSize/2 : 1 : xSize/2 - 1; % pixels
+% ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels                   % MAYBE USE MIDX,MIDY
 
 % xangL_D = xpix/(AiryMultiplicityX*8);
 % yangL_D =  ypix/(AiryMultiplicityY*8);
@@ -92,70 +92,46 @@ ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels                   % MAYBE USE MIDX,MI
 %% Lyot's spot size (main radius)
 apRad = 2.54; % Aperture radius [cm]
 
-Lyotimg = imread('/home/labfisica/Dropbox/Coronógrafo_2018-1_Samuel/6_Photos/Project development/5-Measurement-Results/18_data_ref-self_centering/data_ref_2.bmp');
-Lyotimg = rgb2gray(Lyotimg);
-
 PSFimg = imread('/home/labfisica/Dropbox/Coronógrafo_2018-1_Samuel/two focal planes.bmp');
-
-
-[ySize, xSize] = size(PSFimg); 
-% xpix = -xSize/2 : 1 : xSize/2 - 1; % pixels
-xpix = 1:xSize;
-ypix= 1:ySize;
-% ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels   
+Lyotimg = imread('/home/labfisica/Dropbox/Coronógrafo_2018-1_Samuel/6_Photos/Project development/5-Measurement-Results/18_data_ref-self_centering/data_ref_2.bmp');
+Lyotimg = rgb2gray(Lyotimg); 
 
 drawing = false;
 PP = PP*1e-6; % um to m
 apRad = apRad*1e-2; % cm to m
 [~,mainLyotRadius,~] = findCircleShapedIntensity(Lyotimg,drawing);
+mainLyotRadius = round(mainLyotRadius);
 [apRadpix] = computePupilPixelSize(mainLyotRadius, PP,apRad);
-
-%%  lambda/D factor falco-matlab reference
-% It is scalled with respect to the jinc zeros
-[ySize,xSize] = size(Lyotimg);
-NpadX = xSize; % Camera's x pixel size
-NpadY = ySize; % Camera's y pixel size
-xlamOverD = NpadX/(2*apRadpix);
-ylamOverD = NpadY/(2*apRadpix);
-xvals_fp = -NpadX/2:NpadX/2-1;
-x_L_D = xvals_fp/xlamOverD;
-yvals_fp = -NpadY/2:NpadY/2-1;
-y_L_D = yvals_fp/ylamOverD;
 
 %% Find center of the PSF image (binarization)
 [xangL_D,yangL_D,regionCentroid,aproxRadius] = f_approximateSpotSize(PSFimg);
 
-%% Profile
-plotData = 1; % Shows the profile lines. Ref: 1
-plotH = 0; % Not needed for the metric. Ref: 0
-plotV = 0; % Not needed for the metric. Ref: 0
-oneSideProfile = 1; % Specifically needed for this metric. Ref: 1
-dcShift = 0; % Only used for spectra (Fourier analysis)
-tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
-tit = 'tit';
-xlab = 'Angular position [\lambda/D]';
-ylab = 'Angular position [\lambda/D]';
+midX = regionCentroid(2);
+midY = regionCentroid(1);
+% midX = round((maxX+1)/2); % x mid point
+% midY = round((maxY+1)/2); % y mid point
 
-midX = round((xSize+1)/2); % x mid point
-midY = round((ySize+1)/2); % y mid point
+%%  lambda/D factor falco-matlab reference
+% It is scalled with respect to the jinc zeros
 
-regionCentroid = round(regionCentroid);
+[ySize,xSize] = size(Lyotimg);
+halfX = xSize/2;
+halfY = ySize/2;
 
-sX = regionCentroid(2);
-sY = regionCentroid(1);
- 
-sX =sX- midX;
-sY = midY-sY;
- 
-regionCentroid = [sY sX];
+NpadX = xSize; % Camera's x pixel size
+NpadY = ySize; % Camera's y pixel size
 
-regionCentroid =regionCentroid./(2*[ySize,xSize]); % Nearest pixel
+xlamOverD = NpadX/(2*mainLyotRadius);
+ylamOverD = NpadY/(2*mainLyotRadius);
 
-[x,y,Hprof,Vprof,~,~,~,~] = f_makeImageProfile(xpix,ypix,PSFimg,...
-tol,regionCentroid,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile,dcShift);
+centerShiftX = (midX-halfX);
+centerShiftY = (midY-halfY);
 
+xvals_fp = (-halfX:halfX-1) - centerShiftX;
+yvals_fp = (-halfY:halfY-1) - centerShiftY;
 
-
+xpix = xvals_fp/xlamOverD;
+ypix = yvals_fp/ylamOverD;
 
 %% Metric-specific default parameters
 xlab = 'Angular position [\lambda/D]';
@@ -164,10 +140,46 @@ plotData = 1; % Shows the profile lines. Ref: 1
 plotH = 0; % Not needed for the metric. Ref: 0
 plotV = 0; % Not needed for the metric. Ref: 0
 oneSideProfile = 1; % Specifically needed for this metric. Ref: 1
-dcShift = 0; % Only used for spectra (Fourier analysis)
 tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
+shiftCart = [0,0];
+tit = 'tit';
+
+[x,y,Hprofmeas,Vprofmeas,~,~] = f_makeImageProfile(xpix,ypix,midX,midY, ...
+           PSFimg,tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile);
+
+%% Reference Profile choosing 
+switch metricProfile
+    case 1 % Vertical profile
+        radialIntensityRef = Vprofmeas; % One-sided
+        cartcoord = y;
+        titprof = '(vertical profile)';
+        
+    case 2 % Horizontal profile
+        radialIntensityRef = Hprofmeas; % One-sided
+        cartcoord =x;
+        titprof = '(horizontal profile)';
+        
+    otherwise
+        error('"metricProfile" must be either 1 or 2');
+end
 
 for idxgral = 1:totalImgs
+%% Profile of the measurements
+[xpix,ypix,Hprof,Vprof,~,~] = f_makeImageProfile(xpix,ypix,midX,midY, ...
+   struct.expImgs{idxgral},tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile);
+       
+%% Profile choosing measurements
+switch metricProfile
+    case 1 % Vertical profile
+        radialIntensityMeas = Vprof; % One-sided
+        
+    case 2 % Horizontal profile
+        radialIntensityMeas = Hprof; % One-sided
+        
+    otherwise
+        error('"metricProfile" must be either 1 or 2');
+end
+
   %% Processsing of the image
   
   % ACTUALLY, CALCULATE ALL THE METRICS BUT ONLY PLOT THE WANTED ONES
@@ -177,14 +189,12 @@ for idxgral = 1:totalImgs
      %% Throughput: Encircled Energy Factor metric
       % Camera: PSF.
       tit = 'Encircled Energy Distribution of Intensity';
-      [energy,radialIntensity,cartcoord,titprof] = f_calculateEEF(xpix,ypix,struct.expImgs{idxgral}, ...
-      shiftCart,metricProfile,tit,xlab,ylab,plotData,plotH,plotV, ...
-      oneSideProfile,dcShift,tol);
+      [energy] = f_calculateEEF(radialIntensityRef,cartcoord, tit,xlab);
      
      %% Throughput gradient
       tit = 'Throughput gradient'; 
       % gradient [returns n elements] or diff [returns n-1 elements]
-      normIntensity = radialIntensity./max(radialIntensity);
+      normIntensity = radialIntensityMeas./max(radialIntensityMeas);
       GradEnergy = gradient(normIntensity);
       
      %% Plot of the gradient of the EEF and its corresponding intensity pattern
@@ -210,9 +220,8 @@ for idxgral = 1:totalImgs
       
     case 2 % SNR
       tit = 'Signal-to-Noise Ratio';
-      [~] = f_calculateSNR(xpix,ypix,struct.expImgs{idxgral},refmeas,shiftCart, ...
-      metricProfile,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile, ...
-      dcShift,tol);
+      [SNR] = f_calculateSNR(radialIntensityMeas,radialIntensityRef,cartcoord, ...
+      tit,xlab);
     case 3 % MSE
       tit = 'Mean Squared Error';
         
@@ -220,10 +229,10 @@ for idxgral = 1:totalImgs
       error('Select a valid metric');
   end
 
-  %% Saving
-  processedImgfullpath = strcat(processedImgname,struct.MeasInfo{idxgral});
-  % Explanation: imwrite(variables,directory+filename+extension)
-  imwrite(struct.expImgs{idxgral}, strcat(processedImgfullpath,dataformat));
+  %% Saving (FUTURE PLOT SAVING)
+%   processedImgfullpath = strcat(processedImgname,struct.MeasInfo{idxgral});
+%   Explanation: imwrite(variables,directory+filename+extension)
+%   imwrite(struct.expImgs{idxgral}, strcat(processedImgfullpath,dataformat));
 end
 
 %% End of the processing

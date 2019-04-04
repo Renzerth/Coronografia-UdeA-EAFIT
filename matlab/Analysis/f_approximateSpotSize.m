@@ -31,7 +31,7 @@ regionInfo = regionprops(binaryData,'Centroid','area','MajorAxisLength','MinorAx
 mainIndex = sortIndexes(1);
 
 %% Centroid of the spot
-regionCentroid = cat(1,regionInfo(mainIndex).Centroid);
+regionCentroid = round(fliplr(cat(1,regionInfo(mainIndex).Centroid))); % Row, Column format coordinates in approximated pixels
 
 %% Radius estimative between the major and the minor axis of the elliptical spot
 blobRadius = mean([regionInfo(mainIndex).MajorAxisLength, regionInfo(mainIndex).MinorAxisLength],2)/2;
