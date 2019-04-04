@@ -13,7 +13,7 @@ MeasSize = strcat(maskName,infoDelim,'mask',infoDelim,'tcs',infoDelim, ...
 
 %% Measurement folder creation (Datalog)
 %%% Last measurement's date directory
-lastmeasDir = strcat(dataDir,pathSep,lastmeas);
+lastmeasDir = strcat(dataDir,pathSep,lastmeas,'.mat');
 
 %%% Folder name:
 Measfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize);  % Use the wanted measurement's name
@@ -29,8 +29,12 @@ if meas == 1 %  -> save the numbered measurement folder
     % Explanation: save(directory,filename,variables) % ,'-append'
     save(lastmeasDir,'numberedFolderMeas'); % Save as .mat
 elseif useLastMeas == 1 % here, meas = 0. The last measurement is loaded
+    if exist(lastmeasDir,'file') == 0
+      error('No previous measurement was found.')
+    end  
+  
     %%% Load the last measurement:
-    struct = load(strcat(lastmeasDir,'.mat'));
+    struct = load(lastmeasDir);
     
     %%% Folder name:
     numberedFolderMeas = struct.numberedFolderMeas; % Use last measurement's name

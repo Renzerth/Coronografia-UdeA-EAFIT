@@ -173,4 +173,10 @@ disp(time)
 %% End notification
 N = 3; % Number of beeps for the measurement
 f_EndBeeps(N,beepSound);
+
+%% Clear vid
+if measSimulated == 0
+  delete(vid);
+end
+
 end

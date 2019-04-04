@@ -1,17 +1,18 @@
 function SingleFrame = f_CaptureImage(vid,dataDir,filename,imgformat, ...
-                                      pathSep,snapsfldr)
+                                    pathSep,dirDelim,snapsfldr,previewBool)
+                                  
+% Inputs:
+%   
+%
+% Outputs:
+
+
 
 %% Target directory
-
 createFoldSnap = 1; % Always creates a new folder
 numberedFolderSnap = f_createNextFolderName(dataDir,snapsfldr, ...
                                           dirDelim,pathSep,createFoldSnap);    
 snapsdir = strcat(dataDir,pathSep,numberedFolderSnap); % tests directory           
-
-% ax = exist(snapsdir, 'dir'); % 7 if folder exists, 0 if not
-% if ax ~= 7 % Create a folder if it doesn't exist
-%     mkdir(snapsfldr);
-% end
 
 %% Get frame data
 SingleFrame = getsnapshot(vid); % Take a picture
@@ -40,4 +41,10 @@ colorbar; title(['Camera image: ' filename]);
 figure('units','normalized','position',[5/10 1/10 1/3 1/2]);
 imagesc(log(im2double(SingleFrame))); 
 colorbar; title(['LOG camera image: ' filename])
+
+%% Open preview
+if previewBool
+  preview(vid);
+end
+
 end

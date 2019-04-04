@@ -15,8 +15,9 @@ meas = 0; % Measure: yes (1) or no (0)
     % If meas = 1 -> all the figures will be closed before starting it
     measDebug = 0; % Debugging before actually measuring. Displays the 
                    % default phase mask and shots a photo with the camera
-                   % Works if  measSimulated = 0
-    measSimulated = 1; % Saves the mask and does not involve the cameras: 
+                   % Works if  measSimulated = 0. If it is active, the
+                   % program will set proc = 0
+    measSimulated = 0; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
                        % The mask saving is usefull for reports. Note: the
                        % figure that says Camera isn't saved but the other
@@ -146,34 +147,33 @@ camera = 'DMK23U445';
 switch camera
   case 'DMK23U445' % PSF plane % CCD 
     exposure = 1/1e3; % Range: [,]
+    %fps = '15'; % Frames per second
+    fps = '15.00'; % '15.00', '10.00', ' 7.50', ' 5.00' ' 3.75', 
     format = 'Y800 (1280x960)'; 
-    cameraPlane =  'PSF';
+    cameraPlane = 'PSF';
     PP = 3.75; % Pixel pitch in [um/pixel]
     
   case 'DMK42BUC03' % Lyot plane % CMOS
     exposure = 1/1e3; % Range: [1/1e4,1]
+    fps = [];
     format = 'Y800 (1280x960)';
     cameraPlane =  'Lyot';
     PP = 3.75; % Pixel pitch in [um/pixel]
     
   case 'DMK41BU02.H' % not used here % CCD
     exposure = 1/1e3; % Range: [,]
+    fps = '15.0000'; % Frames per second
     format = 'Y800 (1280x960)';    
     cameraPlane = 'notusedhere';
     PP = 4.65; % Pixel pitch in [um/pixel]
 end
-
-% For 'DMK42BUC03' [Delete]:
-% -Default: 0.0556 or 1.282
-% -PH50um: 0.0030 -- Y0.0256 || PH25um: 0.0083 -- Y0.0556 ||
-% -PH15um: --Y0.1429 || 0.0227 || PH10um: 0.0435 -- Y0.200 || 
-% -PH5um: 0.363 -- Y3.099
 
 %% Image capture for the measurement debug
 % Only works for measDebug = 1 and meas = 1 and measSimulated = 0
 filename = 'test'; % Name of the capture one wants to take
 imgformat = 'png'; % Format with period. mat, bmp, png, jpg
                    % This format doesn't apply for the measurements
+previewBool = 1; % Preview a video of what the camera is seeing
 
                     
                     
@@ -382,7 +382,7 @@ metricProfile = 1; % 1: vertical profile; 2: horizontal profile
 %% Diffraction angle units
 n = 1; % Air's refractive index
 % PP: used with the "camera" variable; pixel pitch [um/pixel]
-M = 1; % No microscope objective is used and there's no magnification
+M = 10; % Microscope's objective is used and there's magnification
 f = 100; % focal length of the lens before the camera [mm]
 scaleFactor = 1e3; % mm to um. Constant factor
 f = f*scaleFactor; % Focal length in um

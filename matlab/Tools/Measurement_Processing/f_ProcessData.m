@@ -1,6 +1,12 @@
 function f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,pathSep,infoDelim, ...
 dataformat,cameraPlane,totalImgs,AiryFactor,metricSel,metricProfile, ...
 shiftCart,beepSound,L,NA,PP)
+
+% Inputs:
+%   
+%
+% Outputs:
+
 %% Post-processing of the data (application of the metric of the degree of
 %%% extintion)
 
@@ -50,11 +56,11 @@ refmeas = im2double(refmeas);
 AiryDiskSpatial = 0.61*L/NA; % um
 AiryDiskSpatialX = AiryDiskSpatial;
 AiryDiskSpatialY = AiryDiskSpatial;
-disp(strcat("Theoretical Airy's radius in um: ", num2str(AiryDiskSpatialX), ' (x) and ', num2str(AiryDiskSpatialY), ' (y)'));
+disp(strcat('Theoretical Airy"s radius in um: ', num2str(AiryDiskSpatialX), ' (x) and ', num2str(AiryDiskSpatialY), ' (y)'));
 
 AiryDiskPixX = AiryDiskSpatialX/PP; % PP: camera's pixel pitch
 AiryDiskPixY = AiryDiskSpatialY/PP;
-disp(strcat("Theoretical Airy's radius in pix: ", num2str(AiryDiskPixX), " (x) and ", num2str(AiryDiskPixY), ' (y)'));
+disp(strcat('Theoretical Airy"s radius in um: ', num2str(AiryDiskPixX), ' (x) and ', num2str(AiryDiskPixY), ' (y)'));
 
 % In reality, there are aberrations and the real radius can be of
 % about 60 times the theoretical one
@@ -64,8 +70,8 @@ AiryDiskPixX = aproxRadius; % Just an example
 AiryDiskPixY= aproxRadius; % Just an example
 AiryDiskSpatialX = AiryDiskPixX*PP; % PP: camera's pixel pitch
 AiryDiskSpatialY = AiryDiskPixY*PP;
-disp(strcat("Estimated Airy's radius in um: ", num2str(AiryDiskSpatialX), " (x) and ", num2str(AiryDiskSpatialY), ' (y)'));
-disp(strcat("Estimated Airy's radius in pix: ", num2str(AiryDiskPixX), " (x) and ", num2str(AiryDiskPixY), ' (y)'));
+disp(strcat('Estimated Airy"s radius in um: ', num2str(AiryDiskSpatialX), ' (x) and ', num2str(AiryDiskSpatialY), ' (y)'));
+disp(strcat('Estimated Airy"s radius in um: ', num2str(AiryDiskPixX), ' (x) and ', num2str(AiryDiskPixY), ' (y)'));
 
 %% Airy radius from the EEC factor
 % When it is the 70%
@@ -75,8 +81,9 @@ disp(strcat("Estimated Airy's radius in pix: ", num2str(AiryDiskPixX), " (x) and
 % AiryMultiplicityY = ySize/AiryDiskPixY;
 
 %% Symmetric pixels
-xpix = -xSize/2 : 1 : xSize/2 - 1; % pixels
-ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels                   % MAYBE USE MIDX,MIDY
+
+% xpix = -xSize/2 : 1 : xSize/2 - 1; % pixels
+% ypix= -ySize/2 : 1 : ySize/2 - 1; % pixels                   % MAYBE USE MIDX,MIDY
 
 % xangL_D = xpix/(AiryMultiplicityX*8);
 % yangL_D =  ypix/(AiryMultiplicityY*8);
@@ -94,8 +101,8 @@ apRad = 2.54; % Aperture radius [cm]
 
 % PSFimg = imread('C:\Users\saple\Dropbox\DAVID-SAMUEL\2019-1\1_PA_Thesis\Coronï¿½grafo_Samuel_2018-2019\two focal planes.bmp');
 % Lyotimg = imread('C:\Users\saple\Dropbox\DAVID-SAMUEL\2019-1\1_PA_Thesis\Coronï¿½grafo_Samuel_2018-2019\6_Photos\Project development\5-Measurement-Results\18_data_ref-self_centering\data_ref_2.bmp');;
-PSFimg = imread('/home/labfisica/Dropbox/CoronÃ³grafo_2018-1_Samuel/two focal planes.bmp');
-Lyotimg = imread('/home/labfisica/Dropbox/CoronÃ³grafo_2018-1_Samuel/6_Photos/Project development/5-Measurement-Results/18_data_ref-self_centering/data_ref_2.bmp');
+PSFimg = imread('C:\Users\labfisica\Dropbox\Coronógrafo_2018-1_Samuel\6_Photos\Project development\5-Measurement-Results\22_Vortex on each SLM\one focal plane.bmp');
+Lyotimg = imread('C:\Users\labfisica\Dropbox\Coronógrafo_2018-1_Samuel\6_Photos\Project development\5-Measurement-Results\18_data_ref-self_centering\data_ref_2.bmp');
 Lyotimg = rgb2gray(Lyotimg); 
 
 drawing = false;
@@ -143,7 +150,7 @@ plotH = 0; % Not needed for the metric. Ref: 0
 plotV = 0; % Not needed for the metric. Ref: 0
 oneSideProfile = 1; % Specifically needed for this metric. Ref: 1
 tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
-shiftCart = [0,0];
+shiftCart = [0,0]; % midX,midY already accounts for the shift
 tit = 'tit';
 
 %% Reference Profile
@@ -168,16 +175,16 @@ end
 
 for idxgral = 1:totalImgs
 %% Profile of the measurements
-% [xpix,ypix,Hprofmeas,Vprofmeas,~,~] = f_makeImageProfile(xpix,ypix,midX,midY, ...
-%    struct.expImgs{idxgral},tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile);
+[xpix,ypix,Hprofmeas,Vprofmeas,~,~] = f_makeImageProfile(xpix,ypix,midX,midY, ...
+   struct.expImgs{idxgral},tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile);
        
 %% Profile choosing measurements
 switch metricProfile
     case 1 % Vertical profile
-        radialIntensityMeas = Vprof; % One-sided
+        radialIntensityMeas = Vprofmeas; % One-sided
         
     case 2 % Horizontal profile
-        radialIntensityMeas = Hprof; % One-sided
+        radialIntensityMeas = Hprofmeas; % One-sided
         
     otherwise
         error('"metricProfile" must be either 1 or 2');

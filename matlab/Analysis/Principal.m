@@ -65,12 +65,15 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
  % algorithm inside "f_DefineSpace"
  if measSimulated == 0 && meas == 1 % When a real measurement will be 
                                     % performed
-  % InitializeHardware;
+  %% Camera preparation
+  if measDebug
+    imaqreset; % Disconnect and delete all image acquisition objects
+  end
   % Turns the camera on and create all the needed variables. Remember to 
   % leave the preview open
-  [vid,~] = f_selectCamera(camera,exposure,format);
+  [vid,~] = f_selectCamera(camera,exposure,fps,format);
  else
-     vid = [];
+     vid = []; % Empty, just to be as a non-used input in some functions
  end
 
 %% Spatial definitions
@@ -118,10 +121,10 @@ if meas
  % Usefull for aligning the vortex and adjusting exposure parameters
  if measDebug == 1 && measSimulated == 0
   SingleFrame = f_CaptureImage(vid,dataDir,filename,imgformat,pathSep, ...
-                               snapsfldr); 
+                               dirDelim,snapsfldr,previewBool); 
   % Takes a camera shot,shows a figure and saves it   
   figure; imhist(SingleFrame); % Shows a histogram of the snapshot
-
+   
   %%% Get some hardware/software/tools info:
   % get(vid): displays the general parameters of the camera
   % getselectedsource(vid): an existing variable (src). Similar to get(vid)
@@ -130,6 +133,9 @@ if meas
   % disp(vid): displays acquisition information
   % imaqtool: toolbox for the camera
   % imaqreset: refresh image acquisition hardware by restoring the settings
+  
+  proc = 0; % Nothing should be processed when debugging
+  
  else % Real measurement
 
   %% Automated measurement
@@ -183,7 +189,10 @@ elseif proc == 1 %  meas == 0 always in order to enter here
 end % End of measurements
 
 %% Post-processing of the data and saving
-if proc
+if proc 
+    if ~exist('refmeasfullpath','var')
+      error('"refmeasfullpath" does not exist, no previous measurement was found')
+    end
     % Metric of the degree of extintion applied
     f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,pathSep, ...
     infoDelim,dataformat,cameraPlane,totalImgs,AiryFactor,metricSel, ...
