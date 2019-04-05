@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 0; % Measure: yes (1) or no (0)
+meas = 1; % Measure: yes (1) or no (0)
 %%% For meas = 0 and proc = 1:  the workspace is loaded
     useLastMeas = 1; % In order to load a previous workspace:
     % 0: doesn't load anything: not recommended in general
@@ -17,13 +17,13 @@ meas = 0; % Measure: yes (1) or no (0)
                    % default phase mask and shots a photo with the camera
                    % Works if  measSimulated = 0. If it is active, the
                    % program will set proc = 0
-    measSimulated = 0; % Saves the mask and does not involve the cameras: 
+    measSimulated = 1; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
                        % The mask saving is usefull for reports. Note: the
                        % figure that says Camera isn't saved but the other
                        % one that shows the mask in a gray scale fashion
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 1; % Processes the data
+proc = 0; % Processes the data
 % NOTE: if meas and proc are both zero, then a unique phase mask is plotted
 % with "plotMask"
 

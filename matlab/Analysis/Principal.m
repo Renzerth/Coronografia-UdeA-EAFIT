@@ -68,6 +68,7 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
   %% Camera preparation
   if measDebug
     imaqreset; % Disconnect and delete all image acquisition objects
+    % Refresh image acquisition hardware by restoring the settings
   end
   % Turns the camera on and create all the needed variables. Remember to 
   % leave the preview open
@@ -133,7 +134,8 @@ if meas
   % disp(vid): displays acquisition information
   % imaqtool: toolbox for the camera
   % imaqreset: refresh image acquisition hardware by restoring the settings
-  
+  % propinfo(src): shows the allowed values that can be modified
+ 
   proc = 0; % Nothing should be processed when debugging
   
  else % Real measurement
