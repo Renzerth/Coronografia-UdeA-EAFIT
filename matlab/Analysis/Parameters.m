@@ -1,8 +1,22 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
-%%% For meas = 0 and proc = 1:  the workspace is loaded
+meas = 0; % Measure: yes (1) or no (0)
+%%% For meas = 1: the whole workspace is saved
+    measSimulated = 0; % Saves the mask and does not involve the cameras: 
+                       % yes (1) or no (0)
+                       % The mask saving is usefull for reports. Note: the
+                       % figure that says Camera isn't saved but the other
+                       % one that shows the mask in a gray scale fashion
+    % if measSimulated = 1 -> measDebug will be 0 
+    % If meas = 1 -> all the figures will be closed before starting it
+    measDebug = 0; % Debugging before actually measuring. Displays the 
+                   % default phase mask and shots a photo with the camera
+                   % Works if  measSimulated = 0. If it is active, the
+                   % program will set proc = 0
+    beepSound = 1; % Beep sound when the measurement finishes.
+proc = 1; % Processes the data
+%%% For proc = 1 and meas = 0:  the workspace is loaded
     useLastMeas = 1; % In order to load a previous workspace:
     % 0: doesn't load anything: not recommended in general
     % 1: loads the last measurement
@@ -10,22 +24,11 @@ meas = 1; % Measure: yes (1) or no (0)
     % 3: select the folder you want to process (inside Data)
     %%% For useLastMeas = 2:
     measFoldName = '04-Apr-2019-No-SLM-VPL-mask-tcs-1-gls-1';
-%%% For meas = 1: the whole workspace is saved
-    % if measSimulated = 1 -> measDebug will be 0 
-    % If meas = 1 -> all the figures will be closed before starting it
-    measDebug = 0; % Debugging before actually measuring. Displays the 
-                   % default phase mask and shots a photo with the camera
-                   % Works if  measSimulated = 0. If it is active, the
-                   % program will set proc = 0
-    measSimulated = 1; % Saves the mask and does not involve the cameras: 
-                       % yes (1) or no (0)
-                       % The mask saving is usefull for reports. Note: the
-                       % figure that says Camera isn't saved but the other
-                       % one that shows the mask in a gray scale fashion
-    beepSound = 1; % Beep sound when the measurement finishes.
-proc = 0; % Processes the data
-% NOTE: if meas and proc are both zero, then a unique phase mask is plotted
-% with "plotMask"
+    
+% NOTE: if meas and proc are both zero, then a single phase mask is plotted
+% with "plotMask". Another case on which this single phase mask is shown,
+% is for meas=1 & measSimulated=0 & measDebug=!, so that it can be manually
+% centered on the vortex and tested
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)           
