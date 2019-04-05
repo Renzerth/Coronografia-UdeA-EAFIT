@@ -1,5 +1,5 @@
 function [SNR] = f_calculateSNR(Measurement, RefMeasurement, cartcoord,...
-                                               tit,xlab)
+                                               tit1,tit2,xlab)
 % Plots the SNR between a signal and its reference 
 %
 % Inputs:
@@ -16,7 +16,7 @@ function [SNR] = f_calculateSNR(Measurement, RefMeasurement, cartcoord,...
 figure('color','white');
 semilogy(cartcoord,Measurement); hold on
 semilogy(cartcoord,RefMeasurement); hold off; 
-title(strcat('Raw contrast',{' '},titprof)); grid on;
+title(tit2); grid on;
 xlabel('Angular position [\lambda/D]'); ylabel('Relative contrast of the radial intensities [logscale]')
 legend({'Measurement', 'Reference'});
 
@@ -27,6 +27,6 @@ SNR = log10(Measurement) - 0.5*log10(RefMeasurement);
 figure('color','white');
 plot(cartcoord,SNR);
 xlabel(xlab); ylabel('SNR')
-title(strcat(tit,{' '},titprof)); grid on;
+title(tit1); grid on;
 
 end

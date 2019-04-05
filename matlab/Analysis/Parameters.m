@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 1: the whole workspace is saved
     measSimulated = 0; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
@@ -10,7 +10,7 @@ meas = 1; % Measure: yes (1) or no (0)
                        % one that shows the mask in a gray scale fashion
     % if measSimulated = 1 -> measDebug will be 0 
     % If meas = 1 -> all the figures will be closed before starting it
-    measDebug = 1; % Debugging before actually measuring. Displays the 
+    measDebug = 0; % Debugging before actually measuring. Displays the 
                    % default phase mask and shots a photo with the camera
                    % Works if  measSimulated = 0. If it is active, the
                    % program will set proc = 0

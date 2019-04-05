@@ -1,4 +1,4 @@
-function [vid,src] = f_selectCamera(camera,exposure,fps,format,measDebug)
+function [vid,src] = f_selectCamera(camera,exposure,fps,format)
 % Inputs:
 %   camera
 %   exposure
@@ -43,8 +43,4 @@ catch ME
     error('Camera is connected but properties cannot be accessed. Verify the USB Port.');
 end
 
-%% Close preview if open
-if strcmp(vid.previewing,'on')
- closepreview(vid); % Gets closed in case it was already opened
-end
 end

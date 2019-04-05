@@ -70,11 +70,11 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
     imaqreset; % Disconnect and delete all image acquisition objects
     % Refresh image acquisition hardware by restoring the settings
   end
-  % Turns the camera on and create all the needed variables. Remember to 
+  % Turns the camera on and create all the needed variables. Remember to
   % leave the preview open
   [vid,~] = f_selectCamera(camera,exposure,fps,format);
  else
-     vid = []; % Empty, just to be as a non-used input in some functions
+   vid = []; % Empty, just to be as a non-used input in some functions
  end
 
 %% Spatial definitions
@@ -123,7 +123,7 @@ if meas
  % Usefull for aligning the vortex and adjusting exposure parameters
  if measDebug == 1 && measSimulated == 0
   [~] = f_CaptureImage(vid,dataDir,filename,imgformat,pathSep, ...
-                               dirDelim,snapsfldr,previewBool); 
+                       infoDelim,dirDelim,snapsfldr,previewBool); 
   % Takes a camera shot,shows a figure and saves it   
   % Close the mask figure after debugging
   if exist('maskFig','var')
@@ -157,13 +157,10 @@ if meas
 
  %% Save the whole workspace 
  % Performed every time a measurement is made   
- % ProcessedDir is not saved since a new one will be used each time the 
- % workspace is loaded. This also applies for the other variables there
- % regexp: match regular expression (case sensitive)
  save(strcat(dataDir,pathSep,numberedFolderMeas,pathSep, ...
- 'workspace.mat'),'-regexp',['^(?!(numberedFolderMeas|ProcessedDir' ...
- 'metricSel|metricProfile|AiryFactor|NA|useLastMeas|vid)$).']);
- % vid, as a video handler, should never be saved (and it isn't needed)
+    'workspace.mat'),'measfullpath','refmeasfullpath','ProcessedDir','dataDir','pathSep', ...
+    'infoDelim','dataformat','imgformat','cameraPlane','totalImgs','AiryFactor','metricSel', ...
+    'metricProfile','shiftCart','beepSound','L','NA','PP');
   
 elseif proc == 1 %  meas == 0 always in order to enter here
     
@@ -206,13 +203,20 @@ if proc
             ' measurement was found']);
     end
     % Metric of the degree of extintion applied
-    f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,pathSep, ...
-    infoDelim,dataformat,cameraPlane,totalImgs,AiryFactor,metricSel, ...
+    f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,dataDir,pathSep, ...
+    infoDelim,dataformat,imgformat,cameraPlane,totalImgs,AiryFactor,metricSel, ...
     metricProfile,shiftCart,beepSound,L,NA,PP);
 end
 
-
-
+%% Termination of the hardware clear vid for any stage of this algorithm
+%%% Close preview if open:
+if exist('vid','var') == 1
+  if ~isempty(vid) && strcmp(vid.previewing,'on') % vid not empty means 
+    % there is an image source
+    closepreview(vid); % Gets closed in case it was already opened
+  end
+  delete(vid); % Delete vid:
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% ACADEMIC PURPOSES: Zernike, simulation

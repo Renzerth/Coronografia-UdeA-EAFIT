@@ -20,11 +20,7 @@ snapsdir = strcat(dataDir,pathSep,numberedFolderSnap); % tests directory
 
 %% Get frame data
 SingleFrame = getsnapshot(vid); % Take a picture
-% isfile(filename) MATLAB 2017; exist(filename,'file'): MATLAB 2015
-% imwrite(variables,directory+filename+extension)
-fullFramePath = strcat(snapsdir,pathSep,filename,'.',imgformat); % Snapshot
-                                                                 % path
-                                                                 
+                                                       
 %% Loop condition (for taking several snapshots)
 loopCondition = 0; % Variable initialization
 i = 1; % counter to store the snapshot's name
@@ -32,14 +28,8 @@ i = 1; % counter to store the snapshot's name
 while loopCondition == 0
   
   %% Save the snapshot
-  if exist(fullFramePath, 'file') == 2
-    newfileName = inputdlg(['The file name already exists, try another ' ...
-      'one (otherwise, the file may be overwritten): ']);
-    imwrite(SingleFrame,strcat(snapsdir,pathSep,newfileName{1},'.',imgformat));
-  else
-    imwrite(SingleFrame,fullFramePath); % File does not exist yet and will be
-    % written.
-  end
+  % imwrite(variables,directory+filename+extension)
+  imwrite(SingleFrame,strcat(snapsdir,pathSep,filename,infoDelim,num2str(i),'.',imgformat));
 
   %% Show frame
   % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium
@@ -55,9 +45,12 @@ while loopCondition == 0
   colorbar; title(['LOG camera image: ' filename])
   
   %% Histogram
-  h3 = figure; imhist(SingleFrame); % Shows a histogram of the snapshot
+  [histImg,~] = imhist(SingleFrame);
+  histImg(histImg>1000) = 1000; % Truncates all the values above 1000
+  h3 = figure; bar(histImg); % Shows a histogram of the snapshot
+  % Another option: log of the hist
   title('Histogram of the current snapshot');
-  xlabel('Gray levels'); ylabel('Counts');
+  xlabel('Bins (gray levels)'); ylabel('Counts');
 
   %% Ask to leave figures open or not
   answer = input('Do you want to take another snapshot? y/n: ','s'); % returned always as a string
@@ -72,8 +65,13 @@ while loopCondition == 0
   end
   
   %% Close current figures
-  close(h1); close(h2); close(h3);
+  close(h1); close(h2); close(h3); closepreview(vid);
   
+end
+
+%% Close preview if open
+if strcmp(vid.previewing,'on')
+ closepreview(vid); % Gets closed in case it was already opened
 end
 
 end

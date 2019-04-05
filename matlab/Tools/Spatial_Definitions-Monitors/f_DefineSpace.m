@@ -128,10 +128,9 @@ rSize = min(HalfSupportX,HalfSupportY);
 %% Shift of the mask (for the SLM: plotMask=2)
 % Check first if vid exists, otherwise set shiftMask to zero
 if isempty(vid) && shiftMask == 2
-    shiftMask = 0;
-    warning(['Set measSimulated = 0 and meas = 1 in order to use' ...
-             ' shiftMask = 2. shiftMask was set to zero.']);
-end 
+  error(['Set measSimulated = 0 and meas = 1 in order to use' ...
+    ' shiftMask = 2. shiftMask was set to zero.']);
+end
 switch shiftMask 
  case 0
   shiftX = 0; shiftY = 0; % Shift deactivated   

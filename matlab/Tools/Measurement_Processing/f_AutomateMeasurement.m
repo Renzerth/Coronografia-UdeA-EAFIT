@@ -165,18 +165,8 @@ time = t2_dt - t1_dt; % Relative difference between start and stop
 disp('Measurement took:'); % datestr(time,'SS') ' seconds'])
 disp(time)
 
-%% Termination
-% TerminateSettings; % Future script % Clears variables, closes all and
-                   % deactivates the cameras
-% delete(vid); % Clean up the camera
-
 %% End notification
 N = 3; % Number of beeps for the measurement
 f_EndBeeps(N,beepSound);
-
-%% Clear vid
-if measSimulated == 0
-  delete(vid);
-end
 
 end

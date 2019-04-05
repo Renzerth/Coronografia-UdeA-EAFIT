@@ -1,5 +1,5 @@
-function f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,pathSep,infoDelim, ...
-dataformat,cameraPlane,totalImgs,AiryFactor,metricSel,metricProfile, ...
+function f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,dataDir,pathSep,infoDelim, ...
+dataformat,imgformat,cameraPlane,totalImgs,AiryFactor,metricSel,metricProfile, ...
 shiftCart,beepSound,L,NA,PP)
 
 % Inputs:
@@ -98,11 +98,8 @@ disp(strcat('Estimated Airy"s radius in um: ', num2str(AiryDiskPixX), ' (x) and 
 
 %% Lyot's spot size (main radius)
 apRad = 2.54; % Aperture radius [cm]
-
-% PSFimg = imread('C:\Users\saple\Dropbox\DAVID-SAMUEL\2019-1\1_PA_Thesis\Coronï¿½grafo_Samuel_2018-2019\two focal planes.bmp');
-% Lyotimg = imread('C:\Users\saple\Dropbox\DAVID-SAMUEL\2019-1\1_PA_Thesis\Coronï¿½grafo_Samuel_2018-2019\6_Photos\Project development\5-Measurement-Results\18_data_ref-self_centering\data_ref_2.bmp');;
-PSFimg = imread('C:\Users\labfisica\Dropbox\Coronógrafo_2018-1_Samuel\6_Photos\Project development\5-Measurement-Results\22_Vortex on each SLM\one focal plane.bmp');
-Lyotimg = imread('C:\Users\labfisica\Dropbox\Coronógrafo_2018-1_Samuel\6_Photos\Project development\5-Measurement-Results\18_data_ref-self_centering\data_ref_2.bmp');
+PSFimg = imread(strcat(dataDir,pathSep,'data_ref_2.bmp'));
+Lyotimg = imread(strcat(dataDir,pathSep,'data_ref_1.bmp'));
 Lyotimg = rgb2gray(Lyotimg); 
 
 drawing = false;
@@ -230,8 +227,10 @@ end
       
     case 2 % SNR
       tit = 'Signal-to-Noise Ratio';
-      [SNR] = f_calculateSNR(radialIntensityMeas,radialIntensityRef,cartcoord, ...
-      tit,xlab);
+      tit1 = strcat(tit,{' '},titprof);
+      tit2 = strcat('Raw contrast',{' '},titprof);
+      [SNR] = f_calculateSNR(radialIntensityMeas,radialIntensityRef, ...
+      cartcoord,tit1,tit2,xlab);
     case 3 % MSE
       tit = 'Mean Squared Error';
         
