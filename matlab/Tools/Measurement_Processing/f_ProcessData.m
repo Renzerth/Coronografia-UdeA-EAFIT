@@ -265,7 +265,7 @@ N = 4; % Number of beeps for the processing
 f_EndBeeps(N,beepSound);
 
 %% Ask to leave figures open or not
-answer = questdlg('Do you want to close all the figures?','Processing finished','yes','no','no');
+answer = questdlg('Do you want to close all the figures?','Processing finished','yes','no');
 if strcmp(answer,'yes') % Compare string
      close all;         
 end

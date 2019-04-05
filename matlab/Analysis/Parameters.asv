@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 1: the whole workspace is saved
     measSimulated = 0; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
@@ -10,7 +10,7 @@ meas = 1; % Measure: yes (1) or no (0)
                        % one that shows the mask in a gray scale fashion
     % if measSimulated = 1 -> measDebug will be 0 
     % If meas = 1 -> all the figures will be closed before starting it
-    measDebug = 1; % Debugging before actually measuring. Displays the 
+    measDebug = 0; % Debugging before actually measuring. Displays the 
                    % default phase mask and shots a photo with the camera
                    % Works if  measSimulated = 0. If it is active, the
                    % program will set proc = 0
@@ -42,7 +42,7 @@ abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % phase, are noticed in the amplitude if the field is 
              % propagated. Consider using simBool = 1
              % abs_ang = 0 is not valid for FTmask = 1
-maskSel = 0; % Phase mask selection:
+maskSel = 5; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -185,7 +185,7 @@ previewBool = 1; % Preview a video of what the camera is seeing
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks (also 
             % used in the data processing)
-tc = 2; % Topological charge (integer bigger or equal to one)
+tc = 1; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
         % Note: only applies when meas and proc are both zero

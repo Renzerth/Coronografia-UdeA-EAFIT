@@ -92,10 +92,10 @@ pixSize,scrnIdx,circularMask,z_pupil,coordType,MaxMask,maskSel);
 %% Single phase mask selection and plot on the screen or on the SLM
 % Don't plot the mask if one will process or measure, but plot it for a
 % measurement debug (that requieres measSimulated = 0)
-if proc == 1 || meas == 1 && ~(measSimulated == 0 && measDebug == 1)
+if (proc == 1 || meas == 1) && ~(measSimulated == 0 && measDebug == 1)
     plotMask = 0;
 end
-[mask,wrapMask,~,maskName] = f_PlotSelectedMask(X,Y,r,phi, ...
+[mask,wrapMask,maskFig,maskName] = f_PlotSelectedMask(X,Y,r,phi, ...
 phaseValues,tc,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha, ...
 Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag, ...
 binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang, ...
@@ -122,11 +122,13 @@ if meas
  %% Measurement debugging
  % Usefull for aligning the vortex and adjusting exposure parameters
  if measDebug == 1 && measSimulated == 0
-  SingleFrame = f_CaptureImage(vid,dataDir,filename,imgformat,pathSep, ...
+  [~] = f_CaptureImage(vid,dataDir,filename,imgformat,pathSep, ...
                                dirDelim,snapsfldr,previewBool); 
   % Takes a camera shot,shows a figure and saves it   
-  figure; imhist(SingleFrame); % Shows a histogram of the snapshot
-   
+  % Close the mask figure after debugging
+  if exist('maskFig','var')
+    close(maskFig);
+  end
   %%% Get some hardware/software/tools info:
   % get(vid): displays the general parameters of the camera
   % getselectedsource(vid): an existing variable (src). Similar to get(vid)
