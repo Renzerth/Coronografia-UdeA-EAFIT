@@ -2,9 +2,9 @@ function [refmeasfullpath] = f_AutomateMeasurement(vid,Xslm,Yslm,rSLM, ...
 phiSLM,Xpc,Ypc,rPC,phiPC,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0, ...
 frkTyp,Aalpha,Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot, ...
 normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType, ...
-abs_ang,MaxMask,maskSel,ltcvect,lglvect,totalImgs,wait,imgpartPath, ...
-dataformat,imgformat,measfullpath,infoDelim,cameraPlane,tcvect,glvect, ...
-measSimulated,recordingDelay,whiteblackref,beepSound)
+abs_ang,MaxMask,maskSel,ltcvect,lglvect,totalImgs,waitbeforemeas, ...
+imgpartPath,dataformat,imgformat,measfullpath,infoDelim,cameraPlane, ...
+tcvect,glvect,measSimulated,recordingDelay,whiteblackref,beepSound)
 % Plots phase masks on the Fourier plane of the vortex coronagraph and
 % takes images of either its Lyot or PSF plane
 %
@@ -22,7 +22,7 @@ idxgral = 1; % Initialization of the general index that runs
 
 %% Measurements initialization
 % Copyright PhD student Jens de Pelsmaeker VUB B-PHOT 2018,Brussels,Belgium
-pause(wait); % Seconds before measuring as a safety measurement
+pause(waitbeforemeas); % Seconds before measuring as a safety measurement
 t1_dt = datetime; % store time
 disp('Measurement started'); disp(t1_dt)
 
@@ -154,6 +154,7 @@ imwrite(snap,refmeasfullpath);
 
 %%% Wait and close the figure:
 pause(recordingDelay); % Displays the mask for "recordingDelay" seconds  
+wait(vid); % Waits until vid is not running or logging
 close(reffig); % Closes the reference mask
 
 %% End of the measurements

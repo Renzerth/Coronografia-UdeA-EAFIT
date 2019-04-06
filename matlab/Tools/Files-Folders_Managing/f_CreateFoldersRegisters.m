@@ -1,6 +1,7 @@
-function [imgpartPath,measfullpath,ProcessedDir,ltcvect,lglvect,totalImgs,numberedFolderMeas] = ...
-f_CreateFoldersRegisters(maskName,tcvect,glvect,slm,cameraPlane,dataDir,...
-outDir,pathSep,infoDelim,dirDelim,lastmeas,meas,proc,useLastMeas)
+function [imgpartPath,measfullpath,ProcessedDir,ltcvect,lglvect, ...
+totalImgs,numberedFolderMeas] = f_CreateFoldersRegisters(maskName, ...
+tcvect,glvect,slm,cameraPlane,dataDir,outDir,pathSep,infoDelim, ...
+dirDelim,lastmeas,meas,proc,useLastMeas)
 
 %% General saving registers
 ltcvect = length(tcvect); % Length of the tc vector
@@ -15,8 +16,8 @@ MeasSize = strcat(maskName,infoDelim,'mask',infoDelim,'tcs',infoDelim, ...
 %%% Last measurement's date directory
 lastmeasDir = strcat(dataDir,pathSep,lastmeas,'.mat');
 
-%%% Folder name:
-Measfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize);  % Use the wanted measurement's name
+%%% Folder name (use the wanted measurement's name):
+Measfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize);
     
 %%% Asks if a measurement will be performed
 if meas == 1 %  -> save the numbered measurement folder
@@ -36,8 +37,8 @@ elseif useLastMeas == 1 % here, meas = 0. The last measurement is loaded
     %%% Load the last measurement:
     struct = load(lastmeasDir);
     
-    %%% Folder name:
-    numberedFolderMeas = struct.numberedFolderMeas; % Use last measurement's name
+    %%% Folder name (use last measurement's name):
+    numberedFolderMeas = struct.numberedFolderMeas; 
     
 else % useLastMeas == 0 or 2 or 3
     numberedFolderMeas = ''; % Not needed at all
@@ -47,7 +48,8 @@ end
 MeasDir = strcat(dataDir,pathSep,numberedFolderMeas); % Datalog folder that
 % takes into account if the folder already exists (numbered folder)
 
-imgpartPath = strcat(MeasDir,pathSep,cameraPlane,infoDelim); % Partial path for the measurements
+imgpartPath = strcat(MeasDir,pathSep,cameraPlane,infoDelim); % Partial path 
+                                                     % for the measurements
 %%% Path of the cell with all the measurements:
 measfullpath = strcat(imgpartPath,'allmeas'); % Name of the saved cell of 
 % images. More information will be concatenated for a full path of the 
@@ -63,6 +65,7 @@ if proc
 else
   createFoldProc = 0;
 end
+
 % Specific processing folder:
 numberedFolderProc = f_createNextFolderName(outDir,Procfldr,dirDelim, ...
                                             pathSep,createFoldProc); 

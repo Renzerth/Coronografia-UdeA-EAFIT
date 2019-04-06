@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 0; % Measure: yes (1) or no (0)
+meas = 1; % Measure: yes (1) or no (0)
 %%% For meas = 1: the whole workspace is saved
     measSimulated = 0; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
@@ -15,7 +15,7 @@ meas = 0; % Measure: yes (1) or no (0)
                    % Works if  measSimulated = 0. If it is active, the
                    % program will set proc = 0
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 1; % Processes the data
+proc = 0; % Processes the data
 %%% For proc = 1 and meas = 0:  the workspace is loaded
     useLastMeas = 1; % In order to load a previous workspace:
     % 0: doesn't load anything: not recommended in general
@@ -143,13 +143,13 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
    % Pluto: [31.5,-1.8]
               
 %% Camera selection and parameters
-camera = 'DMK23U445';
+camera = 'DMK42BUC03';
 % Exposure: analog parameter
 % Format: 'Y800 (1280x960)' [best]; 'RGB24 (1024x768)' [another option]
 
 switch camera
   case 'DMK23U445' % PSF plane % CCD 
-    exposure = 1/1e3; % Range: [,]
+    exposure = 1/1920; % Range: [,]
     %fps = '15'; % Frames per second
     fps = '15.00'; % '15.00', '10.00', ' 7.50', ' 5.00' ' 3.75', 
     format = 'Y800 (1280x960)'; 
@@ -157,7 +157,7 @@ switch camera
     PP = 3.75; % Pixel pitch in [um/pixel]
     
   case 'DMK42BUC03' % Lyot plane % CMOS
-    exposure = 1/1e3; % Range: [1/1e4,1]
+    exposure = 1/250; % Range: [1/1e4,1]
     fps = [];
     format = 'Y800 (1280x960)';
     cameraPlane =  'Lyot';
@@ -177,7 +177,7 @@ filename = 'test'; % Name of the capture one wants to take
 imgformat = 'png'; % Format with period. mat, bmp, png, jpg
                    % This format doesn't apply for the measurements
 previewBool = 1; % Preview a video of what the camera is seeing
-
+loghist = 0; % (1) logscale; (0): normal scale truncated at 1000 counts
                     
                     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          
@@ -324,10 +324,13 @@ dataformat = '.bmp'; % Default: .bmp (not too heavy)
 tcvect = [1 2]; % Topological charges to be measured [integers] 
 glvect = [255]; % Gray level to be measured [0,255]
 % glvect = linspace(2,18,9)
-wait = 0; % Seconds before measuring as a safety measurement. Default: 10
-recordingDelay = 1; % Seconds between each mask to be shown. This time is
+waitbeforemeas = 2; % Seconds before measuring as a safety measurement. Default: 10
+recordingDelay = 0; % Seconds between each mask to be shown. This time is
                     % also important so that the camera bus port doesn't 
-                    % overload. Ref: 5
+                    % overload. Ref: 0. This is a safe parameter, since 
+                    % wait(vid) is already being used, but this time adds a
+                    % bigger confidence for the bus not to fill and
+                    % generate anomalies in the images
 
 %% Reference measurement     
 % For tc=0 and for a gray level of 0 (black) or 256 (white)
