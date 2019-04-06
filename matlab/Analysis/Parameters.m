@@ -375,7 +375,7 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%% PART 5: PROCESSING WITH METRICS %%%%%%%%%%%%%%%%%%%%%%
+%%%% PART 5: PROCESSING WITH METRICS  AND SELF CENTERING ALGORITHM %%%%%%%%
 metricSel = 2; % Type of metric:
 % 1:
 %     -throughput (Encircled Energy Factor)
@@ -385,7 +385,7 @@ metricSel = 2; % Type of metric:
 % 5: MSE (NOT DONE)
 metricProfile = 1; % 1: vertical profile; 2: horizontal profile
 
-%% Diffraction angle units
+%% Optical system parameters
 n = 1; % Air's refractive index
 % PP: used with the "camera" variable; pixel pitch [um/pixel]
 M = 10; % Microscope's objective is used and there's magnification
@@ -395,7 +395,7 @@ f = f*scaleFactor; % Focal length in um
 AiryFactor = n*PP*M/f; % Used to convert from pixels to the diffraction 
                        % angle in Lamda/D units
 NA = 0.1; % Numerical aperture: here, of the lens
-
+apRad = 2.54; % Aperture radius [cm]
 
                        
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

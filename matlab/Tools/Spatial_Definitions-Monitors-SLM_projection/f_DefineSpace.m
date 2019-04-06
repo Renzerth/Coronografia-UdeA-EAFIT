@@ -1,6 +1,6 @@
-function [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC, ...
-monitorSize,shiftCart] = f_DefineSpace(vid,sSupport,sSize,shiftCart, ...
-shiftMask,pixSize,scrnIdx,circularMask,z_pupil,coordType,MaxMask,maskSel)
+function [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize,...
+shiftCart] = f_DefineSpace(vid,sSupport,sSize,shiftCart,shiftMask,PP, ...
+pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType,MaxMask,maskSel)
 % Inputs:
 %  vid: video input object
 %  sSupport: full side-length of the SLMs (or unitary without an SLM)
@@ -159,10 +159,14 @@ switch shiftMask
   %   snap = 20*log10(snap);
 %   snap = im2double(snap);
 %   mode = 'single'; % 'single' or 'vortex'
-   f_computeCenterFromImageMin()
+%    f_computeCenterFromImageMin()
 %   [rowCoord,~] = f_getValleyLocation(snap,'single');
 %   [~,colCoord] = f_getValleyLocation(snap{2},'single');
-shiftCart = [shiftY shiftX];
+
+  %% Self Centering
+  [shiftY,shiftX,systemPupilPixelSize,mainDataCenter,mainDataRadius] = ...
+  f_selfCenterSLMmask(PP, 2*apRad, scrnIdx, vid);
+  shiftCart = [shiftY shiftX];
 end
 % After this switch, shiftCart is taken as the output
 

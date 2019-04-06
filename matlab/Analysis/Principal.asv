@@ -79,8 +79,8 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
 
 %% Spatial definitions
 [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize, ...
-shiftCart] = f_DefineSpace(vid,sSupport,sSize,shiftCart,shiftMask,PP, ...
-pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType,MaxMask,maskSel);
+shiftCart] = f_DefineSpace(vid,sSupport,sSize,shiftCart,shiftMask, ...
+pixSize,scrnIdx,circularMask,z_pupil,coordType,MaxMask,maskSel);
 % Defines the cartesian/polar coordinates, its sampling interval and 
 % discretized angular part for gl
 %%% Coordinates selection:

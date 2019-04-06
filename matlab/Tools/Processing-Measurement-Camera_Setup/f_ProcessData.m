@@ -1,6 +1,6 @@
 function f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,dataDir,pathSep,infoDelim, ...
 dataformat,imgformat,cameraPlane,totalImgs,AiryFactor,metricSel,metricProfile, ...
-shiftCart,beepSound,L,NA,PP)
+shiftCart,beepSound,L,NA,PP,apRad)
 
 % Inputs:
 %   
@@ -97,7 +97,6 @@ disp(strcat('Estimated Airy"s radius in um: ', num2str(AiryDiskPixX), ' (x) and 
 % yangArcs = f_LambdaDToarcsec(yangL_D);
 
 %% Lyot's spot size (main radius)
-apRad = 2.54; % Aperture radius [cm]
 PSFimg = imread(strcat(dataDir,pathSep,'data_ref_2.bmp'));
 Lyotimg = imread(strcat(dataDir,pathSep,'data_ref_1.bmp'));
 Lyotimg = rgb2gray(Lyotimg); 
