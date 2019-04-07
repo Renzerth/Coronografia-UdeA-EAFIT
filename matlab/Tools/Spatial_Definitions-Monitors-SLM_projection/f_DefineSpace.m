@@ -164,11 +164,13 @@ switch shiftMask
 %   [~,colCoord] = f_getValleyLocation(snap{2},'single');
 
   %% Self Centering
+                                                                                % THE camera here must be Lyot!!
   [shiftY,shiftX,systemPupilPixelSize,mainDataCenter,mainDataRadius] = ...
   f_selfCenterSLMmask(PP, 2*apRad, scrnIdx, vid);
   shiftCart = [shiftY shiftX];
 end
-% After this switch, shiftCart is taken as the output
+% After this switch, shiftCart is taken as the output so that all the masks
+% shown during the measurement have this shift
 
 %% Check the shift for the Zernike polynomials
 % Right now, shiftX and shiftY are percentages but z_pupil scaled by the

@@ -1,14 +1,17 @@
-function [shiftYcoord, shiftXcoord] = adjustSLMPositioning(parentHandler, figureHandler, analysisPlotHandler, vid, dataSize, mainDataCenter, referenceRadialProfile, dataRange, varargin)
+function [shiftYcoord, shiftXcoord] = f_adjustSLMPositioning(parentHandler, figureHandler, analysisPlotHandler, vid, dataSize, mainDataCenter, referenceRadialProfile, dataRange, varargin)
+
 %% Input checking
 if ~ishandle(parentHandler)
     error('Invalid or deleted figure handler.');
 end
+
 %% Program Settings
 if nargin == 9 && isnumeric(varargin{1})
     sliderSize = varargin{1};
 else
     sliderSize = 0.025;
 end
+
 %% Slider Properties
 dataXsize = figureHandler.XData(2);
 dataYsize = figureHandler.YData(2);
@@ -39,6 +42,7 @@ while ishandle(parentHandler) % Avoid usage of addlistener to read slider values
     set(analysisPlotHandler,'YData',relativeChange);
     pause(0.1);
 end
+
 %% Former Ideas
 % MyCallBack = @(a,b) disp(b.AffectedObject.Value);
 % MyCallBack2 = @(src,event) disp(event.Key);

@@ -21,7 +21,7 @@ aspectRatio = monitorSize(1)/monitorSize(2);
 projectionMask = mat2gray((rhoRadius <= 0.25/aspectRatio).*angle(exp(1i*TC*(angularTranstion + pi/TC))));
 
 %% Compute initial Radial Profile
-[shiftY, shiftX] = centerMaskToSpot(referenceData, projectionMask, mainDataCenter, mainDataRadius, monitorSize, TC, vid);
+[shiftY, shiftX] = f_centerMaskToSpot(referenceData, projectionMask, mainDataCenter, mainDataRadius, monitorSize, TC, vid);
 
 %% Clear resources
 clear vid;

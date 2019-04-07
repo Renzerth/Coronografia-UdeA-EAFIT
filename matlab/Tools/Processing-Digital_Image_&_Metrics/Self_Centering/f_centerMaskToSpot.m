@@ -62,6 +62,7 @@ shiftStepY = getClosestMultiple(monitorSize(2),scanArea);
 maxIterX = ceil(monitorSize(1)/shiftStepX);
 maxIterY = ceil(monitorSize(2)/shiftStepY);
 circIterator = @(maxIter,iter,n) (maxIter+1)*((iter+n)<0) + iter+n;
+
 %% Figure-Screen properties
 offsetPixel = [1,1];
 figureHandler = figure('Visible','off','MenuBar','none','Toolbar','none','Units','Pixels','color','black');
