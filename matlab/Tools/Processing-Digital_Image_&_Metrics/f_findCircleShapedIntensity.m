@@ -43,7 +43,8 @@ dataProportion = areaCounts/totalCounts;
 radiusEstimation = sqrt(areaCounts(2)/pi);
 dataRanges = round([1-radiusRangePerce,1+radiusRangePerce]*mean([radiusEstimation,blobRadius]));
 
-%% Generate circle with the circular Hough Transform
+%% Generate circle with the Circle Hough Transform (CHT)
+% dataRanges (the mean radius) is an input for using the CHT.
 [dataCenter, dataRadii, circMetrics] = imfindcircles(binaryData,dataRanges,'Sensitivity', 1);
 [~,valueIndex] = max(circMetrics);
 mainDataCenter = mean([dataCenter(valueIndex,:); regionCentroid],1);
