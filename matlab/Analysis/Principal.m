@@ -63,9 +63,8 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
  %% Self centering hardware initialization
  % This is here because the camera is needed for the self-centering
  % algorithm inside "f_DefineSpace"
- if measSimulated == 0 && meas == 1 % When a real measurement will be 
-                                    % performed
-  %% Camera preparation
+ if shiftMask == 2 % When self centering will be performed
+  %% Self centering camera preparation
   if measDebug
     imaqreset; % Disconnect and delete all image acquisition objects
     % Refresh image acquisition hardware by restoring the settings
@@ -73,22 +72,24 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
   % Turns the camera on and create all the needed variables. Remember to
   % leave the preview open
   
-  %% Lyot camera parameters 
+  %% Self centering Lyot camera parameters 
   % always used for the self centering in this setup (of 2019)
+  cameraLyot = 'DMK42BUC03';
   cameraIDLyot = 2;
   exposureLyot = 1/250; % Range: [1/1e4,1]
   fpsLyot = [];
   formatLyot = 'Y800 (1280x960)';
   PPLyot = 3.75; % Pixel pitch in [um/pixel]
-  [vidSelfCent,~] = f_selectCamera(cameraIDLyot,camera,exposureLyot,fpsLyot,formatLyot);
+  [vidSelfCent,~] = f_selectCamera(cameraIDLyot,cameraLyot,exposureLyot,fpsLyot,formatLyot);
  else % ~(measSimulated == 0 && meas == 1)
    vidSelfCent = []; % Empty, just to be as a non-used input in some functions
  end
 
 %% Spatial definitions
+SLMcenterWisdom = strcat(dataDir,pathSep,'SLMwisdom.mat');
 [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize, ...
 shiftCart] = f_DefineSpace(vidSelfCent,sSupport,sSize,shiftCart,shiftMask,PPLyot, ...
-pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType,MaxMask,maskSel);
+pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType,MaxMask,SLMcenterWisdom,maskSel);
 % Defines the cartesian/polar coordinates, its sampling interval and 
 % discretized angular part for gl
 %%% Coordinates selection:

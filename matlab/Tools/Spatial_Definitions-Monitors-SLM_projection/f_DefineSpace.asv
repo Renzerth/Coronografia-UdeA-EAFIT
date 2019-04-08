@@ -1,6 +1,6 @@
 function [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize,...
 shiftCart] = f_DefineSpace(vid,sSupport,sSize,shiftCart,shiftMask,PP, ...
-pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType,MaxMask,SLMcenterWisdom,maskSel)
+pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType,MaxMask,dataDir,maskSel)
 % Inputs:
 %  vid: video input object
 %  sSupport: full side-length of the SLMs (or unitary without an SLM)
@@ -153,17 +153,13 @@ switch shiftMask
 
   %% Self Centering
   % THE camera here must be Lyot for the 2019's setup
-  if ~(exist(SLMcenterWisdom,'file') == 2) % The self centering data doesn't exists in Data (folder)
+  if exist(SLMcenterWisdom,'file')
     PP = PP*1e-6;  % um to m
     lensDiameter = 2*apRad*1e-2; % cm to m
     [shiftY, shiftX,~,~,~] = ...
     f_selfCenterSLMmask(PP, lensDiameter, scrnIdx, vid);
     [shiftX, shiftY] = f_calcHScoorToSgnCoor(shiftX/monitorSize(1), shiftY/monitorSize(2));
     shiftCart = [shiftY, shiftX];
-    % Explanation: save(directory+filename,variables)
-    save(SLMcenterWisdom,'shiftCart')
-  else % The self centering data is available in Data (folder)
-    load(SLMcenterWisdom);
   end
 end
 % After this switch, shiftCart is taken as the output so that all the masks
