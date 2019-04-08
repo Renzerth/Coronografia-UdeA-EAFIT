@@ -57,8 +57,8 @@ criteriaTol = 0.5;
 %% Set Iterator
 spotFraction = 0.2;
 scanArea = round(spotFraction*mainDataRadius);
-shiftStepX = getClosestMultiple(monitorSize(1),scanArea);
-shiftStepY = getClosestMultiple(monitorSize(2),scanArea);
+shiftStepX = f_getClosestMultiple(monitorSize(1),scanArea);
+shiftStepY = f_getClosestMultiple(monitorSize(2),scanArea);
 maxIterX = ceil(monitorSize(1)/shiftStepX);
 maxIterY = ceil(monitorSize(2)/shiftStepY);
 circIterator = @(maxIter,iter,n) (maxIter+1)*((iter+n)<0) + iter+n;
@@ -70,7 +70,7 @@ axesHandler = gca;
 set(axesHandler,'Units','Pixels','Position',[offsetPixel monitorSize(1) monitorSize(2)]);
 updateDisplayHandler = imagesc(zeros(fliplr(monitorSize))); colormap('gray'); axis off;
 figureHandler.Visible = 'on'; axis on;
-[~] = TOOLS.changeProjectionMonitor('Restore');
+[~] = f_changeProjectionMonitor('Restore');
 figure('color','white'); analysisPlotHandler = plot(referenceRadialProfile);ylim auto; grid on; axis square;
 
 %% Specific region of scanning

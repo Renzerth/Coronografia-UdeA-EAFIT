@@ -14,8 +14,8 @@ referenceData = getsnapshot(vid); % Input reference, must be gray 'Y800' Format.
 [systemPupilPixelSize] = f_computePupilPixelSize(mainDataRadius, detectorPixelPitch, systemPupilSIze);
 
 %% Mask Generation
-shiftX = 0; shiftY =0; TC = 10;
-[X,Y,rhoRadius, monitorSize] = f_MakeScreenCoords(screenIndex);
+shiftX = 0; shiftY =0; TC = 10; enablechange = 1;
+[X,Y,rhoRadius, monitorSize] = f_MakeScreenCoords(screenIndex,enablechange);
 aspectRatio = monitorSize(1)/monitorSize(2);
 [angularTranstion,~] = cart2pol(X - shiftX,Y - shiftY);
 projectionMask = mat2gray((rhoRadius <= 0.25/aspectRatio).*angle(exp(1i*TC*(angularTranstion + pi/TC))));
