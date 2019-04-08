@@ -11,17 +11,24 @@ referenceData = getsnapshot(vid); % Input reference, must be gray 'Y800' Format.
 [mainDataCenter, mainDataRadius,~] = f_findCircleShapedIntensity(referenceData,false);
 
 %% System Pixel Size
-[systemPupilPixelSize] = f_computePupilPixelSize(mainDataRadius, detectorPixelPitch, systemPupilSIze);
+[systemPupilPixelSize] = f_computePupilPixelSize(mainDataRadius, ...
+                         detectorPixelPitch,systemPupilSIze);
 
 %% Mask Generation
 shiftX = 0; shiftY =0; TC = 10; enablechange = 1;
-[X,Y,rhoRadius, monitorSize] = f_MakeScreenCoords(screenIndex,enablechange);
-aspectRatio = monitorSize(1)/monitorSize(2);
+[X,Y,aspectRatio,monitorSize] = f_MakeScreenCoords(screenIndex,enablechange);
+
+%% Polar radius
+scaledY = Y/aspectRatio;
+rhoRadius = sqrt(X.^2 + scaledY.^2);
+
 [angularTranstion,~] = cart2pol(X - shiftX,Y - shiftY);
-projectionMask = mat2gray((rhoRadius <= 0.25/aspectRatio).*angle(exp(1i*TC*(angularTranstion + pi/TC))));
+projectionMask = mat2gray((rhoRadius <= 0.25/aspectRatio).* ...
+                 angle(exp(1i*TC*(angularTranstion + pi/TC))));
 
 %% Compute initial Radial Profile
-[shiftY, shiftX] = f_centerMaskToSpot(referenceData, projectionMask, mainDataCenter, mainDataRadius, monitorSize, TC, vid);
+[shiftY,shiftX] = f_centerMaskToSpot(referenceData,projectionMask, ...
+                  mainDataCenter,mainDataRadius,monitorSize,TC,vid);
 
 %% Clear resources
 clear vid;

@@ -165,8 +165,10 @@ switch shiftMask
 
   %% Self Centering
                                                                                 % THE camera here must be Lyot!!
+  PP = PP*1e-6;  % um to m
+  lensDiameter = 2*apRad*1e-2; % cm to m
   [shiftY,shiftX,systemPupilPixelSize,mainDataCenter,mainDataRadius] = ...
-  f_selfCenterSLMmask(PP, 2*apRad, scrnIdx, vid);
+  f_selfCenterSLMmask(PP, lensDiameter, scrnIdx, vid);
   shiftCart = [shiftY shiftX];
 end
 % After this switch, shiftCart is taken as the output so that all the masks

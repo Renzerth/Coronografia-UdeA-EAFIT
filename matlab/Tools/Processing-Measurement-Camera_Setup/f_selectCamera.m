@@ -1,4 +1,4 @@
-function [vid,src] = f_selectCamera(camera,exposure,fps,format)
+function [vid,src] = f_selectCamera(cameraID,camera,exposure,fps,format)
 % Inputs:
 %   camera
 %   exposure
@@ -13,7 +13,7 @@ function [vid,src] = f_selectCamera(camera,exposure,fps,format)
 try
 switch camera
   case 'DMK42BUC03' % CMOS camera used for the transmission SLM
-    vid = videoinput('tisimaq_r2013', 2, format);
+    vid = videoinput('tisimaq_r2013', cameraID, format);
     src = getselectedsource(vid);
     src.Brightness = 0;
     src.Contrast = 0;
@@ -22,18 +22,18 @@ switch camera
     src.GainAuto = 'Off'; % Gain auto feature is always off
 %   src.Gain = 0; % In: [0,30]
     
-  case 'DMK41BU02.H'
-    vid = videoinput('tisimaq_r2013', 1, format);
-    src = getselectedsource(vid);
-    src.Exposure = exposure;
-%     src.FrameRate = fps;
-    src.GainAuto = 'Off'; % Gain auto feature is always off
-    
-  case 'DMK23U445' % PSF plane % CMOS
-    vid = videoinput('tisimaq_r2013', 1, format);
+ case 'DMK23U445' % PSF plane % CMOS
+    vid = videoinput('tisimaq_r2013', cameraID, format);
     src = getselectedsource(vid);
     src.Exposure = exposure;
     src.FrameRate = fps;
+    src.GainAuto = 'Off'; % Gain auto feature is always off
+
+  case 'DMK41BU02.H'
+    vid = videoinput('tisimaq_r2013', cameraID, format);
+    src = getselectedsource(vid);
+    src.Exposure = exposure;
+%     src.FrameRate = fps;
     src.GainAuto = 'Off'; % Gain auto feature is always off
     
   otherwise

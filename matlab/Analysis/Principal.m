@@ -72,7 +72,7 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
   end
   % Turns the camera on and create all the needed variables. Remember to
   % leave the preview open
-  [vid,~] = f_selectCamera(camera,exposure,fps,format);
+  [vid,~] = f_selectCamera(cameraID,camera,exposure,fps,format);
  else
    vid = []; % Empty, just to be as a non-used input in some functions
  end

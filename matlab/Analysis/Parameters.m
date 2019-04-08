@@ -147,8 +147,17 @@ camera = 'DMK42BUC03';
 % Exposure: analog parameter
 % Format: 'Y800 (1280x960)' [best]; 'RGB24 (1024x768)' [another option]
 
-switch camera
+switch camera  
+  case 'DMK42BUC03' % Lyot plane % CMOS
+    cameraID = 2;
+    exposure = 1/250; % Range: [1/1e4,1]
+    fps = [];
+    format = 'Y800 (1280x960)';
+    cameraPlane =  'Lyot';
+    PP = 3.75; % Pixel pitch in [um/pixel]
+ 
   case 'DMK23U445' % PSF plane % CCD 
+    cameraID = 1;
     exposure = 1/1920; % Range: [,]
     %fps = '15'; % Frames per second
     fps = '15.00'; % '15.00', '10.00', ' 7.50', ' 5.00' ' 3.75', 
@@ -156,14 +165,8 @@ switch camera
     cameraPlane = 'PSF';
     PP = 3.75; % Pixel pitch in [um/pixel]
     
-  case 'DMK42BUC03' % Lyot plane % CMOS
-    exposure = 1/250; % Range: [1/1e4,1]
-    fps = [];
-    format = 'Y800 (1280x960)';
-    cameraPlane =  'Lyot';
-    PP = 3.75; % Pixel pitch in [um/pixel]
-    
   case 'DMK41BU02.H' % not used here % CCD
+    cameraID = 1;
     exposure = 1/1e3; % Range: [,]
     fps = '15.0000'; % Frames per second
     format = 'Y800 (1280x960)';    
