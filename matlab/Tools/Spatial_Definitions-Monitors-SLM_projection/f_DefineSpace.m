@@ -129,8 +129,9 @@ rSize = min(HalfSupportX,HalfSupportY);
 % Check first if vid exists, otherwise set shiftMask to zero
 if isempty(vid) && shiftMask == 2
   error(['Set measSimulated = 0 and meas = 1 in order to use' ...
-    ' shiftMask = 2. shiftMask was set to zero.']);
+    ' shiftMask = 2. shiftMask should be set to zero.']);
 end
+
 switch shiftMask 
  case 0
   shiftX = 0; shiftY = 0; % Shift deactivated   
@@ -148,28 +149,16 @@ switch shiftMask
   shiftCart = [shiftY shiftX];
   
  case 2 % Self-centering algorithm
-  % WARNING: Nothing is show on the SLM, so assure you have a black
-  % background on your pc
-  % Pending
-  % Remember to output it as a percentage
-  %   snap = getsnapshot(vid); 
-  %       snap = imread();
-  %    [~,relativeCoord] = f_computeCenterFromImageMin();
-  %   snap = snap/max(snap(:));
-  %   snap = 20*log10(snap);
-%   snap = im2double(snap);
-%   mode = 'single'; % 'single' or 'vortex'
-%    f_computeCenterFromImageMin()
-%   [rowCoord,~] = f_getValleyLocation(snap,'single');
-%   [~,colCoord] = f_getValleyLocation(snap{2},'single');
 
   %% Self Centering
-                                                                                % THE camera here must be Lyot!!
+  % THE camera here must be Lyot for the 2019's setup
   PP = PP*1e-6;  % um to m
   lensDiameter = 2*apRad*1e-2; % cm to m
-  [shiftY,shiftX,systemPupilPixelSize,mainDataCenter,mainDataRadius] = ...
+  [shiftY, shiftX,~,~,~] = ...
   f_selfCenterSLMmask(PP, lensDiameter, scrnIdx, vid);
-  shiftCart = [shiftY shiftX];
+  [shiftX, shiftY] = calcHScoorToSgnCoor(shiftX/monitorSize(1), shiftY/monitorSize(2));
+  shiftCart = [shiftY, shiftX];
+  
 end
 % After this switch, shiftCart is taken as the output so that all the masks
 % shown during the measurement have this shift
@@ -214,5 +203,7 @@ Yslm = Y + shiftY; % Shifted Y for the SLM
                                      % shift. The signs compensate the 
                                      % normal cartesian convention for 
                                      % displacing the phase mask
-                            
+      
+%% Termination of the hardware clear vid for any stage of this algorithm
+f_releaseCamera(vidMeas);                                     
 end

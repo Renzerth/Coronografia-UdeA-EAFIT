@@ -75,19 +75,20 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
   
   %% Lyot camera parameters 
   % always used for the self centering in this setup (of 2019)
-  cameraIDLyot = 2;
-  exposureLyot = 1/250; % Range: [1/1e4,1]
-  fpsLyot = [];
-  formatLyot = 'Y800 (1280x960)';
-  PPLyot = 3.75; % Pixel pitch in [um/pixel]
-  [vidSelfCent,~] = f_selectCamera(cameraIDLyot,camera,exposureLyot,fpsLyot,formatLyot);
+  cameraIDlyot = 2;
+  exposure = 1/250; % Range: [1/1e4,1]
+  fps = [];
+  format = 'Y800 (1280x960)';
+  cameraPlane =  'Lyot';
+  PP = 3.75; % Pixel pitch in [um/pixel]
+  [vidSelfCent,~] = f_selectCamera(cameraID,camera,exposure,fps,format);
  else % ~(measSimulated == 0 && meas == 1)
    vidSelfCent = []; % Empty, just to be as a non-used input in some functions
  end
 
 %% Spatial definitions
 [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize, ...
-shiftCart] = f_DefineSpace(vidSelfCent,sSupport,sSize,shiftCart,shiftMask,PPLyot, ...
+shiftCart] = f_DefineSpace(vidSelfCent,sSupport,sSize,shiftCart,shiftMask,PP, ...
 pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType,MaxMask,maskSel);
 % Defines the cartesian/polar coordinates, its sampling interval and 
 % discretized angular part for gl

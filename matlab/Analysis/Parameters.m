@@ -17,7 +17,7 @@ meas = 1; % Measure: yes (1) or no (0)
     beepSound = 1; % Beep sound when the measurement finishes.
 proc = 0; % Processes the data
 %%% For proc = 1 and meas = 0:  the workspace is loaded
-    useLastMeas = 1; % In order to load a previous workspace:
+    loadMeas = 1; % In order to load a previous workspace:
     % 0: doesn't load anything: not recommended in general
     % 1: loads the last measurement
     % 2: loads a user-defined measurement folder
@@ -142,8 +142,9 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
    % LC2002: [-3,0.1]
    % Pluto: [31.5,-1.8]
               
-%% Camera selection and parameters
-camera = 'DMK42BUC03';
+%% Measurement camera selection and parameters
+% Self centering camera is selected just before f_DefineSpace
+camera = 'DMK23U445'; % PSF is needed for the 2019's metrics (meanwhile)
 % Exposure: analog parameter
 % Format: 'Y800 (1280x960)' [best]; 'RGB24 (1024x768)' [another option]
 
@@ -166,7 +167,7 @@ switch camera
     PP = 3.75; % Pixel pitch in [um/pixel]
     
   case 'DMK41BU02.H' % not used here % CCD
-    cameraID = 1;
+    cameraID = 3;  
     exposure = 1/1e3; % Range: [,]
     fps = '15.0000'; % Frames per second
     format = 'Y800 (1280x960)';    

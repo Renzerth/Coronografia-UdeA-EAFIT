@@ -1,3 +1,4 @@
+
 function [analysDir,toolsDir,dataDir,outDir] = ...
 f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep)
 

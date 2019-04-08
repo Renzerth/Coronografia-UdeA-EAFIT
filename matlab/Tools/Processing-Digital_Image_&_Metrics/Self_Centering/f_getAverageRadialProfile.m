@@ -1,4 +1,4 @@
-function [averageRadialProfile] = getAverageRadialProfile(grayImage, dataSize, coordinatesCenter, varargin)
+function [averageRadialProfile] = f_getAverageRadialProfile(grayImage, dataSize, coordinatesCenter, varargin)
 % Thanks to Image Analyst for the original Demo
 % www.mathworks.com/matlabcentral/answers/276298-how-to-plot-the-radial-profile-of-a-2d-image
 %% Program Settings

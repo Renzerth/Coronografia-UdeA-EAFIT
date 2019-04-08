@@ -38,7 +38,7 @@ while ishandle(parentHandler) % Avoid usage of addlistener to read slider values
     set(figureHandler,'CData',circshift(originalData,floor([shiftYcoord, shiftXcoord])));
     
     currentFrame = getsnapshot(vid);
-    [~, relativeChange, ~] = getDistMetrics(currentFrame,dataSize, mainDataCenter, referenceRadialProfile, dataRange);
+    [~, relativeChange, ~] = f_getDistMetrics(currentFrame,dataSize, mainDataCenter, referenceRadialProfile, dataRange);
     set(analysisPlotHandler,'YData',relativeChange);
     pause(0.1);
 end

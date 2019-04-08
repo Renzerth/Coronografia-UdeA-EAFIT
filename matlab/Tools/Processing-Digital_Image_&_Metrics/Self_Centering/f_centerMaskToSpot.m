@@ -1,4 +1,4 @@
-function [shiftY, shiftX] = f_centerMaskToSpot(referenceData, projectionMask, mainDataCenter, mainDataRadius, monitorSize, TC, vid)
+function [circShiftY, circShiftX] = f_centerMaskToSpot(referenceData, projectionMask, mainDataCenter, mainDataRadius, monitorSize, TC, vid)
 % A centering application designed to adjust optical vortex positioning.
 % Based on a gradient step iterator of radial intensity the algorithm loops
 % through the whole Screen in a coarse displacement looking for small
@@ -66,7 +66,7 @@ circIterator = @(maxIter,iter,n) (maxIter+1)*((iter+n)<0) + iter+n;
 %% Figure-Screen properties
 offsetPixel = [1,1];
 figureHandler = figure('Visible','off','MenuBar','none','Toolbar','none','Units','Pixels','color','black');
-axesHandler = gca;
+axesHandler = gca; % set handler property to 'figure' to revert 'none'.
 set(axesHandler,'Units','Pixels','Position',[offsetPixel monitorSize(1) monitorSize(2)]);
 updateDisplayHandler = imagesc(zeros(fliplr(monitorSize))); colormap('gray'); axis off;
 figureHandler.Visible = 'on'; axis on;
@@ -139,8 +139,12 @@ for times = 1: refiningIterations
   end
 end
 
+%% Instruction for the user
+disp(['Move the sliders to adjust the mask"s position and then close the'...
+     ' mask window when done']);
+
 %% Manual adjustment
 [manualShiftYcoord, manualShiftXcoord] = f_adjustSLMPositioning(figureHandler, updateDisplayHandler, analysisPlotHandler, vid, dataSize, mainDataCenter, referenceRadialProfile, dataRange);
-shiftX = localX + manualShiftXcoord - monitorSize(1); % Referred Overall Coordinates from screen origin
-shiftY = localY + manualShiftYcoord - monitorSize(2);
+circShiftX = localX + manualShiftXcoord - monitorSize(1); % Referred Overall Coordinates from screen origin
+circShiftY = localY + manualShiftYcoord - monitorSize(2);
 end
