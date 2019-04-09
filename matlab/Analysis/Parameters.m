@@ -328,7 +328,8 @@ dataformat = '.bmp'; % Default: .bmp (not too heavy)
 tcvect = [1 2]; % Topological charges to be measured [integers] 
 glvect = [255]; % Gray level to be measured [0,255]
 % glvect = linspace(2,18,9)
-waitbeforemeas = 2; % Seconds before measuring as a safety measurement. Default: 10
+waitbeforemeas = 2; % Seconds before measuring as a safety measurement. 
+                    % Default: 10
 recordingDelay = 0; % Seconds between each mask to be shown. This time is
                     % also important so that the camera bus port doesn't 
                     % overload. Ref: 0. This is a safe parameter, since 

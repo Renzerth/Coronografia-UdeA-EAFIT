@@ -1,6 +1,7 @@
 function [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize,...
 shiftCart] = f_DefineSpace(vid,sSupport,sSize,shiftCart,shiftMask,PP, ...
-pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType,MaxMask,SLMcenterWisdom,maskSel)
+pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType,MaxMask, ...
+SLMcenterWisdom,maskSel)
 % Inputs:
 %  vid: video input object
 %  sSupport: full side-length of the SLMs (or unitary without an SLM)
@@ -30,7 +31,7 @@ pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType,MaxMask,SLMcenterWisdom,mas
 %           -0: custom-size mask that depends on the variable sSize   
 %           -1: maximizes the mask for coordType = 1
 %           -2: maximized mask but keeping its rectangular fashion
-%  dataDir
+%  SLMcenterWisdom: directory to store shiftCart
 %  maskSel: selects a specific mask
 %  shiftCart: same as input but over 100 and filled with zeros when
 %                 shiftMask=0 or with the camera-compensated shift when 
@@ -138,7 +139,7 @@ switch shiftMask
   shiftX = 0; shiftY = 0; % Shift deactivated   
   shiftCart = [shiftX shiftY];    
   
- case 1
+ case 1 % User-give
   % Test if the center of the mask is inside the truncation
   if max(shiftCart) > 100
     error(['The center of the mask is out of the boundaries of the ' ...
@@ -151,19 +152,21 @@ switch shiftMask
   
  case 2 % Self-centering algorithm
 
-  %% Self Centering
-  % THE camera here must be Lyot for the 2019's setup
-  if ~(exist(SLMcenterWisdom,'file') == 2) % The self centering data doesn't exists in Data (folder)
+  %% Self Centering algorithm
+  % The camera here must be Lyot for the 2019's setup
+  if ~(exist(SLMcenterWisdom,'file') == 2) % The self centering data
+                                           % doesn't exist in Data (folder)
     PP = PP*1e-6;  % um to m
     lensDiameter = 2*apRad*1e-2; % cm to m
     [shiftY, shiftX,~,~,~] = ...
     f_selfCenterSLMmask(PP, lensDiameter, scrnIdx, vid);
-    [shiftX, shiftY] = f_calcHScoorToSgnCoor(shiftX/monitorSize(1), shiftY/monitorSize(2));
+    [shiftX,shiftY] = f_calcHScoorToSgnCoor(shiftX/monitorSize(1), ...
+                                            shiftY/monitorSize(2));
     shiftCart = [shiftY, shiftX];
     % Explanation: save(directory+filename,variables)
     save(SLMcenterWisdom,'shiftCart')
   else % The self centering data is available in Data (folder)
-    load(SLMcenterWisdom);
+    load(SLMcenterWisdom,'shiftCart');
   end
 end
 % After this switch, shiftCart is taken as the output so that all the masks
@@ -211,5 +214,6 @@ Yslm = Y + shiftY; % Shifted Y for the SLM
                                      % displacing the phase mask
       
 %% Termination of the hardware clear vid for any stage of this algorithm
-f_releaseCamera(vid);                                     
+f_releaseCamera(vid);              
+
 end

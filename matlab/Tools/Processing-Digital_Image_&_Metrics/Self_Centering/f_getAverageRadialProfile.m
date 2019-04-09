@@ -1,4 +1,5 @@
-function [averageRadialProfile] = f_getAverageRadialProfile(grayImage, dataSize, coordinatesCenter, varargin)
+function [averageRadialProfile] = f_getAverageRadialProfile(grayImage, ...
+                                       dataSize,coordinatesCenter,varargin)
 % Thanks to Image Analyst for the original Demo
 % www.mathworks.com/matlabcentral/answers/276298-how-to-plot-the-radial-profile-of-a-2d-image
 %% Program Settings
@@ -11,7 +12,7 @@ xCenter = coordinatesCenter(1);
 yCenter = coordinatesCenter(2);
 rows = dataSize(1);
 columns = dataSize(2); 
-%% Find out what the max distance will be by computing the distance to each corner.
+%% Find out what the max distance will be by computing the distance to each corner
 distanceToUL = sqrt((1-yCenter)^2 + (1-xCenter)^2);
 distanceToUR = sqrt((1-yCenter)^2 + (columns-xCenter)^2);
 distanceToLL = sqrt((rows-yCenter)^2 + (1-xCenter)^2);
@@ -22,7 +23,7 @@ maxDistance = ceil(max([distanceToUL, distanceToUR, distanceToLL, distanceToLR])
 profileSums = zeros(1, maxDistance);
 profileCounts = zeros(1, maxDistance);
 
-%% Scan the original image getting gray level, and scan edtImage getting distance.
+%% Scan the original image getting gray level, and scan edtImage getting distance
 % Then add those values to the profile.
 for column = 1 : columns
     for row = 1 : rows
