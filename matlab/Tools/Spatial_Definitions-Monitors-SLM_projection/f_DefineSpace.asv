@@ -110,8 +110,10 @@ Xpc = X; Ypc = Y; % Needed for the PC coordinates later on
   % drawn normally on the whole screen
   flagAR = 0; % Flag for the AspectRatio application (not applied)
   if circularMask == 1 && (MaxMask == 1 || coordType == 2) 
-     Xrescaled = AspectRatio*X; % Used for the mask generation: X scaling
-     X = Xrescaled; % Circular truncation in full screen
+%      Xrescaled = AspectRatio*X; % Used for the mask generation: X scaling
+%      X = Xrescaled; % Circular truncation in full screen
+     Yrescaled = Y/AspectRatio;
+     Y = Yrescaled;
      flagAR = 1; % Flag for the AspectRatio application
   end % Otherwise X=X and one has the elliptical truncation in full screen
                                  
@@ -149,7 +151,7 @@ switch shiftMask
   shiftCart = shiftCart/100; % Percentage w.r.t the half size 
   shiftX = shiftCart(2); % Cartesian shift in x
   shiftY = shiftCart(1); % Cartesian shift in y
-  shiftCart = [shiftY shiftX];
+  shiftCart = [shiftY shiftX*AspectRatio];
   
  case 2 % Self-centering algorithm
 
@@ -189,8 +191,10 @@ switch shiftMask
         shiftY/monitorSize(2));
     elseif coordType == 1 && max(abs(shiftCart)) <= 1
       % This converts the shifts from coordType 2 to 1
-      [shiftX,shiftY] = f_calcSgnCoorToHScoor(shiftX*monitorSize(1), ...
-        shiftY*monitorSize(2));
+      [shiftX,shiftY] = f_calcSgnCoorToHScoor(shiftX, shiftY);
+% OLD:
+%       shiftY = round(shiftY*monitorSize(2));
+%       shiftX = round(shiftX*monitorSize(1));
     end
     shiftCart = [shiftY, shiftX];
   end
@@ -231,17 +235,32 @@ end
 
 %% Shift application
 % The signs of the shifts account for the cartesian coordinates convention
+
+% TESTS
 % if shiftCart ~= 2
-  Xslm = X + shiftX;
-  Yslm = Y - shiftY;
+%   Xslm = X + shiftX;
+%   Yslm = Y + shiftY;
 % end
+
+% ORIGINAL
+% Xslm = X + shiftX;
+% Yslm = Y - shiftY;
+
+if flagAR == 1 % Aspect ratio already applied on Y
+%   shiftY = shiftY/AspectRatio;
+end
+% Xslm = X - shiftX;
+% Yslm = Y - shiftY;
+
+
 %% Polar coordinates for the SLM
 % X,Y variables redefined for being used in the EGV and Fork masks
-[phiSLM,rSLM] = cart2pol(Xslm,Yslm); % Polar coordinates with an added
+% [phiSLM,rSLM] = cart2pol(Xslm,Yslm); % Polar coordinates with an added
                                      % shift. The signs compensate the 
                                      % normal cartesian convention for 
                                      % displacing the phase mask
-      
+
+[angularTranstion,rhoRadius] = cart2pol(Xr - maskShiftX, scaledY - maskShiftY/aspectRatio);                                     
 %% Termination of the hardware 
 f_releaseCamera(vidSelfCent); % Clear vid for the self-centering stage
 

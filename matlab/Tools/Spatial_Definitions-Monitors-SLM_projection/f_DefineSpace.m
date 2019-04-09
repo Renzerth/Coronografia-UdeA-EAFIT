@@ -110,8 +110,10 @@ Xpc = X; Ypc = Y; % Needed for the PC coordinates later on
   % drawn normally on the whole screen
   flagAR = 0; % Flag for the AspectRatio application (not applied)
   if circularMask == 1 && (MaxMask == 1 || coordType == 2) 
-     Xrescaled = AspectRatio*X; % Used for the mask generation: X scaling
-     X = Xrescaled; % Circular truncation in full screen
+%      Xrescaled = AspectRatio*X; % Used for the mask generation: X scaling
+%      X = Xrescaled; % Circular truncation in full screen
+     Yrescaled = Y/AspectRatio;
+     Y = Yrescaled;
      flagAR = 1; % Flag for the AspectRatio application
   end % Otherwise X=X and one has the elliptical truncation in full screen
                                  
@@ -226,7 +228,7 @@ end
 %% Shift scaling so that it is a percentage
 % Takes into account the half support of X and Y and a percentage of them
 % is taken
-if shiftCart ~= 2
+if shiftMask ~= 2 % REVISAR!!
   shiftX = shiftX*HalfSupportX; % Shift converted to the HalfSupport's units
   shiftY = shiftY*HalfSupportY; % Shift converted to the HalfSupport's units
 end
@@ -235,14 +237,17 @@ end
 % The signs of the shifts account for the cartesian coordinates convention
 
 % TESTS
-% if shiftCart ~= 2
+% if shiftMask ~= 2
 %   Xslm = X + shiftX;
 %   Yslm = Y + shiftY;
 % end
 
 % ORIGINAL
-if flagAR == 1 % Aspect ratio already applied on X
-  shiftX = shiftX*AspectRatio;
+% Xslm = X + shiftX;
+% Yslm = Y - shiftY;
+
+if flagAR == 1 % Aspect ratio already applied on Y
+  shiftY = shiftY/AspectRatio;
 end
 Xslm = X - shiftX;
 Yslm = Y - shiftY;
@@ -254,7 +259,10 @@ Yslm = Y - shiftY;
                                      % shift. The signs compensate the 
                                      % normal cartesian convention for 
                                      % displacing the phase mask
-      
+% [Xr,Yr,~,~] = f_MakeScreenCoords(3,false);
+% Xslm = Xr - shiftX;
+% Yslm = (Yr - shiftY)/AspectRatio;
+% [phiSLM,rSLM] = cart2pol(Xslm, Yslm);                                     
 %% Termination of the hardware 
 f_releaseCamera(vidSelfCent); % Clear vid for the self-centering stage
 

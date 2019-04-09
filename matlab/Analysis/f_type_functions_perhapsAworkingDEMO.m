@@ -15,7 +15,7 @@ videoFormat = 'Y800 (1280x960)';
 [maskShiftY,maskShiftX,systemPupilPixelSIze,mainDataCenter, ...
 mainDataRadius] = f_selfCenterSLMmask(camPixelPitch,lensDiameter, ...
 SLMscreenIndex,vid,'data');
-[maskShiftX, maskShiftY] = calcHScoorToSgnCoor(maskShiftX/monitorSize(1), maskShiftY/monitorSize(2));
+[maskShiftX, maskShiftY] = f_calcHScoorToSgnCoor(maskShiftX/monitorSize(1), maskShiftY/monitorSize(2));
 %% Test shifting
 TC = 2; enablechange = false;
 [Xr,Yr,aspectRatio,monitorSize] = f_MakeScreenCoords(3,false);

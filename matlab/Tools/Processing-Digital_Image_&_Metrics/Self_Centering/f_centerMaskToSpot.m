@@ -57,7 +57,7 @@ dataRange = TC*100/2;
 criteriaTol = 0.5; % Ref: 0.5
 
 %% Set Iterator
-spotFraction = 0.2; % Ref: 0.2
+spotFraction = 0.2; % Ref: 0.1
 scanArea = round(spotFraction*mainDataRadius);
 shiftStepX = f_getClosestMultiple(monitorSize(1),scanArea);
 shiftStepY = f_getClosestMultiple(monitorSize(2),scanArea);

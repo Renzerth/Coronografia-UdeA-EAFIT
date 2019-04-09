@@ -24,11 +24,12 @@ shiftX = 0; shiftY =0; TC = 2; enablechange = true;
                                                    enablechange);
 
 %% Polar coordinates with the Aspect Ratio scaling
-scaledX = X*aspectRatio;
-[angularTranstion,rhoRadius] = cart2pol(scaledX - shiftX,Y - shiftY);
+scaledY = Y/aspectRatio;
+[angularTranstion,rhoRadius] = cart2pol(X - shiftX,scaledY - shiftY);
 
 %% Mask generation
-projectionMask = mat2gray((rhoRadius <= 0.25/aspectRatio).* ...
+MaskProportion = 0.1; % Relative proportion of the size of the mask. Ref: 0.1
+projectionMask = mat2gray((rhoRadius <= MaskProportion/aspectRatio).* ...
                  angle(exp(1i*TC*(angularTranstion + pi/TC))));
 
 %% Find Vortex center coordinates
