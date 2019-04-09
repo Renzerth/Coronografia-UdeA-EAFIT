@@ -129,7 +129,7 @@ rSize = min(HalfSupportX,HalfSupportY);
           
 %% Shift of the mask (for the SLM: plotMask=2)
 % Check first if vid exists, otherwise set shiftMask to zero
-if isempty(vid) && shiftMask == 2
+if isempty(vid) && shiftMask == 2 && ~(exist(SLMcenterWisdom,'file') == 2)
   error(['Set measSimulated = 0 and meas = 1 in order to use' ...
     ' shiftMask = 2. shiftMask should be set to zero.']);
 end
@@ -158,6 +158,8 @@ switch shiftMask
                                            % doesn't exist in Data (folder)
     PP = PP*1e-6;  % um to m
     lensDiameter = 2*apRad*1e-2; % cm to m
+    % these outputs are not used in the meantime (2019): 
+    % [shiftY,shiftX,systemPupilPixelSize,mainDataCenter,mainDataRadius] 
     [shiftY, shiftX,~,~,~] = ...
     f_selfCenterSLMmask(PP, lensDiameter, scrnIdx, vid);
     [shiftX,shiftY] = f_calcHScoorToSgnCoor(shiftX/monitorSize(1), ...
@@ -167,6 +169,7 @@ switch shiftMask
     save(SLMcenterWisdom,'shiftCart')
   else % The self centering data is available in Data (folder)
     load(SLMcenterWisdom,'shiftCart');
+    shiftX = shiftCart(2); shiftY = shiftCart(1);
   end
 end
 % After this switch, shiftCart is taken as the output so that all the masks

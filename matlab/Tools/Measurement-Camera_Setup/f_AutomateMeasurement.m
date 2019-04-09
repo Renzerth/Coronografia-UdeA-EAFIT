@@ -101,7 +101,16 @@ for idxtc = 1:ltcvect
     pause(recordingDelay); % Displays the mask for "recordingDelay" seconds   
                            % This time is also important so that the camera
                            % bus doesn't overload 
-    close(pcfig); close(camfig); close(slmfig); % Close the shown figures
+    % Close the shown figures  
+    if ishandle(pcfig)
+      close(pcfig);
+    end
+    if ishandle(camfig)
+      close(camfig); 
+    end
+    if ishandle(slmfig)
+      close(slmfig);
+    end
   end
 end
 
@@ -155,7 +164,9 @@ imwrite(snap,refmeasfullpath);
 %%% Wait and close the figure:
 pause(recordingDelay); % Displays the mask for "recordingDelay" seconds  
 wait(vid); % Waits until vid is not running or logging
-close(reffig); % Closes the reference mask
+if ishandle(reffig)
+  close(reffig); % Closes the reference mask
+end
 
 %% End of the measurements
 % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium

@@ -66,6 +66,7 @@ maxIterY = ceil(monitorSize(2)/shiftStepY);
 circIterator = @(maxIter,iter,n) (maxIter+1)*((iter+n)<0) + iter+n;
 
 %% Figure-Screen properties
+%%% Mask figure
 offsetPixel = [1,1];
 figureHandler = figure('Visible','off','MenuBar','none','Toolbar', ...
                        'none','Units','Pixels','color','black');
@@ -76,9 +77,13 @@ updateDisplayHandler = imagesc(zeros(fliplr(monitorSize))); axis off;
 colormap('gray'); 
 figureHandler.Visible = 'on'; axis on;
 [~] = f_changeProjectionMonitor('Restore');
+
+%%% Reference radial profile figure
 figure('color','white'); 
 analysisPlotHandler = plot(referenceRadialProfile);ylim auto; grid on;
-axis square;
+axis square; title(['Relative difference: reference and tc=',num2str(TC)]);
+xlabel('Radial distance from the origin of the spot [pixels]');
+ylabel('Relative difference of intensities [a.u.]')
 
 %% Specific region of scanning
 % rectInfo = imrect(axesHandler);
@@ -157,7 +162,7 @@ for times = 1: refiningIterations
 end
 
 %% Instruction for the user
-disp(['Move the sliders to adjust the mask"s position and then close '...
+disp(['Move the sliders to adjust the mask"s position and then close'...
      ' the mask window when done']);
 
 %% Manual adjustment

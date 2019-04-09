@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 0; % Measure: yes (1) or no (0)
+meas = 1; % Measure: yes (1) or no (0)
 %%% For meas = 1: the whole workspace is saved
     measSimulated = 0; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
@@ -10,7 +10,7 @@ meas = 0; % Measure: yes (1) or no (0)
                        % one that shows the mask in a gray scale fashion
     % if measSimulated = 1 -> measDebug will be 0 
     % If meas = 1 -> all the figures will be closed before starting it
-    measDebug = 0; % Debugging before actually measuring. Displays the 
+    measDebug = 1; % Debugging before actually measuring. Displays the 
                    % default phase mask and shots a photo with the camera
                    % Works if  measSimulated = 0. If it is active, the
                    % program will set proc = 0
@@ -56,7 +56,7 @@ maskSel = 0; % Phase mask selection:
              % 9: Sum of spiral phase masks (NOT DONE)
              % 10: Gerchberg-Saxton (NOT DONE)
              % otherwise: Unitary
-plotMask = 1; % Allows to plot the mask:
+plotMask = 2; % Allows to plot the mask:
               % 0: no plot;
               % 1: on the screen
               % 2: on the SLM
@@ -129,7 +129,10 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
     shiftMask = 2; % Shift for all masks
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
-     % 2: self-centering algorithm: Only works if
+     % 2: self-centering algorithm: it is executed if the file
+     % ..\Data\SLMwisdom.mat (last's self centering execution) doesn't
+     % exist, therefore, delete it in order to perform the self centering 
+     % again
      %%% For shiftMask=1 (SLM plotting):  
      shiftCart = [-10,-20]; % shiftCart: [shiftY,shiftX]. Percentages of 
                         % movement of the

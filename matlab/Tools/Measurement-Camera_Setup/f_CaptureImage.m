@@ -1,5 +1,6 @@
 function SingleFrame = f_CaptureImage(vid,dataDir,filename,imgformat, ...
-                                    pathSep,infoDelim,dirDelim,snapsfldr,previewBool,loghist)
+pathSep,infoDelim,dirDelim,snapsfldr,previewBool,loghist,camera, ...
+cameraPlane,exposure,format,fps)
                                   
 % Inputs:
 %   
@@ -18,10 +19,16 @@ i = 1; % counter to store the snapshot's name
 
 while loopCondition == 0  
   %% Open preview
-  % In general, it is faster to open the preview first and then to implement
-  % the snapshot
+  % In general, it is faster to open the preview first and then to 
+  % implement the snapshot
   if previewBool
-    s = preview(vid);
+    % Original preview: previewHandle = preview(vid); 
+    [N,D] = rat(exposure);
+    tit = strcat('Preview of the',{' '},cameraPlane,{' '}, ...
+    'camera (',camera,')',{' '},'[Exposure:',{' '},num2str(N),'/', ...
+    num2str(D),';',{' '},'format:',{' '},num2str(format),';',{' '}, ...
+    'fps:',{' '},num2str(fps),']');
+    previewHandle = f_CustomPreview(vid,tit);
     wait(vid); % Waits until vid is not running or logging
   end
 
@@ -66,7 +73,7 @@ while loopCondition == 0
   
   %% Don't continue until the preview is closed
   disp('Close the preview in order to continue the program"s execution');
-  while ishandle(s)
+  while ishandle(previewHandle)
     pause(0.1); % In order for the preview to start safely
     % Delay for user response: dead time of the processor
   end
@@ -89,7 +96,15 @@ while loopCondition == 0
   end
   
   %% Close current figures
-  close(h1); close(h2); close(h3);
+  if ishandle(h1)
+    close(h1);
+  end
+  if ishandle(h2)
+    close(h2); 
+  end
+  if ishandle(h3)
+    close(h3);
+  end
 end
 
 %% Close preview if open

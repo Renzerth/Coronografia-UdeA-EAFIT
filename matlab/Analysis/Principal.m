@@ -63,31 +63,29 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
  %% Self centering hardware initialization
  % This is here because the camera is needed for the self-centering
  % algorithm inside "f_DefineSpace"
- if shiftMask == 2 % When self centering will be performed
+ SLMcenterWisdom = strcat(dataDir,pathSep,'SLMwisdom.mat'); % ShiftCart is
+                                       % saved here for the self centering
+ 
+ %% Self centering Lyot camera parameters 
+ % always used for the self centering in this setup (of 2019)
+ cameraLyot = 'DMK42BUC03';
+ cameraIDLyot = 2;
+ exposureLyot = 1/250; % Range: [1/1e4,1]
+ fpsLyot = [];
+ formatLyot = 'Y800 (1280x960)';
+ PPLyot = 3.75; % Pixel pitch in [um/pixel]
+ if shiftMask == 2 && ~(exist(SLMcenterWisdom,'file') == 2)% When self centering will be performed
+  
   %% Self centering camera preparation
-  if measDebug
-    imaqreset; % Disconnect and delete all image acquisition objects
-    % Refresh image acquisition hardware by restoring the settings
-  end
   % Turns the camera on and create all the needed variables. Remember to
   % leave the preview open
-  
-  %% Self centering Lyot camera parameters 
-  % always used for the self centering in this setup (of 2019)
-  cameraLyot = 'DMK42BUC03';
-  cameraIDLyot = 2;
-  exposureLyot = 1/250; % Range: [1/1e4,1]
-  fpsLyot = [];
-  formatLyot = 'Y800 (1280x960)';
-  PPLyot = 3.75; % Pixel pitch in [um/pixel]
-  [vidSelfCent,~] = f_selectCamera(cameraIDLyot,cameraLyot, ...
+   [vidSelfCent,~] = f_selectCamera(cameraIDLyot,cameraLyot, ...
                                    exposureLyot,fpsLyot,formatLyot);
  else % ~(measSimulated == 0 && meas == 1)
    vidSelfCent = []; % Empty, as a non-used input in some functions
  end
 
 %% Spatial definitions
-SLMcenterWisdom = strcat(dataDir,pathSep,'SLMwisdom.mat');
 [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize, ...
 shiftCart] = f_DefineSpace(vidSelfCent,sSupport,sSize,shiftCart, ...
 shiftMask,PPLyot,pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType, ...
@@ -138,7 +136,7 @@ if meas
     end
     % Turns the camera on and create all the needed variables. Remember to
     % leave the preview open
-    [vidMeas,~] = f_selectCamera(cameraID,camera,exposure,fps,format);
+    [vidMeas,~,fps] = f_selectCamera(cameraID,camera,exposure,fps,format);
   else % ~(measSimulated == 0 && meas == 1)
     vidMeas = []; % Empty, just to be as a non-used input in some functions
   end
@@ -147,10 +145,11 @@ if meas
   % Usefull for aligning the vortex and adjusting exposure parameters
   if measDebug == 1 && measSimulated == 0
     [~] = f_CaptureImage(vidMeas,dataDir,filename,imgformat,pathSep, ...
-                         infoDelim,dirDelim,snapsfldr,previewBool,loghist);
+    infoDelim,dirDelim,snapsfldr,previewBool,loghist,camera, ...
+    cameraPlane,exposure,format,fps);
     % Takes a camera shot,shows a figure and saves it
     % Close the mask figure after debugging
-    if exist('maskFig','var') == 1
+    if ishandle(maskFig)
       close(maskFig);
     end
   %%% Get some hardware/software/tools info:
@@ -161,6 +160,7 @@ if meas
   % disp(vid): displays acquisition information
   % imaqtool: toolbox for the camera
   % imaqreset: refresh image acquisition hardware by restoring the settings
+  %            Disconnect and delete all image acquisition objectssa
   % propinfo(src): shows the allowed values that can be modified
     
     proc = 0; % Nothing should be processed when debugging
