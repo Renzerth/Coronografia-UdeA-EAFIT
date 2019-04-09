@@ -80,16 +80,18 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
   fpsLyot = [];
   formatLyot = 'Y800 (1280x960)';
   PPLyot = 3.75; % Pixel pitch in [um/pixel]
-  [vidSelfCent,~] = f_selectCamera(cameraIDLyot,cameraLyot,exposureLyot,fpsLyot,formatLyot);
+  [vidSelfCent,~] = f_selectCamera(cameraIDLyot,cameraLyot, ...
+                                   exposureLyot,fpsLyot,formatLyot);
  else % ~(measSimulated == 0 && meas == 1)
-   vidSelfCent = []; % Empty, just to be as a non-used input in some functions
+   vidSelfCent = []; % Empty, as a non-used input in some functions
  end
 
 %% Spatial definitions
 SLMcenterWisdom = strcat(dataDir,pathSep,'SLMwisdom.mat');
 [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize, ...
-shiftCart] = f_DefineSpace(vidSelfCent,sSupport,sSize,shiftCart,shiftMask,PPLyot, ...
-pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType,MaxMask,SLMcenterWisdom,maskSel);
+shiftCart] = f_DefineSpace(vidSelfCent,sSupport,sSize,shiftCart, ...
+shiftMask,PPLyot,pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType, ...
+MaxMask,SLMcenterWisdom,maskSel);
 % Defines the cartesian/polar coordinates, its sampling interval and 
 % discretized angular part for gl
 %%% Coordinates selection:
@@ -145,73 +147,74 @@ if meas
   % Usefull for aligning the vortex and adjusting exposure parameters
   if measDebug == 1 && measSimulated == 0
     [~] = f_CaptureImage(vidMeas,dataDir,filename,imgformat,pathSep, ...
-      infoDelim,dirDelim,snapsfldr,previewBool,loghist);
+                         infoDelim,dirDelim,snapsfldr,previewBool,loghist);
     % Takes a camera shot,shows a figure and saves it
     % Close the mask figure after debugging
     if exist('maskFig','var') == 1
       close(maskFig);
     end
-    %%% Get some hardware/software/tools info:
-    % get(vid): displays the general parameters of the camera
-    % getselectedsource(vid): an existing variable (src). Similar to get(vid)
-    % imaqhwinfo(vid): displays the driver connection with MATLAB
-    % imaqhwinfo: all the installed adaptors in the Image Acquisition Toolbox
-    % disp(vid): displays acquisition information
-    % imaqtool: toolbox for the camera
-    % imaqreset: refresh image acquisition hardware by restoring the settings
-    % propinfo(src): shows the allowed values that can be modified
+  %%% Get some hardware/software/tools info:
+  % get(vid): displays the general parameters of the camera
+  % getselectedsource(vid): an existing variable (src). Similar to get(vid)
+  % imaqhwinfo(vid): displays the driver connection with MATLAB
+  % imaqhwinfo: all the installed adaptors in the Image Acquisition Toolbox
+  % disp(vid): displays acquisition information
+  % imaqtool: toolbox for the camera
+  % imaqreset: refresh image acquisition hardware by restoring the settings
+  % propinfo(src): shows the allowed values that can be modified
     
     proc = 0; % Nothing should be processed when debugging
   else % Real measurement (measDebug == 0)
     
     %% Automated measurement
     % Performs the measurements and stores them:
-    [refmeasfullpath] = f_AutomateMeasurement(vidMeas,Xslm,Yslm,rSLM,phiSLM, ...
-      Xpc,Ypc,rPC,phiPC,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp, ...
-      Aalpha,Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag, ...
-      binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang, ...
-      MaxMask,maskSel,ltcvect,lglvect,totalImgs,waitbeforemeas,imgpartPath, ...
-      dataformat,imgformat,measfullpath,infoDelim,cameraPlane,tcvect, ...
-      glvect,measSimulated,recordingDelay,whiteblackref,beepSound);
+    [refmeasfullpath] = f_AutomateMeasurement(vidMeas,Xslm,Yslm,rSLM, ...
+    phiSLM,Xpc,Ypc,rPC,phiPC,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0, ...
+    frkTyp,Aalpha,Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot, ...
+    normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType, ...
+    abs_ang,MaxMask,maskSel,ltcvect,lglvect,totalImgs,waitbeforemeas, ...
+    imgpartPath,dataformat,imgformat,measfullpath,infoDelim,cameraPlane,...
+    tcvect,glvect,measSimulated,recordingDelay,whiteblackref,beepSound);
     
     %% Save the whole workspace
     % Performed every time a measurement is made
     save(strcat(dataDir,pathSep,numberedFolderMeas,pathSep, ...
-      'workspace.mat'),'measfullpath','refmeasfullpath','ProcessedDir', ...
-      'dataDir','pathSep','infoDelim','dataformat','imgformat', ...
-      'cameraPlane','totalImgs','AiryFactor','metricSel','metricProfile', ...
-      'shiftCart','beepSound','L','NA','PP');
+    'workspace.mat'),'measfullpath','refmeasfullpath','ProcessedDir', ...
+    'dataDir','pathSep','infoDelim','dataformat','imgformat', ...
+    'cameraPlane','totalImgs','AiryFactor','metricSel','metricProfile', ...
+    'shiftCart','beepSound','L','NA','PP');
   end
 
   %% Termination of the hardware clear vid for any stage of this algorithm
   f_releaseCamera(vidMeas);
   
-elseif proc == 1 %  meas == 0 always in order to enter here (since here one will load a measurement)
+elseif proc == 1 %  meas == 0 always in order to enter here (since here one
+                 % will load a measurement)
   % Either it measures or loads a measurement
   
   %% Load previous measurement (whole workspace)
   % clearvars: these variables are used on the next load and then they are
   % replaced by the new ones that are loded
   switch loadMeas
-    case 0 % Doesn't load anything
-      warning('loadMeas=0 will not load things for proc=1')
-    case 1 % Loads the last measurement
-      clearvars -except dataDir pathSep numberedFolderMeas ProcessedDir ...
-        metricSel metricProfile AiryFactor NA loadMeas;
-      load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep, ...
-        'workspace.mat'));
-    case 2 % Loads a manually-put folder name
-      clearvars -except dataDir pathSep measFoldName ProcessedDir ...
-        metricSel metricProfile AiryFactor NA loadMeas;
-      load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));
-    case 3 % Loads a user-defined measurement
-      %%%  Select a custom measurement folder
-      usermeasFoldName = uigetdir; % The user will select the directory
-      [~,usermeasFoldName] = fileparts(usermeasFoldName);
-      % Selects only the folder from the full path
-      clearvars -except dataDir pathSep usermeasFoldName ProcessedDir ...
-        metricSel metricProfile AiryFactor NA loadMeas;
-      load(strcat(dataDir,pathSep,usermeasFoldName,pathSep,'workspace.mat'));
+   case 0 % Doesn't load anything
+    warning('loadMeas=0 will not load things for proc=1')
+   case 1 % Loads the last measurement
+    clearvars -except dataDir pathSep numberedFolderMeas ProcessedDir ...
+    metricSel metricProfile AiryFactor NA loadMeas;
+    load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep, ...
+    'workspace.mat'));
+   case 2 % Loads a manually-put folder name
+    clearvars -except dataDir pathSep measFoldName ProcessedDir ...
+    metricSel metricProfile AiryFactor NA loadMeas;
+    load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));
+   case 3 % Loads a user-defined measurement
+    %%%  Select a custom measurement folder
+    usermeasFoldName = uigetdir; % The user will select the directory
+    [~,usermeasFoldName] = fileparts(usermeasFoldName);
+    % Selects only the folder from the full path
+    clearvars -except dataDir pathSep usermeasFoldName ProcessedDir ...
+    metricSel metricProfile AiryFactor NA loadMeas;
+    load(strcat(dataDir,pathSep,usermeasFoldName,pathSep,'workspace.mat'));
   end
   %%% Keep some input variables default:
   proc = 1; % In order to maintain its intended value (the program only
@@ -263,7 +266,7 @@ f_ZernikeReconstruction(z_ReconstrNumb,wrapMask,z_pupil,maskZernReconstr);
 %% Simulation
 % Executed if desired on the parameters
 if simBool
-  f_SimulateFreeSpace(x,y,Xpc,Ypc,rPC,mask,starAmplitude,planetAmplitude,...
-    pixelSeparation,w1,w2,rPupilSize,showIin,showPupilin,showFPmag, ...
-    logscale,showFPphas,showPhasout,showMagout,showIout)
+  f_SimulateFreeSpace(x,y,Xpc,Ypc,rPC,mask,starAmplitude,...
+  planetAmplitude,pixelSeparation,w1,w2,rPupilSize,showIin,showPupilin, ...
+  showFPmag,logscale,showFPphas,showPhasout,showMagout,showIout)
 end

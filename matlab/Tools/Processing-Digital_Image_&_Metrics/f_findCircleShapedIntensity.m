@@ -1,4 +1,5 @@
-function [mainDataCenter,mainDataRadius,dataProportion] = f_findCircleShapedIntensity(rawData,varargin)
+function [mainDataCenter,mainDataRadius,dataProportion] = ...
+                              f_findCircleShapedIntensity(rawData,varargin)
 
 % Inputs:
 %   rawData: double format 2D image (single matrix)
@@ -22,37 +23,44 @@ radiusRangePerce = 0.15; %0.25
 
 %% Process Reference
 shapeData = rawData-mean(rawData(:)); % Background filtering
-enhancedRange = mat2gray(log10(im2double(shapeData + 1))); % avoid -Inf log and turn it back to uint8
+enhancedRange = mat2gray(log10(im2double(shapeData + 1))); % avoid -Inf log
+                                                % and turn it back to uint8
 
 %% Detect data regions
 totalCounts = numel(enhancedRange);
 binaryData = imbinarize(enhancedRange,luminanceThresh);
 binaryData = imfill(binaryData,4,'holes');
-binaryData = imopen(binaryData,strel('disk',6)); % Binary shape must fill circle to increase enclosed area approximation
+binaryData = imopen(binaryData,strel('disk',6)); % Binary shape must fill
+                         % circle to increase enclosed area approximation
 
 %% Compute blob properties
-regionInfo = regionprops(binaryData,'Centroid','area','MajorAxisLength','MinorAxisLength');
+regionInfo = regionprops(binaryData,'Centroid','area', ...
+                                    'MajorAxisLength','MinorAxisLength');
 [~, sortIndexes] = sort(cat(1,regionInfo.Area), 'descend');
 mainIndex = sortIndexes(1);
-blobRadius = mean([regionInfo(mainIndex).MajorAxisLength, regionInfo(mainIndex).MinorAxisLength],2)/2;
+blobRadius = mean([regionInfo(mainIndex).MajorAxisLength, ...
+                   regionInfo(mainIndex).MinorAxisLength],2)/2;
 regionCentroid = cat(1,regionInfo(mainIndex).Centroid);
 
 %% Compute area approximation properties
 areaCounts = histcounts(binaryData);
 dataProportion = areaCounts/totalCounts;
 radiusEstimation = sqrt(areaCounts(2)/pi);
-dataRanges = round([1-radiusRangePerce,1+radiusRangePerce]*mean([radiusEstimation,blobRadius]));
+dataRanges = round([1-radiusRangePerce,1+radiusRangePerce]* ...
+                   mean([radiusEstimation,blobRadius]));
 
 %% Generate circle with the Circle Hough Transform (CHT)
 % dataRanges (the mean radius) is an input for using the CHT.
-[dataCenter, dataRadii, circMetrics] = imfindcircles(binaryData,dataRanges,'Sensitivity', 1);
+[dataCenter, dataRadii, circMetrics] = imfindcircles(binaryData, ...
+                                              dataRanges,'Sensitivity', 1);
 [~,valueIndex] = max(circMetrics);
 mainDataCenter = mean([dataCenter(valueIndex,:); regionCentroid],1);
 mainDataRadius = mean([dataRadii(valueIndex,:),blobRadius]);
 
 %% Validate
 if diff([dataRadii(valueIndex,:),blobRadius])/blobRadius >0.05
-    error('Blob region is not a circular area'); % Compare the difference from circular prediction to the blob behaviour
+    error('Blob region is not a circular area'); % Compare the difference
+                         % from circular prediction to the blob behaviour
 end
 
 %% Visualize detected data

@@ -1,4 +1,5 @@
-function [circShiftY, circShiftX] = f_centerMaskToSpot(referenceData, projectionMask, mainDataCenter, mainDataRadius, monitorSize, TC, vid)
+function [circShiftY,circShiftX] = f_centerMaskToSpot(referenceData, ...
+         projectionMask,mainDataCenter,mainDataRadius,monitorSize,TC,vid)
 % A centering application designed to adjust optical vortex positioning.
 % Based on a gradient step iterator of radial intensity the algorithm loops
 % through the whole Screen in a coarse displacement looking for small
@@ -11,26 +12,26 @@ function [circShiftY, circShiftX] = f_centerMaskToSpot(referenceData, projection
 % Inputs: referenceData (MxN) [uint8] Gray image of spot without vortex
 %
 %         projectionMask (PxL) [double] Digital hologram of a vortex
-%         distribution to be presented at an SLM type screen.
+%         distribution to be presented at an SLM type screen
 %
 %         mainDataCenter (2x1) [double] Center coordinates of spot defined
 %         in a previous procedure. See: findCircleShapedIntensity.m
 %
 %         mainDataRadius (0x1) [double] An estimative of the overall spot
 %
-%         monitorSize (2x1) [double]. Width and Height information of SLM.
+%         monitorSize (2x1) [double]. Width and Height information of SLM
 %         holds values for PxL size.
 %
-%         TC (0x1) [double] Topological Charge of the vortex mask.
+%         TC (0x1) [double] Topological Charge of the vortex mask
 %
 %         vid [videoinput] Video Input source object related to a feedback
 %         camera.
 %
 % Outputs: shiftY (0x1) [double] Row Position of the vortex center related
-%          to Y coordinates. Used for shifting the mask coordinates.
+%          to Y coordinates. Used for shifting the mask coordinates
 %
 %          shiftX (0x1) [double] Column Position of the vortex center
-%          related to X coordinates. Used for shifting the mask coordinates.
+%          related to X coordinates. Used for shifting the mask coordinates
 %
 %
 % Version 1.78 - for Matlab 2014b and onward distributions
@@ -50,7 +51,8 @@ function [circShiftY, circShiftX] = f_centerMaskToSpot(referenceData, projection
 
 %% Set Reference
 dataSize = size(referenceData);
-[referenceRadialProfile] = f_getAverageRadialProfile(referenceData, dataSize, mainDataCenter);
+[referenceRadialProfile] = f_getAverageRadialProfile(referenceData, ...
+                                                  dataSize,mainDataCenter);
 dataRange = TC*100/2;
 criteriaTol = 0.5;
 
@@ -65,19 +67,26 @@ circIterator = @(maxIter,iter,n) (maxIter+1)*((iter+n)<0) + iter+n;
 
 %% Figure-Screen properties
 offsetPixel = [1,1];
-figureHandler = figure('Visible','off','MenuBar','none','Toolbar','none','Units','Pixels','color','black');
-axesHandler = gca; % set handler property to 'figure' to revert 'none'.
-set(axesHandler,'Units','Pixels','Position',[offsetPixel monitorSize(1) monitorSize(2)]);
-updateDisplayHandler = imagesc(zeros(fliplr(monitorSize))); colormap('gray'); axis off;
+figureHandler = figure('Visible','off','MenuBar','none','Toolbar', ...
+                       'none','Units','Pixels','color','black');
+axesHandler = gca; % info:set handler property to 'figure' to revert 'none'
+set(axesHandler,'Units','Pixels','Position',[offsetPixel monitorSize(1) ...
+                                             monitorSize(2)]);
+updateDisplayHandler = imagesc(zeros(fliplr(monitorSize))); axis off;
+colormap('gray'); 
 figureHandler.Visible = 'on'; axis on;
 [~] = f_changeProjectionMonitor('Restore');
-figure('color','white'); analysisPlotHandler = plot(referenceRadialProfile);ylim auto; grid on; axis square;
+figure('color','white'); 
+analysisPlotHandler = plot(referenceRadialProfile);ylim auto; grid on;
+axis square;
 
 %% Specific region of scanning
 % rectInfo = imrect(axesHandler);
 % position = round(rectInfo.getPosition);
-% shiftStepX = getClosestMultiple(position(3),round(spotFraction*position(3)));
-% shiftStepY = getClosestMultiple(position(4),round(spotFraction*position(4)));
+% shiftStepX = getClosestMultiple(position(3), ...
+%                                 round(spotFraction*position(3)));
+% shiftStepY = getClosestMultiple(position(4), ...
+%                                 round(spotFraction*position(4)));
 % maxIterX = position(3)/shiftStepX;
 % maxIterY = position(4)/shiftStepY;
 % searchOffsetX = position(1);
@@ -97,7 +106,9 @@ for times = 1: refiningIterations
   for iterationsY = 0:maxIterY
     for iterationsX = 0:maxIterX
       currentFrame = getsnapshot(vid);
-      [criteriaValue, relativeChange, ~] = f_getDistMetrics(currentFrame,dataSize, mainDataCenter, referenceRadialProfile, dataRange);
+      [criteriaValue, relativeChange, ~] = ...
+      f_getDistMetrics(currentFrame,dataSize,mainDataCenter, ...
+                       referenceRadialProfile,dataRange);
       valComparison = (criteriaValue - previousVal);
       previousVal = criteriaValue;
       disp(criteriaValue);
@@ -107,10 +118,12 @@ for times = 1: refiningIterations
         break;
       end
       
-      localY = iterationsY*shiftStepY + searchOffsetY; % If breaks before updating, it holds the variation coordinates (n-1)
+      localY = iterationsY*shiftStepY + searchOffsetY; % If breaks before 
+      % updating, it holds the variation coordinates (n-1)
       localX = iterationsX*shiftStepX + searchOffsetX;
       wait(vid);
-      set(updateDisplayHandler,'CData',circshift(projectionMask,[localY, localX]));
+      set(updateDisplayHandler,'CData',circshift(projectionMask, ...
+          [localY, localX]));
       set(analysisPlotHandler,'YData',relativeChange);
       pause(0.05);
     end
@@ -121,10 +134,12 @@ for times = 1: refiningIterations
     end
   end
   if updateEnabled
-    %     shiftY = (iterationsY)*shiftStepX + shiftY;
-    %     shiftX = circIterator(maxIterX,iterationsX,-2)*shiftStepY + shiftX;
-    searchOffsetY = circIterator(maxIterY,iterationsY,-1)*shiftStepY + searchOffsetY;
-    searchOffsetX = circIterator(maxIterX,iterationsX,-backwardIter)*shiftStepX + searchOffsetX;
+    %  shiftY = (iterationsY)*shiftStepX + shiftY;
+    %  shiftX = circIterator(maxIterX,iterationsX,-2)*shiftStepY + shiftX;
+    searchOffsetY = circIterator(maxIterY,iterationsY,-1)*shiftStepY + ...
+                                                             searchOffsetY;
+    searchOffsetX = circIterator(maxIterX,iterationsX,-backwardIter)* ...
+                                                shiftStepX + searchOffsetX;
     maxIterX = scanAreaFactor*shiftStepX;
     shiftStepX = round(shiftStepX/(2^(times+1)));
     shiftStepY = shiftStepX;
@@ -133,18 +148,24 @@ for times = 1: refiningIterations
     iterationsX = 0;
     iterationsY = 0;
     updateEnabled = false;
-    pause(1); % Wait for intensity to be properly registered after scan area change
+    pause(1); % Wait for intensity to be properly registered after scan
+              % area change
   else
-    warning('Failed to find representative radial changes during iteration.');
+    warning(['Failed to find representative radial changes during' ...
+            ' iteration']);
   end
 end
 
 %% Instruction for the user
-disp(['Move the sliders to adjust the mask"s position and then close the'...
-     ' mask window when done']);
+disp(['Move the sliders to adjust the mask"s position and then close '...
+     ' the mask window when done']);
 
 %% Manual adjustment
-[manualShiftYcoord, manualShiftXcoord] = f_adjustSLMPositioning(figureHandler, updateDisplayHandler, analysisPlotHandler, vid, dataSize, mainDataCenter, referenceRadialProfile, dataRange);
-circShiftX = localX + manualShiftXcoord - monitorSize(1); % Referred Overall Coordinates from screen origin
+[manualShiftYcoord, manualShiftXcoord] = f_adjustSLMPositioning( ...
+figureHandler,updateDisplayHandler,analysisPlotHandler,vid,dataSize, ...
+mainDataCenter,referenceRadialProfile,dataRange);
+circShiftX = localX + manualShiftXcoord - monitorSize(1); % Referred 
+                                   % Overall Coordinates from screen origin
 circShiftY = localY + manualShiftYcoord - monitorSize(2);
+
 end
