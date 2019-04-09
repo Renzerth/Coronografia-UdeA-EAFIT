@@ -73,14 +73,15 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
  exposureLyot = 1/250; % Range: [1/1e4,1]
  fpsLyot = [];
  formatLyot = 'Y800 (1280x960)';
+ cameraPlaneLyot =  'Lyot';
  PPLyot = 3.75; % Pixel pitch in [um/pixel]
  if shiftMask == 2 && ~(exist(SLMcenterWisdom,'file') == 2)% When self centering will be performed
   
   %% Self centering camera preparation
   % Turns the camera on and create all the needed variables. Remember to
   % leave the preview open
-   [vidSelfCent,~] = f_selectCamera(cameraIDLyot,cameraLyot, ...
-                                   exposureLyot,fpsLyot,formatLyot);
+   [vidSelfCent,~,fpsLyot] = f_selectCamera(cameraIDLyot,cameraLyot, ...
+                                          exposureLyot,fpsLyot,formatLyot);
  else % ~(measSimulated == 0 && meas == 1)
    vidSelfCent = []; % Empty, as a non-used input in some functions
  end
@@ -89,7 +90,8 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
 [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize, ...
 shiftCart] = f_DefineSpace(vidSelfCent,sSupport,sSize,shiftCart, ...
 shiftMask,PPLyot,pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType, ...
-MaxMask,SLMcenterWisdom,maskSel);
+MaxMask,SLMcenterWisdom,cameraLyot,cameraPlaneLyot,exposureLyot, ...
+formatLyot,fpsLyot,maskSel);
 % Defines the cartesian/polar coordinates, its sampling interval and 
 % discretized angular part for gl
 %%% Coordinates selection:
@@ -185,8 +187,8 @@ if meas
     'shiftCart','beepSound','L','NA','PP');
   end
 
-  %% Termination of the hardware clear vid for any stage of this algorithm
-  f_releaseCamera(vidMeas);
+%% Termination of the hardware 
+f_releaseCamera(vidMeas); % Clear vid for the self-centering stage
   
 elseif proc == 1 %  meas == 0 always in order to enter here (since here one
                  % will load a measurement)

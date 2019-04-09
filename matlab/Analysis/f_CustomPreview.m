@@ -1,4 +1,4 @@
-function [ previewHandle ] = f_CustomPreview(vid,tit)
+function [ hFig ] = f_CustomPreview(vid,tit)
 %UNTITLED5 Summary of this function goes here
 %   Detailed explanation goes here
 % from: https://nl.mathworks.com/help/imaq/previewing-data.html
@@ -55,6 +55,6 @@ setappdata(hImage,'UpdatePreviewWindowFcn',@f_mypreview_fcn);
 setappdata(hImage,'HandleToTimestampLabel',hTextLabel);
 
 % Display the video data in your GUI:
-previewHandle = preview(vid, hImage);
+preview(vid, hImage);
 end
 

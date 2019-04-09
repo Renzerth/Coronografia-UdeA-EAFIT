@@ -9,7 +9,7 @@ function [SgnWidth, SgnHeight] = f_calcHScoorToSgnCoor(width, height)
 % H = 0.5(1+Sgn(x)) :: Domain [0,1] -> Sgn(x) = 2H - 1 :: Domain [-1,1]
 
 %% Check input
-if width > 1 || height > 1
+if abs(width) > 1 || abs(height) > 1
   error('Height and Width Values must be defined between [0,1]');
 end
 

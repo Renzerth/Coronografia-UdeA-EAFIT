@@ -110,11 +110,11 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
 % pixel coordinates: [-L/2,L/2]
 % 2: size defined by the resolution of the selected screen on [-1,1] (sign function coordiantes)   
 %%%% For coordType = 1 (user custom-sized):
-    k = 9; % Bits for grey levels; 2^k is the resolution (size of x and y)
+%     k = 9; % Bits for grey levels; 2^k is the resolution (size of x and y)
            % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
            % Usually try maximum k = 11
            % Only works when coordType = 1
-    sSize = 2^k-1;  % Spatial size: number of samples; odd number so that 
+    sSize = 10;  % Spatial size: number of samples; odd number so that 
                     % the vortex gets centered. ref: 2^k-1      
     % sSize = 512; % Instead of 2^k-1
     MaxMask = 1; % Defines if the mask should be maximized
@@ -148,7 +148,7 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
               
 %% Measurement camera selection and parameters
 % Self centering camera is selected just before f_DefineSpace
-camera = 'DMK42BUC03'; % PSF is needed for the 2019's metrics (meanwhile)
+camera = 'DMK23U445'; % PSF is needed for the 2019's metrics (meanwhile)
 % Exposure: analog parameter
 % Format: 'Y800 (1280x960)' [best]; 'RGB24 (1024x768)' [another option]
 
@@ -198,7 +198,7 @@ tc = 2; % Topological charge (integer bigger or equal to one)
         % patterns of Hermite-Gauss (maybe just a coincidence)
         % Note: only applies when meas and proc are both zero
 s = 1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
-ph0 = 0; % Initial phase of the angle [radians]; reference +pi from
+ph0 = pi; % Initial phase of the angle [radians]; reference +pi from
          % normal zero of trig circle and same rotation convention.
          % This corresponds to a normal rotation of the mask for stethic
          % reasons and shouldn't affect the results. Only affects if the

@@ -149,7 +149,7 @@ switch shiftMask
   shiftCart = shiftCart/100; % Percentage w.r.t the half size 
   shiftX = shiftCart(2); % Cartesian shift in x
   shiftY = shiftCart(1); % Cartesian shift in y
-  shiftCart = [shiftY shiftX*AspectRatio];
+  shiftCart = [shiftY shiftX];
   
  case 2 % Self-centering algorithm
 
@@ -189,10 +189,8 @@ switch shiftMask
         shiftY/monitorSize(2));
     elseif coordType == 1 && max(abs(shiftCart)) <= 1
       % This converts the shifts from coordType 2 to 1
-      [shiftX,shiftY] = f_calcSgnCoorToHScoor(shiftX, shiftY);
-% OLD:
-%       shiftY = round(shiftY*monitorSize(2));
-%       shiftX = round(shiftX*monitorSize(1));
+      [shiftX,shiftY] = f_calcSgnCoorToHScoor(shiftX*monitorSize(1), ...
+        shiftY*monitorSize(2));
     end
     shiftCart = [shiftY, shiftX];
   end
@@ -233,21 +231,10 @@ end
 
 %% Shift application
 % The signs of the shifts account for the cartesian coordinates convention
-
-% TESTS
 % if shiftCart ~= 2
-%   Xslm = X + shiftX;
-%   Yslm = Y + shiftY;
+  Xslm = X + shiftX;
+  Yslm = Y - shiftY;
 % end
-
-% ORIGINAL
-if flagAR == 1 % Aspect ratio already applied on X
-  shiftX = shiftX*AspectRatio;
-end
-Xslm = X - shiftX;
-Yslm = Y - shiftY;
-
-
 %% Polar coordinates for the SLM
 % X,Y variables redefined for being used in the EGV and Fork masks
 [phiSLM,rSLM] = cart2pol(Xslm,Yslm); % Polar coordinates with an added

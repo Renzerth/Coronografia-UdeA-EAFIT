@@ -95,7 +95,7 @@ while loopCondition == 0
     warning('Try a valid command, the program will assume a "no" as an answer');
   end
   
-  %% Close current figures
+  %% Close current figures (if they exist)
   if ishandle(h1)
     close(h1);
   end

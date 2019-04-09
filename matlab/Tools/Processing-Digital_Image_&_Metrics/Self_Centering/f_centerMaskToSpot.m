@@ -54,10 +54,10 @@ dataSize = size(referenceData);
 [referenceRadialProfile] = f_getAverageRadialProfile(referenceData, ...
                                                   dataSize,mainDataCenter);
 dataRange = TC*100/2;
-criteriaTol = 0.5;
+criteriaTol = 0.5; % Ref: 0.5
 
 %% Set Iterator
-spotFraction = 0.2;
+spotFraction = 0.2; % Ref: 0.2
 scanArea = round(spotFraction*mainDataRadius);
 shiftStepX = f_getClosestMultiple(monitorSize(1),scanArea);
 shiftStepY = f_getClosestMultiple(monitorSize(2),scanArea);
@@ -79,10 +79,13 @@ figureHandler.Visible = 'on'; axis on;
 [~] = f_changeProjectionMonitor('Restore');
 
 %%% Reference radial profile figure
-figure('color','white'); 
+FigProfHandler = figure('color','white'); 
 analysisPlotHandler = plot(referenceRadialProfile);ylim auto; grid on;
+% This title applies since later on the relative difference will be
+% dynamically plotted here
+
 axis square; title(['Relative difference: reference and tc=',num2str(TC)]);
-xlabel('Radial distance from the origin of the spot [pixels]');
+xlabel('Relative distance from the center of the spot [pixels]');
 ylabel('Relative difference of intensities [a.u.]')
 
 %% Specific region of scanning
@@ -165,12 +168,17 @@ end
 disp(['Move the sliders to adjust the mask"s position and then close'...
      ' the mask window when done']);
 
-%% Manual adjustment
+%% Manual adjustment of the mask
 [manualShiftYcoord, manualShiftXcoord] = f_adjustSLMPositioning( ...
 figureHandler,updateDisplayHandler,analysisPlotHandler,vid,dataSize, ...
 mainDataCenter,referenceRadialProfile,dataRange);
 circShiftX = localX + manualShiftXcoord - monitorSize(1); % Referred 
                                    % Overall Coordinates from screen origin
 circShiftY = localY + manualShiftYcoord - monitorSize(2);
+
+%% Close the profile figure
+if ishandle(FigProfHandler)
+  close(FigProfHandler);
+end
 
 end
