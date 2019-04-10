@@ -28,7 +28,7 @@ scaledY = Y/aspectRatio;
 [angularTranstion,rhoRadius] = cart2pol(X - shiftX,scaledY - shiftY);
 
 %% Mask generation
-MaskProportion = 0.25; % Relative proportion of the size of the mask. Ref: 0.1
+MaskProportion = 0.20; % Relative proportion of the size of the mask. Ref: 0.1
 projectionMask = mat2gray((rhoRadius <= MaskProportion/aspectRatio).* ...
                  angle(exp(1i*TC*(angularTranstion + pi/TC))));
 

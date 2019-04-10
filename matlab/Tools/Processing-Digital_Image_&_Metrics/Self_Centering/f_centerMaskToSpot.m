@@ -52,8 +52,8 @@ function [circShiftY,circShiftX] = f_centerMaskToSpot(referenceData, ...
 %% Algorithm Settings
 varBaseLine = 0.10;
 criteriaTol = 0.5; % Ref: 0.5
-histWeightFactor = 0.20;
-spotFraction = 0.12; % Ref: 0.1
+histWeightFactor = 0.2;
+spotFraction = 0.2; % Ref: 0.15 check
 noiseValExcl = 20;
 %% Set Reference
 dataSize = size(referenceData);
@@ -136,7 +136,7 @@ for times = 1: refiningIterations
       set(updateDisplayHandler,'CData',circshift(projectionMask,[localY, localX]));
       set(analysisPlotHandler,'YData',relativeChange);
     end
-        dynamicEval = (varBaseLine + abs(times/10 - histWeightFactor*(criteriaValue + valComparison)));
+        dynamicEval = (varBaseLine + abs(times/10 - histWeightFactor*(criteriaValue + valComparison)) + 0.1*(1-exp(-(2^(times-1)/TC))));
     if criteriaValue >= dynamicEval
       disp('Spot high change - stop')
       updateEnabled = true;
@@ -145,8 +145,8 @@ for times = 1: refiningIterations
   end
   
   if updateEnabled
-    searchOffsetY = circIterator(maxIterY,iterationsY,-1)*shiftStepY;
-    searchOffsetX = circIterator(maxIterX,iterationsX,-backwardIter)*shiftStepX;
+    searchOffsetY = circIterator(maxIterY,iterationsY,-backwardIter)*shiftStepY + searchOffsetY;
+    searchOffsetX = circIterator(maxIterX,iterationsX,-backwardIter)*shiftStepX + searchOffsetX;
     maxIterX = scanAreaFactor*shiftStepX;
     maxIterY = scanAreaFactor*shiftStepY;
     shiftStepX = round(shiftStepX/(2^(times+1)));
@@ -169,7 +169,7 @@ disp(['Move the sliders to adjust the mask"s position and then close'...
 [manualShiftYcoord, manualShiftXcoord] = f_adjustSLMPositioning( ...
 figureHandler,updateDisplayHandler,analysisPlotHandler,vid,dataSize, ...
 mainDataCenter,referenceRadialProfile,dataRange);
-circShiftX = monitorSize(1) - localX + manualShiftXcoord; % Referred 
+circShiftX = localX + manualShiftXcoord - monitorSize(1); % Referred 
                                    % Overall Coordinates from screen origin
 circShiftY = localY + manualShiftYcoord - monitorSize(2);
 
