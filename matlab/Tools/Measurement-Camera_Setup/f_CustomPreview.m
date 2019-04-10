@@ -1,9 +1,10 @@
 function [ hFig ] = f_CustomPreview(vid,tit)
-%UNTITLED5 Summary of this function goes here
 %   Detailed explanation goes here
 % from: https://nl.mathworks.com/help/imaq/previewing-data.html
 % and: https://nl.mathworks.com/help/vision/examples/video-display-in-a-custom-user-interface.html
 % and: https://nl.mathworks.com/help/imaq/examples/working-with-properties.html
+%
+% Taken from those links and organized by Samuel Plazas
 
 % Create a figure window. This example turns off the default
 % toolbar, menubar, and figure numbering:
@@ -26,7 +27,6 @@ imWidth = vidRes(1);
 imHeight = vidRes(2);
 nBands = vid.NumberOfBands;
 hImage = image( zeros(imHeight, imWidth, nBands) );
-
 
 % Set video title using uicontrol. uicontrol is used so that text
 % can be positioned in the context of the figure, not the axis.

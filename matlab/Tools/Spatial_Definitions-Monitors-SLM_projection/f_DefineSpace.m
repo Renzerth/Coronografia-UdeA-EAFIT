@@ -134,7 +134,9 @@ rSize = min(HalfSupportX,HalfSupportY);
 % Check first if vid exists, otherwise set shiftMask to zero
 if isempty(vidSelfCent) && shiftMask == 2 && ~(exist(SLMcenterWisdom,'file') == 2)
   error(['Set measSimulated = 0 and meas = 1 in order to use' ...
-    ' shiftMask = 2. shiftMask should be set to zero.']);
+    ' shiftMask = 2. shiftMask should be set to zero or one.']);
+elseif isempty(vidSelfCent) && shiftMask == 2 
+  warning('SLMwisdom.mat will be loaded for measSimulated=0')  
 end
 
 switch shiftMask 
@@ -142,7 +144,7 @@ switch shiftMask
   shiftX = 0; shiftY = 0; % Shift deactivated   
   shiftCart = [shiftX shiftY];    
   
- case 1 % User-give
+ case 1 % User-given
   % Test if the center of the mask is inside the truncation
   if max(shiftCart) > 100
     error(['The center of the mask is out of the boundaries of the ' ...
@@ -154,8 +156,6 @@ switch shiftMask
   shiftCart = [shiftY shiftX*AspectRatio];
   
  case 2 % Self-centering algorithm
-
-  %% Self Centering algorithm
   % The camera here must be Lyot for the 2019's setup
   if ~(exist(SLMcenterWisdom,'file') == 2) % The self centering data
                                            % doesn't exist in Data (folder)
@@ -163,14 +163,14 @@ switch shiftMask
     PP = PP*1e-6;  % um to m
     lensDiameter = 2*apRad*1e-2; % cm to m
     
-    %%% Preview parameters
+    %%% Preview parameters for the self centering
     [N,D] = rat(exposure);
     tit = strcat('Preview of the',{' '},cameraPlane,{' '}, ...
     'camera (',camera,')',{' '},'[Exposure:',{' '},num2str(N),'/', ...
     num2str(D),';',{' '},'format:',{' '},num2str(format),';',{' '}, ...
     'fps:',{' '},num2str(fps),']');
     
-    %%%% Self centering alrgorithm
+   %% Self-centering algorithm
     % these outputs are not used in the meantime (2019): 
     % [shiftY,shiftX,systemPupilPixelSize,mainDataCenter,mainDataRadius] 
     [shiftY, shiftX,~,~,~] = ...
@@ -180,21 +180,27 @@ switch shiftMask
         shiftY/monitorSize(2));
     end
     shiftCart = [shiftY, shiftX];
+    
+    %% Save SLMwisdom.mat
     % Explanation: save(directory+filename,variables)
     save(SLMcenterWisdom,'shiftCart','coordType')
+    
   else % The self centering data is available in Data (folder)
+    %% Load SLMwisdom.mat
     load(SLMcenterWisdom,'shiftCart');
     shiftX = shiftCart(2); shiftY = shiftCart(1);
-    if coordType == 2 && max(abs(shiftCart)) >= 1 % fix data format incompatibility
+    
+    %% Fix data format incompatibility
+    if coordType == 2 && max(abs(shiftCart)) >= 1
       % This converts the shifts from coordType 1 to 2
       [shiftX,shiftY] = f_calcHScoorToSgnCoor(shiftX/monitorSize(1), ...
         shiftY/monitorSize(2));
     elseif coordType == 1 && max(abs(shiftCart)) <= 1
       % This converts the shifts from coordType 2 to 1
       [shiftX,shiftY] = f_calcSgnCoorToHScoor(shiftX, shiftY);
-% OLD:
-%       shiftY = round(shiftY*monitorSize(2));
-%       shiftX = round(shiftX*monitorSize(1));
+      % OLD:
+      %       shiftY = round(shiftY*monitorSize(2));
+      %       shiftX = round(shiftX*monitorSize(1));
     end
     shiftCart = [shiftY, shiftX];
   end
@@ -228,29 +234,28 @@ end
 %% Shift scaling so that it is a percentage
 % Takes into account the half support of X and Y and a percentage of them
 % is taken
-if shiftMask ~= 2 % REVISAR!!
+if shiftMask ~= 2 
   shiftX = shiftX*HalfSupportX; % Shift converted to the HalfSupport's units
   shiftY = shiftY*HalfSupportY; % Shift converted to the HalfSupport's units
 end
 
 %% Shift application
-% The signs of the shifts account for the cartesian coordinates convention
-
-% TESTS
-% if shiftMask ~= 2
-%   Xslm = X + shiftX;
-%   Yslm = Y + shiftY;
-% end
-
-% ORIGINAL
-% Xslm = X + shiftX;
-% Yslm = Y - shiftY;
 
 if flagAR == 1 % Aspect ratio already applied on Y
   shiftY = shiftY/AspectRatio;
 end
-Xslm = X - shiftX;
-Yslm = Y - shiftY;
+
+if shiftMask == 2 
+    % The signs of the shifts account for "perhapsAworkingDEMO.m"
+    % convention
+    Xslm = X - shiftX;
+    Yslm = Y - shiftY;
+else % shiftMask = [0,1]
+    % The signs of the shifts account for the cartesian coordinate
+    % convention
+    Xslm = X + shiftX;
+    Yslm = Y - shiftY;
+end
 
 
 %% Polar coordinates for the SLM

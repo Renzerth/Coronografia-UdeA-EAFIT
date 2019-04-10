@@ -184,7 +184,7 @@ if meas
     'workspace.mat'),'measfullpath','refmeasfullpath','ProcessedDir', ...
     'dataDir','pathSep','infoDelim','dataformat','imgformat', ...
     'cameraPlane','totalImgs','AiryFactor','metricSel','metricProfile', ...
-    'shiftCart','beepSound','L','NA','PP');
+    'shiftCart','beepSound','L','NA','PP','apRad');
   end
 
 %% Termination of the hardware 
@@ -198,31 +198,50 @@ elseif proc == 1 %  meas == 0 always in order to enter here (since here one
   % clearvars: these variables are used on the next load and then they are
   % replaced by the new ones that are loded
   switch loadMeas
-   case 0 % Doesn't load anything
-    warning('loadMeas=0 will not load things for proc=1')
    case 1 % Loads the last measurement
     clearvars -except dataDir pathSep numberedFolderMeas ProcessedDir ...
     metricSel metricProfile AiryFactor NA loadMeas;
-    load(strcat(dataDir,pathSep,numberedFolderMeas,pathSep, ...
-    'workspace.mat'));
+    loadMeasPath = strcat(dataDir,pathSep,numberedFolderMeas,pathSep, ...
+    'workspace.mat');
+    if exist(loadMeasPath, 'file') == 2 % File exists
+       load(loadMeasPath); 
+    else % File does not exist.
+      error('Could not load the specified previous measurement')  
+    end
+    
    case 2 % Loads a manually-put folder name
     clearvars -except dataDir pathSep measFoldName ProcessedDir ...
     metricSel metricProfile AiryFactor NA loadMeas;
-    load(strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat'));
+    loadMeasPath = strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat');
+    if exist(loadMeasPath, 'file') == 2 % File exists
+       load(loadMeasPath); 
+    else % File does not exist.
+      error('Could not load the specified previous measurement')  
+    end
+    
    case 3 % Loads a user-defined measurement
     %%%  Select a custom measurement folder
     usermeasFoldName = uigetdir; % The user will select the directory
     [~,usermeasFoldName] = fileparts(usermeasFoldName);
     % Selects only the folder from the full path
     clearvars -except dataDir pathSep usermeasFoldName ProcessedDir ...
-    metricSel metricProfile AiryFactor NA loadMeas;
-    load(strcat(dataDir,pathSep,usermeasFoldName,pathSep,'workspace.mat'));
+    metricSel metricProfile AiryFactor NA loadMeas;    
+    loadMeasPath = strcat(dataDir,pathSep,usermeasFoldName,pathSep,'workspace.mat');
+    if exist(loadMeasPath, 'file') == 2 % File exists
+       load(loadMeasPath); 
+    else % File does not exist.
+      error('Could not load the specified previous measurement')  
+    end
+    
+      otherwise % error
+    errror('Invalid value for "loadMeas"')
   end
-  %%% Keep some input variables default:
+  
+  %%% Keep some input variables defaul:
   proc = 1; % In order to maintain its intended value (the program only
   % enters to the switch if proc=1 and if by loading its value is
-  % changed, it gets restored to 1 here). proc = 1
-  meas = 0; % Same reason as above. meas = 0
+  % changed, it gets restored to 1 here). Ref: proc = 1
+  meas = 0; % Same reason as above. Ref: meas = 0
   
 end % End of measurements
 

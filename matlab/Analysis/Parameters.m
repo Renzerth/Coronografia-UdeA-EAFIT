@@ -3,11 +3,15 @@
 %% Algorithm sections
 meas = 1; % Measure: yes (1) or no (0)
 %%% For meas = 1: the whole workspace is saved
-    measSimulated = 0; % Saves the mask and does not involve the cameras: 
+    measSimulated = 1; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
                        % The mask saving is usefull for reports. Note: the
                        % figure that says Camera isn't saved but the other
                        % one that shows the mask in a gray scale fashion
+                       % Ideally, set:
+                       % abs_ang = 1
+                       % maskSel = 1
+                       % tcvect = [1 2 0]; glvect = [255]; 
     % if measSimulated = 1 -> measDebug will be 0 
     % If meas = 1 -> all the figures will be closed before starting it
     measDebug = 1; % Debugging before actually measuring. Displays the 
@@ -15,7 +19,7 @@ meas = 1; % Measure: yes (1) or no (0)
                    % Works if  measSimulated = 0. If it is active, the
                    % program will set proc = 0
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 0; % Processes the data
+proc = 1; % Processes the data
 %%% For proc = 1 and meas = 0:  the workspace is loaded
     loadMeas = 1; % In order to load a previous workspace:
     % 0: doesn't load anything: not recommended in general
@@ -32,7 +36,7 @@ proc = 0; % Processes the data
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)           
-abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
+abs_ang = 1; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. abs_ang=1 is normally used for
              % maskSel=1
              % It doesn't apply for Zernike and LG +
@@ -42,7 +46,7 @@ abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % phase, are noticed in the amplitude if the field is 
              % propagated. Consider using simBool = 1
              % abs_ang = 0 is not valid for FTmask = 1
-maskSel = 0; % Phase mask selection:
+maskSel = 1; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -73,7 +77,7 @@ plotMask = 2; % Allows to plot the mask:
 %  -Principal screen: MATLAB scrnIdx(1); Windows(2); AnyDesk(2)
 %  -Pluto screen: MATLAB scrnIdx(3); Windows(1); Anydesk(1)
 %  -LC2002 screen: MATLAB scrnIdx(2); Windows(3); Anydesk(0)
-slm = 'Pluto'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
+slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
@@ -329,7 +333,7 @@ dataformat = '.bmp'; % Default: .bmp (not too heavy)
 % glvect = [1 16 24 28 36 56 128 256]; % Given by por Juan Jose
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
                                   % with a good system phase response
-tcvect = [1 2]; % Topological charges to be measured [integers] 
+tcvect = [1 2 0]; % Topological charges to be measured [integers] 
 glvect = [255]; % Gray level to be measured [0,255]
 % glvect = linspace(2,18,9)
 waitbeforemeas = 2; % Seconds before measuring as a safety measurement. 

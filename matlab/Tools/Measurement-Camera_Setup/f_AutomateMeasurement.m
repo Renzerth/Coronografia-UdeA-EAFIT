@@ -163,7 +163,9 @@ imwrite(snap,refmeasfullpath);
 
 %%% Wait and close the figure:
 pause(recordingDelay); % Displays the mask for "recordingDelay" seconds  
-wait(vid); % Waits until vid is not running or logging
+if measSimulated == 0
+    wait(vid); % Waits until vid is not running or logging
+end
 if ishandle(reffig)
   close(reffig); % Closes the reference mask
 end
