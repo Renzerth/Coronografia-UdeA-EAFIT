@@ -18,8 +18,9 @@ function angleAiry = f_scalePix2DiffAng(x,AiryFactor)
 %  angleAiry: L/D (wavelength over system's diameter), angular units in
 %  rad. A vector scaled from pixel size to diffraction angle size
 %
-BesselFirstZero = 1.22; % First zero of the cylindrical Bessel function of 
-                        % first kind and zeroth order
-angleAiry = (AiryFactor/BesselFirstZero)*x; % [Lambda/D] Units
+AiryFirstZero = 1.22; % First zero of the cylindrical Bessel function of 
+                        % first kind and zeroth order over its argument:
+                        % jinc or sombrero or airy in optics
+angleAiry = (AiryFactor/AiryFirstZero)*x; % [Lambda/D] Units
 end
 

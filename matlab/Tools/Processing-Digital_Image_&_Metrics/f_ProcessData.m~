@@ -1,6 +1,6 @@
 function f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,dataDir,pathSep,infoDelim, ...
 dataformat,imgformat,cameraPlane,totalImgs,AiryFactor,metricSel,metricProfile, ...
-shiftCart,beepSound,L,NA,PP,apRad)
+shiftCart,beepSound,L,NA,PP,apRad,measSimulated)
 
 % Inputs:
 %   
@@ -23,91 +23,49 @@ disp('Processing started:'); disp(t1_dt)
 processedImgname = strcat(ProcessedDir,pathSep,'processed',infoDelim, ...
                           cameraPlane,infoDelim);
 
-%%% Loading all the measurements
-% Explanation: load(directory+filename,variables)
-struct = load(measfullpath); % Loads all the measured images and their info
-                        % Two variables are loaded in the structure: 
-                        % "expImgs" and "MeasInfo"
+if measSimulated == 0 % Real measurement
+    %%% Loading all the measurements
+    % Explanation: load(directory+filename,variables)
+    struct = load(measfullpath); % Loads all the measured images and their info
+                            % Two variables are loaded in the structure: 
+                            % "expImgs" and "MeasInfo"
 
-%%% Experimental images
-expMeas = struct.expImgs;
+    %%% Experimental images
+    expMeas = struct.expImgs;
 
-%%% Experiment information
-measInfo = struct.MeasInfo;
-                        
-%%%  Loading the reference measurement
-% The image is read in a uint8 format: integer with values that are
-% normally in [0,255] (8-bit depth or dynamic range)
-refMeas = imread(refmeasfullpath);       
+    %%% Experiment information
+    measInfo = struct.MeasInfo;
 
-%%% UINT8 format to Double for the reference image
-% im2double duplicates the precision of the exponent leaving intact the
-% mantisa. It as floating-point format that normalizes the images and this
-% operation is made on each RGB channel. rgb2gray does a similar operation
-% but scalling to a gray scale, where it  converts RGB values to grayscale values
-% by forming a weighted sum of the R, G, and B components:
-% 0.2989 * R + 0.5870 * G + 0.1140 * B 
-refmeas = im2double(refMeas);
+    %%%  Loading the reference measurement
+    % The image is read in a uint8 format: integer with values that are
+    % normally in [0,255] (8-bit depth or dynamic range)
+    refMeas = imread(refmeasfullpath);       
+
+    %%% UINT8 format to Double for the reference image
+    % im2double duplicates the precision of the exponent leaving intact the
+    % mantisa. It as floating-point format that normalizes the images and this
+    % operation is made on each RGB channel. rgb2gray does a similar operation
+    % but scalling to a gray scale, where it  converts RGB values to grayscale values
+    % by forming a weighted sum of the R, G, and B components:
+    % 0.2989 * R + 0.5870 * G + 0.1140 * B 
+    refMeas = im2double(refMeas);
+    
+    Lyotimg = refMeas;                                                                                                     % COMPLETELY TEMPORARY!
+    
+else % Simulated measurement
+   %% Example images to process
+    Lyotimg = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_1.bmp')); % Lyot image
+    Lyotimg = rgb2gray(Lyotimg);  
+    refMeas = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_2.bmp')); % PSF reference
+    expMeas = {0,0}; % Cell initialization
+    expMeas{1} = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_3.png')); % PSF measurement 1
+    expMeas{2} = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_4.png')); % PSF measurement 2
+    measInfo = {'data_ref_3','data_ref_3'};                    
+    totalImgs = 2; % For the case of the simulated measurement
+    
+end
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%% Temporal reference images loading
-%% Temporal reference images
-PSFimg = imread(strcat(dataDir,pathSep,'data_ref_2.bmp'));
-Lyotimg = imread(strcat(dataDir,pathSep,'data_ref_1.bmp'));
-Lyotimg = rgb2gray(Lyotimg);                                                                                               % TO DELETE
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%% Coordinates: Lambda/D, pixels and arcseconds
-%% Find the center of the PSF image (with a binarization)
-refmeas = PSFimg;                                                                                                                 % TO DELETE
-[xangL_D,yangL_D,aproxCenter,aproxRadius] = f_approximateSpotSize(refmeas);
- 
-% MAYBE: Find center of the PSF image (peaks)  [for more robustness]
-
-%% Read the approximate center of the PSF reference
-midX = aproxCenter(2);
-midY = aproxCenter(1);
-
-%%% OLD: center of the image but not of the spot
-% midX = round((maxX+1)/2); % x mid point
-% midY = round((maxY+1)/2); % y mid point
-                        
-%% Cartesian coordinates with pixel units
-% ORIGINAL
-% [ySize, xSize] = size(refmeas); % All images assumed of the same size as the refmeas
-% xpix = 1:xSize; % Pixels start in 1
-% ypix = 1:ySize; % Pixels start in 1
-% halfX = round((maxX+1)/2); % x mid point
-% halfY = round((maxY+1)/2); % y mid point
-% Old: halfX = xSize/2; halfY = ySize/2;
-
-% TO DELETE
-[ySize,xSize] = size(Lyotimg);
-halfX = xSize/2;
-halfY = ySize/2;
-
-%% Symmetric pixels
-% ORIGINAL
-% xpix = -halfX : halfX - 1; % pixels
-% ypix= -halfY :  halfY - 1; % pixels                   
-
-%% Lambda over D scaled coordinates
-% xangL_D = xpix/(AiryMultiplicityX*8);
-% yangL_D =  ypix/(AiryMultiplicityY*8);
-
-%% Cartesian coordinates with the lambda/D scaling (diffraction angle)
-% xangL_D = f_scalePix2DiffAng(xpix,AiryFactor);
-                                                                                                                                                              % 
-
-% yangL_D = f_scalePix2DiffAng(ypix,AiryFactor);
-
-%% Cartesian coordinates with the arcsecond scaling (diffraction angle)
-% xangArcs = f_LambdaDToarcsec(xangL_D);
-% yangArcs = f_LambdaDToarcsec(yangL_D);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TO UNIFY WITH DEFINE SPACE
 %% Find the center of the Lyot image
@@ -117,14 +75,46 @@ halfY = ySize/2;
 %%%%% Lyot Intensity Feedback coordinates
 drawing = false;
 PP = PP*1e-6; % um to m
-lensDiameter = 2*apRad*1e-2; % cm to m
 [~,mainLyotRadius,~] = f_findCircleShapedIntensity(Lyotimg,drawing);
 mainLyotRadius = round(mainLyotRadius);
 
-%%%%% System Pixel Size
-[apRadpix] = f_computePupilPixelSize(mainLyotRadius,PP,lensDiameter);
+%%%%% System Pixel Size:
+% not used since the spot size is used intead for the falco lamda over D (physical scaling)
+% lensDiameter = 2*apRad*1e-2; % cm to m
+% [apRadpix] = f_computePupilPixelSize(mainLyotRadius,PP,lensDiameter);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TO UNIFY WITH DEFINE SPACE
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% Coordinates: Lambda/D, pixels and arcseconds
+%% Find the center of the PSF image (with a binarization)                                                                   
+[~,~,aproxCenter,aproxRadius] = f_approximateSpotSize(refMeas);
+ 
+% MAYBE: Find center of the PSF image (peaks)  [for more robustness]
+
+%% Read the approximate center of the PSF reference
+midX = aproxCenter(2);
+midY = aproxCenter(1);
+
+%%% OLD: center of the image but not the spot's center
+% midX = round((maxX+1)/2); % x mid point
+% midY = round((maxY+1)/2); % y mid point
+                        
+%% Cartesian coordinates with pixel units
+% ORIGINAL
+[ySize, xSize] = size(refMeas); % All images assumed of the same size as the refmeas
+halfX = xSize/2;
+halfY = ySize/2;
+
+% Old: 
+% halfX = floor((ySize+1)/2); % x mid point
+% halfY = floor((xSize+1)/2); % y mid point
+
+% TO DELETE
+% [ySize,xSize] = size(Lyotimg);
+% halfX = xSize/2;
+% halfY = ySize/2;
 
 %%  lambda/D factor falco-matlab reference
 % It is scalled with respect to the jinc zeros
@@ -135,16 +125,53 @@ NpadY = ySize; % Camera's y pixel size
 xlamOverD = NpadX/(2*mainLyotRadius);
 ylamOverD = NpadY/(2*mainLyotRadius);
 
-centerShiftX = (midX-halfX);
+% Centering shifting to the spot location
+centerShiftX = (midX-halfX); 
 centerShiftY = (midY-halfY);
 
-xvals_fp = (-halfX:halfX-1) - centerShiftX;
-yvals_fp = (-halfY:halfY-1) - centerShiftY;
+% Coordinates' origin set to the spot's center
+xpixcenterd= (-halfX:halfX-1) - (centerShiftX - 1); % The center has to be shifted 1
+ypixcenterd = (-halfY:halfY-1) - (centerShiftY - 1); % The center has to be shifted 1
 
-xpix = xvals_fp/xlamOverD;
-ypix = yvals_fp/ylamOverD;
+xangL_Dfalco = xpixcenterd/xlamOverD; % Astronomer's physical scaling of pixels
+yangL_Dfalco = ypixcenterd/ylamOverD; % Astronomer's physical scaling of pixels
 
+%% Lambda over D scaling with the experimental spot size
+% Pixel's size is scalled to the spot's size
+xangL_Dexpairy = xpixcenterd/(aproxRadius/2); % aproxRadius/2 makes it the diameter
+xangL_Dexpairy = ypixcenterd/(aproxRadius/2);
 
+%% Lambda over D scaling with the experimental spot size
+% Pixel's size is scalled to the first Bessel's center
+AiryFirstZero = 1.22; % First zero of the cylindrical Bessel function of 
+                        % first kind and zeroth order
+xangL_Dexpairyzero = xangL_Dexpairy
+xangL_Dexpairyzero =
+
+%% Symmetric pixels (sign type)
+xpixsym = -halfX : halfX - 1; % pixels
+ypixsym= -halfY :  halfY - 1; % pixels      
+
+%% Unitary pixels (scaled heavyside)
+xpix = 1:xSize; % Pixels start in 1
+ypix = 1:ySize; % Pixels start in 1
+
+%% Cartesian coordinates with the lambda/D scaling (diffraction angle)
+                                                                                                                             %  AiryFactor is an input
+xangL_Dtheoric = f_scalePix2DiffAng(xpixcenterd,AiryFactor);
+yangL_Dtheoric = f_scalePix2DiffAng(ypixcenterd,AiryFactor);
+
+%% Definitive Lambda over D vector
+% xangL_D
+% yangL_D
+
+%% Cartesian coordinates with the arcsecond scaling (diffraction angle)
+% angArcs = f_LambdaDToarcsec(xangL_D);
+% yangArcs = f_LambdaDToarcsec(yangL_D);
+
+%% Cartesian coordinates selector
+x = xangL_Dairy;
+y = yangL_Dairy;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% Profiles for the metrics
@@ -161,19 +188,19 @@ shiftCart = [0,0]; % midX,midY already accounts for the shift
 tit = 'tit';
 
 %%% Find the reference profile
-[x,y,HprofRef,VprofRef,~,~] = f_makeImageProfile(xpix,ypix,midX,midY, ...
+[xrefProx,yrefProf,HprofRef,VprofRef,~,~] = f_makeImageProfile(x,y,midX,midY, ...
            refMeas,tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile);
 
 %% Reference profile choice
 switch metricProfile
     case 1 % Vertical profile
         radialIntensityRef = VprofRef; % One-sided
-        cartcoord = y;
+        cartcoord = yrefProf;
         titprof = '(vertical profile)';
         
     case 2 % Horizontal profile
         radialIntensityRef = HprofRef; % One-sided
-        cartcoord =x;
+        cartcoord =xrefProx;
         titprof = '(horizontal profile)';
         
     otherwise
@@ -182,10 +209,10 @@ end
 
 for idxgral = 1:totalImgs
 %% Profile of the measurements
-[xpix,ypix,Hprofmeas,Vprofmeas,~,~] = f_makeImageProfile(xpix,ypix,midX,midY, ...
+[~,~,Hprofmeas,Vprofmeas,~,~] = f_makeImageProfile(x,y,midX,midY, ...
    expMeas{idxgral},tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile);
        
-%% Measurement profile  choice
+%% Measurement profile choice
 switch metricProfile
     case 1 % Vertical profile
         radialIntensityMeas = Vprofmeas; % One-sided
@@ -216,13 +243,11 @@ end
       normIntensity = radialIntensityMeas./max(radialIntensityMeas);
       GradEnergy = gradient(normIntensity); % gradient [returns n elements] or diff [returns n-1 elements]                            % OR GRAD energy ?
       
-     %% Plot of the gradient of the EEF and its corresponding intensity pattern                                                                                                                                                    %
-                                                                                                                                                 
-%       yyaxis left
-%       h1 = plot(cartcoord,GradEnergy);
-%       yyaixs right
-%       h2 = plot(cartcoord,normIntensity);
-     
+     %% Plot of the gradient of the EEF and its corresponding intensity pattern                                                              
+      %       yyaxis left (OLD method)
+      %       h1 = plot(cartcoord,GradEnergy);
+      %       yyaixs right
+      %       h2 = plot(cartcoord,normIntensity);
       figure('color','white');
       [hAxes,hLine1,hLine2] = plotyy(cartcoord,GradEnergy,cartcoord,normIntensity);
       set(hLine1, 'Color','b','LineStyle','-'); set(hLine2, 'Color','r','LineStyle','-');
@@ -283,7 +308,7 @@ N = 4; % Number of beeps for the processing
 f_EndBeeps(N,beepSound);
 
 %% Ask to leave figures open
-answer = questdlg('Do you want to close all the figures?','Processing finished','yes','no');
+answer = questdlg('Do you want to close all the figures?','Processing finished','yes','no','no');
 if strcmp(answer,'yes') % Compare string
      close all;         
 end
@@ -321,5 +346,9 @@ disp(strcat('Estimated Airy"s radius in um: ', num2str(AiryDiskPixX), ' (x) and 
 %% Pixel airy radius
 % AiryMultiplicityX = xSize/AiryDiskPixX; % Number of airy disks 
 % AiryMultiplicityY = ySize/AiryDiskPixY;
+
+%% Lambda over D scaled coordinates OLD METHOD
+% xangL_D = xpix/(AiryMultiplicityX*8);
+% yangL_D =  ypix/(AiryMultiplicityY*8);
 
 end

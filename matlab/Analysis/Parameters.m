@@ -393,6 +393,9 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% PART 5: PROCESSING WITH METRICS  AND SELF CENTERING ALGORITHM %%%%%%%%
+
+% WARNING: these things will only work if proc = 0
+
 metricSel = 2; % Type of metric:
 % 1:
 %     -throughput (Encircled Energy Factor)

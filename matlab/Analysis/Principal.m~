@@ -147,7 +147,7 @@ if meas
   
   %% Measurement debugging
   % Usefull for aligning the vortex and adjusting exposure parameters
-  if measDebug == 1 && measSimulated == 0 
+  if measDebug == 1 && measSimulated == 0
     [~] = f_CaptureImage(vidMeas,dataDir,filename,imgformat,pathSep, ...
     infoDelim,dirDelim,snapsfldr,previewBool,loghist,camera, ...
     cameraPlane,exposure,format,fps);
@@ -186,7 +186,7 @@ if meas
     'workspace.mat'),'measfullpath','refmeasfullpath','ProcessedDir', ...
     'dataDir','pathSep','infoDelim','dataformat','imgformat', ...
     'cameraPlane','totalImgs','AiryFactor','metricSel','metricProfile', ...
-    'shiftCart','beepSound','L','NA','PP','apRad','measSimulated');
+    'shiftCart','beepSound','L','NA','PP','apRad');
   end
 
 %% Termination of the hardware 
@@ -250,7 +250,7 @@ end % End of measurements
 %% Post-processing of the data and saving
 % It is possible to measure and then process
 % It is also possible to load a measurement and process it
-if proc == 1% && measSim == 0
+if proc == 1 && measSim == 0
   if ~exist('refmeasfullpath','var')
     error(['"refmeasfullpath" does not exist, no previous' ...
       ' measurement was found']);
@@ -258,40 +258,38 @@ if proc == 1% && measSim == 0
   % Metric of the degree of extintion applied
   f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,dataDir, ...
     pathSep,infoDelim,dataformat,imgformat,cameraPlane,totalImgs, ...
-    AiryFactor,metricSel,metricProfile,shiftCart,beepSound,L,NA,PP, ...
-    apRad,measSimulated);
+    AiryFactor,metricSel,metricProfile,shiftCart,beepSound,L,NA,PP,apRad);
 end
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% ACADEMIC PURPOSES: Zernike, simulation
-if proc == 0
-    %% Additional information
-    % abs(mask): should always be 1, meaning that it is normalized
 
-    %% Fourier transform of the mask
-    % Executed if desired on the parameters
-    % Performs the FFT of the mask and shows x and y profiles
-    f_ComputeMaskSpectrum(x,y,mask,abs_angFT,maskFTlog,FTmask);
+%% Additional information
+% abs(mask): should always be 1, meaning that it is normalized
 
-    %% Gradient of the mask
-    % Executed if desired on the parameters
-    % Shows the singularity clearly
-    AngMask = angle(mask);
-    f_ComputeMaskGradient(x,y,AngMask,gradMask);
+%% Fourier transform of the mask
+% Executed if desired on the parameters
+% Performs the FFT of the mask and shows x and y profiles
+f_ComputeMaskSpectrum(x,y,mask,abs_angFT,maskFTlog,FTmask);
 
-    %% Reconstruction of the mask with Zernike polynomials
-    % Executed if desired on the parameters
-    % Computes a wavefront reconstruction using Zernike's Polynomials and
-    % calculates the function expansion coefficients
-    f_ZernikeReconstruction(z_ReconstrNumb,wrapMask,z_pupil,maskZernReconstr);
+%% Gradient of the mask
+% Executed if desired on the parameters
+% Shows the singularity clearly
+AngMask = angle(mask);
+f_ComputeMaskGradient(x,y,AngMask,gradMask);
 
-    %% Simulation
-    % Executed if desired on the parameters
-    if simBool
-      f_SimulateFreeSpace(x,y,Xpc,Ypc,rPC,mask,starAmplitude,...
-      planetAmplitude,pixelSeparation,w1,w2,rPupilSize,showIin,showPupilin, ...
-      showFPmag,logscale,showFPphas,showPhasout,showMagout,showIout)
-    end
+%% Reconstruction of the mask with Zernike polynomials
+% Executed if desired on the parameters
+% Computes a wavefront reconstruction using Zernike's Polynomials and
+% calculates the function expansion coefficients
+f_ZernikeReconstruction(z_ReconstrNumb,wrapMask,z_pupil,maskZernReconstr);
+
+%% Simulation
+% Executed if desired on the parameters
+if simBool
+  f_SimulateFreeSpace(x,y,Xpc,Ypc,rPC,mask,starAmplitude,...
+  planetAmplitude,pixelSeparation,w1,w2,rPupilSize,showIin,showPupilin, ...
+  showFPmag,logscale,showFPphas,showPhasout,showMagout,showIout)
 end

@@ -1,6 +1,7 @@
 function [coorShiftY,coorShiftX,systemPupilPixelSize,mainDataCenter, ...
 mainDataRadius] = f_selfCenterSLMmask(detectorPixelPitch, ...
 systemPupilSIze,screenIndex,vid,tit)
+% systemPupilSIze: used to calculate statistics
 
 %% Set Reference
 close all;

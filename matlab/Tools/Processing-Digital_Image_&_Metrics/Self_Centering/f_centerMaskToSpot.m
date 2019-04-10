@@ -36,13 +36,13 @@ function [circShiftY,circShiftX] = f_centerMaskToSpot(referenceData, ...
 %
 % Version 1.78 - for Matlab 2014b and onward distributions
 %
-% Author: Juan José Cadavid Muñoz
+% Author: Juan Josï¿½ Cadavid Muï¿½oz
 %         Engineering Physicist
 %
 % Contact: jcadav22@eafit.edu.co
 %
 % Affiliation: Universidad EAFIT 
-%              Grupo Óptica Aplicada
+%              Grupo ï¿½ptica Aplicada
 %              Colombia - 2019.
 %
 % License: CC(4.0) BY-NC-SA
@@ -88,8 +88,8 @@ analysisPlotHandler = plot(referenceRadialProfile);ylim auto; grid on;
 % This title applies since later on the relative difference will be
 % dynamically plotted here
 
-axis square; title(['Relative difference: reference and tc=',num2str(TC)]);
-xlabel('Relative distance from the center of the spot [pixels]');
+axis square; title(['Difference between reference (tc=0) and tc=',num2str(TC)]);
+xlabel('Radial distance from the center of the spot [pixels]');
 ylabel('Relative difference of intensities [a.u.]')
 
 %% Specific region of scanning
@@ -124,7 +124,8 @@ for times = 1: refiningIterations
       [criteriaValue, relativeChange, ~] = f_getDistMetrics(currentFrame,dataSize, mainDataCenter, referenceRadialProfile, dataRange);
       valComparison = (criteriaValue - previousVal);
       previousVal = criteriaValue;
-      disp([criteriaValue dynamicEval]);
+      disp([criteriaValue dynamicEval]); % criteriaValue: average in the vortex region of the relative difference of the profile
+                                                           % dynamicEval: defines when there's anintensity change
       
       if abs(valComparison) >= 0.1 || criteriaValue >= criteriaTol
         disp('Spot rapid change - Check')
