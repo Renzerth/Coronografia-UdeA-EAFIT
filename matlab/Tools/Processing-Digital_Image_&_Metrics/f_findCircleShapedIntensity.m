@@ -1,7 +1,9 @@
 function [mainDataCenter,mainDataRadius,dataProportion] = ...
                               f_findCircleShapedIntensity(rawData,varargin)
+% The input image is assumed to be circular, for a more general function,
+% use "f_approximateSpotSize.m"
 
-% Inputs:
+ % Inputs:
 %   rawData: double format 2D image (single matrix)
 %   plotsOn: true or false
 %
@@ -33,7 +35,7 @@ binaryData = imfill(binaryData,4,'holes');
 binaryData = imopen(binaryData,strel('disk',6)); % Binary shape must fill
                          % circle to increase enclosed area approximation
 
-%% Compute blob properties
+%% Compute blob properties for the pixel size of the circle
 regionInfo = regionprops(binaryData,'Centroid','area', ...
                                     'MajorAxisLength','MinorAxisLength');
 [~, sortIndexes] = sort(cat(1,regionInfo.Area), 'descend');
@@ -54,10 +56,14 @@ dataRanges = round([1-radiusRangePerce,1+radiusRangePerce]* ...
 [dataCenter, dataRadii, circMetrics] = imfindcircles(binaryData, ...
                                               dataRanges,'Sensitivity', 1);
 [~,valueIndex] = max(circMetrics);
+
+%% Mean of the centroid (blob) and the center (CHT) methods
 mainDataCenter = mean([dataCenter(valueIndex,:); regionCentroid],1);
+
+%% Mean of the blob radius (region major/minor axis estimation) and the CHT radius (area of a circle assumed)
 mainDataRadius = mean([dataRadii(valueIndex,:),blobRadius]);
 
-%% Validate
+%% Validate wether one has a circular region
 if diff([dataRadii(valueIndex,:),blobRadius])/blobRadius >0.05
     error('Blob region is not a circular area'); % Compare the difference
                          % from circular prediction to the blob behaviour

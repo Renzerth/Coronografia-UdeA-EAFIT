@@ -42,6 +42,8 @@
 %
 % Samuel Plazas(PA1/PA2/TG) - Juan Jose Cadavid(Master thesis) - 2018/2019
 
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% PHASE MASK GENERATION WITH SLMs, VORTEX ACQUISITION VIA CAMERAS AND 
 %%% PROCESSING WITH CORONAGRAPHIC METRICS
@@ -162,7 +164,7 @@ if meas
   % disp(vid): displays acquisition information
   % imaqtool: toolbox for the camera
   % imaqreset: refresh image acquisition hardware by restoring the settings
-  %            Disconnect and delete all image acquisition objectssa
+  %            Disconnect and delete all image acquisition objects
   % propinfo(src): shows the allowed values that can be modified
     
     proc = 0; % Nothing should be processed when debugging

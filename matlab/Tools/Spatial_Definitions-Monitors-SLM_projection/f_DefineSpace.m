@@ -156,9 +156,14 @@ switch shiftMask
   shiftCart = [shiftY shiftX*AspectRatio];
   
  case 2 % Self-centering algorithm
-  % The camera here must be Lyot for the 2019's setup
+     shiftCartfine = shiftCart; % User-given for a fine adjustment
+     shiftCartfine = shiftCartfine/100; % Percentage w.r.t the half size 
+     shiftXfine = shiftCartfine(2)*AspectRatio; % Cartesian shift in x
+     shiftYfine = shiftCartfine(1); % Cartesian shift in y
+     % The camera here must be Lyot for the 2019's setup
   if ~(exist(SLMcenterWisdom,'file') == 2) % The self centering data
                                            % doesn't exist in Data (folder)
+                                           
     %%% Self centering parameters
     PP = PP*1e-6;  % um to m
     lensDiameter = 2*apRad*1e-2; % cm to m
@@ -246,17 +251,17 @@ if flagAR == 1 % Aspect ratio already applied on Y
 end
 
 if shiftMask == 2 
-    % The signs of the shifts account for "perhapsAworkingDEMO.m"
-    % convention
-    Xslm = X - shiftX;
-    Yslm = Y - shiftY;
+    % The signs of the shiftX,Y account for "perhapsAworkingDEMO.m"
+    % convention and the signs of the shiftX,Yfine account for the 
+    % cartesian coordinate convention (as for shiftMask = [0,1])
+    Xslm = X - shiftX + shiftXfine;
+    Yslm = Y - shiftY - shiftYfine;
 else % shiftMask = [0,1]
     % The signs of the shifts account for the cartesian coordinate
     % convention
     Xslm = X + shiftX;
     Yslm = Y - shiftY;
 end
-
 
 %% Polar coordinates for the SLM
 % X,Y variables redefined for being used in the EGV and Fork masks

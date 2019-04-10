@@ -96,26 +96,21 @@ disp(strcat('Estimated Airy"s radius in um: ', num2str(AiryDiskPixX), ' (x) and 
 % xangArcs = f_LambdaDToarcsec(xangL_D);
 % yangArcs = f_LambdaDToarcsec(yangL_D);
 
-%% Temporal reference images
+%% Lyot's spot size (main radius)
 PSFimg = imread(strcat(dataDir,pathSep,'data_ref_2.bmp'));
 Lyotimg = imread(strcat(dataDir,pathSep,'data_ref_1.bmp'));
 Lyotimg = rgb2gray(Lyotimg); 
 
-%% Lyot's spot size (main radius)
-%%% Lyot Intensity Feedback coordinates
 drawing = false;
 PP = PP*1e-6; % um to m
-lensDiameter = 2*apRad*1e-2; % cm to m
+apRad = apRad*1e-2; % cm to m
 [~,mainLyotRadius,~] = f_findCircleShapedIntensity(Lyotimg,drawing);
 mainLyotRadius = round(mainLyotRadius);
-
-%%% System Pixel Size
-[apRadpix] = f_computePupilPixelSize(mainLyotRadius,PP,lensDiameter);
+[apRadpix] = f_computePupilPixelSize(mainLyotRadius, PP,apRad);
 
 %% Find center of the PSF image (binarization)
 [xangL_D,yangL_D,aproxCenter,aproxRadius] = f_approximateSpotSize(PSFimg);
 
-%% Read the approximate center of the 
 midX = aproxCenter(2);
 midY = aproxCenter(1);
 % midX = round((maxX+1)/2); % x mid point

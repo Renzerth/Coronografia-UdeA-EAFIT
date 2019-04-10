@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 1: the whole workspace is saved
     measSimulated = 1; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
@@ -138,14 +138,18 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
      % ..\Data\SLMwisdom.mat (last's self centering execution) doesn't
      % exist, therefore, delete it in order to perform the self centering 
      % again
-     %%% For shiftMask=1 (SLM plotting):  
-     shiftCart = [-10,-20]; % shiftCart: [shiftY,shiftX]. Percentages of 
-                        % movement of the
-                        % total size of the mask (cartesian coordinates 
-                        % convention). Ranges per shift: [0,99] (percentge)
-                        % 100 is allowed if no profile will be made. Smaller
-                        % values are restricted if the Zernike masks are
-                        % used.
+     switch shiftMask
+         case 1 % SLM plotting with a manual shift
+              shiftCart = [-10, -20]; % shiftCart: [shiftY,shiftX]. 
+              % Percentages of movement of the half size of the screen
+              % (cartesian coordinates convention). Ranges per shift: 
+              % [0,99] (percentge) 100 is allowed if no profile will be made. 
+              % Smallervalues are restricted if the Zernike masks are used.
+                        
+         case 2 % Fine adjustment of the self centering shift
+             shiftCart = [0, 0]; % Same percentage concept of the 
+             % abovementioned explanation and same conventions
+     end
                           
    % LC2002: [-3,0.1]
    % Pluto: [31.5,-1.8]
