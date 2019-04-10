@@ -5,6 +5,6 @@ referenceRadialProfile,dataRange)
                                              mainDataCenter);
 profileLocalChanges = abs(referenceRadialProfile - currentProfile);
 relativeChange = profileLocalChanges./referenceRadialProfile;
-criteriaValue = mean(relativeChange(1:dataRange));
+criteriaValue = mean(relativeChange(dataRange));
 
 end

@@ -49,15 +49,19 @@ function [circShiftY,circShiftX] = f_centerMaskToSpot(referenceData, ...
 %
 % Master in Applied Physics -- Optics Research
 
+%% Algorithm Settings
+varBaseLine = 0.10;
+criteriaTol = 0.5; % Ref: 0.5
+histWeightFactor = 0.20;
+spotFraction = 0.12; % Ref: 0.1
+noiseValExcl = 20;
 %% Set Reference
 dataSize = size(referenceData);
 [referenceRadialProfile] = f_getAverageRadialProfile(referenceData, ...
                                                   dataSize,mainDataCenter);
-dataRange = TC*100/2;
-criteriaTol = 0.5; % Ref: 0.5
+dataRange = noiseValExcl:TC*100/2;
 
 %% Set Iterator
-spotFraction = 0.2; % Ref: 0.1
 scanArea = round(spotFraction*mainDataRadius);
 shiftStepX = f_getClosestMultiple(monitorSize(1),scanArea);
 shiftStepY = f_getClosestMultiple(monitorSize(2),scanArea);
@@ -104,66 +108,59 @@ ylabel('Relative difference of intensities [a.u.]')
 searchOffsetX = 0;
 searchOffsetY = 0;
 backwardIter = 2;
+dynamicEval = 0;
 scanAreaFactor = 2*backwardIter;
 previousVal = 0;
-refiningIterations = 3;
+refiningIterations = 3; % To large will lead to infinite state -> 4
 updateEnabled = false;
 
 %% Centering logic loop
 for times = 1: refiningIterations
   for iterationsY = 0:maxIterY
     for iterationsX = 0:maxIterX
+      pause(0.05);
       currentFrame = getsnapshot(vid);
-      [criteriaValue, relativeChange, ~] = ...
-      f_getDistMetrics(currentFrame,dataSize,mainDataCenter, ...
-                       referenceRadialProfile,dataRange);
+      wait(vid);
+      [criteriaValue, relativeChange, ~] = f_getDistMetrics(currentFrame,dataSize, mainDataCenter, referenceRadialProfile, dataRange);
       valComparison = (criteriaValue - previousVal);
       previousVal = criteriaValue;
-      disp(criteriaValue);
+      disp([criteriaValue dynamicEval]);
       
       if abs(valComparison) >= 0.1 || criteriaValue >= criteriaTol
         disp('Spot rapid change - Check')
         break;
       end
       
-      localY = iterationsY*shiftStepY + searchOffsetY; % If breaks before 
-      % updating, it holds the variation coordinates (n-1)
+      localY = iterationsY*shiftStepY + searchOffsetY; % If breaks before updating, it holds the variation coordinates (n-1)
       localX = iterationsX*shiftStepX + searchOffsetX;
-      wait(vid);
-      set(updateDisplayHandler,'CData',circshift(projectionMask, ...
-          [localY, localX]));
+      set(updateDisplayHandler,'CData',circshift(projectionMask,[localY, localX]));
       set(analysisPlotHandler,'YData',relativeChange);
-      pause(0.05);
     end
-    if criteriaValue >=  0.1 + (times-valComparison)/10
+        dynamicEval = (varBaseLine + abs(times/10 - histWeightFactor*(criteriaValue + valComparison)));
+    if criteriaValue >= dynamicEval
       disp('Spot high change - stop')
       updateEnabled = true;
       break;
     end
   end
+  
   if updateEnabled
-    %  shiftY = (iterationsY)*shiftStepX + shiftY;
-    %  shiftX = circIterator(maxIterX,iterationsX,-2)*shiftStepY + shiftX;
-    searchOffsetY = circIterator(maxIterY,iterationsY,-1)*shiftStepY + ...
-                                                             searchOffsetY;
-    searchOffsetX = circIterator(maxIterX,iterationsX,-backwardIter)* ...
-                                                shiftStepX + searchOffsetX;
+    searchOffsetY = circIterator(maxIterY,iterationsY,-1)*shiftStepY;
+    searchOffsetX = circIterator(maxIterX,iterationsX,-backwardIter)*shiftStepX;
     maxIterX = scanAreaFactor*shiftStepX;
+    maxIterY = scanAreaFactor*shiftStepY;
     shiftStepX = round(shiftStepX/(2^(times+1)));
-    shiftStepY = shiftStepX;
+    shiftStepY = round(shiftStepY/(2^(times+1)));
     maxIterX = ceil(maxIterX/shiftStepX);
-    maxIterY = maxIterX;
+    maxIterY = ceil(maxIterY/shiftStepY);
     iterationsX = 0;
     iterationsY = 0;
     updateEnabled = false;
-    pause(1); % Wait for intensity to be properly registered after scan
-              % area change
+    pause(1); % Wait for intensity to be properly registered after scan area change
   else
-    warning(['Failed to find representative radial changes during' ...
-            ' iteration']);
+    error('Failed to find representative radial changes during iteration.');
   end
 end
-
 %% Instruction for the user
 disp(['Move the sliders to adjust the mask"s position and then close'...
      ' the mask window when done']);
@@ -172,7 +169,7 @@ disp(['Move the sliders to adjust the mask"s position and then close'...
 [manualShiftYcoord, manualShiftXcoord] = f_adjustSLMPositioning( ...
 figureHandler,updateDisplayHandler,analysisPlotHandler,vid,dataSize, ...
 mainDataCenter,referenceRadialProfile,dataRange);
-circShiftX = localX + manualShiftXcoord - monitorSize(1); % Referred 
+circShiftX = monitorSize(1) - localX + manualShiftXcoord; % Referred 
                                    % Overall Coordinates from screen origin
 circShiftY = localY + manualShiftYcoord - monitorSize(2);
 
