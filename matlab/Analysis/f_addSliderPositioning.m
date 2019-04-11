@@ -38,6 +38,7 @@ while ishandle(parentHandler) % Avoid usage of addlistener to read slider values
     pause(0.1);
 end
 
+
 %% Former Ideas
 % MyCallBack = @(a,b) disp(b.AffectedObject.Value);
 % MyCallBack2 = @(src,event) disp(event.Key);

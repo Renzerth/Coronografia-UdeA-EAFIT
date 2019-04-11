@@ -187,6 +187,9 @@ if meas
     'workspace.mat'),'measfullpath','refmeasfullpath','infoDelim','dataformat', ...
     'imgformat','cameraPlane','totalImgs','beepSound','L','PP', ...
     'mainLyotRadius','measSimulated');
+    % The saved variables include all the input ones of  f_ProcessData.m
+    % minus the ones that are after "-except" in the "Load previous
+    % measurement (whole workspace)" section
   end
 
 %% Termination of the hardware 
