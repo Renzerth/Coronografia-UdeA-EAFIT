@@ -1,6 +1,6 @@
 function f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,dataDir,pathSep,infoDelim, ...
 dataformat,imgformat,cameraPlane,totalImgs,AiryFactor,metricSel,metricProfile, ...
-shiftCart,beepSound,L,NA,PP,apRad,measSimulated)
+beepSound,L,NA,PP,mainLyotRadius,measSimulated)
 
 % Inputs:
 %   
@@ -70,16 +70,18 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TO UNIFY WITH DEFINE SPACE
 %% Find the center of the Lyot image
 % This was already done in f_DefineSpace.m
+% PP = PP*1e-6; % um to m
 
 %%% Lyot's spot size (main radius)
 %%%%% Lyot Intensity Feedback coordinates
 drawing = false;
-PP = PP*1e-6; % um to m
-[~,mainLyotRadius,~] = f_findCircleShapedIntensity(Lyotimg,drawing);
-mainLyotRadius = round(mainLyotRadius);
+
+% [~,mainLyotRadius,~] = f_findCircleShapedIntensity(Lyotimg,drawing);
+% mainLyotRadius = round(mainLyotRadius); % Pixels
 
 %%%%% System Pixel Size:
 % not used since the spot size is used intead for the falco lamda over D (physical scaling)
+% PP = PP*1e-6; % um to m
 % lensDiameter = 2*apRad*1e-2; % cm to m
 % [apRadpix] = f_computePupilPixelSize(mainLyotRadius,PP,lensDiameter);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TO UNIFY WITH DEFINE SPACE
@@ -111,7 +113,7 @@ halfY = ySize/2;
 % halfX = floor((ySize+1)/2); % x mid point
 % halfY = floor((xSize+1)/2); % y mid point
 
-% TO DELETE
+% To delete:
 % [ySize,xSize] = size(Lyotimg);
 % halfX = xSize/2;
 % halfY = ySize/2;
@@ -184,7 +186,7 @@ plotH = 0; % Not needed for the metric. Ref: 0
 plotV = 0; % Not needed for the metric. Ref: 0
 oneSideProfile = 1; % Specifically needed for this metric. Ref: 1
 tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
-shiftCart = [0,0]; % midX,midY already accounts for the shift
+shiftCart = [0,0]; % midX,midY already account for the shift
 tit = 'tit';
 
 %%% Find the reference profile
@@ -235,7 +237,7 @@ end
      %% Throughput: Encircled Energy Factor metric
       % Camera: PSF.
       tit = 'Encircled Energy Distribution of Intensity';
-      [energy] = f_calculateEEF(radialIntensityRef,cartcoord, tit,xlab);
+      [energy] = f_calculateEEF(radialIntensityRef,cartcoord,titprof,tit,xlab);
      
      %% Throughput gradient
                                                                                                                                                                             % DO A FUNCTION ONLY IF THIS WILL BE USEFULL
@@ -320,14 +322,16 @@ end
 %% Theoretical: diffraction-limited systems
 % NA: numerical aperture of the lens
 % L: wavelength in um
+PP = PP*1e-6; % um to m % Measurement camera's PP
+
 AiryDiskSpatial = 0.61*L/NA; % um
 AiryDiskSpatialX = AiryDiskSpatial;
 AiryDiskSpatialY = AiryDiskSpatial;
-disp(strcat('Theoretical Airy"s radius in um: ', num2str(AiryDiskSpatialX), ' (x) and ', num2str(AiryDiskSpatialY), ' (y)'));
+disp(strcat('Theoretical Airy"s radius in um:', {' '}, num2str(AiryDiskSpatialX), ' (x) and', {' '},  num2str(AiryDiskSpatialY), ' (y)'));
 
-AiryDiskPixX = AiryDiskSpatialX/PP; % PP: camera's pixel pitch
-AiryDiskPixY = AiryDiskSpatialY/PP;
-disp(strcat('Theoretical Airy"s radius in um: ', num2str(AiryDiskPixX), ' (x) and ', num2str(AiryDiskPixY), ' (y)'));
+AiryDiskPixX = round(AiryDiskSpatialX/PP); % PP: camera's pixel pitch
+AiryDiskPixY = round(AiryDiskSpatialY/PP);
+disp(strcat('Theoretical Airy"s radius in pix:', {' '},  num2str(AiryDiskPixX), ' (x) and', {' '},  num2str(AiryDiskPixY), ' (y)'));
 
 % In reality, there are aberrations and the real radius can be of
 % about 60 times the theoretical one
@@ -337,8 +341,8 @@ AiryDiskPixX = aproxRadius; % Just an example
 AiryDiskPixY= aproxRadius; % Just an example
 AiryDiskSpatialX = AiryDiskPixX*PP; % PP: camera's pixel pitch
 AiryDiskSpatialY = AiryDiskPixY*PP;
-disp(strcat('Estimated Airy"s radius in um: ', num2str(AiryDiskSpatialX), ' (x) and ', num2str(AiryDiskSpatialY), ' (y)'));
-disp(strcat('Estimated Airy"s radius in um: ', num2str(AiryDiskPixX), ' (x) and ', num2str(AiryDiskPixY), ' (y)'));
+disp(strcat('Estimated Airy"s radius in um:', {' '},  num2str(AiryDiskSpatialX), ' (x) and', {' '},  num2str(AiryDiskSpatialY), ' (y)'));
+disp(strcat('Estimated Airy"s radius in pix:', {' '},  num2str(AiryDiskPixX), ' (x) and', {' '},  num2str(AiryDiskPixY), ' (y)'));
 
 %% Airy radius from the EEC factor
 % When it is the 70%

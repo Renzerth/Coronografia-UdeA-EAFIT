@@ -396,7 +396,7 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 
 % WARNING: these things will only work if proc = 0
 
-metricSel = 2; % Type of metric:
+metricSel = 1; % Type of metric:
 % 1:
 %     -throughput (Encircled Energy Factor)
 %     -throughput gradient

@@ -1,7 +1,8 @@
 function [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize,...
-shiftCart] = f_DefineSpace(vidSelfCent,sSupport,sSize,shiftCart,shiftMask,PP, ...
-pixSize,apRad,scrnIdx,circularMask,z_pupil,coordType,MaxMask, ...
-SLMcenterWisdom,camera,cameraPlane,exposure,format,fps,maskSel)
+shiftCart,mainLyotRadius] = f_DefineSpace(vidSelfCent,sSupport,sSize, ...
+shiftCart,shiftMask,PP,pixSize,apRad,scrnIdx,circularMask,z_pupil, ...
+coordType,MaxMask,SLMcenterWisdom,camera,cameraPlane,exposure, ...
+format,fps,maskSel)
 % Inputs:
 %  vid: video input object
 %  sSupport: full side-length of the SLMs (or unitary without an SLM)
@@ -178,7 +179,7 @@ switch shiftMask
    %% Self-centering algorithm
     % these outputs are not used in the meantime (2019): 
     % [shiftY,shiftX,systemPupilPixelSize,mainDataCenter,mainDataRadius] 
-    [shiftY, shiftX,~,~,~] = ...
+    [shiftY, shiftX,~,~,mainLyotRadius] = ...
     f_selfCenterSLMmask(PP,lensDiameter,scrnIdx,vidSelfCent,tit);
     if coordType == 2
       [shiftX,shiftY] = f_calcHScoorToSgnCoor(shiftX/monitorSize(1), ...
@@ -188,11 +189,11 @@ switch shiftMask
     
     %% Save SLMwisdom.mat
     % Explanation: save(directory+filename,variables)
-    save(SLMcenterWisdom,'shiftCart','coordType')
+    save(SLMcenterWisdom,'shiftCart','mainLyotRadius')
     
   else % The self centering data is available in Data (folder)
     %% Load SLMwisdom.mat
-    load(SLMcenterWisdom,'shiftCart');
+    load(SLMcenterWisdom,'shiftCart','mainLyotRadius');
     shiftX = shiftCart(2); shiftY = shiftCart(1);
     
     %% Fix data format incompatibility
