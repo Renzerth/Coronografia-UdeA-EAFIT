@@ -2,7 +2,7 @@ function [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize,...
 shiftCart,mainLyotRadius] = f_DefineSpace(vidSelfCent,sSupport,sSize, ...
 shiftCart,shiftMask,PP,pixSize,apRad,scrnIdx,circularMask,z_pupil, ...
 coordType,MaxMask,SLMcenterWisdom,camera,cameraPlane,exposure, ...
-format,fps,maskSel)
+format,fps,measSimulated,maskSel)
 % Inputs:
 %  vid: video input object
 %  sSupport: full side-length of the SLMs (or unitary without an SLM)
@@ -133,11 +133,12 @@ rSize = min(HalfSupportX,HalfSupportY);
           
 %% Shift of the mask (for the SLM: plotMask=2)
 % Check first if vid exists, otherwise set shiftMask to zero
-if isempty(vidSelfCent) && shiftMask == 2 && ~(exist(SLMcenterWisdom,'file') == 2)
+widomexist = (exist(SLMcenterWisdom,'file') == 2);
+if isempty(vidSelfCent) && shiftMask == 2 && ~(widomexist)
   error(['Set measSimulated = 0 and meas = 1 in order to use' ...
     ' shiftMask = 2. shiftMask should be set to zero or one.']);
-elseif isempty(vidSelfCent) && shiftMask == 2 
-  warning('SLMwisdom.mat will be loaded for measSimulated=0')  
+elseif isempty(vidSelfCent) && shiftMask == 2  && measSimulated == 1
+  warning('SLMwisdom.mat will be loaded for measSimulated = 1')  
 end
 
 switch shiftMask 
@@ -256,7 +257,8 @@ if shiftMask == 2
     % The signs of the shiftX,Y account for "perhapsAworkingDEMO.m"
     % convention and the signs of the shiftX,Yfine account for the 
     % cartesian coordinate convention (as for shiftMask = [0,1])
-    Xslm = X - shiftX + shiftXfine*shiftX; % shiftXfine*shiftX: % of the current shift
+    Xslm = X - shiftX + shiftXfine*shiftX; % shiftXfine*shiftX: a percent.
+                                           % of the current shift
     Yslm = Y - shiftY - shiftYfine*shiftY;
 else % shiftMask = [0,1]
     % The signs of the shifts account for the cartesian coordinate

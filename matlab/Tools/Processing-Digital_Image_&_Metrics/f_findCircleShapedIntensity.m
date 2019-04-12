@@ -64,7 +64,7 @@ mainDataCenter = mean([dataCenter(valueIndex,:); regionCentroid],1);
 mainDataRadius = mean([dataRadii(valueIndex,:),blobRadius]);
 
 %% Validate wether one has a circular region
-if diff([dataRadii(valueIndex,:),blobRadius])/blobRadius >0.05
+if abs(diff([dataRadii(valueIndex,:),blobRadius]))/blobRadius > 0.05
     error('Blob region is not a circular area'); % Compare the difference
                          % from circular prediction to the blob behaviour
 end

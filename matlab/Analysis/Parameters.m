@@ -14,7 +14,7 @@ meas = 1; % Measure: yes (1) or no (0)
                        % tcvect = [1 2 0]; glvect = [255]; 
     % if measSimulated = 1 -> measDebug will be 0 
     % If meas = 1 -> all the figures will be closed before starting it
-    measDebug = 0; % Debugging before actually measuring. Displays the 
+    measDebug = 1; % Debugging before actually measuring. Displays the 
                    % default phase mask and shots a photo with the camera
                    % Works if  measSimulated = 0. If it is active, the
                    % program will set proc = 0
@@ -147,7 +147,7 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
               % Smallervalues are restricted if the Zernike masks are used.
                         
          case 2 % Fine adjustment of the self centering shift
-             shiftCart = [0, 0]; % Same percentage concept of the 
+             shiftCart = [1, +1]; % Same percentage concept of the 
              % abovementioned explanation and same conventions
      end
                           
@@ -156,14 +156,14 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
               
 %% Measurement camera selection and parameters
 % Self centering camera is selected just before f_DefineSpace
-camera = 'DMK42BUC03'; % PSF is needed for the 2019's metrics (meanwhile)
+camera = 'DMK23U445'; % PSF is needed for the 2019's metrics (meanwhile)
 % Exposure: analog parameter
 % Format: 'Y800 (1280x960)' [best]; 'RGB24 (1024x768)' [another option]
 
 switch camera  
   case 'DMK42BUC03' % Lyot plane % CMOS
     cameraID = 2;
-    exposure = 1/250; % Range: [1/1e4,1]
+    exposure = 1/500; % Range: [1/1e4,1]
     fps = [];
     format = 'Y800 (1280x960)';
     cameraPlane =  'Lyot';
@@ -173,7 +173,7 @@ switch camera
     cameraID = 1;
     exposure = 1/300; % Range: [,]
     %fps = '15'; % Frames per second
-    fps = '15.00'; % '15.00', '10.00', ' 7.50', ' 5.00' ' 3.75', 
+    fps = '10.00'; % '15.00', '10.00', ' 7.50', ' 5.00' ' 3.75', 
     format = 'Y800 (1280x960)'; 
     cameraPlane = 'PSF';
     PP = 3.75; % Pixel pitch in [um/pixel]

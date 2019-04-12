@@ -1,6 +1,6 @@
 function SingleFrame = f_CaptureImage(vid,dataDir,filename,imgformat, ...
 pathSep,infoDelim,dirDelim,snapsfldr,previewBool,loghist,camera, ...
-cameraPlane,exposure,format,fps)
+cameraPlane,exposure,format,fps,maskFig,plotMask)
                                   
 % Inputs:
 %   
@@ -72,11 +72,20 @@ while loopCondition == 0
   xlabel('Bins (gray levels)'); xlim([0 255]);
   
   %% Don't continue until the preview is closed
-  disp('Close the preview in order to continue the program"s execution');
+  
+  
+  %% 
+  disp('Close the preview in order to continue the program"s execution.');
+  if plotMask == 2 && ishandle(maskFig{1})% SLM plot
+    f_addSliderPositioning(maskFig{1},maskFig{2},previewHandle);
+  end
+  
   while ishandle(previewHandle)
     pause(0.1); % In order for the preview to start safely
     % Delay for user response: dead time of the processor
+    % Allow idle instead of processing
   end
+  
   % OLD method:
   % disp('Press any valid key to close the preview (find it!)');
   % pause;
@@ -105,6 +114,10 @@ while loopCondition == 0
   if ishandle(h3)
     close(h3);
   end
+  if ishandle(maskFig{1}) && ~strcmp(answer1,'y')
+    close(maskFig{1});
+  end
+  
 end
 
 %% Close preview if open

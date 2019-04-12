@@ -6,10 +6,17 @@ if ~ishandle(parentHandler)
 end
 
 %% Program Settings
-if nargin == 3 && isnumeric(varargin{1})
+if nargin == 4 && ishandle(varargin{2})
+  outsiderHandle = varargin{2};
+elseif nargin == 3 && ishandle(varargin{1})
+  outsiderHandle = varargin{1};
+  sliderSize = 0.025; 
+elseif nargin == 3 && isnumeric(varargin{1})
     sliderSize = varargin{1};
+    outsiderHandle = [];
 else
-    sliderSize = 0.025;
+    outsiderHandle = [];
+    sliderSize = 0.025; 
 end
 %% Slider Properties
 dataXsize = figureHandler.XData(2);
@@ -31,11 +38,18 @@ xSliderShift = uicontrol('parent',parentHandler,'style','slider','units','normal
 ySliderShift = uicontrol('parent',parentHandler,'style','slider','units','normalized','position',[1-halfSlidSize,sliderSize,halfSlidSize,1-sliderSize],'min',0,'max',dataYsize,'value',halfPointY,'SliderStep',stepRangeY);
 
 %% User Slider operation
-while ishandle(parentHandler) % Avoid usage of addlistener to read slider values
+if ishandle(outsiderHandle)
+  conditionHandle = outsiderHandle;
+else
+  conditionHandle = parentHandler;
+end
+while ishandle(conditionHandle) && ishandle(parentHandler) % Avoid usage of
+                                        % addlistener to read slider values
     shiftYcoord = floor(ySliderShift.Value - halfPointY);
     shiftXcoord = floor(xSliderShift.Value - halfPointX);
     set(figureHandler,'CData',circshift(originalData,floor([shiftYcoord, shiftXcoord])));
-    pause(0.1);
+    pause(0.1); % Allow idle instead of processing
+    % Delay for user response: dead time of the processor
 end
 
 

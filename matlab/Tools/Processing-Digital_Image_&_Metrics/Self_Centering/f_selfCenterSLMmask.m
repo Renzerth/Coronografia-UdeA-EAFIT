@@ -21,23 +21,25 @@ referenceData = getsnapshot(vid); % Input reference, must be gray 'Y800'
 
 %% Mask Generation
 shiftX = 0; shiftY =0; TC = 10; enablechange = true;
-[X,Y,aspectRatio,monitorSize] = f_MakeScreenCoords(screenIndex, ...
-                                                   enablechange);
+[X,Y,aspectRatio,monitorSize] = f_MakeScreenCoords(screenIndex,enablechange);
+maskGen = @(rho,theta,r0,TC) mat2gray(rho <= r0).*angle(exp(1i*TC*(theta + pi/TC)));
 
 %% Polar coordinates with the Aspect Ratio scaling
 scaledY = Y/aspectRatio;
 [angularTranstion,rhoRadius] = cart2pol(X - shiftX,scaledY - shiftY);
 
 %% Mask generation
-MaskProportion = 0.20; % Relative proportion of the size of the mask. Ref: 0.1
-projectionMask = mat2gray((rhoRadius <= MaskProportion/aspectRatio).* ...
-                 angle(exp(1i*TC*(angularTranstion + pi/TC))));
+pupilRatio = 0.20; % Relative proportion of the size of the mask. Ref: 0.1
+vortexTC10 = maskGen(rhoRadius,angularTranstion,pupilRatio/aspectRatio,10);
+vortexTC02 = maskGen(rhoRadius,angularTranstion,pupilRatio/aspectRatio,2);
+projectionMasks = {vortexTC10,vortexTC02};
 
 %% Find Vortex center coordinates
-[circShiftY,circShiftX] = f_centerMaskToSpot(referenceData, ...
-          projectionMask,mainDataCenter,mainDataRadius,monitorSize,TC,vid);
-coorShiftX = monitorSize(1)/2 + circShiftX;
-coorShiftY = monitorSize(2)/2 + circShiftY;
+[coorRelShiftY,coorRelShiftX] = f_centerMaskToSpot(referenceData, ...
+          projectionMasks,mainDataCenter,mainDataRadius,monitorSize,TC,vid);
+        
+coorShiftX = monitorSize(1)/2 + coorRelShiftX;
+coorShiftY = monitorSize(2)/2 + coorRelShiftY;
 
 %% Close preview
 if strcmp(vid.previewing,'on') 

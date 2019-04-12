@@ -77,7 +77,8 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
  formatLyot = 'Y800 (1280x960)';
  cameraPlaneLyot =  'Lyot';
  PPLyot = 3.75; % Pixel pitch in [um/pixel]
- if shiftMask == 2 && ~(exist(SLMcenterWisdom,'file') == 2)% When self centering will be performed
+ widomexist = (exist(SLMcenterWisdom,'file') == 2);
+ if shiftMask == 2 && ~(widomexist)% When self centering will be performed
   
   %% Self centering camera preparation
   % Turns the camera on and create all the needed variables. Remember to
@@ -89,12 +90,13 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
  end
 
 %% Spatial definitions
+% shiftCart can be an output if a Lyot metric will be used in the future
+% As well create shiftcart after f_addSliderPositioning in principal.m
 [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize, ...
-shiftCart,mainLyotRadius] = f_DefineSpace(vidSelfCent,sSupport, ...
-sSize,shiftCart,shiftMask,PPLyot,pixSize,apRad,scrnIdx, ...
-circularMask,z_pupil,coordType,MaxMask,SLMcenterWisdom, ...
-cameraLyot,cameraPlaneLyot,exposureLyot,formatLyot,fpsLyot, ...
-maskSel);
+~,mainLyotRadius] = f_DefineSpace(vidSelfCent,sSupport,sSize, ...
+shiftCart,shiftMask,PPLyot,pixSize,apRad,scrnIdx,circularMask,z_pupil, ...
+coordType,MaxMask,SLMcenterWisdom,cameraLyot,cameraPlaneLyot, ...
+exposureLyot,formatLyot,fpsLyot,measSimulated,maskSel);
 % Defines the cartesian/polar coordinates, its sampling interval and 
 % discretized angular part for gl
 %%% Coordinates selection:
@@ -113,7 +115,7 @@ end
 phaseValues,tc,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha, ...
 Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag, ...
 binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang, ...
-MaxMask,plotMask,maskSel);      
+MaxMask,plotMask,maskSel);
 % Dependencies:
 % f_PlotSelectedMask -> f_SpiralMask (or any other) -> f_ProjectMask -> 
 % f_MaskWrapCircDiscret -> f_discretizeMask -> f_wrapToRange 
@@ -148,10 +150,10 @@ if meas
   
   %% Measurement debugging
   % Usefull for aligning the vortex and adjusting exposure parameters
-  if measDebug == 1 && measSimulated == 0 
+  if measDebug == 1 && measSimulated == 0
     [~] = f_CaptureImage(vidMeas,dataDir,filename,imgformat,pathSep, ...
     infoDelim,dirDelim,snapsfldr,previewBool,loghist,camera, ...
-    cameraPlane,exposure,format,fps);
+    cameraPlane,exposure,format,fps,maskFig,plotMask);
     % Takes a camera shot,shows a figure and saves it
     % Close the mask figure after debugging
     if ishandle(maskFig)
@@ -184,9 +186,9 @@ if meas
     %% Save the whole workspace
     % Performed every time a measurement is made
     save(strcat(dataDir,pathSep,numberedFolderMeas,pathSep, ...
-    'workspace.mat'),'measfullpath','refmeasfullpath','infoDelim','dataformat', ...
-    'imgformat','cameraPlane','totalImgs','beepSound','L','PP', ...
-    'mainLyotRadius','measSimulated');
+    'workspace.mat'),'measfullpath','refmeasfullpath','infoDelim', ...
+    'dataformat','imgformat','cameraPlane','totalImgs','beepSound','L', ...
+    'PP','mainLyotRadius','measSimulated');
     % The saved variables include all the input ones of  f_ProcessData.m
     % minus the ones that are after "-except" in the "Load previous
     % measurement (whole workspace)" section
@@ -217,7 +219,8 @@ elseif proc == 1 %  meas == 0 always in order to enter here (since here one
    case 2 % Loads a manually-put folder name
     clearvars -except dataDir pathSep measFoldName ProcessedDir ...
     metricSel metricProfile AiryFactor NA loadMeas;
-    loadMeasPath = strcat(dataDir,pathSep,measFoldName,pathSep,'workspace.mat');
+    loadMeasPath = strcat(dataDir,pathSep,measFoldName,pathSep, ...
+                          'workspace.mat');
     if exist(loadMeasPath, 'file') == 2 % File exists
        load(loadMeasPath); 
     else % File does not exist.
@@ -231,7 +234,8 @@ elseif proc == 1 %  meas == 0 always in order to enter here (since here one
     % Selects only the folder from the full path
     clearvars -except dataDir pathSep usermeasFoldName ProcessedDir ...
     metricSel metricProfile AiryFactor NA loadMeas;    
-    loadMeasPath = strcat(dataDir,pathSep,usermeasFoldName,pathSep,'workspace.mat');
+    loadMeasPath = strcat(dataDir,pathSep,usermeasFoldName,pathSep, ...
+                          'workspace.mat');
     if exist(loadMeasPath, 'file') == 2 % File exists
        load(loadMeasPath); 
     else % File does not exist.
@@ -270,31 +274,32 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% ACADEMIC PURPOSES: Zernike, simulation
 if proc == 0
-    %% Additional information
-    % abs(mask): should always be 1, meaning that it is normalized
+  %% Additional information
+  % abs(mask): should always be 1, meaning that it is normalized
 
-    %% Fourier transform of the mask
-    % Executed if desired on the parameters
-    % Performs the FFT of the mask and shows x and y profiles
-    f_ComputeMaskSpectrum(x,y,mask,abs_angFT,maskFTlog,FTmask);
+  %% Fourier transform of the mask
+  % Executed if desired on the parameters
+  % Performs the FFT of the mask and shows x and y profiles
+  f_ComputeMaskSpectrum(x,y,mask,abs_angFT,maskFTlog,FTmask);
 
-    %% Gradient of the mask
-    % Executed if desired on the parameters
-    % Shows the singularity clearly
-    AngMask = angle(mask);
-    f_ComputeMaskGradient(x,y,AngMask,gradMask);
+  %% Gradient of the mask
+  % Executed if desired on the parameters
+  % Shows the singularity clearly
+  AngMask = angle(mask);
+  f_ComputeMaskGradient(x,y,AngMask,gradMask);
 
-    %% Reconstruction of the mask with Zernike polynomials
-    % Executed if desired on the parameters
-    % Computes a wavefront reconstruction using Zernike's Polynomials and
-    % calculates the function expansion coefficients
-    f_ZernikeReconstruction(z_ReconstrNumb,wrapMask,z_pupil,maskZernReconstr);
+  %% Reconstruction of the mask with Zernike polynomials
+  % Executed if desired on the parameters
+  % Computes a wavefront reconstruction using Zernike's Polynomials and
+  % calculates the function expansion coefficients
+  f_ZernikeReconstruction(z_ReconstrNumb,wrapMask,z_pupil, ...
+                          maskZernReconstr);
 
-    %% Simulation
-    % Executed if desired on the parameters
-    if simBool
-      f_SimulateFreeSpace(x,y,Xpc,Ypc,rPC,mask,starAmplitude,...
-      planetAmplitude,pixelSeparation,w1,w2,rPupilSize,showIin,showPupilin, ...
-      showFPmag,logscale,showFPphas,showPhasout,showMagout,showIout)
-    end
+  %% Simulation
+  % Executed if desired on the parameters
+  if simBool
+    f_SimulateFreeSpace(x,y,Xpc,Ypc,rPC,mask,starAmplitude,...
+    planetAmplitude,pixelSeparation,w1,w2,rPupilSize,showIin,showPupilin, ...
+    showFPmag,logscale,showFPphas,showPhasout,showMagout,showIout)
+  end
 end

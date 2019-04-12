@@ -167,10 +167,11 @@ switch plotMask
   % [left bottom width height]
   
   %% Figure plotting
-  imagesc(wrapMask);  % Plots in SLM screen 
+  maskImgHandle = imagesc(wrapMask);  % Plots in SLM screen 
+  wrapMaskFig = {wrapMaskFig,maskImgHandle};
   axis off; colormap(customMap);
   % axis fill;
-  wrapMaskFig.Visible = 'on';
+  wrapMaskFig{1}.Visible = 'on';
   [~] = f_changeProjectionMonitor('Restore'); % Restore default figure
   % OLD
   % set(gca,'xtick',[]); set(gca,'ytick',[]) % No axis values

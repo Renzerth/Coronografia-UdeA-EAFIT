@@ -1,5 +1,5 @@
-function [circShiftY,circShiftX] = f_centerMaskToSpot(referenceData, ...
-         projectionMask,mainDataCenter,mainDataRadius,monitorSize,TC,vid)
+function [coorShiftY,coorShiftX] = f_centerMaskToSpot(referenceData, ...
+         projectionMasks,mainDataCenter,mainDataRadius,monitorSize,TC,vid)
 % A centering application designed to adjust optical vortex positioning.
 % Based on a gradient step iterator of radial intensity the algorithm loops
 % through the whole Screen in a coarse displacement looking for small
@@ -48,13 +48,18 @@ function [circShiftY,circShiftX] = f_centerMaskToSpot(referenceData, ...
 % License: CC(4.0) BY-NC-SA
 %
 % Master in Applied Physics -- Optics Research
-
+%% Input Check
+adjustmentEnabled = false;
+if length(projectionMasks) == 2
+  projectionMask = projectionMasks{1}; % TC mask is used for selfcentering algorithm
+  adjustmentEnabled = true;
+end
 %% Algorithm Settings
-varBaseLine = 0.10;
+varBaseLine = 0.3;
 criteriaTol = 0.5; % Ref: 0.5
-histWeightFactor = 0.2;
+histWeightFactor = 0.10;
 spotFraction = 0.2; % Ref: 0.15 check
-noiseValExcl = 20;
+noiseValExcl = 15;
 %% Set Reference
 dataSize = size(referenceData);
 [referenceRadialProfile] = f_getAverageRadialProfile(referenceData, ...
@@ -146,8 +151,10 @@ for times = 1: refiningIterations
   end
   
   if updateEnabled
-    searchOffsetY = circIterator(maxIterY,iterationsY,-backwardIter)*shiftStepY + searchOffsetY;
+    searchOffsetY = circIterator(maxIterY,iterationsY,-(backwardIter - 1))*shiftStepY + searchOffsetY;
     searchOffsetX = circIterator(maxIterX,iterationsX,-backwardIter)*shiftStepX + searchOffsetX;
+%     searchOffsetY = searchOffsetY + monitorSize(1)*(searchOffsetY == 0 && times > 1); % Hysteresis Loss Correction
+%     searchOffsetX = searchOffsetX + monitorSize(2)*(searchOffsetX == 0 && times > 1);
     maxIterX = scanAreaFactor*shiftStepX;
     maxIterY = scanAreaFactor*shiftStepY;
     shiftStepX = round(shiftStepX/(2^(times+1)));
@@ -159,20 +166,28 @@ for times = 1: refiningIterations
     updateEnabled = false;
     pause(1); % Wait for intensity to be properly registered after scan area change
   else
-    error('Failed to find representative radial changes during iteration.');
+    if ~adjustmentEnabled
+      error('Failed to find representative radial changes during iteration.');
+    end
   end
 end
-%% Instruction for the user
-disp(['Move the sliders to adjust the mask"s position and then close'...
-     ' the mask window when done']);
-
 %% Manual adjustment of the mask
-[manualShiftYcoord, manualShiftXcoord] = f_adjustSLMPositioning( ...
-figureHandler,updateDisplayHandler,analysisPlotHandler,vid,dataSize, ...
-mainDataCenter,referenceRadialProfile,dataRange);
-circShiftX = localX + manualShiftXcoord - monitorSize(1); % Referred 
-                                   % Overall Coordinates from screen origin
-circShiftY = localY + manualShiftYcoord - monitorSize(2);
+manualShiftXcoord = 0;
+manualShiftYcoord = 0;
+if adjustmentEnabled
+  % Instruction for the user
+  disp(['Move the sliders to adjust the mask"s position and then close'...
+     ' the mask window when done']);
+  set(updateDisplayHandler,'CData',circshift(projectionMasks{2},[localY, localX]));
+  [manualShiftYcoord, manualShiftXcoord] = f_adjustSLMPositioning( ...
+  figureHandler,updateDisplayHandler,analysisPlotHandler,vid,dataSize, ...
+  mainDataCenter,referenceRadialProfile,dataRange);
+end
+
+%% Coordinates correction
+circShiftX = localX + manualShiftXcoord;
+circShiftY = localY + manualShiftYcoord;
+[coorShiftY, coorShiftX] = f_shiftToCart(circShiftX,circShiftY,monitorSize(1),monitorSize(2)); % Referred % Overall Coordinates from screen origin
 
 %% Close the profile figure
 if ishandle(FigProfHandler)
