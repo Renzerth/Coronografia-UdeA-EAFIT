@@ -1,4 +1,5 @@
-function [shiftYcoord, shiftXcoord] = f_addSliderPositioning(parentHandler, figureHandler, varargin)
+function [shiftXcoord, shiftYcoord] = f_addSliderPositioning(parentHandler, figureHandler, varargin)
+% shiftXcoord,shiftYcoord have the center of the image as origin
 
 %% Input checking
 if ~ishandle(parentHandler)
@@ -45,8 +46,8 @@ else
 end
 while ishandle(conditionHandle) && ishandle(parentHandler) % Avoid usage of
                                         % addlistener to read slider values
+    shiftXcoord = floor(xSliderShift.Value - halfPointX);                                    
     shiftYcoord = floor(ySliderShift.Value - halfPointY);
-    shiftXcoord = floor(xSliderShift.Value - halfPointX);
     set(figureHandler,'CData',circshift(originalData,floor([shiftYcoord, shiftXcoord])));
     pause(0.1); % Allow idle instead of processing
     % Delay for user response: dead time of the processor

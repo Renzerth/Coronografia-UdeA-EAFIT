@@ -9,7 +9,7 @@ format,fps,measSimulated,maskSel)
 %  sSize: bits for grey levels; 2^k is the resolution (size of x and y)
 %     Default: 10. Size is calculated as 2^k - 1
 %     Only works when coordType = 1
-%  shiftCart: [yshift,xshift], works when shiftMask = 1. Percentages of
+%  shiftCart: [xshift,yshift], works when shiftMask = 1. Percentages of
 %             movement of the HALF size of the screen (cartesian coordinates
 %             convention). Ranges per shift: [0,100] (percentage)  
 %  shiftMask: only shifts when plotMask = 2
@@ -153,9 +153,9 @@ switch shiftMask
            'image, please select a smaller value for "shiftCart" ']);
   end
   shiftCart = shiftCart/100; % Percentage w.r.t the half size 
-  shiftX = shiftCart(2); % Cartesian shift in x
-  shiftY = shiftCart(1); % Cartesian shift in y
-  shiftCart = [shiftY shiftX*AspectRatio];
+  shiftX = shiftCart(1); % Cartesian shift in x
+  shiftY = shiftCart(2); % Cartesian shift in y
+  shiftCart = [shiftX*AspectRatio, shiftY];
   
  case 2 % Self-centering algorithm
   shiftCartfine = shiftCart; % User-given for a fine adjustment
@@ -180,13 +180,13 @@ switch shiftMask
    %% Self-centering algorithm
     % these outputs are not used in the meantime (2019): 
     % [shiftY,shiftX,systemPupilPixelSize,mainDataCenter,mainDataRadius] 
-    [shiftY, shiftX,~,~,mainLyotRadius] = ...
+    [shiftX, shiftY,~,~,mainLyotRadius] = ...
     f_selfCenterSLMmask(PP,lensDiameter,scrnIdx,vidSelfCent,tit);
     if coordType == 2
       [shiftX,shiftY] = f_calcHScoorToSgnCoor(shiftX/monitorSize(1), ...
         shiftY/monitorSize(2));
     end
-    shiftCart = [shiftY, shiftX];
+    shiftCart = [shiftX, shiftY];
     
     %% Save SLMwisdom.mat
     % Explanation: save(directory+filename,variables)
@@ -195,7 +195,7 @@ switch shiftMask
   else % The self centering data is available in Data (folder)
     %% Load SLMwisdom.mat
     load(SLMcenterWisdom,'shiftCart','mainLyotRadius');
-    shiftX = shiftCart(2); shiftY = shiftCart(1);
+    shiftX = shiftCart(1); shiftY = shiftCart(2);
     
     %% Fix data format incompatibility
     if coordType == 2 && max(abs(shiftCart)) >= 1
@@ -209,7 +209,7 @@ switch shiftMask
       %       shiftY = round(shiftY*monitorSize(2));
       %       shiftX = round(shiftX*monitorSize(1));
     end
-    shiftCart = [shiftY, shiftX];
+    shiftCart = [shiftX, shiftY];
   end
  end % switch shiftMask
  % After this switch, shiftCart is taken as the output so that all the

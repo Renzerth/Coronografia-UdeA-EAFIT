@@ -161,20 +161,26 @@ if meas
       shiftX = shiftX + shiftCart(1);
       shiftY = shiftY + shiftCart(2);
       shiftCart = [shiftX, shiftY];
-      answer1 = input('ShiftCart was modified. Save changes? y/n: ','s');
+      answer1 = input('Do you want to take another snapshot? y/n: ','s');
       % returned always as a string  
-      if strcmp(answer1,'y') % save
-        save(SLMcenterWisdom,'shiftCart','-append')
-      else
-        disp('No changes were made.');
+      switch answer1
+        case 'y' % Compare string. Loop repeats
+        loopCondition = 0;  
+        i = i + 1;
+        case 'n' % Loop finishes
+        loopCondition = 1;    
+        otherwise % Loop finishes
+        loopCondition = 1; 
+        warning('Try a valid command, the program will assume a "no" as an answer');
       end
+      save(SLMcenterWisdom,'shiftCart','-append')
     end
+    
     % Takes a camera shot,shows a figure and saves it
     % Close the mask figure after debugging
     if ishandle(maskFig)
       close(maskFig);
     end
-    
   %%% Get some hardware/software/tools info:
   % get(vid): displays the general parameters of the camera
   % getselectedsource(vid): an existing variable (src). Similar to get(vid)

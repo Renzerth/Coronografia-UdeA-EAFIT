@@ -1,4 +1,4 @@
-function SingleFrame = f_CaptureImage(vid,dataDir,filename,imgformat, ...
+function [SingleFrame,circShiftX,circShiftY] = f_CaptureImage(vid,dataDir,filename,imgformat, ...
 pathSep,infoDelim,dirDelim,snapsfldr,previewBool,loghist,camera, ...
 cameraPlane,exposure,format,fps,maskFig,plotMask)
                                   
@@ -77,7 +77,7 @@ while loopCondition == 0
   %% 
   disp('Close the preview in order to continue the program"s execution.');
   if plotMask == 2 && ishandle(maskFig{1})% SLM plot
-    f_addSliderPositioning(maskFig{1},maskFig{2},previewHandle);
+    [circShiftX, circShiftY] = f_addSliderPositioning(maskFig{1},maskFig{2},previewHandle);
   end
   
   while ishandle(previewHandle)

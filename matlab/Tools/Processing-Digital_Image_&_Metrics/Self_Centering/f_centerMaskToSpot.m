@@ -1,4 +1,4 @@
-function [coorShiftY,coorShiftX] = f_centerMaskToSpot(referenceData, ...
+function [coorShiftX, coorShiftY] = f_centerMaskToSpot(referenceData, ...
          projectionMasks,mainDataCenter,mainDataRadius,monitorSize,TC,vid)
 % A centering application designed to adjust optical vortex positioning.
 % Based on a gradient step iterator of radial intensity the algorithm loops
@@ -187,7 +187,7 @@ end
 %% Coordinates correction
 circShiftX = localX + manualShiftXcoord;
 circShiftY = localY + manualShiftYcoord;
-[coorShiftY, coorShiftX] = f_shiftToCart(circShiftX,circShiftY,monitorSize(1),monitorSize(2)); % Referred % Overall Coordinates from screen origin
+[coorShiftX, coorShiftY] = f_shiftToCart(circShiftX,circShiftY,monitorSize(1),monitorSize(2)); % Referred % Overall Coordinates from screen origin
 
 %% Close the profile figure
 if ishandle(FigProfHandler)

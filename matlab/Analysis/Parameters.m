@@ -14,7 +14,7 @@ meas = 1; % Measure: yes (1) or no (0)
                        % tcvect = [1 2 0]; glvect = [255]; 
     % if measSimulated = 1 -> measDebug will be 0 
     % If meas = 1 -> all the figures will be closed before starting it
-    measDebug = 1; % Debugging before actually measuring. Displays the 
+    measDebug = 0; % Debugging before actually measuring. Displays the 
                    % default phase mask and shots a photo with the camera
                    % Works if  measSimulated = 0. If it is active, the
                    % program will set proc = 0
@@ -140,14 +140,14 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
      % again
      switch shiftMask
          case 1 % SLM plotting with a manual shift
-              shiftCart = [-10, -20]; % shiftCart: [shiftY,shiftX]. 
+              shiftCart = [-10, -20]; % shiftCart: [shiftX,shiftY]. 
               % Percentages of movement of the half size of the screen
               % (cartesian coordinates convention). Ranges per shift: 
               % [0,99] (percentge) 100 is allowed if no profile will be made. 
               % Smallervalues are restricted if the Zernike masks are used.
                         
          case 2 % Fine adjustment of the self centering shift
-             shiftCart = [1, +1]; % Same percentage concept of the 
+             shiftCart = [0, 0]; % Same percentage concept of the 
              % abovementioned explanation and same conventions
      end
                           

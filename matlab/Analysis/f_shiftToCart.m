@@ -1,4 +1,4 @@
-function [coorY, coorX] = f_shiftToCart(circShiftX,circShiftY,shiftXPeriod,shiftYPeriod)
+function [coorX, coorY] = f_shiftToCart(circShiftX,circShiftY,shiftXPeriod,shiftYPeriod)
 %% Coordinate Reference - Center
 halfMx = shiftXPeriod/2;
 halfMy = shiftYPeriod/2;
