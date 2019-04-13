@@ -143,7 +143,7 @@ if meas
     end
     % Turns the camera on and create all the needed variables. Remember to
     % leave the preview open
-    [vidMeas,~,fps] = f_selectCamera(cameraID,camera,exposure,fps,format);
+    [vidMeas,srcMeas,fps] = f_selectCamera(cameraID,camera,exposure,fps,format);
   else % ~(measSimulated == 0 && meas == 1)
     vidMeas = []; % Empty, just to be as a non-used input in some functions
   end
@@ -191,7 +191,7 @@ if meas
     
     %% Automated measurement
     % Performs the measurements and stores them:
-    [refmeasfullpath] = f_AutomateMeasurement(vidMeas,Xslm,Yslm,rSLM, ...
+    [refmeasfullpath] = f_AutomateMeasurement(srcMeas,vidMeas,Xslm,Yslm,rSLM, ...
     phiSLM,Xpc,Ypc,rPC,phiPC,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0, ...
     frkTyp,Aalpha,Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot, ...
     normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType, ...

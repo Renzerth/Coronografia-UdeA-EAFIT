@@ -1,4 +1,4 @@
-function [refmeasfullpath] = f_AutomateMeasurement(vid,Xslm,Yslm,rSLM, ...
+function [refmeasfullpath] = f_AutomateMeasurement(src,vid,Xslm,Yslm,rSLM, ...
 phiSLM,Xpc,Ypc,rPC,phiPC,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0, ...
 frkTyp,Aalpha,Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot, ...
 normMag,binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType, ...
@@ -27,11 +27,25 @@ t1_dt = datetime; % store time
 disp('Measurement started'); disp(t1_dt)
 
 %% Measurements
+% y = @(x) abs(0.0053*log(x)-0.0008); % in zero, the first number of the characterization
+
 for idxtc = 1:ltcvect 
+  
+  tc = tcvect(idxtc); % Specific tc for this iteration
+  
+  %% Dynamically change the camera's exposure with a previous characterization
+  if tc == 0
+    ExposureDynamic = 1/1239; % Experimental curve for fps=10 and with common exposure values
+  elseif tc == 1
+    ExposureDynamic = 1/500;
+  else
+    ExposureDynamic = 0.0053*log(tc); % Experimental curve for fps=10 and with common exposure values
+  end
+  src.Exposure = ExposureDynamic; % Change camera's exposure due to the energy spreading
+  
   for idxgl = 1:lglvect
-      
+          
    %% Generate the phase mask and display it on the SLM
-    tc = tcvect(idxtc); % Specific tc for this iteration
     phaseValues = glvect(idxgl); % Specific phase values for this iteration
     phaseValues = linspace(0,2*pi,phaseValues);
     plotMask = 2; % Select SLM for plotting
@@ -42,10 +56,16 @@ for idxtc = 1:ltcvect
     Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
     MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
     plotMask,maskSel);      
+    
+    %% Wait between cycles
+    pause(recordingDelay); % Displays the mask for "recordingDelay" seconds   
+                           % This time is also important so that the camera
+                           % bus doesn't overload   
   
    %% Record a snapshot
     if measSimulated == 0
         snap = getsnapshot(vid); % Real measurements
+        wait(vid);
     else % measSimulated = 1
         snap = wrapMaskslm; % "Simulated" measurements (the mask is saved)
     end
@@ -98,9 +118,7 @@ for idxtc = 1:ltcvect
     disp(strcat(stridxgral,' out of ',{' '},strtotalImgs, ...
          ' images recorded'));
     idxgral = idxgral + 1; % The general index increases   
-    pause(recordingDelay); % Displays the mask for "recordingDelay" seconds   
-                           % This time is also important so that the camera
-                           % bus doesn't overload 
+    
     % Close the shown figures  
     if ishandle(pcfig)
       close(pcfig);
@@ -108,8 +126,8 @@ for idxtc = 1:ltcvect
     if ishandle(camfig)
       close(camfig); 
     end
-    if ishandle(slmfig)
-      close(slmfig);
+    if ishandle(slmfig{1})
+      close(slmfig{1});
     end
   end
 end
@@ -166,8 +184,8 @@ pause(recordingDelay); % Displays the mask for "recordingDelay" seconds
 if measSimulated == 0
     wait(vid); % Waits until vid is not running or logging
 end
-if ishandle(reffig)
-  close(reffig); % Closes the reference mask
+if ishandle(reffig{1})
+  close(reffig{1}); % Closes the reference mask
 end
 
 %% End of the measurements

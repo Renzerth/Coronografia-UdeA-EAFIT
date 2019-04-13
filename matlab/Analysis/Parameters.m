@@ -171,7 +171,7 @@ switch camera
  
   case 'DMK23U445' % PSF plane % CCD 
     cameraID = 1;
-    exposure = 1/300; % Range: [,]
+    exposure = 1/436; % Range: [1.0000e-04 300]; DefaultValue: 0.0333
     %fps = '15'; % Frames per second
     fps = '10.00'; % '15.00', '10.00', ' 7.50', ' 5.00' ' 3.75', 
     format = 'Y800 (1280x960)'; 
@@ -333,19 +333,22 @@ end
 % Always saves with the dataformat
 % Sweeps all the GL for one tc and then switches to the other ones
 dataformat = '.bmp'; % Default: .bmp (not too heavy)
-% tcvect = [1 2 3 4 5 6 7 8 9 10]; % Given by Juan Jose
-% glvect = [1 16 24 28 36 56 128 256]; % Given by por Juan Jose
+
+% glvect = 255; % Gray level to be measured [0,255]
+% glvect = round(linspace(2,10,10));
+glvect = [2 16 24 28 36 56 128 256]; % Given by por Juan Jose
+tcvect = 1:10; % Topological charges to be measured [integers] 
+
+% No
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
                                   % with a good system phase response
-tcvect = [1 2 0]; % Topological charges to be measured [integers] 
-glvect = [255]; % Gray level to be measured [0,255]
-% glvect = linspace(2,18,9)
+                                  
 waitbeforemeas = 2; % Seconds before measuring as a safety measurement. 
                     % Default: 10
-recordingDelay = 0; % Seconds between each mask to be shown. This time is
+recordingDelay = 3; % Seconds between each mask to be shown. This time is
                     % also important so that the camera bus port doesn't 
-                    % overload. Ref: 0. This is a safe parameter, since 
-                    % wait(vid) is already being used, but this time adds a
+                    % overload. Ref: 0. This is a safe parameter and is independent from 
+                    % wait(vid), which is already being used, but this time adds a
                     % bigger confidence for the bus not to fill and
                     % generate anomalies in the images
 
