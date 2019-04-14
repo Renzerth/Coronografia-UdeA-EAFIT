@@ -27,21 +27,23 @@ t1_dt = datetime; % store time
 disp('Measurement started'); disp(t1_dt)
 
 %% Measurements
-% y = @(x) abs(0.0053*log(x)-0.0008); % in zero, the first number of the characterization
-
 for idxtc = 1:ltcvect 
   
   tc = tcvect(idxtc); % Specific tc for this iteration
   
-  %% Dynamically change the camera's exposure with a previous characterization
+  %% Dynamically change the camera's exposure with a characterization
   if tc == 0
-    ExposureDynamic = 1/1239; % Experimental curve for fps=10 and with common exposure values
+    ExposureDynamic = 1/1239; % Experimental ´point for tc=0
   elseif tc == 1
-    ExposureDynamic = 1/500;
+    ExposureDynamic = 1/500; % Experimental ´point for tc=1
   else
-    ExposureDynamic = 0.0053*log(tc); % Experimental curve for fps=10 and with common exposure values
+    ExposureDynamic = 0.0053*log(tc); % Experimental curve for fps=10 and
+                                      % with common exposure values
+    % OLD y = @(x) abs(0.0053*log(x)-0.0008); % in zero, the first number
+    % of the characterization
   end
-  src.Exposure = ExposureDynamic; % Change camera's exposure due to the energy spreading
+  src.Exposure = ExposureDynamic; % Change camera's exposure due to the 
+                                  % energy spreading
   
   for idxgl = 1:lglvect
           
@@ -51,8 +53,8 @@ for idxtc = 1:ltcvect
     plotMask = 2; % Select SLM for plotting
     [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
                                       phiPC,plotMask);
-    [~,wrapMaskslm,slmfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc, ...
-    s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
+    [~,wrapMaskslm,slmfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,...
+    tc,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
     Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
     MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
     plotMask,maskSel);      
@@ -83,9 +85,9 @@ for idxtc = 1:ltcvect
     plotMask = 1; % Select PC
     [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
                                       phiPC,plotMask);                             
-    [~,wrapMaskpc,pcfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues, ...  % TEMPORARLY NOT BEING USED
-    tc,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
-    Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
+    [~,~,pcfig,~] = f_PlotSelectedMask(X,Y,r,phi,phaseValues,tc,s,ph0,p,...
+    WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp,Angbet, ...
+    z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
     MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
     plotMask,maskSel);     
     set(pcfig,'units','normalized','position',[6/11 2/10 3/7 1/2]);
@@ -96,7 +98,7 @@ for idxtc = 1:ltcvect
          expImgs{idxgral} = snap; % An extructure with all the images
     else % measSimulated = 1
          % If you want to simulate with the shifted mask, put wrapMaskslm
-         expImgs{idxgral} = wrapMaskslm; % Saves the mask                          % TEMPORARLY BEING USED
+         expImgs{idxgral} = wrapMaskslm; % Saves the mask                         
     end 
     
     tcstr = strcat('tc',infoDelim,num2str(tcvect(idxtc))); 
@@ -158,13 +160,13 @@ binMaskref = 1; % 1: mask is binarized
 maskSelref = 1; % LG mask
 plotMaskref = 2; % Select SLM for plotting
 WsizeRatioref = 100; % Radial nodes' width of 100
-[Xref,Yref,rref,phiref] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
-                                  phiPC,plotMaskref);
-[~,wrapMaskslmref,reffig,~] = f_PlotSelectedMask(Xref,Yref,rref,phiref,phaseValuesref,tcref, ... % TEMPORARLY NOT BEING USED
-s,ph0,pref,WsizeRatioref,L,f_FR,bcst,period,T0,frkTyp,Aalpha,Angalp, ...
-Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMaskref,binv, ...
-MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
-plotMaskref,maskSelref);      
+[Xref,Yref,rref,phiref] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM, ...
+                                            Xpc,Ypc,rPC,phiPC,plotMaskref);
+[~,wrapMaskslmref,reffig,~] = f_PlotSelectedMask(Xref,Yref,rref, ... % TEMPORARLY NOT BEING USED
+phiref,phaseValuesref,tcref,s,ph0,pref,WsizeRatioref,L,f_FR,bcst, ...
+period,T0,frkTyp,Aalpha,Angalp,Angbet,z_coeff,z_a,z_pupil, ...
+z_disp_wrap,z_plot,normMag,binMaskref,binv,MaskPupil,rSize, ...
+monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMaskref,maskSelref);      
 
  %%% Register the reference:
  if measSimulated == 0
@@ -174,7 +176,8 @@ plotMaskref,maskSelref);
  end
  
 %%% Save the reference:
-refImgPath = strcat(imgpartPath,'reference',infoDelim,'tc',num2str(tcref),infoDelim,'gl',num2str(glref));
+refImgPath = strcat(imgpartPath,'reference',infoDelim,'tc', ... 
+                            num2str(tcref),infoDelim,'gl',num2str(glref));
 refmeasfullpath =  strcat(refImgPath,dataformat);
 % Explanation: imwrite(variables,directory+filename+extension)
 imwrite(snap,refmeasfullpath); 

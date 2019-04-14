@@ -112,7 +112,8 @@ MaskPupil = 1; % Applies a pupil truncation to the mask: (0): no; (1): yes
 coordType = 2; % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % pixel coordinates: [-L/2,L/2]
-% 2: size defined by the resolution of the selected screen on [-1,1] (sign function coordiantes)   
+% 2: size defined by the resolution of the selected screen on [-1,1] (sign
+%    function coordiantes)   
 %%%% For coordType = 1 (user custom-sized):
     k = 9; % Bits for grey levels; 2^k is the resolution (size of x and y)
            % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
@@ -140,15 +141,15 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
      % again
      switch shiftMask
          case 1 % SLM plotting with a manual shift
-              shiftCart = [-10, -20]; % shiftCart: [shiftX,shiftY]. 
-              % Percentages of movement of the half size of the screen
-              % (cartesian coordinates convention). Ranges per shift: 
-              % [0,99] (percentge) 100 is allowed if no profile will be made. 
-              % Smallervalues are restricted if the Zernike masks are used.
+            shiftCart = [-10, -20]; % shiftCart: [shiftX,shiftY]. 
+            % Percentages of movement of the half size of the screen
+            % (cartesian coordinates convention). Ranges per shift: 
+            % [0,99] (percentge) 100 is allowed if no profile will be made. 
+            % Smallervalues are restricted if the Zernike masks are used.
                         
          case 2 % Fine adjustment of the self centering shift
-             shiftCart = [0, 0]; % Same percentage concept of the 
-             % abovementioned explanation and same conventions
+            shiftCart = [0, 0]; % Same percentage concept of the 
+            % abovementioned explanation and same conventions
      end
                           
    % LC2002: [-3,0.1]
@@ -347,10 +348,10 @@ waitbeforemeas = 2; % Seconds before measuring as a safety measurement.
                     % Default: 10
 recordingDelay = 3; % Seconds between each mask to be shown. This time is
                     % also important so that the camera bus port doesn't 
-                    % overload. Ref: 0. This is a safe parameter and is independent from 
-                    % wait(vid), which is already being used, but this time adds a
-                    % bigger confidence for the bus not to fill and
-                    % generate anomalies in the images
+                    % overload. Ref: 3. It adds a bigger confidence for the
+                    % bus not to fill and generate anomalies in the images
+                    % measurement. This is a safe parameter and is 
+                    % independent from  wait(vid).
 
 %% Reference measurement     
 % For tc=0 and for a gray level of 0 (black) or 256 (white)
