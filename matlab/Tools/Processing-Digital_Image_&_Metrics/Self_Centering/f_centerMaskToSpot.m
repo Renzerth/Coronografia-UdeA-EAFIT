@@ -187,7 +187,7 @@ end
 %% Coordinates correction
 circShiftX = localX + manualShiftXcoord;
 circShiftY = localY + manualShiftYcoord;
-[coorShiftX, coorShiftY] = f_shiftToCart(circShiftX,circShiftY,monitorSize(1),monitorSize(2)); % Referred % Overall Coordinates from screen origin
+[coorShiftX, coorShiftY] = f_CircShiftToCart(circShiftX,circShiftY,monitorSize(1),monitorSize(2)); % Referred % Overall Coordinates from screen origin
 
 %% Close the profile figure
 if ishandle(FigProfHandler)
