@@ -45,7 +45,7 @@ if measSimulated == 0 % Real measurement
     % im2double duplicates the precision of the exponent leaving intact the
     % mantisa. It as floating-point format that normalizes the images and this
     % operation is made on each RGB channel. rgb2gray does a similar operation
-    % but scalling to a gray scale, where it  converts RGB values to grayscale values
+    % but scaling to a gray scale, where it  converts RGB values to grayscale values
     % by forming a weighted sum of the R, G, and B components:
     % 0.2989 * R + 0.5870 * G + 0.1140 * B 
     refMeas = im2double(refMeas);

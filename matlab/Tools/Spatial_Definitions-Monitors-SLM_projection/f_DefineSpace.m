@@ -118,7 +118,7 @@ Xpc = X; Ypc = Y; % Needed for the PC coordinates later on
      flagAR = 1; % Flag for the AspectRatio application
   end % Otherwise X=X and one has the elliptical truncation in full screen
                                  
-%% Half support for the shift scalling and the mask truncation radius
+%% Half support for the shift scaling and the mask truncation radius
 HalfSupportX = f_MatrixHalfSupport(X);
 HalfSupportY = f_MatrixHalfSupport(Y);
 % Both are 1 for coordType = 2
