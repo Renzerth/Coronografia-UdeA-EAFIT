@@ -30,7 +30,17 @@ enhancedRange = mat2gray(log10(im2double(shapeData + 1))); % avoid -Inf log
 
 %% Detect data regions
 totalCounts = numel(enhancedRange);
-binaryData = imbinarize(enhancedRange,luminanceThresh);
+
+% NOT CORRECT SICNE THE enhancedRange is not in [0,1]
+% Possible solution:
+luminanceThresh = luminanceThresh*max(luminanceThresh(:)); % Percentage of 
+% the maximum of the image
+
+[sizeY,sizeX] = size(enhancedRange);
+binaryData = false(sizeY,sizeX);
+binaryData(cdata>=luminanceThresh) = true; % (1-Threshold) percent of the energy
+
+% OLD: binaryData = imbinarize(enhancedRange,luminanceThresh);
 binaryData = imfill(binaryData,4,'holes');
 binaryData = imopen(binaryData,strel('disk',6)); % Binary shape must fill
                          % circle to increase enclosed area approximation

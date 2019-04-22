@@ -21,8 +21,10 @@ referenceData = getsnapshot(vid); % Input reference, must be gray 'Y800'
 
 %% Mask Generation
 shiftX = 0; shiftY =0; TC = 10; enablechange = true;
-[X,Y,aspectRatio,monitorSize] = f_MakeScreenCoords(screenIndex,enablechange);
-maskGen = @(rho,theta,r0,TC) mat2gray(rho <= r0).*angle(exp(1i*TC*(theta + pi/TC)));
+[X,Y,aspectRatio,monitorSize] = f_MakeScreenCoords(screenIndex, ...
+                                                   enablechange);
+maskGen = @(rho,theta,r0,TC) mat2gray(rho <= r0).*angle(exp(1i*TC*(theta...
+                                                                + pi/TC)));
 
 %% Polar coordinates with the Aspect Ratio scaling
 scaledY = Y/aspectRatio;
