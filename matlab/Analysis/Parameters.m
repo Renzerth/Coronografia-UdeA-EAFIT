@@ -287,7 +287,7 @@ Angbet = 0; % Diffraction angle of vertical direction (y) [radians]
 
 %% Parameters: Zernike polynomials with Noll's convention
 %%%% For maskSel = 5 or 6:
-z_coeff = [4]; % Zernike coeffient vector (see f_ZernikeMask.m)
+z_coeff = [4 5]; % Zernike coeffient vector (see f_ZernikeMask.m)
 z_a = 2.5; % Arbitrary constant; the bigger, the more intense; ref: a=2.5
 z_pupil = 1; % Pupil relative size: [0,1]; like a percentage
 z_disp_wrap = 1; % (0): Original; (1): wrapped mask on [-pi,pi] 

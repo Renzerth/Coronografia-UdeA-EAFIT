@@ -151,6 +151,9 @@ if meas
   
   %% Measurement debugging
   % Usefull for aligning the vortex and adjusting exposure parameters
+  if plotMask ~= 2
+      error('plotMask must be 2 in order to perform the debugging');
+  end
   if measDebug == 1 && measSimulated == 0
     [~,circShiftX,circShiftY] = f_CaptureImage(vidMeas,dataDir, ...
     filename,imgformat,pathSep,infoDelim,dirDelim,snapsfldr, ...
