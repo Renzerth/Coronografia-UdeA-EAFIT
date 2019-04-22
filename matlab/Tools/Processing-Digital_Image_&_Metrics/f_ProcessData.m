@@ -40,6 +40,7 @@ if measSimulated == 0 % Real measurement
     % The image is read in a uint8 format: integer with values that are
     % normally in [0,255] (8-bit depth or dynamic range)
     refMeas = imread(refmeasfullpath);       
+    % since refMeas is a bmp image, it is loaded as uint8
 
     %%% UINT8 format to Double for the reference image
     % im2double duplicates the precision of the exponent leaving intact the
@@ -49,6 +50,8 @@ if measSimulated == 0 % Real measurement
     % by forming a weighted sum of the R, G, and B components:
     % 0.2989 * R + 0.5870 * G + 0.1140 * B 
     refMeas = im2double(refMeas);
+    
+   
     
     % Lyotimg = refMeas;  % TO BE USED FOR LYOT METRICS                                                                                                   
     
@@ -74,7 +77,7 @@ end
 
 %%% Lyot's spot size (main radius)
 %%%%% Lyot Intensity Feedback coordinates
-drawing = false;
+% drawing = false;
 
 % [~,mainLyotRadius,~] = f_findCircleShapedIntensity(Lyotimg,drawing);
 % mainLyotRadius = round(mainLyotRadius); % Pixels
@@ -140,8 +143,8 @@ yangL_Dfalco = ypixcenterd/ylamOverD; % Astronomer's physical scaling of pixels
 
 %% Lambda over D scaling with the experimental spot size
 % Pixel's size is scalled to the spot's size
-xangL_Dexpairy = xpixcenterd/(aproxRadius/2); % aproxRadius/2 makes it the diameter
-yangL_Dexpairy = ypixcenterd/(aproxRadius/2);
+xangL_Dexpairy = xpixcenterd/(aproxRadius); % aproxRadius/2 makes it the diameter
+yangL_Dexpairy = ypixcenterd/(aproxRadius);
 
 %% Lambda over D scaling with the experimental spot size
 % Pixel's size is scalled to the first Bessel's center
@@ -241,9 +244,9 @@ end
      
      %% Throughput gradient
                                                                                                                                                                             % DO A FUNCTION ONLY IF THIS WILL BE USEFULL
-      tit = 'Throughput gradient';                                               
-      normIntensity = radialIntensityMeas./max(radialIntensityMeas);
-      GradEnergy = gradient(normIntensity); % gradient [returns n elements] or diff [returns n-1 elements]                            % OR GRAD energy ?
+%       tit = 'Throughput gradient';                                               
+%       normIntensity = radialIntensityMeas./max(radialIntensityMeas);
+%       GradEnergy = gradient(normIntensity); % gradient [returns n elements] or diff [returns n-1 elements]                            % OR GRAD energy ?
       
      %% Plot of the gradient of the EEF and its corresponding intensity pattern                                                              
       %       yyaxis left (OLD method)

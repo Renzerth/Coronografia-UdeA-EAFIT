@@ -1,7 +1,7 @@
 function [imgpartPath,measfullpath,ProcessedDir,ltcvect,lglvect, ...
 totalImgs,numberedFolderMeas] = f_CreateFoldersRegisters(maskName, ...
 tcvect,glvect,slm,cameraPlane,dataDir,outDir,pathSep,infoDelim, ...
-dirDelim,lastmeas,meas,proc,useLastMeas)
+dirDelim,lastmeas,meas,proc,loadMeas)
 
 %% General saving registers
 ltcvect = length(tcvect); % Length of the tc vector
@@ -29,7 +29,7 @@ if meas == 1 %  -> save the numbered measurement folder
     %%% Save current measurement folder name
     % Explanation: save(directory,filename,variables) % ,'-append'
     save(lastmeasDir,'numberedFolderMeas'); % Save as .mat
-elseif useLastMeas == 1 % here, meas = 0. The last measurement is loaded
+elseif loadMeas == 1 % here, meas = 0. The last measurement is loaded
     if exist(lastmeasDir,'file') == 0
       error('No previous measurement was found.')
     end  
@@ -40,7 +40,7 @@ elseif useLastMeas == 1 % here, meas = 0. The last measurement is loaded
     %%% Folder name (use last measurement's name):
     numberedFolderMeas = struct.numberedFolderMeas; 
     
-else % useLastMeas == 0 or 2 or 3
+else % loadMeas == 0 or 2 or 3
     numberedFolderMeas = ''; % Not needed at all
 end
 
@@ -51,7 +51,7 @@ MeasDir = strcat(dataDir,pathSep,numberedFolderMeas); % Datalog folder that
 imgpartPath = strcat(MeasDir,pathSep,cameraPlane,infoDelim); % Partial path 
                                                      % for the measurements
 %%% Path of the cell with all the measurements:
-measfullpath = strcat(imgpartPath,'allmeas'); % Name of the saved cell of 
+measfullpath = strcat(imgpartPath,'allmeas.mat'); % Name of the saved cell of 
 % images. More information will be concatenated for a full path of the 
 % measured images inside the two "for" loops in f_AutomateMeasurement. As 
 % well, the variable "imgfullpath" is created inside this function

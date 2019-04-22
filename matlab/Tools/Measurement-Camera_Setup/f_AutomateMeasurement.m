@@ -109,7 +109,7 @@ for idxtc = 1:ltcvect
     
    %% Saving the measurement
     if measSimulated == 0
-         expImgs{idxgral} = snap; % An extructure with all the images
+         expImgs{idxgral} = im2double(snap); % An extructure with all the images
     else % measSimulated = 1
          % If you want to simulate with the shifted mask, put wrapMaskslm
          expImgs{idxgral} = wrapMaskslm; % Saves the mask                         
@@ -122,7 +122,7 @@ for idxtc = 1:ltcvect
     imgfullpath = strcat(imgpartPath,MeasInfo{idxgral});
     if measSimulated == 0
         % Explanation: imwrite(variables,directory+filename+extension)
-        imwrite(expImgs{idxgral}, strcat(imgfullpath,dataformat)); 
+        imwrite(snap, strcat(imgfullpath,dataformat)); % snap is uint8
     else % measSimulated == 1
         % Explanation: saveas(variable,directory+filename,extension)
         saveas(gcf,imgfullpath,imgformat); % Saves the last shown figure
@@ -150,7 +150,7 @@ end
 
 %% Store all measurements in a .mat file
 % Explanation: save(directory+filename,variables) % ,'-append'
-save(measfullpath,'expImgs','MeasInfo'); % Save as .mat
+save(measfullpath,'expImgs','MeasInfo'); % Save as .mat. expImgs is saved as double
 
 %% Reference measurement
 % For tc=0 and for a gray level of 0 (black) or 256 (white)

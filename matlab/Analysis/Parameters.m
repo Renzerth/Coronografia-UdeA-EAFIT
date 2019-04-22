@@ -23,13 +23,13 @@ proc = 1; % Processes the data
                 % Note: measSimulated=1 also applies to proc but with some
                 % loaded images from: Data/0_ExampleData
 %%% For proc = 1 and meas = 0:  the workspace is loaded
-    loadMeas = 1; % In order to load a previous workspace:
+    loadMeas = 3; % In order to load a previous workspace:
     % 0: doesn't load anything: not recommended in general
     % 1: loads the last measurement
     % 2: loads a user-defined measurement folder
     % 3: select the folder you want to process (inside Data)
     %%% For useLastMeas = 2:
-    measFoldName = '04-Apr-2019-No-SLM-VPL-mask-tcs-1-gls-1';
+    measFoldName = '12-Apr-2019-Pluto-Spiral-mask-tcs-10-gls-10';
     
 % NOTE: if meas and proc are both zero, then a single phase mask is plotted
 % with "plotMask". Another case on which this single phase mask is shown,
@@ -337,9 +337,12 @@ end
 % Sweeps all the GL for one tc and then switches to the other ones
 dataformat = '.bmp'; % Default: .bmp (not too heavy)
 
+glvect = [2 4 8 12 16 24 32 64 128 256]; % Gray level to be measured [0,255]
+tcvect = 2; 
+
 % For tests:
-glvect = [2 128 255]; % Gray level to be measured [0,255]
-tcvect = [2 10]; 
+% glvect = [2 128 255]; % Gray level to be measured [0,255]
+% tcvect = [2 10]; 
 
 % Gray level possibilities:
 % glvect = 2:10; % Small gray levels
@@ -421,7 +424,7 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 
 % WARNING: these things will only work if proc = 0
 
-metricSel = 1; % Type of metric:
+metricSel = 2; % Type of metric:
 % 1:
 %     -throughput (Encircled Energy Factor)
 %     -throughput gradient
