@@ -25,11 +25,7 @@ idxgral = 1; % Initialization of the general index that runs
 pause(waitbeforemeas); % Seconds before measuring as a safety measurement
 t1_dt = datetime; % store time
 disp('Measurement started'); disp(t1_dt);
-if measSimulated == 0
-    initialExposure =  src.Exposure; % Store the current camera's exposure
-else
-    initialExposure = []; % Empty, won't be used at all
-end
+initialExposure =  src.Exposure; % Store the current camera's exposure
 tc0Exposure  = 1/1239; % Used for the reference measurement ans possible inside the measurement
 
 %% Measurements
@@ -55,14 +51,10 @@ for idxtc = 1:ltcvect
   end
   
   for idxgl = 1:lglvect
-    %% Read a value of the gl vector and adjust exposure if needed
-     phaseValues = glvect(idxgl); % Specific phase values for this iteration
-      if measSimulated == 0 && phaseValues <= 6 && tc <= 3
-          ExposureDynamic = tc0Exposure; % Experimental point for tc=0
-          src.Exposure = ExposureDynamic; 
-      end
+     
       
    %% Generate the phase mask and display it on the SLM
+    phaseValues = glvect(idxgl); % Specific phase values for this iteration
     phaseValues = linspace(0,2*pi,phaseValues);
     plotMask = 2; % Select SLM for plotting
     [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,...
@@ -72,6 +64,15 @@ for idxtc = 1:ltcvect
     Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag,binMask,binv, ...
     MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang,MaxMask, ...
     plotMask,maskSel);      
+
+   %% Displaying the camera on the PC
+    % The numbers after 'position' were empirically obtained
+    camfig = figure('units','normalized','position',[1/12 2/10 3/7 1/2]);
+                                               % [left bottom width height]
+    imagesc(snap); % normalized
+    colorbar; title(strcat('Camera image:',{' '},cameraPlane));
+    pax = gca; pax.FontSize = 16; % Font size
+    % The numbers after 'position' were empirically obtained
     
     %% Display the mask on the PC
     plotMask = 1; % Select PC
@@ -85,7 +86,8 @@ for idxtc = 1:ltcvect
     set(pcfig,'units','normalized','position',[6/11 2/10 3/7 1/2]);
     
     %% Wait between cycles
-     pause(recordingDelay/2); % Displays the mask for these seconds 
+    pause(recordingDelay); % Displays the mask and the figures for
+                                         % "recordingDelay"+wait(vid) seconds   
   
    %% Record a snapshot
     if measSimulated == 0
@@ -94,18 +96,6 @@ for idxtc = 1:ltcvect
     else % measSimulated = 1
         snap = wrapMaskslm; % "Simulated" measurements (the mask is saved)
     end
-    
-   %% Displaying the camera on the PC
-    % The numbers after 'position' were empirically obtained
-    camfig = figure('units','normalized','position',[1/12 2/10 3/7 1/2]);
-                                               % [left bottom width height]
-    imagesc(snap); % normalized
-    colorbar; title(strcat('Camera image:',{' '},cameraPlane));
-    pax = gca; pax.FontSize = 16; % Font size
-    % The numbers after 'position' were empirically obtained
-    
-    %% Time for the snapshot display on the pc
-    pause(recordingDelay/2); % seconds for the image to be shown on the pc
     
    %% Saving the measurement
     if measSimulated == 0

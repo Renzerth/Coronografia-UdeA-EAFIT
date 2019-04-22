@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 0; % Measure: yes (1) or no (0)
+meas = 1; % Measure: yes (1) or no (0)
 %%% For meas = 1: the whole workspace is saved
     measSimulated = 1; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
@@ -19,9 +19,7 @@ meas = 0; % Measure: yes (1) or no (0)
                    % Works if  measSimulated = 0. If it is active, the
                    % program will set proc = 0
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 1; % Processes the data
-                % Note: measSimulated=1 also applies to proc but with some
-                % loaded images from: Data/0_ExampleData
+proc = 0; % Processes the data
 %%% For proc = 1 and meas = 0:  the workspace is loaded
     loadMeas = 1; % In order to load a previous workspace:
     % 0: doesn't load anything: not recommended in general
@@ -338,26 +336,25 @@ end
 dataformat = '.bmp'; % Default: .bmp (not too heavy)
 
 % For tests:
-glvect = [2 128 255]; % Gray level to be measured [0,255]
-tcvect = [2 10]; 
+% glvect = 255; % Gray level to be measured [0,255]
+% tcvect = 2; 
 
 % Gray level possibilities:
 % glvect = 2:10; % Small gray levels
-% glvect = [12 16 24 32 64 128 256]; % whole span
+glvect = [12 16 24 32 64 128 256]; % whole span
 
 % Always used:
-% tcvect = 1:10; % Topological charges to be measured [integers] 
+tcvect = 1:10; % Topological charges to be measured [integers] 
 
 % Old (used on 12/04/2019):
 % glvect = round(linspace(2,10,9)); 
-% glvect = [2 16 24 28 36 56 128 256]; % Whole span
-% glvect = round(linspace(2,255,9)); % Whole span also
+% glvect = [2 16 24 28 36 56 128 256]; % whole span
+% glvect = round(linspace(2,255,9));
 
 
 % No:
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
                                   % with a good system phase response
-                                  % For their LC 2002
                                   
 waitbeforemeas = 2; % Seconds before measuring as a safety measurement. 
                     % Default: 10

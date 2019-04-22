@@ -52,7 +52,8 @@ clc; clear; close all; % Initialization
 Parameters; % Adds to the algorithm all the needed parameters
 % open Parameters; % Keep open always
 
-% Default parameters for measuring: IN PROGRESS
+% Default parameters for measuring: uncomment this in case you want to, but
+% comment Parameters above
 % ParametersMeasuring
 
 %% Directories and add functions
@@ -147,14 +148,16 @@ if meas
                                            fps,format);
   else % ~(measSimulated == 0 && meas == 1)
     vidMeas = []; % Empty, just to be as a non-used input in some functions
+    srcMeas = [];
   end
   
   %% Measurement debugging
   % Usefull for aligning the vortex and adjusting exposure parameters
-  if plotMask ~= 2
-      error('plotMask must be 2 in order to perform the debugging');
-  end
+
   if measDebug == 1 && measSimulated == 0
+    if plotMask ~= 2
+      error('plotMask must be 2 in order to perform the debugging');
+    end
     [~,circShiftX,circShiftY] = f_CaptureImage(vidMeas,dataDir, ...
     filename,imgformat,pathSep,infoDelim,dirDelim,snapsfldr, ...
     previewBool,loghist,camera,cameraPlane,exposure,format,fps, ...
@@ -213,7 +216,7 @@ if meas
     save(strcat(dataDir,pathSep,numberedFolderMeas,pathSep, ...
     'workspace.mat'),'measfullpath','refmeasfullpath','infoDelim', ...
     'dataformat','imgformat','cameraPlane','totalImgs','beepSound','L', ...
-    'PP','mainLyotRadius','measSimulated');
+    'PP','mainLyotRadius','measSimulated','tcvect','glvect','slm','maskSel');
     % The saved variables include all the input ones of  f_ProcessData.m
     % minus the ones that are after "-except" in the "Load previous
     % measurement (whole workspace)" section
