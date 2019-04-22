@@ -57,7 +57,7 @@ for idxtc = 1:ltcvect
   for idxgl = 1:lglvect
     %% Read a value of the gl vector and adjust exposure if needed
      phaseValues = glvect(idxgl); % Specific phase values for this iteration
-      if measSimulated == 0 && phaseValues <= 6 && tc <= 3
+      if measSimulated == 0 && phaseValues <= 4 && tc <= 3
           ExposureDynamic = tc0Exposure; % Experimental point for tc=0
           src.Exposure = ExposureDynamic; 
       end

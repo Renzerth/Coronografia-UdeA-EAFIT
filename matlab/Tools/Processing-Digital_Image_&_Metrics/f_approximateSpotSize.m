@@ -31,6 +31,7 @@ end
 [sizeY,sizeX] = size(cdata);
 binaryData = false(sizeY,sizeX);
 binaryData(cdata>=Threshold) = true; % (1-Threshold) percent of the energy
+% Equal operation as above: imbinarize(cdata,Threshold)
 % OLD: binaryData = im2bw(cdata,Threshold); % use imbinarize for newer MATLAB versions (2017 and further versions)
 
 %% Estimation of the pixel size of the Airy Disk 

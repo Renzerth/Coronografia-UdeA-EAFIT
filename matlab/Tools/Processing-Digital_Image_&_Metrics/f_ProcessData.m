@@ -50,12 +50,12 @@ if measSimulated == 0 % Real measurement
     % 0.2989 * R + 0.5870 * G + 0.1140 * B 
     refMeas = im2double(refMeas);
     
-    Lyotimg = refMeas;                                                                                                     % COMPLETELY TEMPORARY!
+    % Lyotimg = refMeas;  % TO BE USED FOR LYOT METRICS                                                                                                   
     
 else % Simulated measurement
    %% Example images to process
-    Lyotimg = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_1.bmp')); % Lyot image
-    Lyotimg = rgb2gray(Lyotimg);  
+%     Lyotimg = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_1.bmp')); % Lyot image
+%     Lyotimg = rgb2gray(Lyotimg);  
     refMeas = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_2.bmp')); % PSF reference
     expMeas = {0,0}; % Cell initialization
     expMeas{1} = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_3.png')); % PSF measurement 1
