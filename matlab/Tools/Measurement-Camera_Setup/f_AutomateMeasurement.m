@@ -25,12 +25,16 @@ idxgral = 1; % Initialization of the general index that runs
 pause(waitbeforemeas); % Seconds before measuring as a safety measurement
 t1_dt = datetime; % store time
 disp('Measurement started'); disp(t1_dt);
+
 if measSimulated == 0
     initialExposure =  src.Exposure; % Store the current camera's exposure
 else
     initialExposure = []; % Empty, won't be used at all
 end
-tc0Exposure  = 1/1239; % Used for the reference measurement ans possible inside the measurement
+
+%% Static exposure
+tc0Exposure  = 1/400; % Used for the reference measurement ans possible inside the measurement
+src.Exposure = tc0Exposure;
 
 %% Measurements
 for idxtc = 1:ltcvect 
@@ -39,28 +43,30 @@ for idxtc = 1:ltcvect
   tc = tcvect(idxtc); % Specific tc for this iteration
   
   %% Dynamically change the camera's exposure with a characterization
-  if measSimulated == 0
-    if tc == 0
-      ExposureDynamic = tc0Exposure; % Experimental point for tc=0
-    elseif tc == 1
-      ExposureDynamic = 1/500; % Experimental point for tc=1
-    else
-      ExposureDynamic = 0.0053*log(tc); % Experimental curve for fps=10 and
-                                        % with common exposure values
-      % OLD y = @(x) abs(0.0053*log(x)-0.0008); % in zero, the first number
-      % of the characterization
-    end
-    src.Exposure = ExposureDynamic; % Change camera's exposure due to the 
-                                    % energy spreading
-  end
-  
+%   if measSimulated == 0
+%     if tc == 0
+%       ExposureDynamic = tc0Exposure; % Experimental point for tc=0
+%     elseif tc == 1
+%       ExposureDynamic = 1/500; % Experimental point for tc=1
+%     else
+%       ExposureDynamic = 0.0053*log(tc); % Experimental curve for fps=10 and
+%                                         % with common exposure values
+%       % OLD y = @(x) abs(0.0053*log(x)-0.0008); % in zero, the first number
+%       % of the characterization
+%     end
+%     src.Exposure = ExposureDynamic; % Change camera's exposure due to the 
+%                                     % energy spreading
+%   end
+
   for idxgl = 1:lglvect
     %% Read a value of the gl vector and adjust exposure if needed
      phaseValues = glvect(idxgl); % Specific phase values for this iteration
-      if measSimulated == 0 && phaseValues <= 4 && tc <= 3
-          ExposureDynamic = tc0Exposure; % Experimental point for tc=0
-          src.Exposure = ExposureDynamic; 
-      end
+     
+     %% Dynamic exposure
+%       if measSimulated == 0 && phaseValues <= 4 && tc <= 3
+%           ExposureDynamic = tc0Exposure; % Experimental point for tc=0
+%           src.Exposure = ExposureDynamic; 
+%       end
       
    %% Generate the phase mask and display it on the SLM
     phaseValues = linspace(0,2*pi,phaseValues);
@@ -85,7 +91,7 @@ for idxtc = 1:ltcvect
     set(pcfig,'units','normalized','position',[6/11 2/10 3/7 1/2]);
     
     %% Wait between cycles
-     pause(recordingDelay/2); % Displays the mask for these seconds 
+    pause(recordingDelay/2); % Displays the mask for these seconds 
   
    %% Record a snapshot
     if measSimulated == 0
@@ -187,6 +193,7 @@ monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMaskref,maskSelref);
     src.Exposure = tc0Exposure; % Change camera's exposure due to the 
                                                    % energy spreading: Experimental point for tc=0
     snap = getsnapshot(vid); % Real measurements
+    wait(vid);
  else % measSimulated = 1
     snap = wrapMaskslm; % "Simulated" measurements (the mask is saved)
  end
