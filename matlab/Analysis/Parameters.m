@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 1: the whole workspace is saved
     measSimulated = 0; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
@@ -19,7 +19,7 @@ meas = 1; % Measure: yes (1) or no (0)
                    % Works if  measSimulated = 0. If it is active, the
                    % program will set proc = 0
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 0; % Processes the data
+proc = 1; % Processes the data
                 % Note: measSimulated=1 also applies to proc but with some
                 % loaded images from: Data/0_ExampleData
 %%% For proc = 1 and meas = 0:  the workspace is loaded
@@ -159,7 +159,7 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
               
 %% Measurement camera selection and parameters
 % Self centering camera is selected just before f_DefineSpace
-camera = 'DMK42BUC03'; % PSF is needed for the 2019's metrics (meanwhile)
+camera = 'DMK23U445'; % PSF is needed for the 2019's metrics (meanwhile)
 % Exposure: analog parameter
 % Format: 'Y800 (1280x960)' [best]; 'RGB24 (1024x768)' [another option]
 
@@ -174,7 +174,7 @@ switch camera
  
   case 'DMK23U445' % PSF plane % CCD 
     cameraID = 1;
-    exposure = 1/792; % Range: [1.0000e-04 300]; DefaultValue: 0.0333
+    exposure = 1/90; % Range: [1.0000e-04 300]; DefaultValue: 0.0333
     %fps = '15'; % Frames per second
     fps = '10.00'; % '15.00', '10.00', ' 7.50', ' 5.00' ' 3.75', 
     format = 'Y800 (1280x960)'; 
@@ -337,7 +337,7 @@ end
 % Sweeps all the GL for one tc and then switches to the other ones
 dataformat = '.bmp'; % Default: .bmp (not too heavy)
 
-glvect = [12 16 24 32 64 128 256]; % Gray level to be measured [0,255]
+glvect = [12 16 24 32 64 128 256]; % Gray level to be measured 
 tcvect = 1:10; 
 
 % For tests:

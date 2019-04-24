@@ -240,71 +240,71 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% Metric application
-%% Processsing of the images
-for idxgral = 1:totalImgs                                                                                                                    % ACTUALLY, CALCULATE ALL THE METRICS BUT ONLY PLOT THE WANTED ONES
-  switch metricSel
-    case 1 
-     %% Throughput: Encircled Energy Factor metric
-      % Camera: PSF.
-      tit = 'Encircled Energy Distribution of Intensity';
-      [energy] = f_calculateEEF(radialIntensityRef,cartcoord,titprof,tit,xlab);
-     
-     %% Throughput gradient
-                                                                                                                                                                            % DO A FUNCTION ONLY IF THIS WILL BE USEFULL
-%       tit = 'Throughput gradient';                                               
-%       normIntensity = radialIntensityMeas./max(radialIntensityMeas);
-%       GradEnergy = gradient(normIntensity); % gradient [returns n elements] or diff [returns n-1 elements]                            % OR GRAD energy ?
-      
-     %% Plot of the gradient of the EEF and its corresponding intensity pattern                                                              
-      %       yyaxis left (OLD method)
-      %       h1 = plot(cartcoord,GradEnergy);
-      %       yyaixs right
-      %       h2 = plot(cartcoord,normIntensity);
-      figure('color','white');
-      [hAxes,hLine1,hLine2] = plotyy(cartcoord,GradEnergy,cartcoord,normIntensity);
-      set(hLine1, 'Color','b','LineStyle','-'); set(hLine2, 'Color','r','LineStyle','-');
-      set(hAxes(1),'YColor','b'); set(hAxes(2),'YColor','r'); set(hAxes,'FontSize',12,'FontWeight','bold');
-      axis(hAxes(1), 'square'); axis(hAxes(2), 'square'); box(hAxes(1), 'on');
-      title(strcat(tit,{' '},titprof)); grid on;
-      xlabel('Angular position [\lambda/D]'); 
-      ylabel(hAxes(1),'Gradient of the relative throughput','FontSize',12,'FontWeight','bold');
-      ylabel(hAxes(2),'Intensity pattern','FontSize',14,'FontWeight','bold'); grid on;
-      lgdHandler = legend({'Gradient of the Encircled Energy Factor', 'Intensity'}); lgdHandler.FontSize = 10;
-      
-     %% Power suppresion in the airy disk
-      tit ='Power suppresion in the airy disk';    
-      % Needs case 1 as input, BUT FOR MULTIPLE GLs to do one cycle. A plot
-      % is done per TC !
-      
-    case 2 % SNR
-      tit = 'Signal-to-Noise Ratio';
-      tit1 = strcat(tit,{' '},titprof);
-      tit2 = strcat('Raw contrast',{' '},titprof);
-      [SNR] = f_calculateSNR(radialIntensityMeas,radialIntensityRef, ...
-      cartcoord,tit1,tit2,xlab);
-    case 3 % MSE
-      tit = 'Mean Squared Error';
-        
-    otherwise
-      error('Select a valid metric');
-  end
-  
-
-  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%  Save and finish the processing
-
-  %% Saving                                                                      
-  %                                                                                                                                             FUTURE PLOT SAVING
-  processedImgfullpath = strcat(processedImgname,measInfo{idxgral});
-  % Explanation: saveas(variable,directory+filename,extension)
-  saveas(gcf,strcat(processedImgfullpath),imgformat); % Saves the last shown figure
-  
-  % OLD:
-  %   % Explanation: imwrite(variables,directory+filename+extension)
-  %   imwrite(expMeas{idxgral}, strcat(processedImgfullpath,dataformat));
-  
-end
+%% Processsing of the images - DEACTIVATED DUE TO REFORMING
+% for idxgral = 1:totalImgs                                                                                                                    % ACTUALLY, CALCULATE ALL THE METRICS BUT ONLY PLOT THE WANTED ONES
+%   switch metricSel
+%     case 1 
+%      %% Throughput: Encircled Energy Factor metric
+%       % Camera: PSF.
+%       tit = 'Encircled Energy Distribution of Intensity';
+%       [energy] = f_calculateEEF(radialIntensityRef,cartcoord,titprof,tit,xlab);
+%      
+%      %% Throughput gradient
+%                                                                                                                                                                             % DO A FUNCTION ONLY IF THIS WILL BE USEFULL
+% %       tit = 'Throughput gradient';                                               
+% %       normIntensity = radialIntensityMeas./max(radialIntensityMeas);
+% %       GradEnergy = gradient(normIntensity); % gradient [returns n elements] or diff [returns n-1 elements]                            % OR GRAD energy ?
+%       
+%      %% Plot of the gradient of the EEF and its corresponding intensity pattern                                                              
+%       %       yyaxis left (OLD method)
+%       %       h1 = plot(cartcoord,GradEnergy);
+%       %       yyaixs right
+%       %       h2 = plot(cartcoord,normIntensity);
+%       figure('color','white');
+%       [hAxes,hLine1,hLine2] = plotyy(cartcoord,GradEnergy,cartcoord,normIntensity);
+%       set(hLine1, 'Color','b','LineStyle','-'); set(hLine2, 'Color','r','LineStyle','-');
+%       set(hAxes(1),'YColor','b'); set(hAxes(2),'YColor','r'); set(hAxes,'FontSize',12,'FontWeight','bold');
+%       axis(hAxes(1), 'square'); axis(hAxes(2), 'square'); box(hAxes(1), 'on');
+%       title(strcat(tit,{' '},titprof)); grid on;
+%       xlabel('Angular position [\lambda/D]'); 
+%       ylabel(hAxes(1),'Gradient of the relative throughput','FontSize',12,'FontWeight','bold');
+%       ylabel(hAxes(2),'Intensity pattern','FontSize',14,'FontWeight','bold'); grid on;
+%       lgdHandler = legend({'Gradient of the Encircled Energy Factor', 'Intensity'}); lgdHandler.FontSize = 10;
+%       
+%      %% Power suppresion in the airy disk
+%       tit ='Power suppresion in the airy disk';    
+%       % Needs case 1 as input, BUT FOR MULTIPLE GLs to do one cycle. A plot
+%       % is done per TC !
+%       
+%     case 2 % SNR
+%       tit = 'Signal-to-Noise Ratio';
+%       tit1 = strcat(tit,{' '},titprof);
+%       tit2 = strcat('Raw contrast',{' '},titprof);
+%       [SNR] = f_calculateSNR(radialIntensityMeas,radialIntensityRef, ...
+%       cartcoord,tit1,tit2,xlab);
+%     case 3 % MSE
+%       tit = 'Mean Squared Error';
+%         
+%     otherwise
+%       error('Select a valid metric');
+%   end
+%   
+% 
+%   
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%  Save and finish the processing
+% 
+%   %% Saving                                                                      
+%   %                                                                                                                                             FUTURE PLOT SAVING
+%   processedImgfullpath = strcat(processedImgname,measInfo{idxgral});
+%   % Explanation: saveas(variable,directory+filename,extension)
+%   saveas(gcf,strcat(processedImgfullpath),imgformat); % Saves the last shown figure
+%   
+%   % OLD:
+%   %   % Explanation: imwrite(variables,directory+filename+extension)
+%   %   imwrite(expMeas{idxgral}, strcat(processedImgfullpath,dataformat));
+%   
+% end
 
 %% End of the processing
 % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium

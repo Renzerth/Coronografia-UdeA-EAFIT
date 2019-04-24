@@ -258,12 +258,12 @@ elseif proc == 1 %  meas == 0 always in order to enter here (since here one
    case 3 % Loads a user-defined measurement
     % Selects only the folder from the full path
     clearvars -except dataDir pathSep ProcessedDir ...
-    metricSel metricProfile AiryFactor NA loadMeas;
+    metricSel metricProfile AiryFactor NA loadMeas ;
     %%%  Select a custom measurement folder
+    dataFlrd = 'Data';
     usermeasFoldName = uigetdir; % The user will select the directory
     [folderRoot,usermeasFoldName] = fileparts(usermeasFoldName);
-    folderRoot = fileparts(folderRoot);
-    newDirBase = strcat(dataDir,pathSep,usermeasFoldName,pathSep);
+    newDirBase = strcat(folderRoot,pathSep,usermeasFoldName,pathSep);
     loadMeasPath =  strcat(newDirBase,'workspace.mat');
     
     if exist(loadMeasPath, 'file') == 2 % File exists
@@ -272,7 +272,7 @@ elseif proc == 1 %  meas == 0 always in order to enter here (since here one
       error('Could not load the specified previous measurement')  
     end
     measfullpath =  strcat(newDirBase,'PSF-allmeas.mat'); % Update new dir
-    refmeasfullpath = strrep(strcat(folderRoot,pathSep,refmeasfullpath(strfind(refmeasfullpath,'Data'):end)),'\',pathSep);
+    refmeasfullpath = strrep(strcat(folderRoot,pathSep,refmeasfullpath(strfind(refmeasfullpath,dataFlrd)+length(dataFlrd)+1:end)),'\',pathSep);
     
       otherwise % error
     errror('Invalid value for "loadMeas"')

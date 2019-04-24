@@ -33,7 +33,7 @@ else
 end
 
 %% Static exposure
-tc0Exposure  = 1/400; % Used for the reference measurement ans possible inside the measurement
+tc0Exposure  = 1/90; % Used for the reference measurement ans possible inside the measurement
 src.Exposure = tc0Exposure;
 
 %% Measurements

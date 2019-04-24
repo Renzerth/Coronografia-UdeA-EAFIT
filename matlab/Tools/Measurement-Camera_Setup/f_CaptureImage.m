@@ -1,3 +1,4 @@
+
 function [SingleFrame,circShiftX,circShiftY] = f_CaptureImage(vid,dataDir,filename,imgformat, ...
 pathSep,infoDelim,dirDelim,snapsfldr,previewBool,loghist,camera, ...
 cameraPlane,exposure,format,fps,maskFig,plotMask)
@@ -16,6 +17,9 @@ snapsdir = strcat(dataDir,pathSep,numberedFolderSnap); % tests directory
 %% Loop condition (for taking several snapshots)
 loopCondition = 0; % Variable initialization
 i = 1; % counter to store the snapshot's name
+
+circShiftX = 0; % Initialization
+circShiftY = 0; % Initialization
 
 while loopCondition == 0  
   %% Open preview
@@ -77,7 +81,10 @@ while loopCondition == 0
   %% 
   disp('Close the preview in order to continue the program"s execution.');
   if plotMask == 2 && ishandle(maskFig{1})% SLM plot
-    [circShiftX, circShiftY] = f_addSliderPositioning(maskFig{1},maskFig{2},previewHandle);
+    % circShiftXp, circShiftYp : p: previous shift
+    [circShiftXp, circShiftYp] = f_addSliderPositioning(maskFig{1},maskFig{2},previewHandle);
+    circShiftX = circShiftXp + circShiftX;
+    circShiftY = circShiftYp + circShiftY;
   end
   
   while ishandle(previewHandle)
