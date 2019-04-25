@@ -229,10 +229,12 @@ disp('Done.');
 disp('Calculating Encircled Energy Factor...');
 measEEFcurves = cell(1,totalImgs);
 measNormIntensity = cell(1,totalImgs);
+dynamicProfileTitle = cell(1,totalImgs);
 [refEEFcurve, resNormIntensity] = f_calculateEEF(radialIntensityRef);
 
 for idxgral = 1:totalImgs
     [measEEFcurves{idxgral}, measNormIntensity{idxgral}] = f_calculateEEF(radialIntensityMeas{idxgral});
+    dynamicProfileTitle{idxgral} = sprintf('of %s: %s',titprof, measInfo{idxgral});
 end
 disp('Done.');
 
@@ -281,7 +283,7 @@ tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 0; % Not needed for the metric. Ref: 0
 plotV = 0; % Not needed for the metric. Ref: 0
-metricSel = 5; % Type of metric -- BYPASS VARIABLE
+metricSel = 3; % Type of metric -- BYPASS VARIABLE
 
 %% Plot Selection
 switch metricSel
@@ -292,8 +294,7 @@ switch metricSel
         f_plotLinearProfiles(dataArray,x,y,titRef,xlab,ylab,plotData,plotH,plotV,tol)
         
         for idxgral = 1:totalImgs
-            dynamicProfileTitle = sprintf('Profile of %s',MeasInfo{idxgral});
-            f_plotLinearProfiles(expMeas{idxgral},x,y,dynamicProfileTitle,xlab,ylab,plotData,plotH,plotV,tol)
+            f_plotLinearProfiles(expMeas{idxgral},x,y,dynamicProfileTitle{idxgral},xlab,ylab,plotData,plotH,plotV,tol)
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
         
@@ -303,19 +304,25 @@ switch metricSel
         f_plotEEF(cartcoord, refEEFcurve, resNormIntensity, titprof, xlab)
         
         for idxgral = 1:totalImgs
-            f_plotEEF(cartcoord, measEEFcurves{idxgral}, measNormIntensity{idxgral}, titprof, xlab)
+            f_plotEEF(cartcoord, measEEFcurves{idxgral}, measNormIntensity{idxgral}, dynamicProfileTitle{idxgral}, xlab)
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
         
     case 3
+        %% Analysis Figures Plotting -- Relative Contrast
+        disp('Plotting Relative Contrast...');
+        for idxgral = 1:totalImgs
+            f_plotContrast(cartcoord,radialIntensityRef,radialIntensityMeas{idxgral},dynamicProfileTitle{idxgral})
+            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
+        end
+    case 4
         %% Analysis Figures Plotting -- Logarithmic Signal-to-Noise Ratio
         disp('Plotting Logarithmic SNR...');
         for idxgral = 1:totalImgs
-            f_plotSNR(cartcoord,radialIntensityRef,radialIntensityMeas{idxgral},logSNR{idxgral},titprof,xlab)
+            f_plotLogSNR(cartcoord,logSNR{idxgral},dynamicProfileTitle{idxgral},xlab)
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
-        
-    case 4
+    case 5
         %% Analysis Figures Plotting -- Power Supression
         disp('Plotting Power Supression...');
         figure('color', 'white');
@@ -324,7 +331,7 @@ switch metricSel
         legendCell = cellstr(num2str((1:10)', 'TC=%d')); legend(legendCell); grid on; axis square;
         disp('Done.')
         
-    case 5
+    case 6
         %% Analysis Figures Plotting -- Throughput
         disp('Plotting Throughput...');
         plotAlotFunc = @(reference, Data) plot(reference,Data);
@@ -337,7 +344,7 @@ switch metricSel
             fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL);
         end
         
-    case 6
+    case 7
         %%  Analysis Figures Plotting -- Gradient of Intensity
         disp('Plotting Gradient of Intensity...');
         for idxgral = 1:totalImgs
@@ -345,7 +352,7 @@ switch metricSel
             fprintf('Plotting group... %d/%d\n\r', idxgral, totalImgs);
         end
         
-    case 7
+    case 8
         %% Analysis Figures Plotting -- Mean Squared Error
         disp('Plotting Mean Squared Error...');
         fprintf('Underconstruction... %d/%d\n\r', 0, 0);

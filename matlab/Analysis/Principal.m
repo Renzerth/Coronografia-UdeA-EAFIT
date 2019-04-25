@@ -63,71 +63,74 @@ addpath(strcat('..',pathSep,toolsFldr,pathSep,filemanag));
 f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
 % Adds all the directories to use in the algorithm
 
- %% Self centering hardware initialization
- % This is here because the camera is needed for the self-centering
- % algorithm inside "f_DefineSpace"
- SLMcenterWisdom = strcat(dataDir,pathSep,'SLMwisdom.mat'); % ShiftCart is
-                                       % saved here for the self centering
- 
- %% Self centering Lyot camera parameters 
- % always used for the self centering in this setup (of 2019)
- cameraLyot = 'DMK42BUC03';
- cameraIDLyot = 2;
- exposureLyot = 1/250; % Range: [1/1e4,1]
- fpsLyot = [];
- formatLyot = 'Y800 (1280x960)';
- cameraPlaneLyot =  'Lyot';
- PPLyot = 3.75; % Pixel pitch in [um/pixel]
- widomexist = (exist(SLMcenterWisdom,'file') == 2);
- if shiftMask == 2 && ~(widomexist)% When self centering will be performed
-  
-  %% Self centering camera preparation
-  % Turns the camera on and create all the needed variables. Remember to
-  % leave the preview open
-   [vidSelfCent,~,fpsLyot] = f_selectCamera(cameraIDLyot,cameraLyot, ...
-                                          exposureLyot,fpsLyot,formatLyot);
- else % ~(measSimulated == 0 && meas == 1)
-   vidSelfCent = []; % Empty, as a non-used input in some functions
- end
-
-%% Spatial definitions
-% shiftCart can be an output if a Lyot metric will be used in the future
-% As well create shiftcart after f_addSliderPositioning in principal.m
-[rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize, ...
-shiftCart,mainLyotRadius] = f_DefineSpace(vidSelfCent,sSupport,sSize, ...
-shiftCart,shiftMask,PPLyot,pixSize,apRad,scrnIdx,circularMask,z_pupil, ...
-coordType,MaxMask,SLMcenterWisdom,cameraLyot,cameraPlaneLyot, ...
-exposureLyot,formatLyot,fpsLyot,measSimulated,maskSel);
-% Defines the cartesian/polar coordinates, its sampling interval and 
-% discretized angular part for gl
-%%% Coordinates selection:
-[X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC, ...
-                                  phiPC,plotMask);
-% f_DefineSpace and f_SelectCoordinates were divided so that in 
-% f_SelectCoordinates one just selects already-calculated variables
-                
-%% Single phase mask selection and plot on the screen or on the SLM
-% Don't plot the mask if one will process or measure, but plot it for a
-% measurement debug (that requieres measSimulated = 0)
-if (proc == 1 || meas == 1) && ~(measSimulated == 0 && measDebug == 1)
-    plotMask = 0;
+if meas == 1 || (meas == 0 && proc == 0 ) || measDebug == 1
+    %% Self centering hardware initialization
+    % This is here because the camera is needed for the self-centering
+    % algorithm inside "f_DefineSpace"
+    SLMcenterWisdom = strcat(dataDir,pathSep,'SLMwisdom.mat'); % ShiftCart is
+    % saved here for the self centering
+    
+    %% Self centering Lyot camera parameters
+    % always used for the self centering in this setup (of 2019)
+    cameraLyot = 'DMK42BUC03';
+    cameraIDLyot = 2;
+    exposureLyot = 1/250; % Range: [1/1e4,1]
+    fpsLyot = [];
+    formatLyot = 'Y800 (1280x960)';
+    cameraPlaneLyot =  'Lyot';
+    PPLyot = 3.75; % Pixel pitch in [um/pixel]
+    widomexist = (exist(SLMcenterWisdom,'file') == 2);
+    if shiftMask == 2 && ~(widomexist)% When self centering will be performed
+        
+        %% Self centering camera preparation
+        % Turns the camera on and create all the needed variables. Remember to
+        % leave the preview open
+        [vidSelfCent,~,fpsLyot] = f_selectCamera(cameraIDLyot,cameraLyot, ...
+            exposureLyot,fpsLyot,formatLyot);
+    else % ~(measSimulated == 0 && meas == 1)
+        vidSelfCent = []; % Empty, as a non-used input in some functions
+    end
+    
+    %% Spatial definitions
+    % shiftCart can be an output if a Lyot metric will be used in the future
+    % As well create shiftcart after f_addSliderPositioning in principal.m
+    [rSize,x,y,Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC,phiPC,monitorSize, ...
+        shiftCart,mainLyotRadius] = f_DefineSpace(vidSelfCent,sSupport,sSize, ...
+        shiftCart,shiftMask,PPLyot,pixSize,apRad,scrnIdx,circularMask,z_pupil, ...
+        coordType,MaxMask,SLMcenterWisdom,cameraLyot,cameraPlaneLyot, ...
+        exposureLyot,formatLyot,fpsLyot,measSimulated,maskSel);
+    % Defines the cartesian/polar coordinates, its sampling interval and
+    % discretized angular part for gl
+    %%% Coordinates selection:
+    [X,Y,r,phi] = f_SelectCoordinates(Xslm,Yslm,rSLM,phiSLM,Xpc,Ypc,rPC, ...
+        phiPC,plotMask);
+    % f_DefineSpace and f_SelectCoordinates were divided so that in
+    % f_SelectCoordinates one just selects already-calculated variables
+    
+    %% Single phase mask selection and plot on the screen or on the SLM
+    % Don't plot the mask if one will process or measure, but plot it for a
+    % measurement debug (that requieres measSimulated = 0)
+    if (proc == 1 || meas == 1) && ~(measSimulated == 0 && measDebug == 1)
+        plotMask = 0;
+    end
+    [mask,wrapMask,maskFig,maskName] = f_PlotSelectedMask(X,Y,r,phi, ...
+        phaseValues,tc,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha, ...
+        Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag, ...
+        binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang, ...
+        MaxMask,plotMask,maskSel);
+    % Dependencies:
+    % f_PlotSelectedMask -> f_SpiralMask (or any other) -> f_ProjectMask ->
+    % f_MaskWrapCircDiscret -> f_discretizeMask -> f_wrapToRange
+    %                       -> f_ScaleMatrixData
+else
+    [maskName] = f_getMaskName(maskSel);
 end
-[mask,wrapMask,maskFig,maskName] = f_PlotSelectedMask(X,Y,r,phi, ...
-phaseValues,tc,s,ph0,p,WsizeRatio,L,f_FR,bcst,period,T0,frkTyp,Aalpha, ...
-Angalp,Angbet,z_coeff,z_a,z_pupil,z_disp_wrap,z_plot,normMag, ...
-binMask,binv,MaskPupil,rSize,monitorSize,scrnIdx,coordType,abs_ang, ...
-MaxMask,plotMask,maskSel);
-% Dependencies:
-% f_PlotSelectedMask -> f_SpiralMask (or any other) -> f_ProjectMask -> 
-% f_MaskWrapCircDiscret -> f_discretizeMask -> f_wrapToRange 
-%                       -> f_ScaleMatrixData       
-
-              
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% MEASUREMENT/PROCESSING BY AN AUTOMATED PARAMETER VARIATION
 %% Folders and register creations on Data and Output    
+
 [imgpartPath,measfullpath,ProcessedDir,ltcvect,lglvect,totalImgs, ...
 numberedFolderMeas] = f_CreateFoldersRegisters(maskName,tcvect,glvect, ...
 slm,cameraPlane,dataDir,outDir,pathSep,infoDelim,dirDelim,lastmeas, ...
@@ -240,7 +243,7 @@ elseif proc == 1 %  meas == 0 always in order to enter here (since here one
     'workspace.mat');
     if exist(loadMeasPath, 'file') == 2 % File exists
        load(loadMeasPath); 
-    else % File does not exist.
+    else % File does not exist
       error('Could not load the specified previous measurement')  
     end
     
