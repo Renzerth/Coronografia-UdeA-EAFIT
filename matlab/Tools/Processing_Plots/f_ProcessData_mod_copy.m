@@ -1,12 +1,9 @@
-function [xangL_Dexpairy, yangL_Dexpairy, radialIntensityRef,radialIntensityMeas,...
-    cartcoord, refEEFcurve, resNormIntensity, measEEFcurves, measNormIntensity,...
-    logSNR, refIntensityGradient, measIntensityGradient] = f_ProcessData(...
-    measfullpath,refmeasfullpath,ProcessedDir,dataDir,pathSep,infoDelim, ...
-    dataformat,imgformat,cameraPlane,totalImgs,AiryFactor,metricSel,metricProfile, ...
-    beepSound,L,NA,PP,mainLyotRadius,measSimulated,glvect,tcvect)
+function f_ProcessData(measfullpath,refmeasfullpath,ProcessedDir,dataDir,pathSep,infoDelim, ...
+dataformat,imgformat,cameraPlane,totalImgs,AiryFactor,metricSel,metricProfile, ...
+beepSound,L,NA,PP,mainLyotRadius,measSimulated)
 
 % Inputs:
-%
+%   
 %
 % Outputs:
 
@@ -24,47 +21,49 @@ function [xangL_Dexpairy, yangL_Dexpairy, radialIntensityRef,radialIntensityMeas
 t1_dt = datetime; % store time
 disp('Processing started:'); disp(t1_dt)
 processedImgname = strcat(ProcessedDir,pathSep,'processed',infoDelim, ...
-    cameraPlane,infoDelim);
+                          cameraPlane,infoDelim);
 
 if measSimulated == 0 % Real measurement
     %%% Loading all the measurements
     % Explanation: load(directory+filename,variables)
     struct = load(measfullpath); % Loads all the measured images and their info
-    % Two variables are loaded in the structure:
-    % "expImgs" and "MeasInfo"
-    
+                            % Two variables are loaded in the structure: 
+                            % "expImgs" and "MeasInfo"
+
     %%% Experimental images
     expMeas = struct.expImgs;
-    
+
     %%% Experiment information
     measInfo = struct.MeasInfo;
-    
+
     %%%  Loading the reference measurement
     % The image is read in a uint8 format: integer with values that are
     % normally in [0,255] (8-bit depth or dynamic range)
-    refMeas = imread(refmeasfullpath);
+    refMeas = imread(refmeasfullpath);       
     % since refMeas is a bmp image, it is loaded as uint8
-    
+
     %%% UINT8 format to Double for the reference image
     % im2double duplicates the precision of the exponent leaving intact the
     % mantisa. It as floating-point format that normalizes the images and this
     % operation is made on each RGB channel. rgb2gray does a similar operation
     % but scaling to a gray scale, where it  converts RGB values to grayscale values
     % by forming a weighted sum of the R, G, and B components:
-    % 0.2989 * R + 0.5870 * G + 0.1140 * B
+    % 0.2989 * R + 0.5870 * G + 0.1140 * B 
     refMeas = im2double(refMeas);
     
-    % Lyotimg = refMeas;  % TO BE USED FOR LYOT METRICS
+   
+    
+    % Lyotimg = refMeas;  % TO BE USED FOR LYOT METRICS                                                                                                   
     
 else % Simulated measurement
-    %% Example images to process
-    %     Lyotimg = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_1.bmp')); % Lyot image
-    %     Lyotimg = rgb2gray(Lyotimg);
+   %% Example images to process
+%     Lyotimg = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_1.bmp')); % Lyot image
+%     Lyotimg = rgb2gray(Lyotimg);  
     refMeas = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_2.bmp')); % PSF reference
     expMeas = {0,0}; % Cell initialization
     expMeas{1} = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_3.png')); % PSF measurement 1
     expMeas{2} = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_4.png')); % PSF measurement 2
-    measInfo = {'data_ref_3','data_ref_3'};
+    measInfo = {'data_ref_3','data_ref_3'};                    
     totalImgs = 2; % For the case of the simulated measurement
     
 end
@@ -91,11 +90,13 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TO UNIFY WITH DEFINE SPACE
 
 
-%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% Coordinates: Lambda/D, pixels and arcseconds
-%% Find the center of the PSF image (with a binarization)
+%% Find the center of the PSF image (with a binarization)                                                                   
 [~,~,aproxCenter,aproxRadius] = f_approximateSpotSize(refMeas);
+ 
+% MAYBE: Find center of the PSF image (peaks)  [for more robustness]
 
 %% Read the approximate center of the PSF reference
 midX = aproxCenter(2);
@@ -104,16 +105,21 @@ midY = aproxCenter(1);
 %%% OLD: center of the image but not the spot's center
 % midX = round((maxX+1)/2); % x mid point
 % midY = round((maxY+1)/2); % y mid point
-
+                        
 %% Cartesian coordinates with pixel units
 % ORIGINAL
 [ySize, xSize] = size(refMeas); % All images assumed of the same size as the refmeas
 halfX = xSize/2;
 halfY = ySize/2;
 
-% Old:
+% Old: 
 % halfX = floor((ySize+1)/2); % x mid point
 % halfY = floor((xSize+1)/2); % y mid point
+
+% To delete:
+% [ySize,xSize] = size(Lyotimg);
+% halfX = xSize/2;
+% halfY = ySize/2;
 
 %%  lambda/D factor falco-matlab reference
 % It is scalled with respect to the jinc zeros
@@ -125,7 +131,7 @@ xlamOverD = NpadX/(2*mainLyotRadius);
 ylamOverD = NpadY/(2*mainLyotRadius);
 
 % Centering shifting to the spot location
-centerShiftX = (midX-halfX);
+centerShiftX = (midX-halfX); 
 centerShiftY = (midY-halfY);
 
 % Coordinates' origin set to the spot's center
@@ -142,20 +148,21 @@ yangL_Dexpairy = ypixcenterd/(aproxRadius);
 
 %% Lambda over D scaling with the experimental spot size
 % Pixel's size is scalled to the first Bessel's center
-% AiryFirstZero = 1.22; % First zero of the cylindrical Bessel function of
+% AiryFirstZero = 1.22; % First zero of the cylindrical Bessel function of 
 %                         % first kind and zeroth order
 % xangL_Dexpairyzero = xangL_Dexpairy*AiryFirstZero;
 % yangL_Dexpairyzero = yangL_Dexpairy*AiryFirstZero;
 
 %% Symmetric pixels (sign type)
 % xpixsym = -halfX : halfX - 1; % pixels
-% ypixsym= -halfY :  halfY - 1; % pixels
+% ypixsym= -halfY :  halfY - 1; % pixels      
 
 %% Unitary pixels (scaled heavyside)
 % xpix = 1:xSize; % Pixels start in 1
 % ypix = 1:ySize; % Pixels start in 1
 
-%% Cartesian coordinates with the lambda/D scaling (diffraction angle)                                                                                                                      %  AiryFactor is an input
+%% Cartesian coordinates with the lambda/D scaling (diffraction angle)
+                                                                                                                             %  AiryFactor is an input
 % xangL_Dtheoric = f_scalePix2DiffAng(xpixcenterd,AiryFactor);
 % yangL_Dtheoric = f_scalePix2DiffAng(ypixcenterd,AiryFactor);
 
@@ -171,8 +178,6 @@ yangL_Dexpairy = ypixcenterd/(aproxRadius);
 x = xangL_Dexpairy;
 y = yangL_Dexpairy;
 
-
-%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% Profiles for the metrics
 %% Reference Profile
@@ -181,191 +186,107 @@ oneSideProfile = 1; % Specifically needed for this metric. Ref: 1
 shiftCart = [0,0]; % midX,midY already account for the shift
 
 %%% Find the reference profile
-disp('Calculating Profiles...');
 [xrefProx,yrefProf,HprofRef,VprofRef,~,~] = f_makeImageProfile(x,y,midX,midY, ...
-    refMeas, shiftCart, oneSideProfile);
+           refMeas, shiftCart, oneSideProfile);
 [averRefProfile] = f_getAverageRadialProfile(refMeas,[ySize, xSize],aproxCenter);
 
 %% Profile of the measurements
 Hprofmeas = cell(1,totalImgs);
 Vprofmeas = cell(1,totalImgs);
-averMeasProfile = cell(1,totalImgs);
+averMeasProfile = cell(1,totalImgs); 
 
 for idxgral = 1:totalImgs
     [~,~,Hprofmeas{idxgral},Vprofmeas{idxgral},~,~] = f_makeImageProfile(x,y,midX,midY, ...
-        expMeas{idxgral},shiftCart, oneSideProfile);
+       expMeas{idxgral},shiftCart, oneSideProfile);
     [averMeasProfile{idxgral}] = f_getAverageRadialProfile(expMeas{idxgral},[ySize, xSize],aproxCenter);
 end
 
 %% Measurement profile choice
 switch metricProfile
-    case 1 % Vertical profile
-        radialIntensityRef = VprofRef;
-        radialIntensityMeas = Vprofmeas; % One-sided
-        cartcoord = yrefProf;
-        titprof = '(vertical profile)';
-        
-    case 2 % Horizontal profile
-        radialIntensityRef = HprofRef;
-        radialIntensityMeas = Hprofmeas; % One-sided
-        cartcoord = xrefProx;
-        titprof = '(horizontal profile)';
-        
-    case 3 % Radial averaged profile
-        radialIntensityRef = averRefProfile;
-        radialIntensityMeas = averMeasProfile;
-        cartcoord = [nan]; % to be fix
-        titprof = '(radial average profile)';
-        
-    otherwise
-        error('"metricProfile" must be either 1 or 2');
+  case 1 % Vertical profile
+    radialIntensityMeas = Vprofmeas; % One-sided
+    
+  case 2 % Horizontal profile
+    radialIntensityMeas = Hprofmeas; % One-sided
+    
+  case 3 % Radial averaged profile
+    radialIntensityMeas = averMeasProfile;
+    
+  otherwise
+    error('"metricProfile" must be either 1 or 2');
 end
-disp('Done.');
 
-%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% Metric application
-%% Processsing of profiles -- Encircled Energy Factor metric
-disp('Calculating Encircled Energy Factor...');
-measEEFcurves = cell(1,totalImgs);
-measNormIntensity = cell(1,totalImgs);
-[refEEFcurve, resNormIntensity] = f_calculateEEF(radialIntensityRef);
-
+%% Processsing of the profiles
 for idxgral = 1:totalImgs
-    [measEEFcurves{idxgral}, measNormIntensity{idxgral}] = f_calculateEEF(radialIntensityMeas{idxgral});
+    [measEEFcurves{idxgral}] = f_calculateEEF(radialIntensityMeas{idxgral},cartcoord,titprof,tit,xlab);
 end
-disp('Done.');
 
-%% Processsing of profiles -- Throughput and Power Suppression
-disp('Calculating Throughput...');
-totalGL = length(glvect);
-totalTC = length(tcvect);
-powerSupr = zeros(totalTC,totalGL);
-arrangedData = cell(totalTC,totalGL);
-
-for tcIndx = 1:totalTC
-    for glIndx = 1:totalGL
-        idxgral = glIndx + (tcIndx - 1)*totalGL; % Reversed width/index
-        powerSupr(tcIndx,glIndx) = measEEFcurves{idxgral}(aproxRadius);
-        arrangedData{tcIndx,glIndx} = measEEFcurves{idxgral};
-    end
-end
-disp('Done.');
-
-%% Processsing of profiles -- Logarithmic SNR
-disp('Calculating Logarithmic SNR...');
-logSNR = cell(1,totalImgs);
-
-for idxgral = 1:totalImgs
-    [logSNR{idxgral}] = f_calculateSNR(radialIntensityMeas{idxgral},radialIntensityRef);
-end
-disp('Done.');
-
-%% Intensity profile gradient
-disp('Calculating Intensity Gradient...');
-measIntensityGradient = cell(1,totalImgs);
-refIntensityGradient = gradient(radialIntensityRef) ;
-
-for idxgral = 1:totalImgs
-    measIntensityGradient{idxgral} = gradient(radialIntensityMeas{idxgral}); % gradient [returns n elements] or diff [returns n-1 elements]
-end
-disp('Done.');
-
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%% Plotting
-%% Plot Settings
-xlab = 'Angular position [\lambda/D]';
-ylab = 'Angular position [\lambda/D]';
-tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
-plotData = 0; % Shows the profile lines. Ref: 1
-plotH = 0; % Not needed for the metric. Ref: 0
-plotV = 0; % Not needed for the metric. Ref: 0
-metricSel = 5; % Type of metric -- BYPASS VARIABLE
-
-%% Plot Selection
-switch metricSel
-    case 1
-        %% Analysis Figures Plotting -- Profile Lines
-        disp('Plotting Profile Lines...');
-        titRef = 'Profile of Reference Intensity';
-        f_plotLinearProfiles(dataArray,x,y,titRef,xlab,ylab,plotData,plotH,plotV,tol)
+for idxgral = 1:totalImgs                                                                                                                    % ACTUALLY, CALCULATE ALL THE METRICS BUT ONLY PLOT THE WANTED ONES
+  switch metricSel
+    case 1 
+     %% Throughput: Encircled Energy Factor metric
+      % Camera: PSF.
+      tit = 'Encircled Energy Distribution of Intensity';
+      [energy] = f_calculateEEF(radialIntensityRef);
+     
+     %% Throughput gradient
+                                                                                                                                                                            % DO A FUNCTION ONLY IF THIS WILL BE USEFULL
+%       tit = 'Throughput gradient';                                               
+%       normIntensity = radialIntensityMeas./max(radialIntensityMeas);
+%       GradEnergy = gradient(normIntensity); % gradient [returns n elements] or diff [returns n-1 elements]                            % OR GRAD energy ?
+      
+     %% Plot of the gradient of the EEF and its corresponding intensity pattern                                                              
+      %       yyaxis left (OLD method)
+      %       h1 = plot(cartcoord,GradEnergy);
+      %       yyaixs right
+      %       h2 = plot(cartcoord,normIntensity);
+      figure('color','white');
+      [hAxes,hLine1,hLine2] = plotyy(cartcoord,GradEnergy,cartcoord,normIntensity);
+      set(hLine1, 'Color','b','LineStyle','-'); set(hLine2, 'Color','r','LineStyle','-');
+      set(hAxes(1),'YColor','b'); set(hAxes(2),'YColor','r'); set(hAxes,'FontSize',12,'FontWeight','bold');
+      axis(hAxes(1), 'square'); axis(hAxes(2), 'square'); box(hAxes(1), 'on');
+      title(strcat(tit,{' '},titprof)); grid on;
+      xlabel('Angular position [\lambda/D]'); 
+      ylabel(hAxes(1),'Gradient of the relative throughput','FontSize',12,'FontWeight','bold');
+      ylabel(hAxes(2),'Intensity pattern','FontSize',14,'FontWeight','bold'); grid on;
+      lgdHandler = legend({'Gradient of the Encircled Energy Factor', 'Intensity'}); lgdHandler.FontSize = 10;
+      
+     %% Power suppresion in the airy disk
+      tit ='Power suppresion in the airy disk';    
+      % Needs case 1 as input, BUT FOR MULTIPLE GLs to do one cycle. A plot
+      % is done per TC !
+      
+    case 2 % SNR
+      tit = 'Signal-to-Noise Ratio';
+      tit1 = strcat(tit,{' '},titprof);
+      tit2 = strcat('Raw contrast',{' '},titprof);
+      [SNR] = f_calculateSNR(radialIntensityMeas,radialIntensityRef, ...
+      cartcoord,tit1,tit2,xlab);
+    case 3 % MSE
+      tit = 'Mean Squared Error';
         
-        for idxgral = 1:totalImgs
-            dynamicProfileTitle = sprintf('Profile of %s',MeasInfo{idxgral});
-            f_plotLinearProfiles(expMeas{idxgral},x,y,dynamicProfileTitle,xlab,ylab,plotData,plotH,plotV,tol)
-            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
-        end
-        
-    case 2
-        %% Analysis Figures Plotting -- Encircled Energy Factor metric
-        disp('Plotting Encircled Energy Factor...');
-        f_plotEEF(cartcoord, refEEFcurve, resNormIntensity, titprof, xlab)
-        
-        for idxgral = 1:totalImgs
-            f_plotEEF(cartcoord, measEEFcurves{idxgral}, measNormIntensity{idxgral}, titprof, xlab)
-            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
-        end
-        
-    case 3
-        %% Analysis Figures Plotting -- Logarithmic Signal-to-Noise Ratio
-        disp('Plotting Logarithmic SNR...');
-        for idxgral = 1:totalImgs
-            f_plotSNR(cartcoord,radialIntensityRef,radialIntensityMeas{idxgral},logSNR{idxgral},titprof,xlab)
-            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
-        end
-        
-    case 4
-        %% Analysis Figures Plotting -- Power Supression
-        disp('Plotting Power Supression...');
-        figure('color', 'white');
-        hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:)), 1:totalTC); hold off;
-        xlabel('Gray Level'); ylabel('EEF at Airy Range');
-        legendCell = cellstr(num2str((1:10)', 'TC=%d')); legend(legendCell); grid on; axis square;
-        disp('Done.')
-        
-    case 5
-        %% Analysis Figures Plotting -- Throughput
-        disp('Plotting Throughput...');
-        plotAlotFunc = @(reference, Data) plot(reference,Data);
-        legendCell = cellstr(num2str((1:10)', 'TC=%d'));
-        for indexGL = 1:totalGL
-            figure('color', 'white');
-            hold on; arrayfun(@(indexTC)plotAlotFunc(cartcoord,arrangedData{indexTC,indexGL}),1:totalTC); hold off;
-            grid on; axis square; xlabel('Radial Distance (\lambda/D)'); ylabel('Throughput (EEF)'); legend(legendCell);
-            title(sprintf('Throughput of Topological Charges at GL = %d',glvect(indexGL)));
-            fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL);
-        end
-        
-    case 6
-        %%  Analysis Figures Plotting -- Gradient of Intensity
-        disp('Plotting Gradient of Intensity...');
-        for idxgral = 1:totalImgs
-            f_plotGradient(cartcoord,measIntensityGradient{idxgral},measNormIntensity{idxgral})
-            fprintf('Plotting group... %d/%d\n\r', idxgral, totalImgs);
-        end
-        
-    case 7
-        %% Analysis Figures Plotting -- Mean Squared Error
-        disp('Plotting Mean Squared Error...');
-        fprintf('Underconstruction... %d/%d\n\r', 0, 0);
-        % tit = 'Mean Squared Error';
     otherwise
-        warning('Unavailable Plot.');
-end
-%%
+      error('Select a valid metric');
+  end
+  
+
+  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%  Save and finish the processing
-%% Saving
-%                                                                                                                                             FUTURE PLOT SAVING
-processedImgfullpath = strcat(processedImgname,measInfo{idxgral});
-% Explanation: saveas(variable,directory+filename,extension)
-saveas(gcf,strcat(processedImgfullpath),imgformat); % Saves the last shown figure
 
-% OLD:
-%   % Explanation: imwrite(variables,directory+filename+extension)
-%   imwrite(expMeas{idxgral}, strcat(processedImgfullpath,dataformat));
-
+  %% Saving                                                                      
+  %                                                                                                                                             FUTURE PLOT SAVING
+  processedImgfullpath = strcat(processedImgname,measInfo{idxgral});
+  % Explanation: saveas(variable,directory+filename,extension)
+  saveas(gcf,strcat(processedImgfullpath),imgformat); % Saves the last shown figure
+  
+  % OLD:
+  %   % Explanation: imwrite(variables,directory+filename+extension)
+  %   imwrite(expMeas{idxgral}, strcat(processedImgfullpath,dataformat));
+  
+end
 
 %% End of the processing
 % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium
@@ -383,11 +304,11 @@ f_EndBeeps(N,beepSound);
 %% Ask to leave figures open
 answer = questdlg('Do you want to close all the figures?','Processing finished','yes','no','no');
 if strcmp(answer,'yes') % Compare string
-    close all;
+     close all;         
 end
 
 
-%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% Airy size estimatives
 %% Theoretical: diffraction-limited systems
@@ -419,7 +340,7 @@ disp(strcat('Estimated Airy"s radius in pix:', {' '},  num2str(AiryDiskPixX), ' 
 % When it is the 70%
 
 %% Pixel airy radius
-% AiryMultiplicityX = xSize/AiryDiskPixX; % Number of airy disks
+% AiryMultiplicityX = xSize/AiryDiskPixX; % Number of airy disks 
 % AiryMultiplicityY = ySize/AiryDiskPixY;
 
 %% Lambda over D scaled coordinates OLD METHOD

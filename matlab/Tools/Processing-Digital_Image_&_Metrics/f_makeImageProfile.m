@@ -1,5 +1,5 @@
 function [x,y,Hprof,Vprof,maxX,maxY] = f_makeImageProfile(x,y,midX,midY, ...
-           dataArray,tol,shiftCart,tit,xlab,ylab,plotData,plotH,plotV,oneSideProfile)
+    dataArray,shiftCart, oneSideProfile, varargin)
 % returns the profiles of a 2D data array (or matrix), i.e., an image or a
 % 2D map. These profiles are horizontal and vertical
 %
@@ -8,9 +8,10 @@ function [x,y,Hprof,Vprof,maxX,maxY] = f_makeImageProfile(x,y,midX,midY, ...
 % midX:
 % midY:
 %  dataArray: 2D numerical array (or matrix): image/mask for example
-%  tol: discrete index tolerance in order to symmetrically dicrease the
 %  size of the profile
 %  shiftCart: should only be in [-0.99 , 0.99]
+%
+% Optional Inputs (Enables plotting)
 %  tit: title for dataArray
 %  xlab,ylab: x and y labels (strings)
 %  plotData: plots dataArray and lines of the profiles
@@ -18,9 +19,23 @@ function [x,y,Hprof,Vprof,maxX,maxY] = f_makeImageProfile(x,y,midX,midY, ...
 %  oneSideProfile: 0 (no); 1(1st and 4th quadrants); 2(2nd and 3rd
 %  quadrants). For cases 1 and 2, the origin is always on the center of the
 %  image (determined by shiftCart)
+%  tol: discrete index tolerance in order to symmetrically dicrease the
 %
 % Outputs:
 %  [Hprof,Vprof]: array of the profiles
+%% Program settings and input check
+if nargin == 14 && prod(cellfun(@(inputs) ischar(inputs), varargin{1:3})) && prod(isnumeric(varargin(4:7)))
+    tit = varargin{1};
+    xlab = varargin{2};
+    ylab = varargin{3};
+    plotData = varargin{4};
+    plotH = varargin{5};
+    plotV = varargin{6};
+    tol = varargin{7};
+    plottingEnabled = true;
+else
+    plottingEnabled = false;
+end
 
 %% Max points of the array (with the shift application)
 % Takes into account an even/odd size of the size of dataArray
@@ -40,7 +55,7 @@ shiftY = shiftCart(1); % Cartesian shift in y
 % The extreme parts of the profile are conserved and the midpoints shift
 % The signs here are the opposite of the Shift application section of the
 % function "f_DefineSpace" since they compensate this shift
-midX = midX + shiftX; % Shifted X for the SLM 
+midX = midX + shiftX; % Shifted X for the SLM
 midY = midY - shiftY; % Shifted Y for the SLM
 
 %% Profile coordinates
@@ -49,24 +64,11 @@ Vy = [1,maxY]; % Vertical y components: (yi,yf)
 Hy = [midY,midY]; % Horizontal y components: (yi,yf)
 Vx = [midX,midX]; % Vertical x components: (xi,xf)
 
-%% Profiles of the 2D array drawn on the dataArray 
-if plotData
-    figure; imagesc(x,y,dataArray); title(tit); % colormap(hot)
-    xlabel(xlab);
-    ylabel(ylab);
-    hold on
-    % Horizontal:
-    line(x(Hx),y(Hy),'LineWidth',3,'Color','blue','LineStyle','--'); 
-    % Vertical:
-    line(x(Vx),y(Vy),'LineWidth',3,'Color','red','LineStyle','--'); 
-    hold off
-end
-
 %% Calculation of the profiles
 Hprof = improfile(dataArray,Hx,Hy); % Horizontal profile
 Vprof = improfile(dataArray,Vx,Vy); % Vertical profile
 
-%% One side profile extraction
+%% One-side profile extraction
 switch oneSideProfile
     case 0
         % No change: full-sided profile
@@ -79,21 +81,11 @@ switch oneSideProfile
         Hprof = fliplr(Hprof(1:midX)'); % From the middle to the end
         Vprof = fliplr(Vprof(1:midY)'); % From the middle to the end
         x = x(1:midX); % From the middle to the end
-        y = y(1:midY); % From the middle to the end        
-end 
-
-%% Plot of each profiles
-if plotH
-    %% Horizontal profile
-    figure();
-    plot(x(1+tol:end-tol),Hprof(1+tol:end-tol)); 
-    title(strcat('Horizontal profile of the',{' '},tit)); 
+        y = y(1:midY); % From the middle to the end
 end
-if plotV
-    %% Vertical profile
-    figure();
-    plot(y(1+tol:end-tol),Vprof(1+tol:end-tol)); 
-    title(strcat('Vertical profile of the',{' '},tit));
-end 
 
+%% Plotting
+if plottingEnabled
+    f_plotLinearProfiles(dataArray,x,y,tit,xlab,ylab,plotData,plotH,plotV,tol)
+end
 end
