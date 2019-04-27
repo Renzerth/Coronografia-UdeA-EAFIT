@@ -9,5 +9,5 @@ title(strcat(tit,{' '},titprof)); grid on;
 xlabel('Angular position [\lambda/D]');
 ylabel(hAxes(1),'Gradient of the relative throughput','FontSize',12,'FontWeight','bold');
 ylabel(hAxes(2),'Intensity pattern','FontSize',14,'FontWeight','bold'); grid on;
-lgdHandler = legend({'Gradient of the Encircled Energy Factor', 'Intensity'}); lgdHandler.FontSize = 10;
+lgdHandler = legend({'Gradient of the Intensity', 'Intensity'}); lgdHandler.FontSize = 10;
 end

@@ -1,4 +1,4 @@
-function [SNR] = f_calculateSNR(Measurement, RefMeasurement, varargin)
+function [SNR] = f_calculateLogSNR(Measurement, RefMeasurement, varargin)
 % Plots the SNR between a signal and its reference
 %
 % Inputs:

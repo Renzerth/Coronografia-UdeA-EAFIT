@@ -7,5 +7,5 @@ semilogy(cartcoord,Measurement); hold on
 semilogy(cartcoord,RefMeasurement); hold off;
 title(tit); grid on;
 xlabel('Angular position [\lambda/D]'); ylabel('Relative contrast of the radial intensities [logscale]')
-legend({'Measurement', 'Reference'});
+legend({'Coronographic', 'Non-Coronographic'});
 end

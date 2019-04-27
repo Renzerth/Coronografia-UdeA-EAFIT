@@ -1,9 +1,10 @@
 function [xangL_Dexpairy, yangL_Dexpairy, radialIntensityRef,radialIntensityMeas,...
     cartcoord, refEEFcurve, resNormIntensity, measEEFcurves, measNormIntensity,...
-    logSNR, refIntensityGradient, measIntensityGradient] = f_ProcessData(...
-    measfullpath,refmeasfullpath,ProcessedDir,dataDir,pathSep,infoDelim, ...
-    dataformat,imgformat,cameraPlane,totalImgs,AiryFactor,metricSel,metricProfile, ...
-    beepSound,L,NA,PP,mainLyotRadius,measSimulated,glvect,tcvect)
+    logSNR, attenuationRatio,EEFattenuationRatio,refIntensityGradient,...
+    measIntensityGradient] = f_ProcessData(measfullpath,refmeasfullpath,...
+    ProcessedDir,dataDir,pathSep,infoDelim,dataformat,imgformat,cameraPlane,...
+    totalImgs,AiryFactor,metricSel,metricProfile, beepSound,L,NA,PP,...
+    mainLyotRadius,measSimulated,glvect,tcvect)
 
 % Inputs:
 %
@@ -243,15 +244,18 @@ disp('Calculating Throughput...');
 totalGL = length(glvect);
 totalTC = length(tcvect);
 powerSupr = zeros(totalTC,totalGL);
-arrangedData = cell(totalTC,totalGL);
+arrangedEEF = cell(totalTC,totalGL);
+arrangedProfiles = cell(totalTC,totalGL);
 
 for tcIndx = 1:totalTC
     for glIndx = 1:totalGL
         idxgral = glIndx + (tcIndx - 1)*totalGL; % Reversed width/index
         powerSupr(tcIndx,glIndx) = measEEFcurves{idxgral}(aproxRadius);
-        arrangedData{tcIndx,glIndx} = measEEFcurves{idxgral};
+        arrangedEEF{tcIndx,glIndx} = measEEFcurves{idxgral};
+        arrangedProfiles{tcIndx,glIndx}  = radialIntensityMeas{idxgral};
     end
 end
+arrangedProfiles = arrangedProfiles';
 disp('Done.');
 
 %% Processsing of profiles -- Logarithmic SNR
@@ -259,7 +263,18 @@ disp('Calculating Logarithmic SNR...');
 logSNR = cell(1,totalImgs);
 
 for idxgral = 1:totalImgs
-    [logSNR{idxgral}] = f_calculateSNR(radialIntensityMeas{idxgral},radialIntensityRef);
+    [logSNR{idxgral}] = f_calculateLogSNR(radialIntensityMeas{idxgral},radialIntensityRef);
+end
+disp('Done.');
+
+%% Processsing of profiles -- Attenuation Ratios
+disp('Calculating Attenuation Ratios...');
+attenuationRatio = cell(1,totalImgs);
+EEFattenuationRatio = cell(1,totalImgs);
+
+for idxgral = 1:totalImgs
+    [~, attenuationRatio{idxgral}] = f_calculateAttenuat(radialIntensityMeas{idxgral},radialIntensityRef);
+    [~, EEFattenuationRatio{idxgral}] = f_calculateAttenuat(measEEFcurves{idxgral},refEEFcurve);
 end
 disp('Done.');
 
@@ -283,7 +298,7 @@ tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 0; % Not needed for the metric. Ref: 0
 plotV = 0; % Not needed for the metric. Ref: 0
-metricSel = 3; % Type of metric -- BYPASS VARIABLE
+metricSel = 8; % Type of metric -- BYPASS VARIABLE
 
 %% Plot Selection
 switch metricSel
@@ -315,36 +330,59 @@ switch metricSel
             f_plotContrast(cartcoord,radialIntensityRef,radialIntensityMeas{idxgral},dynamicProfileTitle{idxgral})
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
+        
     case 4
+        %% Analysis Figures Plotting -- Relative Contrast (Arrenged)
+        disp('Plotting Arranged Relative Contrast...');
+        plotAlotFunc = @(reference, DataA, DataB) plot(reference,DataA,reference,DataB);
+        legendCell = cellstr(num2str(glvect', 'Coronagraphic: GL=%d')); legendCell = [{'Non-Coronagraphic'}; legendCell];
+        
+        for indexTC = 1:totalTC
+            figure('color', 'white');
+            hold on; arrayfun(@(indexGL) plotAlotFunc(cartcoord,radialIntensityRef, arrangedProfiles{indexGL,indexTC}),1:totalGL); hold off;
+            grid on; xlabel('Angular position [\lambda/D]'); ylabel('Relative contrast of the radial intensities [logscale]'); legend(legendCell);
+            title(sprintf('Raw Contrast GL Comparison with TC = %d',tcvect(indexTC)));
+            fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log')
+        end
+        
+    case 5
         %% Analysis Figures Plotting -- Logarithmic Signal-to-Noise Ratio
         disp('Plotting Logarithmic SNR...');
         for idxgral = 1:totalImgs
             f_plotLogSNR(cartcoord,logSNR{idxgral},dynamicProfileTitle{idxgral},xlab)
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
-    case 5
+        
+    case 6
         %% Analysis Figures Plotting -- Power Supression
         disp('Plotting Power Supression...');
         figure('color', 'white');
         hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:)), 1:totalTC); hold off;
+        title('Power supression of TCs at Different phase levels');
         xlabel('Gray Level'); ylabel('EEF at Airy Range');
         legendCell = cellstr(num2str((1:10)', 'TC=%d')); legend(legendCell); grid on; axis square;
-        disp('Done.')
         
-    case 6
+    case 7
         %% Analysis Figures Plotting -- Throughput
         disp('Plotting Throughput...');
         plotAlotFunc = @(reference, Data) plot(reference,Data);
-        legendCell = cellstr(num2str((1:10)', 'TC=%d'));
+        legendCell = cellstr(num2str(tcvect', 'TC=%d'));
         for indexGL = 1:totalGL
             figure('color', 'white');
-            hold on; arrayfun(@(indexTC)plotAlotFunc(cartcoord,arrangedData{indexTC,indexGL}),1:totalTC); hold off;
+            hold on; arrayfun(@(indexTC) plotAlotFunc(cartcoord,arrangedEEF{indexTC,indexGL}),1:totalTC); hold off;
             grid on; axis square; xlabel('Radial Distance (\lambda/D)'); ylabel('Throughput (EEF)'); legend(legendCell);
             title(sprintf('Throughput of Topological Charges at GL = %d',glvect(indexGL)));
             fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL);
         end
+    case 8
+        %% Analysis Figures Plotting -- Attenuation Ratios
+        disp('Plotting Attenuation Ratios...');
+        for idxgral = 1:totalImgs
+            f_plotAttenRatios(cartcoord,attenuationRatio{idxgral},EEFattenuationRatio{idxgral})
+            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
+        end
         
-    case 7
+    case 9
         %%  Analysis Figures Plotting -- Gradient of Intensity
         disp('Plotting Gradient of Intensity...');
         for idxgral = 1:totalImgs
@@ -352,7 +390,7 @@ switch metricSel
             fprintf('Plotting group... %d/%d\n\r', idxgral, totalImgs);
         end
         
-    case 8
+    case 10
         %% Analysis Figures Plotting -- Mean Squared Error
         disp('Plotting Mean Squared Error...');
         fprintf('Underconstruction... %d/%d\n\r', 0, 0);
@@ -360,6 +398,9 @@ switch metricSel
     otherwise
         warning('Unavailable Plot.');
 end
+disp('Rendering...')
+
+
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%  Save and finish the processing
