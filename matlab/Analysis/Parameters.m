@@ -27,7 +27,8 @@ proc = 1; % Processes the data
     % 0: doesn't load anything: not recommended in general
     % 1: loads the last measurement
     % 2: loads a user-defined measurement folder
-    % 3: select the folder you want to process (inside Data)
+    % 3: select the folder you want to process (anywhere). This is useful
+    % if you measured in a differnet OS than the one where you will process
     %%% For useLastMeas = 2:
     measFoldName = '12-Apr-2019-Pluto-Spiral-mask-tcs-10-gls-10';
     
