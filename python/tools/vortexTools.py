@@ -51,8 +51,8 @@ class vortexProfiler:
         circMask = self.rho/np.abs(w) <= relSize # Bool circular shape descrption
         return circMask
     
-    def placeAperture(self):
-        window = self.createCircMask(2*self.apertureRadius,0.5)
+    def placeAperture(self,radius=0.5):
+        window = self.createCircMask(2*self.apertureRadius,radius).astype('double')
         return window
     
     def analyzeSpectrum(self,field):
@@ -103,12 +103,12 @@ class vortexProfiler:
         for ax, col in zip(axes[0], colHeader):
             ax.annotate(col, xy=(0.5, 1), xytext=(0, pad),
                         xycoords='axes fraction', textcoords='offset points',
-                        size='large', ha='center', va='baseline')
+                        size=20, ha='center', va='baseline')
         
         for ax, row in zip(axes[:,0], rowHeader):
             ax.annotate(row, xy=(0, 0.5), xytext=(-ax.yaxis.labelpad - pad, 0),
                         xycoords=ax.yaxis.label, textcoords='offset points',
-                        size='large', ha='right', va='center')
+                        size=20, ha='right', va='center')
         
         if plotType in 'angle':
             for index, ax in enumerate(axes.flat,0):
@@ -119,7 +119,7 @@ class vortexProfiler:
                 ax.imshow((np.abs(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])**2),cmap='gray')
         elif plotType in 'log':
             for index, ax in enumerate(axes.flat,0):
-                ax.imshow((20.0*np.log10(np.abs(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])**2)))
+                ax.imshow((np.log10(np.abs(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])**2)))
         
         f.tight_layout()
         f.subplots_adjust(left=0.15, top=0.95)

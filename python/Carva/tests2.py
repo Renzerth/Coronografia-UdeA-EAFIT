@@ -19,19 +19,17 @@ from tools.vortexTools import vortexProfiler
 # fundamentals
 spatialSampling = 60.1e-3 # Divisor entero de pixSize (mm)
 apertureRadius = 12.5 # Telescope - Lyot plane (mm)
-<<<<<<< HEAD
+
 wavelength = 635e-6 # (mm)
 propc = 0
 
 # first lens (f_lens = 200 mm, r_lens = apertureRadius)
 f_l1 = 200 # focal length (mm)
-=======
 wavelenght = 635e-6 # (mm)
 propc = 0
 
 # first lens (f_lens = 200 mm, r_lens = apertureRadius)
 f_l1 = 200 # focal lenght (mm)
->>>>>>> origin/master
 r_l1 = apertureRadius # lens radius (mm)
 
 # SPP
@@ -41,11 +39,7 @@ Lvor = 2 # Topological Charge
 NG = 2 # Number of gray levels
 
 # second lens
-<<<<<<< HEAD
 f_l2 = f_l1 # lens 2 focal length (mm)
-=======
-f_l2 = f_l1 # lens 2 focal lenght (mm)
->>>>>>> origin/master
 r_l2 = r_l1 # lens 2 radius (mm)
 
 
@@ -63,11 +57,9 @@ distanceThree = f_l2
 #-------------
 
 VTools = vortexProfiler(dx=spatialSampling,radius=apertureRadius, p = 12)
-<<<<<<< HEAD
+
 PTools = propagators(M = VTools.spaceSamples, dx =VTools.spatialStep, wl= wavelength)
-=======
-PTools = propagators(M = VTools.spaceSamples, dx =VTools.spatialStep, wl= wavelenght)
->>>>>>> origin/master
+
 #%%-------------------------------------------------
 #Propagation (Memory responsible condensed ver.)
 #---------------------------------------------------

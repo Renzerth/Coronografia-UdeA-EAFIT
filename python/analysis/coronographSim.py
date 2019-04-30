@@ -25,29 +25,30 @@ plotsEnabled = True
 #System Parameters
 #-----------------
         
-Lvor = 2 # Topological Charge
-NG = 2 # Number of gray levels
+Lvor = 1 # Topological Charge
+NG = 3 # Number of gray levels
 spatialSampling = 60.1e-3 # SLM Pixel Pitch (mm)
 apertureRadius = 2.0 # Telescope - Lyot plane (mm)
 #%%-------------------
 #Vortex Analyzer Tools
 #---------------------
 
-vortexTools = vortexProfiler(dx=spatialSampling,radius=apertureRadius)
+vortexTools = vortexProfiler(dx=spatialSampling,p=10,radius=apertureRadius)
 #%%----------------------
 #Compute Field Properties
 #------------------------
 
-aperture = np.fft.fftshift(vortexTools.placeAperture())
+telescopeAperture = vortexTools.placeAperture();
+lyotAperture = vortexTools.placeAperture(0.5)
 SLMfilterMask = np.fft.fftshift(vortexTools.SPP(Lvor,NG))
 #%%--------------
 #Propagate Fields
 #----------------
 
-SLMInput = vortexTools.analyzeSpectrum(aperture)
+SLMInput = vortexTools.analyzeSpectrum(telescopeAperture)
 SLMPlane = SLMInput*SLMfilterMask
 lyotPlane = vortexTools.synthetizeSpectrum(SLMPlane)
-lyotAperturePlane = lyotPlane*aperture
+lyotAperturePlane = lyotPlane*lyotAperture
 outputField = vortexTools.analyzeSpectrum(lyotAperturePlane)
 #%%---
 #Plots
@@ -67,16 +68,16 @@ if plotsEnabled:
     ax.set_title("$Telescope$ $Apperture,$ $z=0$",fontsize=14,position=(0.5,1.0))
     ax.set_xlabel("$N_{x}$",labelpad=8)
     ax.set_ylabel("$N_{y}$")
-    plt.imshow((abs(np.fft.ifftshift(aperture)[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2),cmap='gray')
+    plt.imshow(((telescopeAperture[viewRangeN:viewRangeM,viewRangeN:viewRangeM])),cmap='gray')
     #plt.show()
     
     # First Fourier Plane
     plt.figure(3)
     ax=plt.axes()
-    ax.set_title("$First$ $Fourier$ $Plane,$ $z=f_{2}$",fontsize=14,position=(0.5,1.0))
+    ax.set_title("$First$ $Fourier$ $Plane,$ $z=f_{1}$",fontsize=14,position=(0.5,1.0))
     ax.set_xlabel("$N_{x}$",labelpad=8)
     ax.set_ylabel("$N_{y}$")
-    plt.imshow((abs(np.fft.ifftshift(SLMInput)[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2),cmap='gray')
+    plt.imshow((np.abs(np.fft.ifftshift(SLMInput)[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2),cmap='gray')
     cb=plt.colorbar()
     cb.set_label(r"$Intensity$ $units$",fontsize=12)
     #plt.show()
@@ -107,7 +108,7 @@ if plotsEnabled:
     ax1.set_title("$Intensity$ $field$ $after$ $SPP,$ $z=f_{1}$",fontsize=14,position=(0.5,1.0))
     ax1.set_xlabel("$N_{x}$",labelpad=8)
     ax1.set_ylabel("$N_{y}$") 
-    map1=ax1.imshow((abs(np.fft.fftshift(SLMPlane)[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2))
+    map1=ax1.imshow((np.abs(np.fft.fftshift(SLMPlane)[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2))
     cb=plt.colorbar(map1,orientation='horizontal')
     cb.set_label(r"$Intensity$ $units$",fontsize=12)
     #plt.show()
@@ -118,7 +119,7 @@ if plotsEnabled:
     ax.set_title("$Field$ $at$ $z=f_{1}+2*f_{2}$",fontsize=14,position=(0.5,1.0))
     ax.set_xlabel("$N_{x}$",labelpad=8)
     ax.set_ylabel("$N_{y}$") 
-    plt.imshow((abs(np.fft.ifftshift(lyotPlane)[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2),cmap='gray')
+    plt.imshow(np.abs(lyotPlane[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2,cmap='gray')
     cb=plt.colorbar()
     cb.set_label(r"$Intensity$ $units$",fontsize=12)
     #plt.show()
@@ -129,7 +130,7 @@ if plotsEnabled:
     ax.set_title("$Field$ $*$ $App.Stop,$ $z=f_{1}+2*f_{2}$",fontsize=14,position=(0.5,1.0))
     ax.set_xlabel("$N_{x}$",labelpad=8)
     ax.set_ylabel("$N_{y}$") 
-    plt.imshow((abs(np.fft.ifftshift(lyotAperturePlane)[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2),cmap='gray')
+    plt.imshow((np.abs(lyotAperturePlane[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2),cmap='gray')
     cb=plt.colorbar(orientation='vertical')
     cb.set_label(r"$Intensity$ $units$",fontsize=12)
     #plt.show()
@@ -138,10 +139,10 @@ if plotsEnabled:
     
     plt.figure(8)
     ax = plt.axes()
-    ax.set_title("$Intensity$ $field$ $at$ $camera,$ $z=f_{1}+2*f_{2}+2f_{3}$",fontsize=14,position=(0.5,1.0))
-    ax.set_xlabel("$N_{x}$",labelpad=8)
-    ax.set_ylabel("$N_{y}$") 
-    plt.imshow((abs(20*np.log10(np.fft.ifftshift(outputField))[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2))#,cmap='gray')
+    ax.set_title('Intensity - PSF Stellar Leakage at camera plane: 4F',fontsize=14,position=(0.5,1.0))
+    ax.set_xlabel("$N_{x}$ [Pixels]",labelpad=8,size=20)
+    ax.set_ylabel("$N_{y}$ [Pixels]",size=20) 
+    plt.imshow(np.log10(np.abs((np.fft.ifftshift(outputField))[viewRangeN:viewRangeM,viewRangeN:viewRangeM])**2))#,cmap='gray')
     cb=plt.colorbar(orientation='vertical')
     cb.set_label(r"$Intensity$ $units$",fontsize=12)
 

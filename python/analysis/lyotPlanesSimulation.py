@@ -26,8 +26,9 @@ plotsEnabled = True
         
 Lvor = 6 # Topologic Charge
 TCStep = 1
-NG = 10
-NGStep = 1
+NGmin = 2
+NGmax = 10
+NG = 4
 
 spatialSampling = 60.1e-3 # SLM Pixel Pitch (mm)
 apertureRadius = 4.0 # Telescope - Lyot plane (mm)
@@ -35,13 +36,13 @@ apertureRadius = 4.0 # Telescope - Lyot plane (mm)
 #Vortex Analyzer Tools
 #---------------------
 
-vortexTools = vortexProfiler(dx=spatialSampling,p=9,radius=apertureRadius)
+vortexTools = vortexProfiler(dx=spatialSampling,p=10,radius=apertureRadius)
 #%%---------------
 #Evaluation Ranges
 #-----------------
 
 TCRanges = np.arange(1,Lvor+1,TCStep)
-GLRanges = np.arange(2,NG,2)
+GLRanges = np.fix(np.linspace(NGmin,NGmax,NG)).astype('int')
 TCSize = len(TCRanges)
 GLSize = len(GLRanges)
 volumeSize = (TCSize)*(GLSize)
@@ -53,9 +54,9 @@ allocatedMatrixSLM,allocatedMatrixLyot = vortexTools.prepareFFTW(volumeSize)
 #Compute Field Properties
 #------------------------
 
-aperture = np.fft.fftshift(vortexTools.placeAperture())
+aperture = np.fft.fftshift(vortexTools.placeAperture(0.5))
+lyotAperture = np.fft.fftshift(vortexTools.placeAperture(0.5))
 SLMInput = vortexTools.analyzeSpectrum(aperture)
-lyotAperture = aperture[:,:,np.newaxis]
 
 for grayIndex in range(0,GLSize):
     for TCIndex in range(0,TCSize):
@@ -67,7 +68,7 @@ for grayIndex in range(0,GLSize):
         
 allocatedMatrixSLM[:] = SLMPlanes
 allocatedMatrixLyot[:] = vortexTools.propagateField(allocatedMatrixSLM,'forward') # Lyot's Plane Response
-allocatedMatrixLyotTrunc = allocatedMatrixLyot*aperture[:,:,np.newaxis]
+allocatedMatrixLyotTrunc = allocatedMatrixLyot*lyotAperture[:,:,np.newaxis]
 PSFoutputFields = vortexTools.propagateField(allocatedMatrixLyotTrunc,'backward') # PSF response
 #%%---
 #Plots
@@ -83,5 +84,6 @@ if plotsEnabled:
     rows = ['NG: {}'.format(row) for row in GLRanges]
     
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, SLMPMasks, 'angle')
-    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixLyot, 'intensity')
+    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixLyot, 'log')
+    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixLyotTrunc, 'intensity')
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, PSFoutputFields, 'log')
