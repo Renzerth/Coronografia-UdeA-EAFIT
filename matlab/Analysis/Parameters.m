@@ -1,32 +1,54 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
-%%% For meas = 1:
-    % Note: measDebug will be 0 if measSimulated = 1
-    % If meas = 1 -> all the figures will be closed before starting it
-    measDebug = 0; % Debugging before actually measuring. Displays the 
-                   % default phase mask and shots a photo with the camera
-                   % Works if  measSimulated = 0
-    measSimulated = 1; % Saves the mask and does not involve the cameras: 
+meas = 0; % Measure: yes (1) or no (0)
+%%% For meas = 1: the whole workspace is saved
+    measSimulated = 0; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
                        % The mask saving is usefull for reports. Note: the
                        % figure that says Camera isn't saved but the other
                        % one that shows the mask in a gray scale fashion
+                       % Ideally, set:
+                       % abs_ang = 1
+                       % maskSel = 1
+                       % tcvect = [1 2 0]; glvect = [255]; 
+    % if measSimulated = 1 -> measDebug will be 0 
+    % If meas = 1 -> all the figures will be closed before starting it
+    measDebug = 0; % Debugging before actually measuring. Displays the 
+                   % default phase mask and shots a photo with the camera
+                   % Works if  measSimulated = 0. If it is active, the
+                   % program will set proc = 0
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 0; % Processes the data
+proc = 1; % Processes the data
+                % Note: measSimulated=1 also applies to proc but with some
+                % loaded images from: Data/0_ExampleData
+%%% For proc = 1 and meas = 0:  the workspace is loaded
+    loadMeas = 3; % In order to load a previous workspace:
+    % 0: doesn't load anything: not recommended in general
+    % 1: loads the last measurement
+    % 2: loads a user-defined measurement folder
+    % 3: select the folder you want to process (inside Data)
+    %%% For useLastMeas = 2:
+    measFoldName = '12-Apr-2019-Pluto-Spiral-mask-tcs-10-gls-10';
+    
+% NOTE: if meas and proc are both zero, then a single phase mask is plotted
+% with "plotMask". Another case on which this single phase mask is shown,
+% is for meas=1 & measSimulated=0 & measDebug=!, so that it can be manually
+% centered on the vortex and tested
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
-precision = 3; % Precision of displayed results: significative digits (3)
-               % vpa or sprintf ???
+precision = 3; % Precision of displayed results: significative digits (3)           
 abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
-             % (1) or phase (2) plot. It doesn't apply for Zernike and LG +
-             % Zernike: instead use z_disp_wrap for phase wrapping or not.
+             % (1) or phase (2) plot. abs_ang=1 is normally used for
+             % maskSel=1
+             % It doesn't apply for Zernike and LG +
+             % Zernike (maskSel = 5 or 6): instead use z_disp_wrap for
+             % phase wrapping or not.
              % This is done since the aberration effects observed in the 
              % phase, are noticed in the amplitude if the field is 
              % propagated. Consider using simBool = 1
              % abs_ang = 0 is not valid for FTmask = 1
-maskSel = 1; % Phase mask selection:
+maskSel = 0; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -35,17 +57,17 @@ maskSel = 1; % Phase mask selection:
              % ---- NOT USED:
              % 5: Zernike (aberrations)
              % 6: Laguerre-Gauss + Zernike
-             % 7: Hermite-Gauss beams NOT DONE
-             % 8: Mutliple vortices NOT DONE
-             % 9: Sum of spiral phase masks NOT DONE
-             % 10: Gerchberg-Saxton NOT DONE
+             % 7: Hermite-Gauss beams (NOT DONE)
+             % 8: Mutliple vortices (NOT DONE)
+             % 9: Sum of spiral phase masks (NOT DONE)
+             % 10: Gerchberg-Saxton (NOT DONE)
              % otherwise: Unitary
-plotMask = 1; % Allows to plot the final mask, as it can be a combination 
-              % of the previous ones
+plotMask = 2; % Allows to plot the mask:
               % 0: no plot;
               % 1: on the screen
               % 2: on the SLM
               % 3: on the screen but surface-plot type
+              % Note: only applies when meas and proc are both zero
         
                      
                      
@@ -57,7 +79,7 @@ plotMask = 1; % Allows to plot the final mask, as it can be a combination
 %  -Principal screen: MATLAB scrnIdx(1); Windows(2); AnyDesk(2)
 %  -Pluto screen: MATLAB scrnIdx(3); Windows(1); Anydesk(1)
 %  -LC2002 screen: MATLAB scrnIdx(2); Windows(3); Anydesk(0)
-slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
+slm = 'Pluto'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
@@ -67,31 +89,33 @@ switch slm
     maxNumPix = max([1920 1080]); % Maximum number of pixels on the SLM 
                                   % (either horizontal or vertical); SLM's 
                                   % resolution in pixels: 1920 x 1080 
-    pixSize = 8; % SLM pixel's size in um
+    pixSize = 8; % SLM pixel's pitch (or size) in [um/pixel]
     scrnIdx = 3; % Screen number selector. Default: 3
     
   case 'LC2002'
     %% SLM parameters (transmision)
     sSupport = min([2.66 2.00]); % Same as the reflection SLM
     maxNumPix = max([800 600]); % Same as the reflection SLM
-    pixSize = 32; % Same as the reflection SLM in um
+    pixSize = 32; % Same as the reflection SLM in [um/pixel]
     scrnIdx = 2; % Screen number selector. Default: 2
     
   case 'No-SLM'
    sSupport = 1; % A unitary space can be created when coordType=1
    maxNumPix = max([1920 1080]); % As the Pluto SLM
-   pixSize = 8; % As the Pluto SLM
-   scrnIdx = 1; % PC screem
+   pixSize = 8; % Same as the reflection SLM in [um/pixel]
+   scrnIdx = 1; % PC screen
   otherwise
-    warning('Please select an SLM');
+    warning('Please select a valid SLM');
 end 
 
 %% SLM positionining calibration, coordinates and type of truncation
 MaskPupil = 1; % Applies a pupil truncation to the mask: (0): no; (1): yes
 % Won't work for maskSel = 5 or 6 (Zernike), as it has z_pupil
-coordType = 1; % Type of calculation of the spatial coordinates. def: 2 
+coordType = 2; % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
-% 2: size defined by the resolution of the selected screen    
+% pixel coordinates: [-L/2,L/2]
+% 2: size defined by the resolution of the selected screen on [-1,1] (sign
+%    function coordiantes)   
 %%%% For coordType = 1 (user custom-sized):
     k = 9; % Bits for grey levels; 2^k is the resolution (size of x and y)
            % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
@@ -110,83 +134,105 @@ coordType = 1; % Type of calculation of the spatial coordinates. def: 2
      % 0: The mask presents an elliptical form when in the full screen
      % 1: The mask presents a circular form when in the full screen
      % On both cases full screen means that plotMask = 2
-    shiftMask = 1; % Shift for all masks
+    shiftMask = 2; % Shift for all masks
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
-     % 2: self-centering algorithm
-    shiftCart = [31.5,-1.8]; % shiftCart: [yshift,xshift], works when 
-                       % shiftMask = 1. Percentages of movement of the
-                       % total size of the mask (cartesian coordinates 
-                       % convention). Ranges per shift: [0,100] (percentge)  
+     % 2: self-centering algorithm: it is executed if the file
+     % ..\Data\SLMwisdom.mat (last's self centering execution) doesn't
+     % exist, therefore, delete it in order to perform the self centering 
+     % again
+     switch shiftMask
+         case 1 % SLM plotting with a manual shift
+            shiftCart = [-10, -20]; % shiftCart: [shiftX,shiftY]. 
+            % Percentages of movement of the half size of the screen
+            % (cartesian coordinates convention). Ranges per shift: 
+            % [0,99] (percentge) 100 is allowed if no profile will be made. 
+            % Smallervalues are restricted if the Zernike masks are used.
+                        
+         case 2 % Fine adjustment of the self centering shift
+            shiftCart = [0, 0]; % Same percentage concept of the 
+            % abovementioned explanation and same conventions
+     end
                           
    % LC2002: [-3,0.1]
    % Pluto: [31.5,-1.8]
               
-%% Camera selection and parameters
-camera = 'DMK23U445';
+%% Measurement camera selection and parameters
+% Self centering camera is selected just before f_DefineSpace
+camera = 'DMK23U445'; % PSF is needed for the 2019's metrics (meanwhile)
 % Exposure: analog parameter
 % Format: 'Y800 (1280x960)' [best]; 'RGB24 (1024x768)' [another option]
 
-switch camera
-  case 'DMK23U445' % PSF plane % CMOS
-    exposure = 1/1e3; % Range: [,]
-    format = 'Y800 (1280x960)'; 
-    cameraPlane =  'PSF';
-    PP = 3.75; % Pixel pitch in um
-    
-  case 'DMK42BUC03' % Lyot plane % CCD
-    exposure = 1/1e3; % Range: [1/1e4,1]
+switch camera  
+  case 'DMK42BUC03' % Lyot plane % CMOS
+    cameraID = 2;
+    exposure = 1/400; % Range: [1/1e4,1]
+    fps = [];
     format = 'Y800 (1280x960)';
     cameraPlane =  'Lyot';
-    PP = 3.75; % Pixel pitch in um
+    PP = 3.75; % Pixel pitch in [um/pixel]
+ 
+  case 'DMK23U445' % PSF plane % CCD 
+    cameraID = 1;
+    exposure = 1/90; % Range: [1.0000e-04 300]; DefaultValue: 0.0333
+    %fps = '15'; % Frames per second
+    fps = '10.00'; % '15.00', '10.00', ' 7.50', ' 5.00' ' 3.75', 
+    format = 'Y800 (1280x960)'; 
+    cameraPlane = 'PSF';
+    PP = 3.75; % Pixel pitch in [um/pixel]
     
   case 'DMK41BU02.H' % not used here % CCD
+    cameraID = 3;  
     exposure = 1/1e3; % Range: [,]
+    fps = '15.0000'; % Frames per second
     format = 'Y800 (1280x960)';    
     cameraPlane = 'notusedhere';
-    PP = 4.65; % Pixel pitch in um
+    PP = 4.65; % Pixel pitch in [um/pixel]
 end
 
-% For 'DMK42BUC03' [Delete]:
-% -Default: 0.0556 or 1.282
-% -PH50um: 0.0030 -- Y0.0256 || PH25um: 0.0083 -- Y0.0556 ||
-% -PH15um: --Y0.1429 || 0.0227 || PH10um: 0.0435 -- Y0.200 || 
-% -PH5um: 0.363 -- Y3.099
-
-%% Image capture
+%% Image capture for the measurement debug
+% Only works for measDebug = 1 and meas = 1 and measSimulated = 0
 filename = 'test'; % Name of the capture one wants to take
-imgformat = '.png'; % Format with period. mat, bmp, png, jpg
-                    % This format doesn't apply for the measurements
-
+imgformat = 'png'; % Format with period. mat, bmp, png, jpg
+                   % This format doesn't apply for the measurements
+previewBool = 1; % Preview a video of what the camera is seeing
+loghist = 0; % (1) logscale; (0): normal scale truncated at 1000 counts
                     
                     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          
 %%%%%%%%%%%%%%%%%%%%% PART 3: PHASE MASKS PARAMETERS %%%%%%%%%%%%%%%%%%%%%%
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
-L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks
-tc = 1; % Topological charge (integer bigger or equal to one)
+L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks (also 
+            % used in the data processing)
+tc = 2; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
+        % Note: only applies when meas and proc are both zero
 s = 1; % Sign of mask (+1 or -1); reverses the imprinted OAM 
-ph0 = pi; % Initial phase of the angle [radians]; reference +pi from
+ph0 = 0; % Initial phase of the angle [radians]; reference +pi from
          % normal zero of trig circle and same rotation convention.
          % This corresponds to a normal rotation of the mask for stethic
          % reasons and shouldn't affect the results. Only affects if the
          % vortex is no fully centered
 % For abs_ang = 2:
-binMask = 0; % Binarizes the mask w.r.t the max/min of the phase (boolean)
-binv = 0; % Binary inversion of the mask: yes(1); no(0). Only applies when 
-          % binMask=1. It is usefull to be applied for odd p's on LG beams
+    binMask = 0; % Binarizes the mask w.r.t the max/min of the phase 
+                 % (boolean). Sometimes it won't work as expected for
+                 % constant-valued masks
+    binv = 0; % Binary inversion of the mask: yes(1); no(0). Only applies 
+              % when binMask=1. It is usefull to be applied for odd p's on 
+              % LG beams
 % For abs_ang = 1:
-normMag = 0; % Normalize magnitude. yes(1); no(0). 
+    normMag = 1; % Normalize magnitude. yes(1); no(0). 
           
 %% Parameters: Laguerre-Gauss
-p = 1; % Number of radial nodes. If p=0, normal helicoid masks are obtained
+p = 4; % Number of radial nodes. If p=0, normal helicoid masks are obtained
        % If they are used and tc=0(m=0); binary masks are obtained
        % Even p; rings are ones. Odd p; rings are zeroes. Use mask = mask'
-WsizeRatio = 100; % Width of the modes; for LG; ref: [0,100] (percentage  
-                % that is more understandable when p=1)
-                % When smaller than 3, the size of the mask decreases
+WsizeRatio = 20; % Width of the modes; for LG; ref: [0,100] (percentage  
+                % that has as reference the first ring p=1 and tc>=1). 
+                % Other values may fractionate this percentage
+                % When smaller than 3, the size of the mask decreases (this
+                % is a bug)
          
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
@@ -197,7 +243,8 @@ minf_FRum = AreaSLM/L; % Criterium to determine the MINIMUM f_FR [um]
 scaleFactor = 1e-6; % um to m. Constant factor
 minf_FR = minf_FRum*scaleFactor; % um to m
 if f_FR < minf_FR % f cannot be smaller than the criterium of the smallest
-  error(['VPL criterium not fulfilled, establish f_FR bigger than ' num2str(minf_FR)]);
+  error(['VPL criterium not fulfilled, establish f_FR bigger than ' ...
+         num2str(minf_FR)]);
 end
 % From: 2_edgar_2015_Generation_Optical_Vortices_Binary_Vortex_Lenses.pdf
 % minf_FR is used in meters in this paper and uses reasonable scales:
@@ -242,7 +289,7 @@ Angbet = 0; % Diffraction angle of vertical direction (y) [radians]
 
 %% Parameters: Zernike polynomials with Noll's convention
 %%%% For maskSel = 5 or 6:
-z_coeff = [4]; % Zernike coeffient vector (see f_ZernikeMask.m)
+z_coeff = [4 5]; % Zernike coeffient vector (see f_ZernikeMask.m)
 z_a = 2.5; % Arbitrary constant; the bigger, the more intense; ref: a=2.5
 z_pupil = 1; % Pupil relative size: [0,1]; like a percentage
 z_disp_wrap = 1; % (0): Original; (1): wrapped mask on [-pi,pi] 
@@ -254,11 +301,13 @@ z_plot = 0; % plot with Zernike builder: yes(1); no(0)
 % For coordType = 1, a low value of k (for example less than 8) can affect
 % the orthogonality
 
-%% Gray levels (discretization levels of the mask)             
+%% Gray levels (discretization levels of the mask)         
+% Only applies when meas and proc are both zero
 discretization = 1; % Variable for the next switch
+% Example of equivalence: gl = 2 <-> phaseValues = [0 255]
 switch discretization % Gray-level discretized azimuthal angle vector
  case 1 % 1: Evenly-spaced gl phase values.
-  gl = 255; % Number of gray levels . Default: 256         
+  gl = 256; % Number of gray levels . Default: 256         
   phaseValues = linspace(0,2*pi,gl); % Discretized phi vector on [0,2*pi]  
   % The sampling interval consists on dividing the range over the gray
   % levels. Similar to the VPL Edgar's discretization formula on the first
@@ -266,13 +315,15 @@ switch discretization % Gray-level discretized azimuthal angle vector
   % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf 
   
  case 2 % 2: user-defined gl values
-  phaseValues = [0 64 128 255]; % Range of each value: [0,255]
-                                % Example: [0 64 128 255]
-  % Custom gl vector: the mask will only have these levels
-  phaseValues = phaseValues*2*pi/255; % Conversion from gray-levels to 
-                                      % phase levels              
-  % phase values = gray level values * 2Pi/255. Current range: [0,2pi], but
-  % inside f_discretizeMask.m, the values are adjusted to be on [-Pi,Pi] 
+ % Custom gl vector: the mask will only have these levels    
+ phaseValues = [0 255];
+ %   phaseValues = [0 64 128 255]; % Range of each value: [0,255]
+                               % Example: [0 64 128 255]
+ 
+ phaseValues = phaseValues*2*pi/255; % Conversion from gray-levels to 
+                                     % phase levels              
+ % phase values = gray level values * 2Pi/255. Current range: [0,2pi], but
+ % inside f_discretizeMask.m, the values are adjusted to be on [-Pi,Pi] 
 end
 % Number of gray levels gl = length(phaseValues): calculated inside the
 % functions
@@ -284,22 +335,56 @@ end
 %% Measurement
 % Always saves with the dataformat
 % Sweeps all the GL for one tc and then switches to the other ones
-% savetype = 1; % 1: as a .mat files or 
-                % 2: as dataformat files
-dataformat = '.bmp'; % Applies only for savetype = 2
-% tcvect = [1 2 3 4 5 6 7 8 9 10]; % Dados por Juan Jose
-% glvect = [1 16 24 28 36 56 128 256]; % Dados por Juan Jose
+dataformat = '.bmp'; % Default: .bmp (not too heavy)
+
+glvect = [12 16 24 32 64 128 256]; % Gray level to be measured 
+tcvect = 1:10; 
+
+% For tests:
+% glvect = [2 128 255]; % Gray level to be measured [0,255]
+% tcvect = [2 10]; 
+
+% Gray level possibilities:
+% glvect = 2:10; % Small gray levels
+% glvect = [12 16 24 32 64 128 256]; % whole span
+
+% Always used:
+% tcvect = 1:10; % Topological charges to be measured [integers] 
+
+% Old (used on 12/04/2019):
+% glvect = round(linspace(2,10,9)); 
+% glvect = [2 16 24 28 36 56 128 256]; % Whole span
+% glvect = round(linspace(2,255,9)); % Whole span also
+
+
+% No:
 % glvect = [3, 127, 203, 59, 167] % Andres F. Izquierdo: best gl
                                   % with a good system phase response
-tcvect = [2]; % Topological charges to be measured
-glvect = [20]; % Gray level to be measured
-% glvect = linspace(2,18,9)
-wait = 0; % 10 seconds before measuring as a safety measurement
-          % RIGHT NOW 0 FOR DEBUGGING
-recordingDelay = 5; % Waits 5 seconds between each mask to be shown
-                    % This time is also important so that the camera
-                    % bus doesn't overload. Ref: 5
-                    % RIGHT NOW 1 FOR DEBUGGING
+                                  % For their LC 2002
+                                  
+waitbeforemeas = 2; % Seconds before measuring as a safety measurement. 
+                    % Default: 10
+recordingDelay = 3; % recordingDelay/2 seconds after the mask is shown in  
+                                % the SLM and in the pc, It is the time before the snapshot
+                                % is taken. It is  independent from  wait(vid). After the snapshot, another
+                                % recordingDelay/2 happens so that the
+                                % snapshot is shown in the pc. Ref: 3. 
+                                % Total time for each cycle of the
+                                % measurement:                             
+                                % recordingDelay/2 +wait(vid) + recordingDelay/2
+% For wait(vid): this time is important so that the camera bus port doesn't 
+% overload. It adds a bigger confidence so that the bus doesn't fill and
+% generates anomalies in the measurement images. This is a safe parameter.
+% It waits after the snapshot is taken
+
+%% Reference measurement     
+% For tc=0 and for a gray level of 0 (black) or 256 (white)
+% This is the non-coronagraphic PSF reference: the system response without
+% a phase mask
+whiteblackref = 0; % 1: white; 0: black background. Default: 0
+% White adds a piston pase of 2*Pi
+% The rest of parameters regarding this reference measurement should not be
+% changed and are inside the function
 
 %% Folder names
 if ispc %  Linux (0) or Windows (1)
@@ -310,12 +395,14 @@ end
 % Both info/dir-Delim should be left as they are, since "date" is used and
 % has the symbol '-'
 infoDelim = '-'; % For the data and output folder information
-dirDelim= '_'; % For the repeated folder or snapshot creation "infoDelim" must always be different than "dirDelim"
+dirDelim= '_'; % For the repeated folder or snapshot creation "infoDelim"
+               % must always be different from "dirDelim"
 analysFldr = 'Analysis'; % Folder name: scripts
 dataFlrd = 'Data'; % Folder name: input data  
 snapsfldr = 'TestSnapshots'; % Snapshot tests folder (inside dataFlrd)
 outFlrd = 'Output'; % Folder name: output data
 toolsFldr = 'Tools'; % Folder name: functions
+lastmeas = 'LastMeasName'; % .mat's name of the last measurement date
 filemanag = 'Files-Folders_Managing'; % Folder with the function 
                                       % f_makeParentFolder, the 1st 
                                       % function that is used in the 
@@ -333,19 +420,32 @@ filemanag = 'Files-Folders_Managing'; % Folder with the function
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%% PART 5: PROCESSING WITH METRICS %%%%%%%%%%%%%%%%%%%%%%
-metricSel = 1; % 
+%%%% PART 5: PROCESSING WITH METRICS  AND SELF CENTERING ALGORITHM %%%%%%%%
+
+% WARNING: these things will only work if proc = 0
+
+metricSel = 2; % Type of metric:
+% 1:
+%     -throughput (Encircled Energy Factor)
+%     -throughput gradient
+%     -power suppresion in the airy disk
+% 2: SNR
+% 5: MSE (NOT DONE)
 metricProfile = 1; % 1: vertical profile; 2: horizontal profile
 
-%% Diffraction angle units
+%% Optical system parameters
 n = 1; % Air's refractive index
-% PP: used with the "camera" variable
-M = 1; % No microscope objective is used and there's no magnification
+% PP: used with the "camera" variable; pixel pitch [um/pixel]
+M = 10; % Microscope's objective is used and there's magnification
 f = 100; % focal length of the lens before the camera [mm]
+scaleFactor = 1e3; % mm to um. Constant factor
+f = f*scaleFactor; % Focal length in um
+AiryFactor = n*PP*M/f; % Used to convert from pixels to the diffraction 
+                       % angle in Lamda/D units
+NA = 0.1; % Numerical aperture: here, of the lens
+apRad = 2.54; % Aperture radius [cm]
 
-
-
-
+                       
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 6: ACADEMIC-PURPOSE ASPECTS %%%%%%%%%%%%%%%%%%
 
@@ -353,7 +453,8 @@ f = 100; % focal length of the lens before the camera [mm]
 % that is not very depured
 %% Optional plots and procedures
 FTmask = 0; % Finds the FFT of the mask and plots it: yes(1); no(0)
-%%% For FTmask = 1 and abs_ang = 1:
+abs_angFT = 1; % Same definition as abs_ang
+%%% For FTmask = 1 and abs_angFT = 1:
    maskFTlog = 1; % (1)Plots the log10 of the spectrum. (0) normal spectrum                
 gradMask = 0; % Finds the gradient of the mask and pltos it: yes(1); no(0)
 maskZernReconstr = 0; % Reconstructs the mask with Zernike polynomials and

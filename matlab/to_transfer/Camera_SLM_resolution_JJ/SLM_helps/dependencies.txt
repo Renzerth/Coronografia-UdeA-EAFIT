@@ -1,7 +1,0 @@
-Dependencies: 
-projectVortexToDisplay.m
--> f_scaleMatrix.m
--> f_discretizeMask.m
--> f_makeScreenCoordinates.m
-- -> f_changeProjectionMonitor.m
--> f_changeProjectionMonitor.m

@@ -1,38 +1,71 @@
-function [MeasDir,ProcessedDir,ltcvect,lglvect] = ...
-f_CreateFoldersRegisters(maskName,tcvect,glvect,slm,dataDir,outDir, ...
-pathSep,infoDelim,dirDelim,meas,proc)
+function [imgpartPath,measfullpath,ProcessedDir,ltcvect,lglvect, ...
+totalImgs,numberedFolderMeas] = f_CreateFoldersRegisters(maskName, ...
+tcvect,glvect,slm,cameraPlane,dataDir,outDir,pathSep,infoDelim, ...
+dirDelim,lastmeas,meas,proc,loadMeas)
 
 %% General saving registers
 ltcvect = length(tcvect); % Length of the tc vector
 lglvect = length(glvect); % Length of the gl vector
+totalImgs = ltcvect*lglvect; % Number of images to be taken
 strDate = date; % Today's date is retrieved from the local machine
 MeasSize = strcat(maskName,infoDelim,'mask',infoDelim,'tcs',infoDelim, ...
            num2str(ltcvect),infoDelim,'gls',infoDelim,num2str(lglvect));
 % Datalog with the number of measurements for tc's and gl's
 
 %% Measurement folder creation (Datalog)
-% Folder name:
-Measfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize); 
-if meas
-  createFoldMeas = 1;
-else
-  createFoldMeas = 0;
+%%% Last measurement's date directory
+lastmeasDir = strcat(dataDir,pathSep,lastmeas,'.mat');
+
+%%% Folder name (use the wanted measurement's name):
+Measfldr = strcat(strDate,infoDelim,slm,infoDelim,MeasSize);
+    
+%%% Asks if a measurement will be performed
+if meas == 1 %  -> save the numbered measurement folder
+    %%% Specific measurement folder:
+    createFoldMeas = 1; % Create a measurement folder
+    numberedFolderMeas = f_createNextFolderName(dataDir,Measfldr, ...
+        dirDelim,pathSep,createFoldMeas);
+    
+    %%% Save current measurement folder name
+    % Explanation: save(directory,filename,variables) % ,'-append'
+    save(lastmeasDir,'numberedFolderMeas'); % Save as .mat
+elseif loadMeas == 1 % here, meas = 0. The last measurement is loaded
+    if exist(lastmeasDir,'file') == 0
+      error('No previous measurement was found.')
+    end  
+  
+    %%% Load the last measurement:
+    struct = load(lastmeasDir);
+    
+    %%% Folder name (use last measurement's name):
+    numberedFolderMeas = struct.numberedFolderMeas; 
+    
+else % loadMeas == 0 or 2 or 3
+    numberedFolderMeas = ''; % Not needed at all
 end
-% Specific measurement folder:
-numberedFolderMeas = f_createNextFolderName(dataDir,Measfldr, ...
-                                          dirDelim,pathSep,createFoldMeas);                        
+
+%%% Measurement directory:
 MeasDir = strcat(dataDir,pathSep,numberedFolderMeas); % Datalog folder that
-% takes into account if the folder alraedy exists (numbered folder)
+% takes into account if the folder already exists (numbered folder)
+
+imgpartPath = strcat(MeasDir,pathSep,cameraPlane,infoDelim); % Partial path 
+                                                     % for the measurements
+%%% Path of the cell with all the measurements:
+measfullpath = strcat(imgpartPath,'allmeas.mat'); % Name of the saved cell of 
+% images. More information will be concatenated for a full path of the 
+% measured images inside the two "for" loops in f_AutomateMeasurement. As 
+% well, the variable "imgfullpath" is created inside this function
 
 %% Output folder creation (processed images)
 % Folder name:
-Procfldr = strcat(date,infoDelim,'processed',infoDelim,slm, ...
+Procfldr = strcat(strDate,infoDelim,'processed',infoDelim,slm, ...
                   infoDelim,MeasSize); 
 if proc 
   createFoldProc = 1;
 else
   createFoldProc = 0;
 end
+
 % Specific processing folder:
 numberedFolderProc = f_createNextFolderName(outDir,Procfldr,dirDelim, ...
                                             pathSep,createFoldProc); 

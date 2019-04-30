@@ -36,8 +36,8 @@ end
      case 1 % Amplitude
          mask = abs(maskFFT); % Magnitude of the FT
          if maskFTlog == 1
-           logmask = 20*log10(mask); % Magnitude squared of the FT in
-                                     % log scale
+           logmask = 20*log10(mask/1); % Magnitude squared of the FT in
+                                       % log scale. Reference: 1
            mask = logmask; % Logarithm of the magnitude squared 
            tit = 'Log of the FT of the Mask';
          else
@@ -54,6 +54,13 @@ plotH = 1; % 1: plot the horizontal profile
 plotV = 1; % 1: plot the vertical profile
 oneSideProfile = 0; % 0: two-sided profile
 shiftCart = [0,0]; % No shift here
-f_makeImageProfile(x,y,mask,tol,shiftCart,tit,plotData,plotH,plotV, ...
-                                oneSideProfile);
+dcShift = 1; % Accounts one pixel movement for the dc component. This is 
+             % caused by the fftshift. ref: 1
+xlab = '';
+ylab = '';
+midX = round((maxX+1)/2) + dcShift*mod(maxX,2); % x mid point
+midY = round((maxY+1)/2) + dcShift*mod(maxY,2); % y mid point
+
+[~,~,~,~,~,~] = f_makeImageProfile(x,y,midX,midY,mask,tol,shiftCart,tit, ...
+                              xlab,ylab,plotData,plotH,plotV,oneSideProfile);
 end

@@ -13,7 +13,8 @@ coordType,abs_ang,MaxMask,plotMask,maskSel)
 %        [-pi,pi]. mask = exp(i*UnwrappedMask).
 %  wrapMask: truncation, discretization and angle operations on mask. 
 %            It is wrapped on [-pi,pi].
-%  wrapMaskFig: figure handler if needed outside the function
+%  wrapMaskFig: figure handler if needed outside the function. It is a cell
+%  only for plotMask == 2 (fig handle and image handle [parent,child])
 
 %  maskName: name of the selected mask
 

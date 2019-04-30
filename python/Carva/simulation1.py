@@ -102,7 +102,11 @@ def clens(U, X, Y, f_lens, r_lens, wl): # wl: wavelenght
     
     LF = np.exp(-(1j*np.pi)/(wl*f_lens)*X**2)
     
+<<<<<<< HEAD
     return U*LF
+=======
+    return LF
+>>>>>>> master
     
 # continuous spp pass-by
 
@@ -157,7 +161,7 @@ U1 = np.exp(-a*(X**2+Y**2))
 
 # Now if we want a circular stop or radiud r = 0.5, is as simple as:
 
-UC = np.sqrt(X**2+Y**2) < r_l1 # boolean-like array for simplifying the calculations
+UC = (np.sqrt(X**2+Y**2) < r_l1).astype(float) # boolean-like array for simplifying the calculations
 
 # Entry stop
 U1 = U1*UC # U1 is the field at entry stop
