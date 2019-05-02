@@ -432,7 +432,11 @@ metricSel = 2; % Type of metric:
 %     -power suppresion in the airy disk
 % 2: SNR
 % 5: MSE (NOT DONE)
-metricProfile = 1; % 1: vertical profile; 2: horizontal profile
+metricProfile = 1;
+% values:
+% 1: vertical profile; 
+% 2: horizontal profile;
+% 3: radial averaged profile (ImageAnalyst)
 
 %% Optical system parameters
 n = 1; % Air's refractive index

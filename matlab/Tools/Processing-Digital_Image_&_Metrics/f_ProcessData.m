@@ -1,5 +1,5 @@
 function [xangL_Dexpairy, yangL_Dexpairy, radialIntensityRef,radialIntensityMeas,...
-    cartcoord, refEEFcurve, resNormIntensity, measEEFcurves, measNormIntensity,...
+    cartcoord, refEEFcurve, refNormIntensity, measEEFcurves, measNormIntensity,...
     logSNR, attenuationRatio,EEFattenuationRatio,refIntensityGradient,...
     measIntensityGradient] = f_ProcessData(measfullpath,refmeasfullpath,...
     ProcessedDir,dataDir,pathSep,infoDelim,dataformat,imgformat,cameraPlane,...
@@ -55,7 +55,7 @@ if measSimulated == 0 % Real measurement
     % 0.2989 * R + 0.5870 * G + 0.1140 * B
     refMeas = im2double(refMeas);
     
-    % Lyotimg = refMeas;  % TO BE USED FOR LYOT METRICS
+    % Lyotimg = refMeas;                                                                                                               % TO BE USED FOR LYOT METRICS
     
 else % Simulated measurement
     %% Example images to process
@@ -212,7 +212,7 @@ switch metricProfile
         cartcoord = xrefProx;
         titprof = '(horizontal profile)';
         
-    case 3 % Radial averaged profile
+    case 3 % Radial averaged profile (ImageAnalyst)
         radialIntensityRef = averRefProfile;
         radialIntensityMeas = averMeasProfile;
         cartcoord = [nan]; % to be fix
@@ -226,12 +226,15 @@ disp('Done.');
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% Metric application
+% Here, all the metrics are calculated but on a later stage only some are
+% plotted
+
 %% Processsing of profiles -- Encircled Energy Factor metric
 disp('Calculating Encircled Energy Factor...');
 measEEFcurves = cell(1,totalImgs);
 measNormIntensity = cell(1,totalImgs);
 dynamicProfileTitle = cell(1,totalImgs);
-[refEEFcurve, resNormIntensity] = f_calculateEEF(radialIntensityRef);
+[refEEFcurve, refNormIntensity] = f_calculateEEF(radialIntensityRef);
 
 for idxgral = 1:totalImgs
     [measEEFcurves{idxgral}, measNormIntensity{idxgral}] = f_calculateEEF(radialIntensityMeas{idxgral});
@@ -292,13 +295,13 @@ disp('Done.');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% Plotting
 %% Plot Settings
-xlab = 'Angular position [\lambda/D]';
-ylab = 'Angular position [\lambda/D]';
+xlab = 'Angular separation [\lambda/D]';
+ylab = 'Angular separation [\lambda/D]';
 tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 0; % Not needed for the metric. Ref: 0
 plotV = 0; % Not needed for the metric. Ref: 0
-metricSel = 8; % Type of metric -- BYPASS VARIABLE
+metricSel = 7; % Type of metric -- BYPASS VARIABLE
 
 %% Plot Selection
 switch metricSel
@@ -306,17 +309,17 @@ switch metricSel
         %% Analysis Figures Plotting -- Profile Lines
         disp('Plotting Profile Lines...');
         titRef = 'Profile of Reference Intensity';
-        f_plotLinearProfiles(dataArray,x,y,titRef,xlab,ylab,plotData,plotH,plotV,tol)
+        f_plotLinearProfiles(dataArray,x,y,titRef,xlab,ylab,plotData,plotH,plotV,tol);
         
         for idxgral = 1:totalImgs
-            f_plotLinearProfiles(expMeas{idxgral},x,y,dynamicProfileTitle{idxgral},xlab,ylab,plotData,plotH,plotV,tol)
+            f_plotLinearProfiles(expMeas{idxgral},x,y,dynamicProfileTitle{idxgral},xlab,ylab,plotData,plotH,plotV,tol);
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
         
     case 2
         %% Analysis Figures Plotting -- Encircled Energy Factor metric
         disp('Plotting Encircled Energy Factor...');
-        f_plotEEF(cartcoord, refEEFcurve, resNormIntensity, titprof, xlab)
+        f_plotEEF(cartcoord, refEEFcurve, refNormIntensity, titprof, xlab); % Reference
         
         for idxgral = 1:totalImgs
             f_plotEEF(cartcoord, measEEFcurves{idxgral}, measNormIntensity{idxgral}, dynamicProfileTitle{idxgral}, xlab)
@@ -332,16 +335,16 @@ switch metricSel
         end
         
     case 4
-        %% Analysis Figures Plotting -- Relative Contrast (Arrenged)
+        %% Analysis Figures Plotting -- Relative Contrast (Arranged) [grouped gl's]
         disp('Plotting Arranged Relative Contrast...');
         plotAlotFunc = @(reference, DataA, DataB) plot(reference,DataA,reference,DataB);
-        legendCell = cellstr(num2str(glvect', 'Coronagraphic: GL=%d')); legendCell = [{'Non-Coronagraphic'}; legendCell];
+        legendCell = cellstr(num2str(glvect', 'Coronagraphic: NG=%d')); legendCell = [{'Non-Coronagraphic'}; legendCell];
         
         for indexTC = 1:totalTC
             figure('color', 'white');
             hold on; arrayfun(@(indexGL) plotAlotFunc(cartcoord,radialIntensityRef, arrangedProfiles{indexGL,indexTC}),1:totalGL); hold off;
-            grid on; xlabel('Angular position [\lambda/D]'); ylabel('Relative contrast of the radial intensities [logscale]'); legend(legendCell);
-            title(sprintf('Raw Contrast GL Comparison with TC = %d',tcvect(indexTC)));
+            grid on; xlabel('Angular separation [\lambda/D]'); ylabel('Relative contrast of the radial intensities [logscale]'); legend(legendCell);
+            title(sprintf('Raw Contrast NG Comparison with TC = %d',tcvect(indexTC)));
             fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log')
         end
         
@@ -359,7 +362,7 @@ switch metricSel
         figure('color', 'white');
         hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:)), 1:totalTC); hold off;
         title('Power supression of TCs at Different phase levels');
-        xlabel('Gray Level'); ylabel('EEF at Airy Range');
+        xlabel('Gray Level'); ylabel('EEF in Airy Disk'); % OLD:  ylabel('EEF at Airy Range');
         legendCell = cellstr(num2str((1:10)', 'TC=%d')); legend(legendCell); grid on; axis square;
         
     case 7
@@ -370,8 +373,8 @@ switch metricSel
         for indexGL = 1:totalGL
             figure('color', 'white');
             hold on; arrayfun(@(indexTC) plotAlotFunc(cartcoord,arrangedEEF{indexTC,indexGL}),1:totalTC); hold off;
-            grid on; axis square; xlabel('Radial Distance (\lambda/D)'); ylabel('Throughput (EEF)'); legend(legendCell);
-            title(sprintf('Throughput of Topological Charges at GL = %d',glvect(indexGL)));
+            grid on; axis square; xlabel('Angular separation (\lambda/D)'); ylabel('Throughput (EEF)'); legend(legendCell); %  xlabel('Radial Distance (\lambda/D)')
+            title(sprintf('Throughput of Topological Charges at NG = %d',glvect(indexGL)));
             fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL);
         end
     case 8
@@ -398,7 +401,7 @@ switch metricSel
     otherwise
         warning('Unavailable Plot.');
 end
-disp('Rendering...')
+disp('Rendering...');
 
 
 %%

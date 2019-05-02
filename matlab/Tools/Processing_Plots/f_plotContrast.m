@@ -6,6 +6,6 @@ figure('color','white');
 semilogy(cartcoord,Measurement); hold on
 semilogy(cartcoord,RefMeasurement); hold off;
 title(tit); grid on;
-xlabel('Angular position [\lambda/D]'); ylabel('Relative contrast of the radial intensities [logscale]')
-legend({'Coronographic', 'Non-Coronographic'});
+xlabel('Angular separation [\lambda/D]'); ylabel('Relative contrast of the radial intensities [logscale]')
+legend({'Coronagraphic', 'Non-Coronagraphic'});
 end

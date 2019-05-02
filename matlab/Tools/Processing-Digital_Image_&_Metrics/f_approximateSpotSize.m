@@ -60,8 +60,8 @@ yLengthRatio = halfQ/aproxRadius;
 x = -xLengthRatio:xLengthRatio-1;
 y = -yLengthRatio:yLengthRatio-1;
 
-%% Plot
-figure;
-imagesc(x,y,cdata);
-title('Test for f-approximateSpotSize.m')
+%% Test plot to check the scaled 
+% figure;
+% imagesc(x,y,cdata);
+% title('Test for f-approximateSpotSize.m')
 end
