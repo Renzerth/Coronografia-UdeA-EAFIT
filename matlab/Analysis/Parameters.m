@@ -309,7 +309,7 @@ discretization = 1; % Variable for the next switch
 switch discretization % Gray-level discretized azimuthal angle vector
  case 1 % 1: Evenly-spaced gl phase values.
   gl = 256; % Number of gray levels . Default: 256         
-  phaseValues = linspace(0,2*pi,gl); % Discretized phi vector on [0,2*pi]  
+  GrayLevel = linspace(0,2*pi,gl); % Discretized phi vector on [0,2*pi]  
   % The sampling interval consists on dividing the range over the gray
   % levels. Similar to the VPL Edgar's discretization formula on the first
   % page of:
@@ -317,11 +317,11 @@ switch discretization % Gray-level discretized azimuthal angle vector
   
  case 2 % 2: user-defined gl values
  % Custom gl vector: the mask will only have these levels    
- phaseValues = [0 255];
+GrayLevel = [0 255];
  %   phaseValues = [0 64 128 255]; % Range of each value: [0,255]
                                % Example: [0 64 128 255]
  
- phaseValues = phaseValues*2*pi/255; % Conversion from gray-levels to 
+ phaseValues = GrayLevel*2*pi/255; % Conversion from gray-levels to 
                                      % phase levels              
  % phase values = gray level values * 2Pi/255. Current range: [0,2pi], but
  % inside f_discretizeMask.m, the values are adjusted to be on [-Pi,Pi] 
@@ -337,12 +337,12 @@ end
 % Always saves with the dataformat
 % Sweeps all the GL for one tc and then switches to the other ones
 dataformat = '.bmp'; % Default: .bmp (not too heavy)
-
+% glvect: discretization level in [1,256]
 glvect = [12 16 24 32 64 128 256]; % Gray level to be measured 
 tcvect = 1:10; 
 
 % For tests:
-% glvect = [2 128 255]; % Gray level to be measured [0,255]
+% glvect = [2 128 256]; % Gray level to be measured [1,256]
 % tcvect = [2 10]; 
 
 % Gray level possibilities:

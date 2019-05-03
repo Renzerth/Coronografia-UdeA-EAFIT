@@ -185,7 +185,8 @@ shiftCart = [0,0]; % midX,midY already account for the shift
 disp('Calculating Profiles...');
 [xrefProx,yrefProf,HprofRef,VprofRef,~,~] = f_makeImageProfile(x,y,midX,midY, ...
     refMeas, shiftCart, oneSideProfile);
-[averRefProfile] = f_getAverageRadialProfile(refMeas,[ySize, xSize],aproxCenter);
+flippedAproxCenter = fliplr(aproxCenter); % [X,Y] Format
+[averRefProfile] = f_getAverageRadialProfile(refMeas,[ySize, xSize],flippedAproxCenter);
 
 %% Profile of the measurements
 Hprofmeas = cell(1,totalImgs);
@@ -195,7 +196,7 @@ averMeasProfile = cell(1,totalImgs);
 for idxgral = 1:totalImgs
     [~,~,Hprofmeas{idxgral},Vprofmeas{idxgral},~,~] = f_makeImageProfile(x,y,midX,midY, ...
         expMeas{idxgral},shiftCart, oneSideProfile);
-    [averMeasProfile{idxgral}] = f_getAverageRadialProfile(expMeas{idxgral},[ySize, xSize],aproxCenter);
+    [averMeasProfile{idxgral}] = f_getAverageRadialProfile(expMeas{idxgral},[ySize, xSize],flippedAproxCenter);
 end
 
 %% Measurement profile choice
@@ -215,7 +216,10 @@ switch metricProfile
     case 3 % Radial averaged profile (ImageAnalyst)
         radialIntensityRef = averRefProfile;
         radialIntensityMeas = averMeasProfile;
-        cartcoord = [nan]; % to be fix
+        trimRange = 1:min(numel(xrefProx),numel(yrefProf));
+        radialAverageDist = mean([xrefProx(trimRange); yrefProf(trimRange)]);
+        cartcoord = interp1(trimRange,radialAverageDist,1:length(averRefProfile)); % Spatial size interpolation range
+        aproxRadius = find(cartcoord==1); % Airy range (corresponding pixel) of interpolated data;
         titprof = '(radial average profile)';
         
     otherwise
@@ -261,12 +265,14 @@ end
 arrangedProfiles = arrangedProfiles';
 disp('Done.');
 
-%% Processsing of profiles -- Logarithmic SNR
-disp('Calculating Logarithmic SNR...');
+%% Processsing of profiles -- Logarithmic SNR & Logarithmic RMS
+disp('Calculating Logarithmic SNR and RMS...');
 logSNR = cell(1,totalImgs);
+logRMS = cell(1,totalImgs);
 
 for idxgral = 1:totalImgs
     [logSNR{idxgral}] = f_calculateLogSNR(radialIntensityMeas{idxgral},radialIntensityRef);
+    [logRMS{idxgral}] = f_calculateLogRMS(logSNR{idxgral});
 end
 disp('Done.');
 
@@ -299,30 +305,42 @@ xlab = 'Angular separation [\lambda/D]';
 ylab = 'Angular separation [\lambda/D]';
 tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 plotData = 0; % Shows the profile lines. Ref: 1
-plotH = 0; % Not needed for the metric. Ref: 0
-plotV = 0; % Not needed for the metric. Ref: 0
+plotH = 1;
+plotV = 0;
 metricSel = 7; % Type of metric -- BYPASS VARIABLE
+
+fontSize = 14; %[pts]
+lineWidth = 1.5; %[pts]
+colorSet = [1 0 0 ; 0 1 0; 0.8500 0.3250 0.0980; 0 0 1; 0.9290 0.6940 0.1250; 0 1 1; 0.4940 0.1840 0.5560; 1 0 1; 0.6350 0.0780 0.1840; 0 0 0];
+lineStyle = '-.';
+markerSet = [{'o'},{'+'},{'s'},{'>'},{'d'},{'x'},{'p'},{'^'},{'h'},{'v'}]';
+plotSpec = arrayfun(@ (index) strcat(markerSet{index},lineStyle),1:length(markerSet),'UniformOutput',false); % Joints the line specs strings
 
 %% Plot Selection
 switch metricSel
     case 1
         %% Analysis Figures Plotting -- Profile Lines
+        if metricProfile == 3 && plotData ~= 0
+            warning('Metric Profile 3 does not have a spatial related profile. Profile line disabled.');
+            plotData = 0;
+        end
         disp('Plotting Profile Lines...');
         titRef = 'Profile of Reference Intensity';
-        f_plotLinearProfiles(dataArray,x,y,titRef,xlab,ylab,plotData,plotH,plotV,tol);
+        [refPoints] = getPlotCenterCoor([ySize, xSize] ,midX,midY,shiftCart);
+        f_plotLinearProfiles(refMeas,x,y,cartcoord,cartcoord,titRef,xlab,ylab,plotData, radialIntensityRef, plotH,plotV,tol,refPoints,fontSize,lineWidth);
         
         for idxgral = 1:totalImgs
-            f_plotLinearProfiles(expMeas{idxgral},x,y,dynamicProfileTitle{idxgral},xlab,ylab,plotData,plotH,plotV,tol);
+            f_plotLinearProfiles(expMeas{idxgral},x,y,cartcoord,cartcoord,dynamicProfileTitle{idxgral},xlab,ylab,plotData,radialIntensityMeas{idxgral},plotH,plotV,tol,refPoints,fontSize,lineWidth);
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
         
     case 2
         %% Analysis Figures Plotting -- Encircled Energy Factor metric
         disp('Plotting Encircled Energy Factor...');
-        f_plotEEF(cartcoord, refEEFcurve, refNormIntensity, titprof, xlab); % Reference
+        f_plotEEF(cartcoord, refEEFcurve, refNormIntensity, titprof, xlab, fontSize,lineWidth); % Reference
         
         for idxgral = 1:totalImgs
-            f_plotEEF(cartcoord, measEEFcurves{idxgral}, measNormIntensity{idxgral}, dynamicProfileTitle{idxgral}, xlab)
+            f_plotEEF(cartcoord, measEEFcurves{idxgral}, measNormIntensity{idxgral}, dynamicProfileTitle{idxgral}, xlab, fontSize, lineWidth)
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
         
@@ -330,58 +348,69 @@ switch metricSel
         %% Analysis Figures Plotting -- Relative Contrast
         disp('Plotting Relative Contrast...');
         for idxgral = 1:totalImgs
-            f_plotContrast(cartcoord,radialIntensityRef,radialIntensityMeas{idxgral},dynamicProfileTitle{idxgral})
+            f_plotContrast(cartcoord,radialIntensityRef,radialIntensityMeas{idxgral},dynamicProfileTitle{idxgral},fontSize,lineWidth)
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
         
     case 4
         %% Analysis Figures Plotting -- Relative Contrast (Arranged) [grouped gl's]
         disp('Plotting Arranged Relative Contrast...');
-        plotAlotFunc = @(reference, DataA, DataB) plot(reference,DataA,reference,DataB);
-        legendCell = cellstr(num2str(glvect', 'Coronagraphic: NG=%d')); legendCell = [{'Non-Coronagraphic'}; legendCell];
+        plotRange = 1:totalGL;
+        plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference,Data,plotSpec,'color', color, 'LineWidth',lineWidth);
+        legendCell = cellstr(num2str(glvect(plotRange)', 'Coronagraphic: NG=%d')); legendCell = [{'Non-Coronagraphic'}; legendCell];
         
         for indexTC = 1:totalTC
             figure('color', 'white');
-            hold on; arrayfun(@(indexGL) plotAlotFunc(cartcoord,radialIntensityRef, arrangedProfiles{indexGL,indexTC}),1:totalGL); hold off;
-            grid on; xlabel('Angular separation [\lambda/D]'); ylabel('Relative contrast of the radial intensities [logscale]'); legend(legendCell);
-            title(sprintf('Raw Contrast NG Comparison with TC = %d',tcvect(indexTC)));
-            fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log')
+            hold on; plot(cartcoord, radialIntensityRef,plotSpec{1},'color',colorSet(1,:),'LineWidth',lineWidth); set(gca,'yscale','log');
+            arrayfun(@(indexGL) plotAlotFunc(cartcoord, arrangedProfiles{indexGL,indexTC},plotSpec{indexGL+1},colorSet(indexGL+1,:),lineWidth),plotRange); hold off;
+            xlabel('Angular separation [\lambda/D]','FontSize',fontSize,'FontWeight','bold');
+            ylabel('Relative contrast of the radial intensities [logscale]','FontSize',fontSize,'FontWeight','bold');
+            title(sprintf('Raw Contrast NG Comparison with TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
+            set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on;
+            fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log'); xlim([0,2])
         end
         
     case 5
         %% Analysis Figures Plotting -- Logarithmic Signal-to-Noise Ratio
         disp('Plotting Logarithmic SNR...');
         for idxgral = 1:totalImgs
-            f_plotLogSNR(cartcoord,logSNR{idxgral},dynamicProfileTitle{idxgral},xlab)
+            f_plotLogSNR(cartcoord,logSNR{idxgral},dynamicProfileTitle{idxgral},xlab,fontSize,lineWidth)
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
         
     case 6
         %% Analysis Figures Plotting -- Power Supression
         disp('Plotting Power Supression...');
+        plotRange = 1:totalTC;
         figure('color', 'white');
-        hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:)), 1:totalTC); hold off;
-        title('Power supression of TCs at Different phase levels');
-        xlabel('Gray Level'); ylabel('EEF in Airy Disk'); % OLD:  ylabel('EEF at Airy Range');
-        legendCell = cellstr(num2str((1:10)', 'TC=%d')); legend(legendCell); grid on; axis square;
+        hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:),'color',colorSet(index,:),'LineWidth',lineWidth), plotRange); hold off;
+        title('Power supression of TCs at different phase levels','FontSize',fontSize,'FontWeight','bold');
+        xlabel('Discretization level','FontSize',fontSize,'FontWeight','bold');
+        ylabel('EEF in Airy disk','FontSize',fontSize,'FontWeight','bold'); % OLD:  ylabel('EEF at Airy Range');
+        legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d')); legend(legendCell); grid on; axis square;
+        set(gca,'FontSize',fontSize,'FontWeight','normal')
         
     case 7
         %% Analysis Figures Plotting -- Throughput
         disp('Plotting Throughput...');
-        plotAlotFunc = @(reference, Data) plot(reference,Data);
-        legendCell = cellstr(num2str(tcvect', 'TC=%d'));
+        plotRange = 1:totalTC;
+        plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference, Data, plotSpec,'color', color, 'LineWidth', lineWidth);
+        legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d'));
         for indexGL = 1:totalGL
             figure('color', 'white');
-            hold on; arrayfun(@(indexTC) plotAlotFunc(cartcoord,arrangedEEF{indexTC,indexGL}),1:totalTC); hold off;
-            grid on; axis square; xlabel('Angular separation (\lambda/D)'); ylabel('Throughput (EEF)'); legend(legendCell); %  xlabel('Radial Distance (\lambda/D)')
-            title(sprintf('Throughput of Topological Charges at NG = %d',glvect(indexGL)));
-            fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL);
+            hold on; arrayfun(@(indexTC) plotAlotFunc(cartcoord,arrangedEEF{indexTC,indexGL},plotSpec{indexTC}, colorSet(indexTC,:),lineWidth),plotRange); hold off;
+            xlabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
+            ylabel('Throughput (EEF)','FontSize',fontSize,'FontWeight','bold'); legend(legendCell); %  xlabel('Radial Distance (\lambda/D)')
+            title(sprintf('Throughput of topological charges at NG = %d',glvect(indexGL)));
+            set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on; axis square;
+            fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); xlim([0,2])
         end
+        
     case 8
         %% Analysis Figures Plotting -- Attenuation Ratios
         disp('Plotting Attenuation Ratios...');
         for idxgral = 1:totalImgs
-            f_plotAttenRatios(cartcoord,attenuationRatio{idxgral},EEFattenuationRatio{idxgral})
+            f_plotAttenRatios(cartcoord,attenuationRatio{idxgral},EEFattenuationRatio{idxgral},fontSize,lineWidth)
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
         
@@ -389,11 +418,16 @@ switch metricSel
         %%  Analysis Figures Plotting -- Gradient of Intensity
         disp('Plotting Gradient of Intensity...');
         for idxgral = 1:totalImgs
-            f_plotGradient(cartcoord,measIntensityGradient{idxgral},measNormIntensity{idxgral})
+            f_plotGradient(cartcoord,measIntensityGradient{idxgral},measNormIntensity{idxgral},fontSize,lineWidth)
             fprintf('Plotting group... %d/%d\n\r', idxgral, totalImgs);
         end
         
     case 10
+        %% Analysis Figures Plotting -- Logarithmic RMS
+        disp('Plotting Logarithmic RMS...');
+        fprintf('Underconstruction... %d/%d\n\r', 0, 0);
+        
+    case 11
         %% Analysis Figures Plotting -- Mean Squared Error
         disp('Plotting Mean Squared Error...');
         fprintf('Underconstruction... %d/%d\n\r', 0, 0);

@@ -1,4 +1,4 @@
-function [x,y,Hprof,Vprof,maxX,maxY] = f_makeImageProfile(x,y,midX,midY, ...
+function [cartcoordX,cartcoordY,Hprof,Vprof,maxX,maxY] = f_makeImageProfile(x,y,midX,midY, ...
     dataArray,shiftCart, oneSideProfile, varargin)
 % returns the profiles of a 2D data array (or matrix), i.e., an image or a
 % 2D map. These profiles are horizontal and vertical
@@ -75,17 +75,18 @@ switch oneSideProfile
     case 1 %  Profiles in the 1st and 4th quadrants
         Hprof = Hprof(midX:end); % From the middle to the end
         Vprof = Vprof(midY:end); % From the middle to the end
-        x = x(midX:end); % From the middle to the end
-        y = y(midY:end); % From the middle to the end
+        cartcoordX = x(midX:end); % From the middle to the end
+        cartcoordY = y(midY:end); % From the middle to the end
     case 2 % Profiles in the 2nd and 3rd quadrants
         Hprof = fliplr(Hprof(1:midX)'); % From the middle to the end
         Vprof = fliplr(Vprof(1:midY)'); % From the middle to the end
-        x = x(1:midX); % From the middle to the end
-        y = y(1:midY); % From the middle to the end
+        cartcoordX = x(1:midX); % From the middle to the end
+        cartcoordY = y(1:midY); % From the middle to the end
 end
 
 %% Plotting
 if plottingEnabled
-    f_plotLinearProfiles(dataArray,x,y,tit,xlab,ylab,plotData,plotH,plotV,tol)
+    refPoints = [Hx;Vy;Hy;Vx];
+    f_plotLinearProfiles(dataArray,x,y,cartcoordX,cartcoordY,tit,xlab,ylab,plotData,Hprof,plotH,plotV,tol,refPoints,fontSize,lineWidth)
 end
 end

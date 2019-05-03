@@ -16,7 +16,8 @@ if nargin == 5 && prod(cellfun(@(inputs) ischar(inputs), varargin(2:end))) && is
     cartcoord = varargin{1};
     titprof = varargin{2};
     xlab = varargin{3};
-    f_plotSNR(cartcoord,Measurement)
+    fontSize = 12;
+    lineWidth = 1.0;
     
     plottingEnabled = true;
 else
@@ -28,6 +29,6 @@ SNR = log10(Measurement) - 0.5*log10(RefMeasurement);
 
 %% Plotting
 if plottingEnabled
-    f_plotSNR(cartcoord,RefMeasurement,Measurement,SNR,titprof,xlab)
+    f_plotLogSNR(cartcoord,RefMeasurement,Measurement,SNR,titprof,xlab,fontSize,lineWidth)
 end
 end

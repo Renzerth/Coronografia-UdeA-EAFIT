@@ -1,4 +1,10 @@
-function f_plotLinearProfiles(dataArray,x,y,tit,xlab,ylab,plotData,plotH,plotV,tol)
+function f_plotLinearProfiles(dataArray,x,y,cartcoordX,cartcoordY,tit,xlab,ylab,plotData,profileData, plotH,plotV,tol,refPoints,fontSize,lineWidth)
+%% Plot lines reference
+Vy = refPoints(1,:); % Vertical y components: (yi,yf)
+Hx = refPoints(2,:); % Horizontal x components: (xi,xf)
+Hy = refPoints(3,:); % Horizontal y components: (yi,yf)
+Vx = refPoints(4,:); % Vertical x components: (xi,xf)
+
 %% Profiles of the 2D array drawn on the dataArray
 if plotData
     figure; imagesc(x,y,dataArray); title(tit); % colormap(hot)
@@ -6,9 +12,9 @@ if plotData
     ylabel(ylab);
     hold on
     % Horizontal:
-    line(x(Hx),y(Hy),'LineWidth',3,'Color','blue','LineStyle','--');
+    line(x(Hx),y(Hy),'LineWidth',lineWidth,'Color','blue','LineStyle','--');
     % Vertical:
-    line(x(Vx),y(Vy),'LineWidth',3,'Color','red','LineStyle','--');
+    line(x(Vx),y(Vy),'LineWidth',lineWidth,'Color','red','LineStyle','--');
     hold off
 end
 
@@ -16,15 +22,15 @@ end
 if plotH
     %% Horizontal profile
     figure();
-    plot(x(1+tol:end-tol),Hprof(1+tol:end-tol));
-    title(strcat('Horizontal profile of the',{' '},tit));
+    plot(cartcoordX(1+tol:end-tol),profileData(1+tol:end-tol));
+    title(strcat('Horizontal profile of the',{' '},tit),'FontSize',fontSize,'FontWeight','bold');
 end
 
 if plotV
     %% Vertical profile
     figure();
-    plot(y(1+tol:end-tol),Vprof(1+tol:end-tol));
-    title(strcat('Vertical profile of the',{' '},tit));
+    plot(cartcoordY(1+tol:end-tol),profileData(1+tol:end-tol)');
+    title(strcat('Vertical profile of the',{' '},tit),'FontSize',fontSize,'FontWeight','bold');
 end
 
 end

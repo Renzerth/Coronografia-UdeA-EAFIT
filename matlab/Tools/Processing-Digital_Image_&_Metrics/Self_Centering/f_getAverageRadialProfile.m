@@ -91,3 +91,4 @@ if plotsEnabled
     hold on;
     viscircles(centers,radii); % Plot the circles over the image.
 end
+end

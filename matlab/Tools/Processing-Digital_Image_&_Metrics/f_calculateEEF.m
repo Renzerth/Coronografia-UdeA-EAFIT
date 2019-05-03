@@ -19,6 +19,8 @@ if nargin == 4 && prod(cellfun(@(inputs) ischar(inputs), varargin(2:end))) && is
     cartcoord = varargin{1};
     titprof = varargin{2};
     xlab = varargin{3};
+    fontSize = 12;
+    lineWidth = 1.0;
     plottingEnabled = true;
 else
     plottingEnabled = false;
@@ -31,6 +33,6 @@ normIntensity = radialIntensity./max(radialIntensity);
 
 %% Plot of the EEF and its corresponding intensity pattern
 if plottingEnabled
-    f_plotEEF(cartcoord, energy, normIntensity, titprof, xlab)
+    f_plotEEF(cartcoord, energy, normIntensity, titprof, xlab, fontSize, lineWidth)
 end
 end
