@@ -432,7 +432,7 @@ metricSel = 2; % Type of metric:
 %     -power suppresion in the airy disk
 % 2: SNR
 % 5: MSE (NOT DONE)
-metricProfile = 1;
+metricProfile = 3;
 % values:
 % 1: vertical profile; 
 % 2: horizontal profile;
