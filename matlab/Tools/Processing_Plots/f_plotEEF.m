@@ -4,10 +4,10 @@ tit = 'Encircled Energy Distribution of Intensity';
 %% Plot comparison Energy and EEF distributions
 figure('color','white');
 [hAxes,hLine1,hLine2] = plotyy(cartcoord,energy,cartcoord,normIntensity);
-set(hLine1, 'Color',colorSet(1,:),'LineStyle',lineStyle,'LineWidth', ...
-            lineWidth,'Marker',markerSet);
-set(hLine2, 'Color',colorSet(2,:),'LineStyle',lineStyle,'LineWidth', ...
-            lineWidth,'Marker',markerSet);
+set(hLine1,'Color',colorSet(1,:),'LineStyle',lineStyle,'LineWidth', ...
+            lineWidth,'Marker',markerSet{1});
+set(hLine2,'Color',colorSet(2,:),'LineStyle',lineStyle,'LineWidth', ...
+            lineWidth,'Marker',markerSet{2});
 set(hAxes(1),'YColor',colorSet(1,:)); set(hAxes(2),'YColor',colorSet(2,:));
 set(hAxes,'FontSize',fontSize,'FontWeight','bold');
 

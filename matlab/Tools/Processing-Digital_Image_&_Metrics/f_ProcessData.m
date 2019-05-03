@@ -380,12 +380,12 @@ switch metricSel
       %% Analysis Figures Plotting -- Encircled Energy Factor metric
       disp('Plotting Encircled Energy Factor...');
       f_plotEEF(cartcoord,refEEFcurve,refNormIntensity,titprof,xlab, ...
-                fontSize,lineWidth,colorSet,plotSpec); % Reference
+                fontSize,lineWidth,colorSet,lineStyle,markerSet); % Reference
       
       for idxgral = 1:totalImgs
           f_plotEEF(cartcoord,measEEFcurves{idxgral}, ...
           measNormIntensity{idxgral},dynamicProfileTitle{idxgral},xlab, ...
-          fontSize,lineWidth,colorSet,plotSpec);
+          fontSize,lineWidth,colorSet,lineStyle,markerSet);
           fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
       end
       
