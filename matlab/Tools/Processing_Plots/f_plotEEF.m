@@ -1,6 +1,6 @@
 function f_plotEEF(cartcoord,energy,normIntensity,titprof,xlab,fontSize,lineWidth,colorSet,lineStyle,markerSet)
 %% Program Settings
-tit = 'Encircled Energy Distribution of Intensity';
+tit = 'EEF Irradiance distribution'; % 'Encircled Energy Distribution of Intensity';
 %% Plot comparison Energy and EEF distributions
 figure('color','white');
 [hAxes,hLine1,hLine2] = plotyy(cartcoord,energy,cartcoord,normIntensity);
