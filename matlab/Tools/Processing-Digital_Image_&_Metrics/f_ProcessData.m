@@ -333,7 +333,7 @@ tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 1;
 plotV = 0;
-metricSel = 2; % Type of metric -- BYPASS VARIABLE
+metricSel = 6; % Type of metric -- BYPASS VARIABLE
                % 1: Profiles
                % 2: EEF: Encircled Energy Factor
                % 3: Throughput (arranged EEF)
@@ -379,6 +379,7 @@ switch metricSel
   case 2
       %% Analysis Figures Plotting -- Encircled Energy Factor metric
       disp('Plotting Encircled Energy Factor...');
+      titprof = strcat(titprof,':',{' '},'Reference');
       f_plotEEF(cartcoord,refEEFcurve,refNormIntensity,titprof,xlab, ...
                 fontSize,lineWidth,colorSet,lineStyle,markerSet); % Reference
       
@@ -401,7 +402,7 @@ switch metricSel
           xlabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
           ylabel('Throughput (EEF)','FontSize',fontSize,'FontWeight','bold'); legend(legendCell); %  xlabel('Radial Distance (\lambda/D)')
           title(sprintf('Throughput of topological charges at NG = %d',glvect(indexGL)));
-          set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on; axis square;
+          set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','southeast'); grid on; axis square;
           fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); xlim([0,2])
       end      
       
@@ -410,7 +411,7 @@ switch metricSel
       disp('Plotting Power Supression...');
       plotRange = 1:totalTC;
       figure('color', 'white');
-      hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:),'color',colorSet(index,:),'LineWidth',lineWidth), plotRange); hold off;
+      hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:),plotSpec{index},'color',colorSet(index,:),'LineWidth',lineWidth), plotRange); hold off;
       title('Power supression of TCs at different phase levels','FontSize',fontSize,'FontWeight','bold');
       xlabel('Discretization level','FontSize',fontSize,'FontWeight','bold');
       ylabel('EEF in Airy disk','FontSize',fontSize,'FontWeight','bold'); % OLD:  ylabel('EEF at Airy Range');
