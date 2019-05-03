@@ -316,6 +316,10 @@ for idxgral = 1:totalImgs
     radialIntensityMeas{idxgral}); % gradient [returns n elements] or 
                                    % diff [returns n-1 elements]
 end
+
+%% MSE
+% Under construction
+
 disp('Done.');
 
 %%
@@ -329,6 +333,18 @@ plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 1;
 plotV = 0;
 metricSel = 7; % Type of metric -- BYPASS VARIABLE
+               % 1: Profiles
+               % 2: EEF: Encircled Energy Factor
+               % 3: Throughput (arranged EEF)
+               % 4: Power Supression
+               % 5: Relative contrast
+               % 6: Relative contrast (arranged)
+               % 7: Logarithmic SNR
+               % 8: Logarithmic RMS
+               % 9: Attenuation Ratios
+               % 10: Gradient of Intensity
+               % 11: MSE: Mean Squared Error
+               
 
 fontSize = 14; %[pts]
 lineWidth = 1.5; %[pts]
@@ -368,8 +384,36 @@ switch metricSel
           f_plotEEF(cartcoord, measEEFcurves{idxgral}, measNormIntensity{idxgral}, dynamicProfileTitle{idxgral}, xlab, fontSize, lineWidth)
           fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
       end
-        
+      
   case 3
+      %% Analysis Figures Plotting -- Throughput
+      disp('Plotting Throughput...');
+      plotRange = 1:totalTC;
+      plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference, Data, plotSpec,'color', color, 'LineWidth', lineWidth);
+      legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d'));
+      for indexGL = 1:totalGL
+          figure('color', 'white');
+          hold on; arrayfun(@(indexTC) plotAlotFunc(cartcoord,arrangedEEF{indexTC,indexGL},plotSpec{indexTC}, colorSet(indexTC,:),lineWidth),plotRange); hold off;
+          xlabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
+          ylabel('Throughput (EEF)','FontSize',fontSize,'FontWeight','bold'); legend(legendCell); %  xlabel('Radial Distance (\lambda/D)')
+          title(sprintf('Throughput of topological charges at NG = %d',glvect(indexGL)));
+          set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on; axis square;
+          fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); xlim([0,2])
+      end      
+      
+  case 4
+      %% Analysis Figures Plotting -- Power Supression in the Airy disk
+      disp('Plotting Power Supression...');
+      plotRange = 1:totalTC;
+      figure('color', 'white');
+      hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:),'color',colorSet(index,:),'LineWidth',lineWidth), plotRange); hold off;
+      title('Power supression of TCs at different phase levels','FontSize',fontSize,'FontWeight','bold');
+      xlabel('Discretization level','FontSize',fontSize,'FontWeight','bold');
+      ylabel('EEF in Airy disk','FontSize',fontSize,'FontWeight','bold'); % OLD:  ylabel('EEF at Airy Range');
+      legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d')); legend(legendCell); grid on; axis square;
+      set(gca,'FontSize',fontSize,'FontWeight','normal')      
+        
+  case 5
       %% Analysis Figures Plotting -- Relative Contrast
       disp('Plotting Relative Contrast...');
       for idxgral = 1:totalImgs
@@ -377,7 +421,7 @@ switch metricSel
           fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
       end
       
-  case 4
+  case 6
       %% Analysis Figures Plotting -- Relative Contrast (Arranged) [grouped gl's]
       disp('Plotting Arranged Relative Contrast...');
       plotRange = 1:totalGL;
@@ -395,7 +439,7 @@ switch metricSel
           fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log'); xlim([0,2])
       end
       
-  case 5
+  case 7
       %% Analysis Figures Plotting -- Logarithmic Signal-to-Noise Ratio
       disp('Plotting Logarithmic SNR...');
       for idxgral = 1:totalImgs
@@ -403,35 +447,12 @@ switch metricSel
           fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
       end
       
-  case 6
-      %% Analysis Figures Plotting -- Power Supression
-      disp('Plotting Power Supression...');
-      plotRange = 1:totalTC;
-      figure('color', 'white');
-      hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:),'color',colorSet(index,:),'LineWidth',lineWidth), plotRange); hold off;
-      title('Power supression of TCs at different phase levels','FontSize',fontSize,'FontWeight','bold');
-      xlabel('Discretization level','FontSize',fontSize,'FontWeight','bold');
-      ylabel('EEF in Airy disk','FontSize',fontSize,'FontWeight','bold'); % OLD:  ylabel('EEF at Airy Range');
-      legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d')); legend(legendCell); grid on; axis square;
-      set(gca,'FontSize',fontSize,'FontWeight','normal')
-      
-  case 7
-      %% Analysis Figures Plotting -- Throughput
-      disp('Plotting Throughput...');
-      plotRange = 1:totalTC;
-      plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference, Data, plotSpec,'color', color, 'LineWidth', lineWidth);
-      legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d'));
-      for indexGL = 1:totalGL
-          figure('color', 'white');
-          hold on; arrayfun(@(indexTC) plotAlotFunc(cartcoord,arrangedEEF{indexTC,indexGL},plotSpec{indexTC}, colorSet(indexTC,:),lineWidth),plotRange); hold off;
-          xlabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
-          ylabel('Throughput (EEF)','FontSize',fontSize,'FontWeight','bold'); legend(legendCell); %  xlabel('Radial Distance (\lambda/D)')
-          title(sprintf('Throughput of topological charges at NG = %d',glvect(indexGL)));
-          set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on; axis square;
-          fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); xlim([0,2])
-      end
-       
   case 8
+      %% Analysis Figures Plotting -- Logarithmic RMS
+      disp('Plotting Logarithmic RMS...');
+      fprintf('Underconstruction... %d/%d\n\r', 0, 0);      
+       
+  case 9
       %% Analysis Figures Plotting -- Attenuation Ratios
       disp('Plotting Attenuation Ratios...');
       for idxgral = 1:totalImgs
@@ -439,7 +460,7 @@ switch metricSel
           fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
       end
       
-  case 9
+  case 10
       %%  Analysis Figures Plotting -- Gradient of Intensity
       disp('Plotting Gradient of Intensity...');
       for idxgral = 1:totalImgs
@@ -447,16 +468,12 @@ switch metricSel
           fprintf('Plotting group... %d/%d\n\r', idxgral, totalImgs);
       end
       
-  case 10
-      %% Analysis Figures Plotting -- Logarithmic RMS
-      disp('Plotting Logarithmic RMS...');
-      fprintf('Underconstruction... %d/%d\n\r', 0, 0);
-      
   case 11
       %% Analysis Figures Plotting -- Mean Squared Error
       disp('Plotting Mean Squared Error...');
       fprintf('Underconstruction... %d/%d\n\r', 0, 0);
       % tit = 'Mean Squared Error';
+      
   otherwise
       warning('Unavailable Plot.');
 end
