@@ -186,7 +186,7 @@ y = yangL_Dexpairy;
 %%%%%%%%%%%%%%%% Profiles for the metrics
 %% Reference Profile
 %%% Metric-specific default parameters for the profile
-oneSideProfile = 1; % Specifically needed for this metric. Ref: 1
+oneSideProfile = 1; % Specifically needed for all the metrics. Ref: 1
 shiftCart = [0,0]; % midX,midY already account for the shift
 
 %%% Find the reference profile
@@ -316,11 +316,12 @@ for idxgral = 1:totalImgs
     radialIntensityMeas{idxgral}); % gradient [returns n elements] or 
                                    % diff [returns n-1 elements]
 end
+disp('Done.');
 
 %% MSE
 % Under construction
 
-disp('Done.');
+
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -332,7 +333,7 @@ tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 1;
 plotV = 0;
-metricSel = 7; % Type of metric -- BYPASS VARIABLE
+metricSel = 2; % Type of metric -- BYPASS VARIABLE
                % 1: Profiles
                % 2: EEF: Encircled Energy Factor
                % 3: Throughput (arranged EEF)
@@ -346,8 +347,8 @@ metricSel = 7; % Type of metric -- BYPASS VARIABLE
                % 11: MSE: Mean Squared Error
                
 
-fontSize = 14; %[pts]
-lineWidth = 1.5; %[pts]
+fontSize = 14; %[pts] Ref: 14
+lineWidth = 1.5; %[pts] Ref: 1.5
 colorSet = [1 0 0 ; 0 1 0; 0.8500 0.3250 0.0980; ...
             0 0 1; 0.9290 0.6940 0.1250; 0 1 1; 0.4940 0.1840 0.5560; ...
             1 0 1; 0.6350 0.0780 0.1840; 0 0 0];
@@ -378,10 +379,13 @@ switch metricSel
   case 2
       %% Analysis Figures Plotting -- Encircled Energy Factor metric
       disp('Plotting Encircled Energy Factor...');
-      f_plotEEF(cartcoord, refEEFcurve, refNormIntensity, titprof, xlab, fontSize,lineWidth); % Reference
+      f_plotEEF(cartcoord,refEEFcurve,refNormIntensity,titprof,xlab, ...
+                fontSize,lineWidth,colorSet,plotSpec); % Reference
       
       for idxgral = 1:totalImgs
-          f_plotEEF(cartcoord, measEEFcurves{idxgral}, measNormIntensity{idxgral}, dynamicProfileTitle{idxgral}, xlab, fontSize, lineWidth)
+          f_plotEEF(cartcoord,measEEFcurves{idxgral}, ...
+          measNormIntensity{idxgral},dynamicProfileTitle{idxgral},xlab, ...
+          fontSize,lineWidth,colorSet,plotSpec);
           fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
       end
       
@@ -436,7 +440,9 @@ switch metricSel
           ylabel('Relative contrast of the radial intensities [logscale]','FontSize',fontSize,'FontWeight','bold');
           title(sprintf('Raw Contrast NG Comparison with TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
           set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on;
-          fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log'); xlim([0,2])
+          fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log'); 
+          xlim([0,2.5]); % 2 Airy disks
+          ylim([1e-3 1]); % Maximum attenuation
       end
       
   case 7

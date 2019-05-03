@@ -6,6 +6,8 @@ figure('color','white');
 semilogy(cartcoord,Measurement,'LineWidth',lineWidth); hold on
 semilogy(cartcoord,RefMeasurement,'LineWidth',lineWidth); hold off;
 title(tit,'FontSize',fontSize,'FontWeight','bold'); grid on;
+xlim([0,2.5]); % 2 Airy disks
+ylim([1e-3 1]); % Maximum attenuation
 xlabel('Angular separation [\lambda/D]','FontSize',fontSize,'FontWeight','bold');
 ylabel('Relative contrast of the radial intensities [logscale]','FontSize',fontSize,'FontWeight','bold')
 legend({'Coronagraphic', 'Non-Coronagraphic'},'FontSize',fontSize,'FontWeight','bold');
