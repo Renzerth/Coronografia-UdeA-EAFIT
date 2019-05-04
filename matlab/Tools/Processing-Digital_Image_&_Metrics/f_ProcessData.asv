@@ -242,7 +242,7 @@ end
 disp('Done.');
 
 %% Data Cropping for view range
-AiryDisksNum = 2; % Number of Airy disks (Lambda/D times from center 
+AiryDisksNum = 3; % Number of Airy disks (Lambda/D times from the center 
                   % point). Ref: 2
 rangeFactor = AiryDisksNum; % Ref: 2
 croppedMeasData = cell(1,totalImgs);
