@@ -330,10 +330,6 @@ for idxgral = 1:totalImgs
 end
 disp('Done.');
 
-%% MSE
-% Under construction
-
-
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -353,11 +349,12 @@ metricSel = 12; % Type of metric -- BYPASS VARIABLE
             % 5: Relative contrast
             % 6: Relative contrast (arranged)
             % 7: Logarithmic SNR
-            % 8: Logarithmic RMS
+            % 8: Logarithmic RMS (RMS of logarithmic SNR) [arranged]
             % 9: Attenuation Ratios
             % 10: Gradient of Intensity
-            % 11: MSE: Mean Squared Error
-
+            % 11: Plot Cropped intensity
+            % 12: Plot Images Mosaic
+            
 fontSize = 14; %[pts] Ref: 14
 lineWidth = 1.5; %[pts] Ref: 1.5
 colorSet = [1 0 0 ; 0 1 0; 0.8500 0.3250 0.0980; ...
@@ -526,11 +523,12 @@ switch metricSel
         
         f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,viridis,fontSize,saveEnabled)
         
-    case 13
+    case 13 % WON'T BE USED
         %% Analysis Figures Plotting -- Mean Squared Error
         disp('Plotting Mean Squared Error...');
         fprintf('Underconstruction... %d/%d\n\r', 0, 0);
         % tit = 'Mean Squared Error';
+        % % 13: MSE: Mean Squared Error
         
     otherwise
         warning('Unavailable Plot.');
@@ -540,8 +538,8 @@ disp('Rendering...');
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%  Save and finish the processing                  ssssssss
-%  This is not correct
+%%%%%%%%%%%%%%%%  Save and finish the processing                 
+%  This is not correct YET
 
 %% Saving
 %
