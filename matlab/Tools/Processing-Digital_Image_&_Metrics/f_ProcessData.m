@@ -62,12 +62,12 @@ else % Simulated measurement
     %     Lyotimg = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_1.bmp')); % Lyot image
     %     Lyotimg = rgb2gray(Lyotimg);
     refMeas = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep, ...
-                            'data_ref_2.bmp')); % PSF reference
+        'data_ref_2.bmp')); % PSF reference
     expMeas = {0,0}; % Cell initialization
     expMeas{1} = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep, ...
-                               'data_ref_3.png')); % PSF measurement 1
+        'data_ref_3.png')); % PSF measurement 1
     expMeas{2} = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep, ...
-                               'data_ref_4.png')); % PSF measurement 2
+        'data_ref_4.png')); % PSF measurement 2
     measInfo = {'data_ref_3','data_ref_3'};
     totalImgs = 2; % For the case of the simulated measurement
     
@@ -88,7 +88,7 @@ end
 % mainLyotRadius = round(mainLyotRadius); % Pixels
 
 %%%%% System Pixel Size:
-% not used since the spot size is used intead for the falco lamda over D 
+% not used since the spot size is used intead for the falco lamda over D
 % (physical scaling)
 % PP = PP*1e-6; % um to m
 % lensDiameter = 2*apRad*1e-2; % cm to m
@@ -112,8 +112,8 @@ midY = aproxCenter(1);
 
 %% Cartesian coordinates with pixel units
 % ORIGINAL
-[ySize, xSize] = size(refMeas); % All images assumed of the same size as 
-                                % the refmeas
+[ySize, xSize] = size(refMeas); % All images assumed of the same size as
+% the refmeas
 halfX = xSize/2;
 halfY = ySize/2;
 
@@ -124,10 +124,10 @@ halfY = ySize/2;
 %%  lambda/D factor falco-matlab reference
 % It is scalled with respect to the jinc zeros
 
-NpadX = xSize; % Camera's x pixel size
-NpadY = ySize; % Camera's y pixel size
-xlamOverD = NpadX/(2*mainLyotRadius);
-ylamOverD = NpadY/(2*mainLyotRadius);
+% NpadX = xSize; % Camera's x pixel size
+% NpadY = ySize; % Camera's y pixel size
+% xlamOverD = NpadX/(2*mainLyotRadius);
+% ylamOverD = NpadY/(2*mainLyotRadius);
 
 % Centering shifting to the spot location
 centerShiftX = (midX-halfX);
@@ -135,9 +135,9 @@ centerShiftY = (midY-halfY);
 
 % Coordinates' origin set to the spot's center
 xpixcenterd= (-halfX:halfX-1) - (centerShiftX - 1); % The center has to be
-                                                    % shifted 1
+% shifted 1
 ypixcenterd = (-halfY:halfY-1) - (centerShiftY - 1); % The center has to be
-                                                     % shifted 1
+% shifted 1
 
 % xangL_Dfalco = xpixcenterd/xlamOverD; % Astronomer's physical scaling of
 % pixels
@@ -192,10 +192,10 @@ shiftCart = [0,0]; % midX,midY already account for the shift
 %%% Find the reference profile
 disp('Calculating Profiles...');
 [xrefProx,yrefProf,HprofRef,VprofRef,~,~] = f_makeImageProfile(x,y,midX,...
-midY,refMeas, shiftCart, oneSideProfile);
+    midY,refMeas, shiftCart, oneSideProfile);
 flippedAproxCenter = fliplr(aproxCenter); % [X,Y] Format
 [averRefProfile] = f_getAverageRadialProfile(refMeas,[ySize, xSize], ...
-flippedAproxCenter);
+    flippedAproxCenter);
 
 %% Profile of the measurements
 Hprofmeas = cell(1,totalImgs);
@@ -204,10 +204,10 @@ averMeasProfile = cell(1,totalImgs);
 
 for idxgral = 1:totalImgs
     [~,~,Hprofmeas{idxgral},Vprofmeas{idxgral},~,~] = ...
-    f_makeImageProfile(x,y,midX,midY,expMeas{idxgral},shiftCart, ...
-    oneSideProfile);
+        f_makeImageProfile(x,y,midX,midY,expMeas{idxgral},shiftCart, ...
+        oneSideProfile);
     [averMeasProfile{idxgral}] = f_getAverageRadialProfile(...
-    expMeas{idxgral},[ySize, xSize],flippedAproxCenter);
+        expMeas{idxgral},[ySize, xSize],flippedAproxCenter);
 end
 
 %% Measurement profile choice
@@ -228,18 +228,27 @@ switch metricProfile
         radialIntensityRef = averRefProfile;
         radialIntensityMeas = averMeasProfile;
         trimRange = 1:min(numel(xrefProx),numel(yrefProf));
-        radialAverageDist = mean([xrefProx(trimRange); 
-        yrefProf(trimRange)]);
+        radialAverageDist = mean([xrefProx(trimRange);
+            yrefProf(trimRange)]);
         cartcoord = interp1(trimRange,radialAverageDist,1: ...
-        length(averRefProfile)); % Spatial size interpolation range
-        aproxRadius = find(cartcoord==1); % Airy range (corresponding 
-                                          % pixel) of interpolated data;
+            length(averRefProfile)); % Spatial size interpolation range
+        aproxRadius = find(cartcoord==1); % Airy range (corresponding
+        % pixel) of interpolated data;
         titprof = '(radial average profile)';
         
     otherwise
         error('"metricProfile" must be either 1 or 2');
 end
 disp('Done.');
+
+%% Data Cropping for view range
+rangeFactor = 2; % Lambda/D times from center point
+croppedMeasData = cell(1,totalImgs);
+croppedCoorVect = x(abs(x)<=rangeFactor);
+[cropRange] = f_computePSFCropRange(rangeFactor,2*aproxRadius,aproxCenter);
+for idxgral = 1:totalImgs
+    [croppedMeasData{idxgral}] = f_cropPSFrange(expMeas{idxgral},cropRange);
+end
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -256,9 +265,21 @@ dynamicProfileTitle = cell(1,totalImgs);
 
 for idxgral = 1:totalImgs
     [measEEFcurves{idxgral}, measNormIntensity{idxgral}] = ...
-    f_calculateEEF(radialIntensityMeas{idxgral});
+        f_calculateEEF(radialIntensityMeas{idxgral});
     dynamicProfileTitle{idxgral} = sprintf('of %s: %s',titprof, ...
-    measInfo{idxgral});
+        measInfo{idxgral});
+end
+disp('Done.');
+
+%% Processsing of profiles -- Logarithmic SNR & Logarithmic RMS
+disp('Calculating Logarithmic SNR and RMS...');
+logSNR = cell(1,totalImgs);
+logRMS = zeros(1,totalImgs);
+
+for idxgral = 1:totalImgs
+    [logSNR{idxgral}] = f_calculateLogSNR(radialIntensityMeas{idxgral}, ...
+        radialIntensityRef);
+    [logRMS(idxgral)] = f_calculateLogRMS(logSNR{idxgral});
 end
 disp('Done.');
 
@@ -269,6 +290,7 @@ totalTC = length(tcvect);
 powerSupr = zeros(totalTC,totalGL);
 arrangedEEF = cell(totalTC,totalGL);
 arrangedProfiles = cell(totalTC,totalGL);
+arrangedLogRMS = zeros(totalTC,totalGL);
 
 for tcIndx = 1:totalTC
     for glIndx = 1:totalGL
@@ -276,21 +298,11 @@ for tcIndx = 1:totalTC
         powerSupr(tcIndx,glIndx) = measEEFcurves{idxgral}(aproxRadius);
         arrangedEEF{tcIndx,glIndx} = measEEFcurves{idxgral};
         arrangedProfiles{tcIndx,glIndx}  = radialIntensityMeas{idxgral};
+        arrangedLogRMS(tcIndx,glIndx) = logRMS(idxgral);
     end
 end
 arrangedProfiles = arrangedProfiles';
-disp('Done.');
-
-%% Processsing of profiles -- Logarithmic SNR & Logarithmic RMS
-disp('Calculating Logarithmic SNR and RMS...');
-logSNR = cell(1,totalImgs);
-logRMS = cell(1,totalImgs);
-
-for idxgral = 1:totalImgs
-    [logSNR{idxgral}] = f_calculateLogSNR(radialIntensityMeas{idxgral}, ...
-                                          radialIntensityRef);
-    [logRMS{idxgral}] = f_calculateLogRMS(logSNR{idxgral});
-end
+arrangedLogRMS = arrangedLogRMS';
 disp('Done.');
 
 %% Processsing of profiles -- Attenuation Ratios
@@ -300,9 +312,9 @@ EEFattenuationRatio = cell(1,totalImgs);
 
 for idxgral = 1:totalImgs
     [~,attenuationRatio{idxgral}] = f_calculateAttenuat( ...
-    radialIntensityMeas{idxgral},radialIntensityRef);
-    [~,EEFattenuationRatio{idxgral}] = f_calculateAttenuat( ...
-    measEEFcurves{idxgral},refEEFcurve);
+        radialIntensityMeas{idxgral},radialIntensityRef);
+    [~,EEFattenuationRatio{idxgral}] = f_calculateEEFAttenuat( ...
+        measEEFcurves{idxgral},refEEFcurve);
 end
 disp('Done.');
 
@@ -313,8 +325,8 @@ refIntensityGradient = gradient(radialIntensityRef) ;
 
 for idxgral = 1:totalImgs
     measIntensityGradient{idxgral} = gradient( ...
-    radialIntensityMeas{idxgral}); % gradient [returns n elements] or 
-                                   % diff [returns n-1 elements]
+        radialIntensityMeas{idxgral}); % gradient [returns n elements] or
+    % diff [returns n-1 elements]
 end
 disp('Done.');
 
@@ -333,156 +345,195 @@ tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 1;
 plotV = 0;
-metricSel = 9; % Type of metric -- BYPASS VARIABLE
-               % 1: Profiles
-               % 2: EEF: Encircled Energy Factor
-               % 3: Throughput (arranged EEF)
-               % 4: Power Supression
-               % 5: Relative contrast
-               % 6: Relative contrast (arranged)
-               % 7: Logarithmic SNR
-               % 8: Logarithmic RMS
-               % 9: Attenuation Ratios
-               % 10: Gradient of Intensity
-               % 11: MSE: Mean Squared Error
-               
+metricSel = 12; % Type of metric -- BYPASS VARIABLE
+            % 1: Profiles
+            % 2: EEF: Encircled Energy Factor
+            % 3: Throughput (arranged EEF)
+            % 4: Power Supression
+            % 5: Relative contrast
+            % 6: Relative contrast (arranged)
+            % 7: Logarithmic SNR
+            % 8: Logarithmic RMS
+            % 9: Attenuation Ratios
+            % 10: Gradient of Intensity
+            % 11: MSE: Mean Squared Error
 
 fontSize = 14; %[pts] Ref: 14
 lineWidth = 1.5; %[pts] Ref: 1.5
 colorSet = [1 0 0 ; 0 1 0; 0.8500 0.3250 0.0980; ...
-            0 0 1; 0.9290 0.6940 0.1250; 0 1 1; 0.4940 0.1840 0.5560; ...
-            1 0 1; 0.6350 0.0780 0.1840; 0 0 0];
+    0 0 1; 0.9290 0.6940 0.1250; 0 1 1; 0.4940 0.1840 0.5560; ...
+    1 0 1; 0.6350 0.0780 0.1840; 0 0 0];
 lineStyle = '-.';
 markerSet = [{'o'},{'+'},{'s'},{'>'},{'d'},{'x'},{'p'},{'^'},{'h'},{'v'}]';
 plotSpec = arrayfun(@ (index) strcat(markerSet{index},lineStyle), ...
-1:length(markerSet),'UniformOutput',false); % Joints the line specs strings
+    1:length(markerSet),'UniformOutput',false); % Joints the line specs strings
 
 %% Plot Selection
 switch metricSel
-  case 1
-      %% Analysis Figures Plotting -- Profile Lines
-      if metricProfile == 3 && plotData ~= 0
-         warning(['Metric Profile 3 does not have a spatial related' ...
-                  'profile. Profile line disabled.']);
-         plotData = 0;
-      end
-      disp('Plotting Profile Lines...');
-      titRef = 'Profile of Reference Intensity';
-      [refPoints] = getPlotCenterCoor([ySize, xSize] ,midX,midY,shiftCart);
-      f_plotLinearProfiles(refMeas,x,y,cartcoord,cartcoord,titRef,xlab,ylab,plotData, radialIntensityRef, plotH,plotV,tol,refPoints,fontSize,lineWidth);
-      
-      for idxgral = 1:totalImgs
-           f_plotLinearProfiles(expMeas{idxgral},x,y,cartcoord,cartcoord,dynamicProfileTitle{idxgral},xlab,ylab,plotData,radialIntensityMeas{idxgral},plotH,plotV,tol,refPoints,fontSize,lineWidth);
-           fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
-      end
+    case 1
+        %% Analysis Figures Plotting -- Profile Lines
+        if metricProfile == 3 && plotData ~= 0
+            warning(['Metric Profile 3 does not have a spatial related' ...
+                'profile. Profile line disabled.']);
+            plotData = 0;
+        end
+        disp('Plotting Profile Lines...');
+        titRef = 'Profile of Reference Intensity';
+        [refPoints] = getPlotCenterCoor([ySize, xSize] ,midX,midY,shiftCart);
+        f_plotLinearProfiles(refMeas,x,y,cartcoord,cartcoord,titRef,xlab,ylab,plotData, radialIntensityRef, plotH,plotV,tol,refPoints,fontSize,lineWidth);
         
-  case 2
-      %% Analysis Figures Plotting -- Encircled Energy Factor metric
-      disp('Plotting Encircled Energy Factor...');
-      titprof = strcat(titprof,':',{' '},'Non-Coronagraphic');
-      f_plotEEF(cartcoord,refEEFcurve,refNormIntensity,titprof,xlab, ...
-                fontSize,lineWidth,colorSet,lineStyle,markerSet); % Reference
-      
-      for idxgral = 1:totalImgs
-          f_plotEEF(cartcoord,measEEFcurves{idxgral}, ...
-          measNormIntensity{idxgral},dynamicProfileTitle{idxgral},xlab, ...
-          fontSize,lineWidth,colorSet,lineStyle,markerSet);
-          fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
-      end
-      
-  case 3
-      %% Analysis Figures Plotting -- Throughput
-      disp('Plotting Throughput...');
-      plotRange = 1:totalTC;
-      plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference, Data, plotSpec,'color', color, 'LineWidth', lineWidth);
-      legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d'));
-      for indexGL = 1:totalGL
-          figure('color', 'white');
-          hold on; arrayfun(@(indexTC) plotAlotFunc(cartcoord,arrangedEEF{indexTC,indexGL},plotSpec{indexTC}, colorSet(indexTC,:),lineWidth),plotRange); hold off;
-          xlabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
-          ylabel('Throughput (EEF)','FontSize',fontSize,'FontWeight','bold'); legend(legendCell); %  xlabel('Radial Distance (\lambda/D)')
-          title(sprintf('Throughput of topological charges at NG = %d',glvect(indexGL)));
-          set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','southeast'); grid on; axis square;
-          fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); xlim([0,2])
-      end      
-      
-  case 4
-      %% Analysis Figures Plotting -- Power Supression in the Airy disk
-      disp('Plotting Power Supression...');
-      plotRange = 1:totalTC;
-      figure('color', 'white');
-      hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:),plotSpec{index},'color',colorSet(index,:),'LineWidth',lineWidth), plotRange); hold off;
-      title('Power supression of TCs at different phase levels','FontSize',fontSize,'FontWeight','bold');
-      xlabel('Discretization level','FontSize',fontSize,'FontWeight','bold');
-      ylabel('EEF in Airy disk','FontSize',fontSize,'FontWeight','bold'); % OLD:  ylabel('EEF at Airy Range');
-      legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d')); legend(legendCell); grid on; axis square;
-      set(gca,'FontSize',fontSize,'FontWeight','normal')      
+        for idxgral = 1:totalImgs
+            f_plotLinearProfiles(expMeas{idxgral},x,y,cartcoord,cartcoord,dynamicProfileTitle{idxgral},xlab,ylab,plotData,radialIntensityMeas{idxgral},plotH,plotV,tol,refPoints,fontSize,lineWidth);
+            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
+        end
         
-  case 5
-      %% Analysis Figures Plotting -- Relative Contrast
-      disp('Plotting Relative Contrast...');
-      for idxgral = 1:totalImgs
-          f_plotContrast(cartcoord,radialIntensityRef,radialIntensityMeas{idxgral},dynamicProfileTitle{idxgral},fontSize,lineWidth)
-          fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
-      end
-      
-  case 6
-      %% Analysis Figures Plotting -- Relative Contrast (Arranged) [grouped gl's]
-      disp('Plotting Arranged Relative Contrast...');
-      plotRange = 1:totalGL;
-      plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference,Data,plotSpec,'color', color, 'LineWidth',lineWidth);
-      legendCell = cellstr(num2str(glvect(plotRange)', 'Coronagraphic: NG=%d')); legendCell = [{'Non-Coronagraphic'}; legendCell];
-      
-      for indexTC = 1:totalTC
-          figure('color', 'white');
-          hold on; plot(cartcoord, radialIntensityRef,plotSpec{1},'color',colorSet(1,:),'LineWidth',lineWidth); set(gca,'yscale','log');
-          arrayfun(@(indexGL) plotAlotFunc(cartcoord, arrangedProfiles{indexGL,indexTC},plotSpec{indexGL+1},colorSet(indexGL+1,:),lineWidth),plotRange); hold off;
-          xlabel('Angular separation [\lambda/D]','FontSize',fontSize,'FontWeight','bold');
-          ylabel('Relative contrast of the radial intensities [logscale]','FontSize',fontSize,'FontWeight','bold');
-          title(sprintf('Raw Contrast NG Comparison with TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
-          set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on;
-          fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log'); 
-          xlim([0,2.5]); % 2 Airy disks
-          ylim([1e-3 1]); % Maximum attenuation
-      end
-      
-  case 7
-      %% Analysis Figures Plotting -- Logarithmic Signal-to-Noise Ratio
-      disp('Plotting Logarithmic SNR...');
-      for idxgral = 1:totalImgs
-          f_plotLogSNR(cartcoord,logSNR{idxgral},dynamicProfileTitle{idxgral},xlab,fontSize,lineWidth)
-          fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
-      end
-      
-  case 8
-      %% Analysis Figures Plotting -- Logarithmic RMS
-      disp('Plotting Logarithmic RMS...');
-      fprintf('Underconstruction... %d/%d\n\r', 0, 0);      
-       
-  case 9
-      %% Analysis Figures Plotting -- Attenuation Ratios
-      disp('Plotting Attenuation Ratios...');
-      for idxgral = 1:totalImgs
-          f_plotAttenRatios(cartcoord,attenuationRatio{idxgral},EEFattenuationRatio{idxgral},fontSize,lineWidth)
-          fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
-      end
-      
-  case 10
-      %%  Analysis Figures Plotting -- Gradient of Intensity
-      disp('Plotting Gradient of Intensity...');
-      for idxgral = 1:totalImgs
-          f_plotGradient(cartcoord,measIntensityGradient{idxgral},measNormIntensity{idxgral},fontSize,lineWidth)
-          fprintf('Plotting group... %d/%d\n\r', idxgral, totalImgs);
-      end
-      
-  case 11
-      %% Analysis Figures Plotting -- Mean Squared Error
-      disp('Plotting Mean Squared Error...');
-      fprintf('Underconstruction... %d/%d\n\r', 0, 0);
-      % tit = 'Mean Squared Error';
-      
-  otherwise
-      warning('Unavailable Plot.');
+    case 2
+        %% Analysis Figures Plotting -- Encircled Energy Factor metric
+        disp('Plotting Encircled Energy Factor...');
+        titprof = strcat(titprof,':',{' '},'Non-Coronagraphic');
+        f_plotEEF(cartcoord,refEEFcurve,refNormIntensity,titprof,xlab, ...
+            fontSize,lineWidth,colorSet,lineStyle,markerSet); % Reference
+        
+        for idxgral = 1:totalImgs
+            f_plotEEF(cartcoord,measEEFcurves{idxgral}, ...
+                measNormIntensity{idxgral},dynamicProfileTitle{idxgral},xlab, ...
+                fontSize,lineWidth,colorSet,lineStyle,markerSet);
+            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
+        end
+        
+    case 3
+        %% Analysis Figures Plotting -- Throughput
+        disp('Plotting Throughput...');
+        plotRange = 1:totalTC;
+        plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference, Data, plotSpec,'color', color, 'LineWidth', lineWidth);
+        legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d'));
+        for indexGL = 1:totalGL
+            figure('color', 'white');
+            hold on; arrayfun(@(indexTC) plotAlotFunc(cartcoord,arrangedEEF{indexTC,indexGL},plotSpec{indexTC}, colorSet(indexTC,:),lineWidth),plotRange); hold off;
+            xlabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
+            ylabel('Throughput (EEF)','FontSize',fontSize,'FontWeight','bold');  %  xlabel('Radial Distance (\lambda/D)')
+            title(sprintf('Throughput of topological charges at NG = %d',glvect(indexGL)));
+            set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','southeast'); grid on; axis square;
+            fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); xlim([0,2])
+        end
+        
+    case 4
+        %% Analysis Figures Plotting -- Power Supression in the Airy disk
+        disp('Plotting Power Supression...');
+        plotRange = 1:totalTC;
+        figure('color', 'white');
+        hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:),plotSpec{index},'color',colorSet(index,:),'LineWidth',lineWidth), plotRange); hold off;
+        title('Power supression of TCs at different phase levels','FontSize',fontSize,'FontWeight','bold');
+        xlabel('Discretization level','FontSize',fontSize,'FontWeight','bold');
+        ylabel('EEF in Airy disk','FontSize',fontSize,'FontWeight','bold'); % OLD:  ylabel('EEF at Airy Range');
+        legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d')); legend(legendCell); grid on; axis square;
+        set(gca,'FontSize',fontSize,'FontWeight','normal')
+        
+    case 5
+        %% Analysis Figures Plotting -- Relative Contrast
+        disp('Plotting Relative Contrast...');
+        for idxgral = 1:totalImgs
+            f_plotContrast(cartcoord,radialIntensityRef,radialIntensityMeas{idxgral},dynamicProfileTitle{idxgral},fontSize,lineWidth)
+            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
+        end
+        
+    case 6
+        %% Analysis Figures Plotting -- Relative Contrast (Arranged) [grouped gl's]
+        disp('Plotting Arranged Relative Contrast...');
+        plotRange = 1:totalGL;
+        plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference,Data,plotSpec,'color', color, 'LineWidth',lineWidth);
+        legendCell = cellstr(num2str(glvect(plotRange)', 'Coronagraphic: NG=%d')); legendCell = [{'Non-Coronagraphic'}; legendCell];
+        
+        for indexTC = 1:totalTC
+            figure('color', 'white');
+            hold on; plot(cartcoord, radialIntensityRef,plotSpec{1},'color',colorSet(1,:),'LineWidth',lineWidth); set(gca,'yscale','log');
+            arrayfun(@(indexGL) plotAlotFunc(cartcoord, arrangedProfiles{indexGL,indexTC},plotSpec{indexGL+1},colorSet(indexGL+1,:),lineWidth),plotRange); hold off;
+            xlabel('Angular separation [\lambda/D]','FontSize',fontSize,'FontWeight','bold');
+            ylabel('Relative contrast of the radial intensities [logscale]','FontSize',fontSize,'FontWeight','bold');
+            title(sprintf('Raw Contrast NG Comparison with TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
+            set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on;
+            fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log');
+            xlim([0,2.5]); % 2 Airy disks
+            ylim([1e-3 1]); % Maximum attenuation
+        end
+        
+    case 7
+        %% Analysis Figures Plotting -- Logarithmic Signal-to-Noise Ratio
+        disp('Plotting Logarithmic SNR...');
+        for idxgral = 1:totalImgs
+            f_plotLogSNR(cartcoord,logSNR{idxgral},dynamicProfileTitle{idxgral},xlab,fontSize,lineWidth)
+            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
+        end
+        
+    case 8
+        %% Analysis Figures Plotting -- Logarithmic RMS
+        disp('Plotting Logarithmic RMS...');
+        plotRange = 1:totalGL;
+        legendCell = cellstr(num2str(glvect(plotRange)', 'Coronagraphic: NG=%d'));
+        
+        figure('color', 'white');
+        hold on; arrayfun(@(indexGL) plot(tcvect, arrangedLogRMS(indexGL,:), plotSpec{indexGL},'color',colorSet(indexGL,:),'LineWidth',lineWidth),plotRange);hold off
+        title('Coronographic RMS analysis for GL effects','FontSize',fontSize,'FontWeight','bold');
+        xlabel('Vortex Topological Charge','FontSize',fontSize,'FontWeight','bold');
+        ylabel('Root Mean Square of Logarithmic SNR','FontSize',fontSize,'FontWeight','bold');
+        legend(legendCell); set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on;
+        
+    case 9
+        %% Analysis Figures Plotting -- Attenuation Ratios
+        disp('Plotting Attenuation Ratios...');
+        for idxgral = 1:totalImgs
+            f_plotAttenRatios(cartcoord,attenuationRatio{idxgral},EEFattenuationRatio{idxgral},measInfo{idxgral},fontSize,lineWidth)
+            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
+        end
+        
+    case 10
+        %%  Analysis Figures Plotting -- Gradient of Intensity
+        disp('Plotting Gradient of Intensity...');
+        for idxgral = 1:totalImgs
+            f_plotGradient(cartcoord,measIntensityGradient{idxgral},measNormIntensity{idxgral},fontSize,lineWidth)
+            fprintf('Plotting group... %d/%d\n\r', idxgral, totalImgs);
+        end
+        
+    case 11
+        %%  Analysis Figures Plotting -- Plot Cropped intensity
+        disp('Plotting Cropped Images...');
+        for idxgral = 1:totalImgs
+            figure('color','white');
+            imagesc(croppedCoorVect,croppedCoorVect,croppedMeasData{end});
+            xlabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
+            ylabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
+            title(sprintf('Coronagraphic PSF: %s',measInfo{idxgral}));
+            set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on; axis square;
+            colormap(viridis); colorbar; set(gca,'GridColor',[1,1,1]);
+            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
+        end
+        
+    case 12
+        %%  Analysis Figures Plotting -- Plot Images Mosaic
+        disp('Plotting Images Mosaic...');
+        
+        titleSet = arrayfun(@(index) sprintf('TC:%d',tcvect(index)),1:totalTC,'UniformOutput',false);
+        xLabelSet = arrayfun(@(index) sprintf('GL:%d',glvect(index)),1:totalGL,'UniformOutput',false);
+        yLabelSet = cell(tcIndx,glIndx);
+        
+        arrangedCroppedImages = cell(totalTC,totalGL);
+        for tcIndx = 1:totalTC
+            for glIndx = 1:totalGL
+                idxgral = glIndx + (tcIndx - 1)*totalGL; % Reversed width/index
+                arrangedCroppedImages{tcIndx,glIndx}  = croppedMeasData{idxgral};
+            end
+        end
+        
+        f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,viridis)
+        
+    case 13
+        %% Analysis Figures Plotting -- Mean Squared Error
+        disp('Plotting Mean Squared Error...');
+        fprintf('Underconstruction... %d/%d\n\r', 0, 0);
+        % tit = 'Mean Squared Error';
+        
+    otherwise
+        warning('Unavailable Plot.');
 end
 disp('Rendering...');
 
@@ -490,10 +541,10 @@ disp('Rendering...');
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%  Save and finish the processing                  ssssssss
-                                                                           %  This is not correct  
+%  This is not correct
 
 %% Saving
-%                                                                                                                                          
+%
 processedImgfullpath = strcat(processedImgname,measInfo{idxgral});
 % Explanation: saveas(variable,directory+filename,extension)
 saveas(gcf,strcat(processedImgfullpath),imgformat); % Saves the last shown figure
