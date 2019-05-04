@@ -245,7 +245,7 @@ disp('Done.');
 rangeFactor = 2; % Lambda/D times from center point
 croppedMeasData = cell(1,totalImgs);
 croppedCoorVect = x(abs(x)<=rangeFactor);
-[cropRange] = f_computePSFCropRange(rangeFactor,2*aproxRadius,aproxCenter);
+[cropRange] = f_computePSFCropRange(rangeFactor,2*aproxRadius,aproxCenter); % 2 Airy disks
 for idxgral = 1:totalImgs
     [croppedMeasData{idxgral}] = f_cropPSFrange(expMeas{idxgral},cropRange);
 end
@@ -494,9 +494,9 @@ switch metricSel
     case 11
         %%  Analysis Figures Plotting -- Plot Cropped intensity
         disp('Plotting Cropped Images...');
-        for idxgral = 1:5% 1:totalImgs
+        for idxgral = 1:totalImgs
             figure('color','white');
-            imagesc(croppedCoorVect,croppedCoorVect,croppedMeasData{end});
+            imagesc(croppedCoorVect,croppedCoorVect,croppedMeasData{idxgral});
             xlabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
             ylabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
             title(sprintf('Coronagraphic PSF: %s',measInfo{idxgral}));
