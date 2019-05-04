@@ -283,7 +283,7 @@ for idxgral = 1:totalImgs
 end
 disp('Done.');
 
-%% Processsing of profiles -- Throughput and Power Suppression
+%% Processsing of profiles -- Throughput, Power Suppression and logRMS
 disp('Calculating Throughput...');
 totalGL = length(glvect);
 totalTC = length(tcvect);
@@ -420,6 +420,7 @@ switch metricSel
         plotRange = 1:totalTC;
         figure('color', 'white');
         hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:),plotSpec{index},'color',colorSet(index,:),'LineWidth',lineWidth), plotRange); hold off;
+        axis fill; % They used to be too squared!
         title('Power supression of TCs at different phase levels','FontSize',fontSize,'FontWeight','bold');
         xlabel('Discretization level','FontSize',fontSize,'FontWeight','bold');
         ylabel('EEF in Airy disk','FontSize',fontSize,'FontWeight','bold'); % OLD:  ylabel('EEF at Airy Range');
