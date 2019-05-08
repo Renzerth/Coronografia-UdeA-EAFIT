@@ -3,3 +3,6 @@ LOW NG:
 
 HIGH NG:
 /home/labfisica/Dropbox/Coronógrafo_2018-1_Samuel/7_Results/4_April_23_2019_PSF/2_tcs10_gls7_high/23-Apr-2019-Pluto-Spiral-mask-tcs-10-gls-7
+
+Python
+/home/labfisica/Coronografia-UdeA-EAFIT/python/data/Simulations

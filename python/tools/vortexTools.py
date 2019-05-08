@@ -55,6 +55,10 @@ class vortexProfiler:
         window = self.createCircMask(2*self.apertureRadius,radius).astype('double')
         return window
     
+    def placeGaussianAperture(self,sigma=0.5):
+        window = np.exp(-(self.rho/sigma)**2)
+        return window
+    
     def analyzeSpectrum(self,field):
         Ef = np.fft.fft2(field)
         Ef = Ef*self.spatialStep**2

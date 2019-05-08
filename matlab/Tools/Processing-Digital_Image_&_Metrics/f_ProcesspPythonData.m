@@ -1,10 +1,4 @@
-function [x, y, radialIntensityRef,radialIntensityMeas,...
-    cartcoord, refEEFcurve, refNormIntensity, measEEFcurves, measNormIntensity,...
-    logSNR, attenuationRatio,EEFattenuationRatio,refIntensityGradient,...
-    measIntensityGradient] = f_ProcessData(measfullpath,refmeasfullpath,...
-    ProcessedDir,dataDir,pathSep,infoDelim,dataformat,imgformat,cameraPlane,...
-    totalImgs,AiryFactor,metricSel,metricProfile, beepSound,L,NA,PP,...
-    mainLyotRadius,measSimulated,glvect,tcvect)
+function [] = f_ProcesspPythonData()
 
 % Inputs:
 %
@@ -15,86 +9,46 @@ function [x, y, radialIntensityRef,radialIntensityMeas,...
 % extintion)
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% INITIALIZATION
 %% Processing initialization
+infoDelim = '/';
+fileFormat = '.mat';
+[foundFiles] = loadFilesFromDir(fileFormat);
+%%% Loading all the measurements
+% 4 variables are loaded in the structure:
 
-%%% Measure the processing time
-% Copyright PhD student Jens de Pelsmaeker VUB B-PHOT 2018,Brussels,Belgium
-t1_dt = datetime; % store time
-disp('Processing started:'); disp(t1_dt)
-processedImgname = strcat(ProcessedDir,pathSep,'processed',infoDelim, ...
-    cameraPlane,infoDelim);
+%%% Experiment information
+tcvect = foundFiles.TCRanges;
+glvect = foundFiles.GLRanges;
 
-if measSimulated == 0 % Real measurement
-    %%% Loading all the measurements
-    % Explanation: load(directory+filename,variables)
-    struct = load(measfullpath); % Loads all the measured images & info
-    % Two variables are loaded in the structure:
-    % "expImgs" and "MeasInfo"
-    
-    %%% Experimental images
-    expMeas = struct.expImgs;
-    
-    %%% Experiment information
-    measInfo = struct.MeasInfo;
-    
-    %%%  Loading the reference measurement
-    % The image is read in a uint8 format: integer with values that are
-    % normally in [0,255] (8-bit depth or dynamic range)
-    refMeas = imread(refmeasfullpath);
-    % since refMeas is a bmp image, it is loaded as uint8
-    
-    %%% UINT8 format to Double for the reference image
-    % im2double duplicates the precision of the exponent leaving intact the
-    % mantisa. It as floating-point format that normalizes the images and this
-    % operation is made on each RGB channel. rgb2gray does a similar operation
-    % but scaling to a gray scale, where it  converts RGB values to grayscale values
-    % by forming a weighted sum of the R, G, and B components:
-    % 0.2989 * R + 0.5870 * G + 0.1140 * B
-    refMeas = im2double(refMeas);
-    
-    % Lyotimg = refMeas;                                                                                                               % TO BE USED FOR LYOT METRICS
-    
-else % Simulated measurement
-    %% Example images to process
-    %     Lyotimg = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_1.bmp')); % Lyot image
-    %     Lyotimg = rgb2gray(Lyotimg);
-    refMeas = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep, ...
-        'data_ref_2.bmp')); % PSF reference
-    expMeas = {0,0}; % Cell initialization
-    expMeas{1} = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep, ...
-        'data_ref_3.png')); % PSF measurement 1
-    expMeas{2} = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep, ...
-        'data_ref_4.png')); % PSF measurement 2
-    measInfo = {'data_ref_3','data_ref_3'};
-    totalImgs = 2; % For the case of the simulated measurement
-    
+totalGL = length(glvect);
+totalTC = length(tcvect);
+totalImgs = totalGL*totalTC;
+measInfo = cell(1,totalImgs);
+
+%%% Processing Handlers
+getIntensity = @(complexField) abs(fftshift(complexField)).^2;
+scaleIntensity = @(intensity,maxVal) f_ScaleMatrixData(intensity,0,max(intensity(:))/maxVal);
+
+%%%  Loading the reference measurement
+refMeas = getIntensity(foundFiles.PSFreference);
+maxRefVal = max(refMeas(:));
+refMeas = f_ScaleMatrixData(refMeas,0,1);
+
+%%% 'Experimental' images
+expMeas = arrayfun(@(dataIndex) scaleIntensity(getIntensity(foundFiles.PSFoutputFields(:,:,dataIndex)),maxRefVal), 1:totalImgs,'UniformOutput',false);
+
+%%% Data tags
+idxgral = 1; % Init of general index that runs % on the range: [1,totalImgs]
+for idxgl = 1:totalGL
+    for idxtc = 1: totalTC
+        tcstr = strcat('tc-',num2str(tcvect(idxtc)));
+        glstr = strcat('ng-',num2str(glvect(idxgl)));
+        measInfo{idxgral} = strcat(tcstr,'-',glstr); % Dataname for each
+        idxgral = idxgral + 1; % The general index increases
+    end
 end
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TO UNIFY WITH DEFINE SPACE
-%% Find the center of the Lyot image
-% This was already done in f_DefineSpace.m
-% PP = PP*1e-6; % um to m
-
-%%% Lyot's spot size (main radius)
-%%%%% Lyot Intensity Feedback coordinates
-% drawing = false;
-
-% [~,mainLyotRadius,~] = f_findCircleShapedIntensity(Lyotimg,drawing);
-% mainLyotRadius = round(mainLyotRadius); % Pixels
-
-%%%%% System Pixel Size:
-% not used since the spot size is used intead for the falco lamda over D
-% (physical scaling)
-% PP = PP*1e-6; % um to m
-% lensDiameter = 2*apRad*1e-2; % cm to m
-% [apRadpix] = f_computePupilPixelSize(mainLyotRadius,PP,lensDiameter);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TO UNIFY WITH DEFINE SPACE
-
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,14 +72,14 @@ halfY = ySize/2;
 centerShiftX = (midX-halfX);
 centerShiftY = (midY-halfY);
 
-% Coordinates' origin set to the spot's center
+% Coordinates' origin set to the spot's center % 
 xpixcenterd = (-halfX:halfX-1) - (centerShiftX - 1); % The x center is shifted 1
 ypixcenterd = (-halfY:halfY-1) - (centerShiftY - 1); % The y center is shifted 1
 
 %% Lambda over D scaling with the experimental spot size (THIS ONE'S USED)
 % Pixel's size is scalled to the experimental spot's size
-x  = xpixcenterd/(aproxRadius); 
-y  = ypixcenterd/(aproxRadius);
+x = xpixcenterd/(aproxRadius);
+y = ypixcenterd/(aproxRadius);
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,6 +111,7 @@ for idxgral = 1:totalImgs
 end
 
 %% Measurement profile choice
+metricProfile = 3;
 switch metricProfile
     case 1 % Vertical profile
         radialIntensityRef = VprofRef;
@@ -188,10 +143,10 @@ end
 disp('Done.');
 
 %% Data Cropping for view range
-rangeFactor = 2; % Ref: 2 Number of Airy disks (Lambda/D times from center)
+rangeFactor = 2.5; % Ref: 2 Number of Airy disks (Lambda/D times from center)
 croppedMeasData = cell(1,totalImgs);
 croppedCoorVect = x(abs(x)<=rangeFactor);
-[cropRange] = f_computePSFCropRange(rangeFactor,2*aproxRadius,aproxCenter); 
+[cropRange] = f_computePSFCropRange(rangeFactor,2*aproxRadius,aproxCenter);
 for idxgral = 1:totalImgs
     [croppedMeasData{idxgral}] = f_cropPSFrange(expMeas{idxgral},cropRange);
 end
@@ -231,8 +186,6 @@ disp('Done.');
 
 %% Processsing of profiles -- Throughput, Power Suppression and logRMS
 disp('Calculating Throughput...');
-totalGL = length(glvect);
-totalTC = length(tcvect);
 powerSupr = zeros(totalTC,totalGL);
 arrangedEEF = cell(totalTC,totalGL);
 arrangedProfiles = cell(totalTC,totalGL);
@@ -240,7 +193,7 @@ arrangedLogRMS = zeros(totalTC,totalGL);
 
 for tcIndx = 1:totalTC
     for glIndx = 1:totalGL
-        idxgral = glIndx + (tcIndx - 1)*totalGL; % Reversed width/index
+        idxgral = tcIndx + (glIndx - 1)*totalTC; % Reversed width/index
         powerSupr(tcIndx,glIndx) = measEEFcurves{idxgral}(aproxRadius);
         arrangedEEF{tcIndx,glIndx} = measEEFcurves{idxgral};
         arrangedProfiles{tcIndx,glIndx}  = radialIntensityMeas{idxgral};
@@ -287,20 +240,20 @@ tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 1;
 plotV = 0;
-metricSel = 12; % Type of metric -- BYPASS VARIABLE
-                % 1: Profiles
-                % 2: EEF: Encircled Energy Factor
-                % 3: Throughput (arranged EEF)
-                % 4: Power Supression
-                % 5: Relative contrast
-                % 6: Relative contrast (arranged)
-                % 7: Logarithmic SNR
-                % 8: Logarithmic RMS (RMS of logarithmic SNR) [arranged]
-                % 9: Attenuation Ratios
-                % 10: Gradient of Intensity
-                % 11: Plot Cropped intensity
-                % 12: Plot Images Mosaic
-            
+metricSel = 3; % Type of metric -- BYPASS VARIABLE
+                        % 1: Profiles
+                        % 2: EEF: Encircled Energy Factor
+                        % 3: Throughput (arranged EEF)
+                        % 4: Power Supression
+                        % 5: Relative contrast
+                        % 6: Relative contrast (arranged)
+                        % 7: Logarithmic SNR
+                        % 8: Logarithmic RMS (RMS of logarithmic SNR) [arranged]
+                        % 9: Attenuation Ratios
+                        % 10: Gradient of Intensity
+                        % 11: Plot Cropped intensity
+                        % 12: Plot Images Mosaic
+
 fontSize = 14; %[pts] Ref: 14
 lineWidth = 1.5; %[pts] Ref: 1.5
 colorSet = [1 0 0 ; 0 1 0; 0.8500 0.3250 0.0980; ...
@@ -357,7 +310,7 @@ switch metricSel
             ylabel('Throughput (EEF)','FontSize',fontSize,'FontWeight','bold');  %  xlabel('Radial Distance (\lambda/D)')
             title(sprintf('Throughput of topological charges at NG = %d',glvect(indexGL)));
             set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','southeast'); grid on; axis square;
-            fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); xlim([0,2])
+            fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); %xlim([0,2])
         end
         
     case 4
@@ -378,8 +331,7 @@ switch metricSel
         disp('Plotting Relative Contrast...');
         for idxgral = 1:totalImgs
             f_plotContrast(cartcoord,radialIntensityRef,radialIntensityMeas{idxgral},dynamicProfileTitle{idxgral},fontSize,lineWidth)
-            xlim([0,2.5]); ylim([1e-3 1]);
-            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs); 
+            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs); %xlim([0,2.5]); % 2 Airy disks ylim([1e-3 1]); % Maximum attenuation
         end
         
     case 6
@@ -398,8 +350,8 @@ switch metricSel
             title(sprintf('Raw Contrast NG Comparison with TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
             set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on;
             fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log');
-            xlim([0,2.5]); % 2 Airy disks
-            ylim([1e-3 1]); % Maximum attenuation
+%             xlim([0,2.5]); % 2 Airy disks
+%             ylim([1e-3 1]); % Maximum attenuation
         end
         
     case 7
@@ -464,7 +416,7 @@ switch metricSel
         arrangedCroppedImages = cell(totalTC,totalGL);
         for tcIndx = 1:totalTC
             for glIndx = 1:totalGL
-                idxgral = glIndx + (tcIndx - 1)*totalGL; % Reversed width/index
+                idxgral = tcIndx + (glIndx - 1)*totalTC; % Reversed width/index
                 arrangedCroppedImages{tcIndx,glIndx}  = croppedMeasData{idxgral};
             end
         end
@@ -486,7 +438,7 @@ disp('Rendering...');
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%  Save and finish the processing                 
+%%%%%%%%%%%%%%%%  Save and finish the processing
 %  This is not correct YET
 
 %% Saving
@@ -499,18 +451,9 @@ disp('Rendering...');
 %   % Explanation: imwrite(variables,directory+filename+extension)
 %   imwrite(expMeas{idxgral}, strcat(processedImgfullpath,dataformat));
 
-
-%% End of the processing
-% Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium
-% MATLAB built in:
-t2_dt = datetime;
-disp('Processing finished:'); disp(t2_dt)
-time = t2_dt - t1_dt;
-disp('Processing took: '); % datestr(time,'SS') ' seconds'])
-disp(time);
-
 %% End notification
 N = 4; % Number of beeps for the processing
+beepSound = 1;
 f_EndBeeps(N,beepSound);
 
 %% Ask to leave figures open
@@ -518,39 +461,5 @@ answer = questdlg('Do you want to close all the figures?','Processing finished',
 if strcmp(answer,'yes') % Compare string
     close all;
 end
-
-
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%% Airy size estimatives
-%% Theoretical: diffraction-limited systems
-% NA: numerical aperture of the lens
-% L: wavelength in um
-PP = PP*1e-6; % um to m % Measurement camera's PP
-
-AiryDiskSpatial = 0.61*L/NA; % um
-AiryDiskSpatialX = AiryDiskSpatial;
-AiryDiskSpatialY = AiryDiskSpatial;
-disp(strcat('Theoretical Airy"s radius in um:', {' '}, num2str(AiryDiskSpatialX), ' (x) and', {' '},  num2str(AiryDiskSpatialY), ' (y)'));
-
-AiryDiskPixX = round(AiryDiskSpatialX/PP); % PP: camera's pixel pitch
-AiryDiskPixY = round(AiryDiskSpatialY/PP);
-disp(strcat('Theoretical Airy"s radius in pix:', {' '},  num2str(AiryDiskPixX), ' (x) and', {' '},  num2str(AiryDiskPixY), ' (y)'));
-
-% In reality, there are aberrations and the real radius can be of
-% about 60 times the theoretical one
-
-%% Airy radius measured from the reference image
-AiryDiskPixX = aproxRadius; % Just an example
-AiryDiskPixY= aproxRadius; % Just an example
-AiryDiskSpatialX = AiryDiskPixX*PP; % PP: camera's pixel pitch
-AiryDiskSpatialY = AiryDiskPixY*PP;
-disp(strcat('Estimated Airy"s radius in um:', {' '},  num2str(AiryDiskSpatialX), ' (x) and', {' '},  num2str(AiryDiskSpatialY), ' (y)'));
-disp(strcat('Estimated Airy"s radius in pix:', {' '},  num2str(AiryDiskPixX), ' (x) and', {' '},  num2str(AiryDiskPixY), ' (y)'));
-
-%% Airy radius from the EEF factor
-% When it is the 70%
-
-% PENDING
 
 end

@@ -62,6 +62,7 @@ addpath(strcat('..',pathSep,toolsFldr,pathSep,filemanag));
 [analysDir,toolsDir,dataDir,outDir] = ...
 f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
 % Adds all the directories to use in the algorithm
+
 %% Self-centering and spatial definition
 if meas == 1 || (meas == 0 && proc == 0 ) || measDebug == 1
     %% Self centering hardware initialization

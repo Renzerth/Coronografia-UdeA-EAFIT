@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.abspath('..'))
 from tools.vortexTools import vortexProfiler
 
 import numpy as np
+from scipy.io import savemat
         
 #%%--------------
 #PROGRAM SETTINGS
@@ -55,13 +56,20 @@ allocatedMatrixSLM,allocatedMatrixLyot = vortexTools.prepareFFTW(volumeSize)
 #------------------------
 
 aperture = np.fft.fftshift(vortexTools.placeAperture(0.5))
+#aperture = np.fft.fftshift(vortexTools.placeGaussianAperture(1.0))
 lyotAperture = np.fft.fftshift(vortexTools.placeAperture(0.5))
 SLMInput = vortexTools.analyzeSpectrum(aperture)
 
-for grayIndex in range(0,GLSize):
-    for TCIndex in range(0,TCSize):
-        SLMPMasks[:,:,TCIndex + grayIndex*(TCSize)] = vortexTools.SPP(TCRanges[TCIndex],GLRanges[grayIndex])
-        SLMPlanes[:,:,TCIndex + grayIndex*(TCSize)] = SLMInput*SLMPMasks[:,:,TCIndex + grayIndex*(TCSize)]
+for TCIndex in range(0,TCSize):
+    for grayIndex in range(0,GLSize):
+
+        singleIndex = TCIndex + grayIndex*(TCSize)
+        SLMPMasks[:,:,singleIndex] = vortexTools.SPP(TCRanges[TCIndex],GLRanges[grayIndex])
+        SLMPlanes[:,:,singleIndex] = SLMInput*SLMPMasks[:,:,singleIndex]
+#%%----------------------
+#Generate PSF Reference
+#------------------------
+PSFreference = vortexTools.analyzeSpectrum(vortexTools.synthetizeSpectrum(SLMInput)*lyotAperture);
 #%%--------------
 #Propagate Fields
 #----------------
@@ -87,3 +95,14 @@ if plotsEnabled:
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixLyot, 'log')
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixLyotTrunc, 'intensity')
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, PSFoutputFields, 'log')
+#%%-------------
+#Save Data Files
+#---------------
+matorpyton = 2
+mdict={'PSFoutputFields':PSFoutputFields,'PSFreference':PSFreference,'TCRanges':TCRanges,'GLRanges':GLRanges}
+saveDir = '../data/Simulations/PSFs'
+
+if matorpyton == 1:
+    savemat(saveDir + '.mat',mdict)
+else:
+    np.save(saveDir + '.npy',mdict)
