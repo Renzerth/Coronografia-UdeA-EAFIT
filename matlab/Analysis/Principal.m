@@ -48,7 +48,7 @@
 %%% PHASE MASK GENERATION WITH SLMs, VORTEX ACQUISITION VIA CAMERAS AND 
 %%% PROCESSING WITH CORONAGRAPHIC METRICS
 %% Parameters and initialization
-clc; clear; close all; % Initialization
+%clc; clear; close all; % Initialization
 Parameters; % Adds to the algorithm all the needed parameters
 % open Parameters; % Keep open always
 

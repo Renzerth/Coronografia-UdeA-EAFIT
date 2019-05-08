@@ -287,7 +287,7 @@ tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 1;
 plotV = 0;
-metricSel = 12; % Type of metric -- BYPASS VARIABLE
+metricSel = 8; % Type of metric -- BYPASS VARIABLE
                 % 1: Profiles
                 % 2: EEF: Encircled Energy Factor
                 % 3: Throughput (arranged EEF)
@@ -420,9 +420,9 @@ switch metricSel
         
         figure('color', 'white');
         hold on; arrayfun(@(indexGL) plot(tcvect, arrangedLogRMS(indexGL,:), plotSpec{indexGL},'color',colorSet(indexGL,:),'LineWidth',lineWidth),plotRange);hold off
-        title('Coronographic RMS analysis for GL effects','FontSize',fontSize,'FontWeight','bold');
-        xlabel('Vortex Topological Charge','FontSize',fontSize,'FontWeight','bold');
-        ylabel('Root Mean Square of Logarithmic SNR','FontSize',fontSize,'FontWeight','bold');
+        title('Coronagraphic RMS analysis for NG effects','FontSize',fontSize,'FontWeight','bold');
+        xlabel('Vortex Topological Charge (TC)','FontSize',fontSize,'FontWeight','bold');
+        ylabel('Root Mean Square of the Logarithmic SNR','FontSize',fontSize,'FontWeight','bold');
         legend(legendCell); set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on;
         
     case 9
