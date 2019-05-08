@@ -5,7 +5,7 @@ function f_plotMosaic(dataArrange,xRefVector,yRefVector,titleSet,xLabelSet,yLabe
 %% Initialization
 [subplotsx,subplotsy] = size(dataArrange);
 %% Parameters for figure and panel size
-plotheight=20;
+plotheight=20; % cm
 plotwidth=16;
 
 leftedge=1.2;
@@ -36,6 +36,9 @@ for i=1:subplotsx
         ax=axes('position',sub_pos{i,ii},'XGrid','off','XMinorGrid','off','FontSize',fontsize,'Box','on','Layer','top','FontWeight','bold');
         
         imagesc(xRefVector,yRefVector,dataArrange{i,ii}); colormap(customMap);
+        cbarHandler=colorbar; limVals=get(cbarHandler,'Limits');
+        ticksLabels = cellstr(num2str(limVals', '%1.0e'));
+        set(cbarHandler,'XTickLabel',ticksLabels);
         
         if ii==subplotsy
             title(titleSet{i},'FontSize',fontSize,'FontWeight','bold');
