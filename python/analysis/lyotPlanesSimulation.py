@@ -98,7 +98,7 @@ if plotsEnabled:
 #%%-------------
 #Save Data Files
 #---------------
-matorpyton = 2
+matorpyton = 1
 mdict={'PSFoutputFields':PSFoutputFields,'PSFreference':PSFreference,'TCRanges':TCRanges,'GLRanges':GLRanges}
 saveDir = '../data/Simulations/PSFs'
 

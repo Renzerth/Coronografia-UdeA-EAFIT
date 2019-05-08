@@ -307,6 +307,8 @@ colorSet = [1 0 0 ; 0 1 0; 0.8500 0.3250 0.0980; ...
     0 0 1; 0.9290 0.6940 0.1250; 0 1 1; 0.4940 0.1840 0.5560; ...
     1 0 1; 0.6350 0.0780 0.1840; 0 0 0];
 lineStyle = '-.';
+xLimRange = [0,2];
+yLimRange = [1e-3,1];
 markerSet = [{'o'},{'+'},{'s'},{'>'},{'d'},{'x'},{'p'},{'^'},{'h'},{'v'}]';
 plotSpec = arrayfun(@ (index) strcat(markerSet{index},lineStyle), ...
     1:length(markerSet),'UniformOutput',false); % Joints the line specs strings
@@ -357,7 +359,7 @@ switch metricSel
             ylabel('Throughput (EEF)','FontSize',fontSize,'FontWeight','bold');  %  xlabel('Radial Distance (\lambda/D)')
             title(sprintf('Throughput of topological charges at NG = %d',glvect(indexGL)));
             set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','southeast'); grid on; axis square;
-            fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); xlim([0,2])
+            fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); xlim(xLimRange);
         end
         
     case 4
@@ -378,7 +380,7 @@ switch metricSel
         disp('Plotting Relative Contrast...');
         for idxgral = 1:totalImgs
             f_plotContrast(cartcoord,radialIntensityRef,radialIntensityMeas{idxgral},dynamicProfileTitle{idxgral},fontSize,lineWidth)
-            xlim([0,2.5]); ylim([1e-3 1]);
+            xlim(xLimRange); ylim(yLimRange);
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs); 
         end
         
@@ -398,8 +400,8 @@ switch metricSel
             title(sprintf('Raw Contrast NG Comparison with TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
             set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on;
             fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log');
-            xlim([0,2.5]); % 2 Airy disks
-            ylim([1e-3 1]); % Maximum attenuation
+            xlim(xLimRange); % 2 Airy disks
+            ylim(yLimRange); % Maximum attenuation
         end
         
     case 7

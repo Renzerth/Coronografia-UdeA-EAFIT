@@ -1,18 +1,14 @@
 function [] = f_ProcesspPythonData()
-
 % Inputs:
-%
-%
+
 % Outputs:
 
 % Post-processing of the data (application of the metric of the degree of
 % extintion)
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% INITIALIZATION
 %% Processing initialization
-infoDelim = '/';
 fileFormat = '.mat';
 [foundFiles] = loadFilesFromDir(fileFormat);
 %%% Loading all the measurements
@@ -38,6 +34,7 @@ refMeas = f_ScaleMatrixData(refMeas,0,1);
 
 %%% 'Experimental' images
 expMeas = arrayfun(@(dataIndex) scaleIntensity(getIntensity(foundFiles.PSFoutputFields(:,:,dataIndex)),maxRefVal), 1:totalImgs,'UniformOutput',false);
+expMeas = flipLinearIndexCell(expMeas,totalTC,totalGL);
 
 %%% Data tags
 idxgral = 1; % Init of general index that runs % on the range: [1,totalImgs]
@@ -108,6 +105,7 @@ for idxgral = 1:totalImgs
         oneSideProfile);
     [averMeasProfile{idxgral}] = f_getAverageRadialProfile(...
         expMeas{idxgral},[ySize, xSize],flippedAproxCenter);
+    averMeasProfile{idxgral}(isnan(averMeasProfile{idxgral})) = 0;
 end
 
 %% Measurement profile choice
@@ -193,7 +191,7 @@ arrangedLogRMS = zeros(totalTC,totalGL);
 
 for tcIndx = 1:totalTC
     for glIndx = 1:totalGL
-        idxgral = tcIndx + (glIndx - 1)*totalTC; % Reversed width/index
+        idxgral = glIndx + (tcIndx - 1)*totalGL; % Reversed width/index
         powerSupr(tcIndx,glIndx) = measEEFcurves{idxgral}(aproxRadius);
         arrangedEEF{tcIndx,glIndx} = measEEFcurves{idxgral};
         arrangedProfiles{tcIndx,glIndx}  = radialIntensityMeas{idxgral};
@@ -240,7 +238,7 @@ tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 1;
 plotV = 0;
-metricSel = 3; % Type of metric -- BYPASS VARIABLE
+metricSel = 12; % Type of metric -- BYPASS VARIABLE
                         % 1: Profiles
                         % 2: EEF: Encircled Energy Factor
                         % 3: Throughput (arranged EEF)
@@ -260,6 +258,8 @@ colorSet = [1 0 0 ; 0 1 0; 0.8500 0.3250 0.0980; ...
     0 0 1; 0.9290 0.6940 0.1250; 0 1 1; 0.4940 0.1840 0.5560; ...
     1 0 1; 0.6350 0.0780 0.1840; 0 0 0];
 lineStyle = '-.';
+xLimRange = [0,3];
+yLimRange = [1e-6,1];
 markerSet = [{'o'},{'+'},{'s'},{'>'},{'d'},{'x'},{'p'},{'^'},{'h'},{'v'}]';
 plotSpec = arrayfun(@ (index) strcat(markerSet{index},lineStyle), ...
     1:length(markerSet),'UniformOutput',false); % Joints the line specs strings
@@ -310,7 +310,7 @@ switch metricSel
             ylabel('Throughput (EEF)','FontSize',fontSize,'FontWeight','bold');  %  xlabel('Radial Distance (\lambda/D)')
             title(sprintf('Throughput of topological charges at NG = %d',glvect(indexGL)));
             set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','southeast'); grid on; axis square;
-            fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); %xlim([0,2])
+            fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); xlim(xLimRange);
         end
         
     case 4
@@ -331,7 +331,7 @@ switch metricSel
         disp('Plotting Relative Contrast...');
         for idxgral = 1:totalImgs
             f_plotContrast(cartcoord,radialIntensityRef,radialIntensityMeas{idxgral},dynamicProfileTitle{idxgral},fontSize,lineWidth)
-            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs); %xlim([0,2.5]); % 2 Airy disks ylim([1e-3 1]); % Maximum attenuation
+            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs); xlim(xLimRange); ylim(yLimRange); % Maximum attenuation
         end
         
     case 6
@@ -350,8 +350,7 @@ switch metricSel
             title(sprintf('Raw Contrast NG Comparison with TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
             set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on;
             fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log');
-%             xlim([0,2.5]); % 2 Airy disks
-%             ylim([1e-3 1]); % Maximum attenuation
+            xlim(xLimRange); ylim(yLimRange); % Maximum attenuation
         end
         
     case 7
@@ -416,7 +415,7 @@ switch metricSel
         arrangedCroppedImages = cell(totalTC,totalGL);
         for tcIndx = 1:totalTC
             for glIndx = 1:totalGL
-                idxgral = tcIndx + (glIndx - 1)*totalTC; % Reversed width/index
+                idxgral = glIndx + (tcIndx - 1)*totalGL; % Reversed width/index
                 arrangedCroppedImages{tcIndx,glIndx}  = croppedMeasData{idxgral};
             end
         end
