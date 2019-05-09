@@ -36,8 +36,12 @@ for i=1:subplotsx
         ax=axes('position',sub_pos{i,ii},'XGrid','off','XMinorGrid','off','FontSize',fontsize,'Box','on','Layer','top','FontWeight','bold');
         
         imagesc(xRefVector,yRefVector,dataArrange{i,ii}); colormap(customMap);
+       
         cbarHandler=colorbar; limVals=get(cbarHandler,'Limits');
-        ticksLabels = cellstr(num2str(limVals', '%1.0e'));
+        tol2 = 0.2*limVals(2); % Colorbar custom tick adjustment
+        set(cbarHandler,'Ticks',linspace(limVals(1)+tol2,limVals(2)-tol2,2));
+        ticksLabels = cellstr(num2str(limVals', '%1.3f'));
+        % ticksLabels = cellstr(num2str(limVals', '%1.0e')); SCIENTIFIC
         set(cbarHandler,'XTickLabel',ticksLabels);
         
         if ii==subplotsy
@@ -53,13 +57,13 @@ for i=1:subplotsx
         end
         
         if i==1
-            ylabel(yLabelSet{ii});
+            ylabel(yLabelSet{ii},'FontSize',fontSize,'FontWeight','bold');
         end
         
         if ii==1
-            xlabel(xLabelSet{i});
+            xlabel(xLabelSet{i},'FontSize',fontSize,'FontWeight','bold');
         end
-        set(gca,'FontSize',fontsize,'FontWeight','bold');
+        set(gca,'FontSize',fontsize-2);
     end
 end
 

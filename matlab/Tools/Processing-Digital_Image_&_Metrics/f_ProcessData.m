@@ -188,7 +188,7 @@ end
 disp('Done.');
 
 %% Data Cropping for view range
-rangeFactor = 2; % Ref: 2 Number of Airy disks (Lambda/D times from center)
+rangeFactor = 1.5; % Ref: 2 Number of Airy disks (Lambda/D times from center)
 croppedMeasData = cell(1,totalImgs);
 croppedCoorVect = x(abs(x)<=rangeFactor);
 [cropRange] = f_computePSFCropRange(rangeFactor,2*aproxRadius,aproxCenter); 
@@ -459,9 +459,9 @@ switch metricSel
         %%  Analysis Figures Plotting -- Plot Images Mosaic
         disp('Plotting Images Mosaic...');
         saveEnabled = false;
-        fontSize = 10;
+        fontSize = 17;
         titleSet = arrayfun(@(index) sprintf('TC:%d',tcvect(index)),1:totalTC,'UniformOutput',false);
-        yLabelSet = arrayfun(@(index) sprintf('GL:%d',glvect(index)),1:totalGL,'UniformOutput',false);
+        yLabelSet = arrayfun(@(index) sprintf('NG:%d',glvect(index)),1:totalGL,'UniformOutput',false);
         xLabelSet = cell(tcIndx,glIndx);
         
         arrangedCroppedImages = cell(totalTC,totalGL);
