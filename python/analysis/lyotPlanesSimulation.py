@@ -20,16 +20,16 @@ from scipy.io import savemat
 #PROGRAM SETTINGS
 #----------------
         
-plotsEnabled = True
+plotsEnabled = False
 #%%---------------
 #System Parameters
 #-----------------
         
-Lvor = 6 # Topologic Charge
+Lvor = 10 # Topologic Charge
 TCStep = 1
 NGmin = 2
 NGmax = 10
-NG = 4
+NG = 9
 
 spatialSampling = 60.1e-3 # SLM Pixel Pitch (mm)
 apertureRadius = 4.0 # Telescope - Lyot plane (mm)
@@ -43,7 +43,10 @@ vortexTools = vortexProfiler(dx=spatialSampling,p=10,radius=apertureRadius)
 #-----------------
 
 TCRanges = np.arange(1,Lvor+1,TCStep)
-GLRanges = np.fix(np.linspace(NGmin,NGmax,NG)).astype('int')
+
+# GLRanges = np.fix(np.linspace(NGmin,NGmax,NG)).astype('int')
+GLRanges = np.array([12,16,24,32,64,128,256])
+
 TCSize = len(TCRanges)
 GLSize = len(GLRanges)
 volumeSize = (TCSize)*(GLSize)
@@ -98,11 +101,11 @@ if plotsEnabled:
 #%%-------------
 #Save Data Files
 #---------------
-matorpyton = 1
+matlaborpyton = 1 # 1: MATLAB; 2: Python
 mdict={'PSFoutputFields':PSFoutputFields,'PSFreference':PSFreference,'TCRanges':TCRanges,'GLRanges':GLRanges}
 saveDir = '../data/Simulations/PSFs'
 
-if matorpyton == 1:
+if matlaborpyton == 1:
     savemat(saveDir + '.mat',mdict)
 else:
     np.save(saveDir + '.npy',mdict)

@@ -10,7 +10,7 @@ function [] = f_ProcesspPythonData()
 %%%%%%%%%%%%%%%% INITIALIZATION
 %% Processing initialization
 fileFormat = '.mat';
-[foundFiles] = loadFilesFromDir(fileFormat);
+[foundFiles] = f_loadFilesFromDir(fileFormat);
 %%% Loading all the measurements
 % 4 variables are loaded in the structure:
 
@@ -238,7 +238,7 @@ tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 1;
 plotV = 0;
-metricSel = 8; % Type of metric -- BYPASS VARIABLE
+metricSel = 4; % Type of metric -- BYPASS VARIABLE
                         % 1: Profiles
                         % 2: EEF: Encircled Energy Factor
                         % 3: Throughput (arranged EEF)
@@ -321,9 +321,9 @@ switch metricSel
         hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:),plotSpec{index},'color',colorSet(index,:),'LineWidth',lineWidth), plotRange); hold off;
         axis fill; % They used to be too squared!
         title('Power supression of TCs at different phase levels','FontSize',fontSize,'FontWeight','bold');
-        xlabel('Discretization level','FontSize',fontSize,'FontWeight','bold');
+        xlabel('Discretization level (NG)','FontSize',fontSize,'FontWeight','bold');
         ylabel('EEF in Airy disk','FontSize',fontSize,'FontWeight','bold'); % OLD:  ylabel('EEF at Airy Range');
-        legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d')); legend(legendCell); grid on; axis square;
+        legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d')); legend(legendCell); grid on; axis auto;
         set(gca,'FontSize',fontSize,'FontWeight','normal')
         
     case 5
@@ -331,7 +331,8 @@ switch metricSel
         disp('Plotting Relative Contrast...');
         for idxgral = 1:totalImgs
             f_plotContrast(cartcoord,radialIntensityRef,radialIntensityMeas{idxgral},dynamicProfileTitle{idxgral},fontSize,lineWidth)
-            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs); xlim(xLimRange); ylim(yLimRange); % Maximum attenuation
+            xlim(xLimRange); ylim(yLimRange);
+            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs); 
         end
         
     case 6
@@ -350,7 +351,8 @@ switch metricSel
             title(sprintf('Raw Contrast NG Comparison with TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
             set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on;
             fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log');
-            xlim(xLimRange); ylim(yLimRange); % Maximum attenuation
+            xlim(xLimRange); % 2 Airy disks
+            ylim(yLimRange); % Maximum attenuation
         end
         
     case 7
@@ -369,9 +371,9 @@ switch metricSel
         
         figure('color', 'white');
         hold on; arrayfun(@(indexGL) plot(tcvect, arrangedLogRMS(indexGL,:), plotSpec{indexGL},'color',colorSet(indexGL,:),'LineWidth',lineWidth),plotRange);hold off
-        title('Coronographic RMS analysis for GL effects','FontSize',fontSize,'FontWeight','bold');
-        xlabel('Vortex Topological Charge','FontSize',fontSize,'FontWeight','bold');
-        ylabel('Root Mean Square of Logarithmic SNR','FontSize',fontSize,'FontWeight','bold');
+        title('Coronagraphic RMS analysis for NG effects','FontSize',fontSize,'FontWeight','bold');
+        xlabel('Vortex Topological Charge (TC)','FontSize',fontSize,'FontWeight','bold');
+        ylabel('Root Mean Square of the Logarithmic SNR','FontSize',fontSize,'FontWeight','bold');
         legend(legendCell); set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on;
         
     case 9
@@ -408,8 +410,9 @@ switch metricSel
         %%  Analysis Figures Plotting -- Plot Images Mosaic
         disp('Plotting Images Mosaic...');
         saveEnabled = false;
+        fontSize = 17;
         titleSet = arrayfun(@(index) sprintf('TC:%d',tcvect(index)),1:totalTC,'UniformOutput',false);
-        yLabelSet = arrayfun(@(index) sprintf('GL:%d',glvect(index)),1:totalGL,'UniformOutput',false);
+        yLabelSet = arrayfun(@(index) sprintf('NG:%d',glvect(index)),1:totalGL,'UniformOutput',false);
         xLabelSet = cell(tcIndx,glIndx);
         
         arrangedCroppedImages = cell(totalTC,totalGL);

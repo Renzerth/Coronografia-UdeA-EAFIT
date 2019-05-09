@@ -1,4 +1,4 @@
-function [foundFiles] = loadFilesFromDir(fileFormat)
+function [foundFiles] = f_loadFilesFromDir(fileFormat)
 % loadFilesFromDir loads files of specified fileFormat
 % from selected directory.
 %   Inputs:  fileFormat (string)
@@ -7,7 +7,7 @@ function [foundFiles] = loadFilesFromDir(fileFormat)
 %
 %  Version: 1.2 for Matlab R2014b
 %
-%  Author: Juan Jos? Cadavid Mu?oz - EAFIT UNIVERSITY
+%  Author: Juan Jose Cadavid Munoz - EAFIT UNIVERSITY
 %
 %  Date: 08/02/2015
 %
