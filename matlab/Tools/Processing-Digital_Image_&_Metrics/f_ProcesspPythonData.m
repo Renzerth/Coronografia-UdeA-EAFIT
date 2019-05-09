@@ -141,7 +141,7 @@ end
 disp('Done.');
 
 %% Data Cropping for view range
-rangeFactor = 2.5; % Ref: 2 Number of Airy disks (Lambda/D times from center)
+rangeFactor = 1.5; % Ref: 2 Number of Airy disks (Lambda/D times from center)
 croppedMeasData = cell(1,totalImgs);
 croppedCoorVect = x(abs(x)<=rangeFactor);
 [cropRange] = f_computePSFCropRange(rangeFactor,2*aproxRadius,aproxCenter);
@@ -238,7 +238,7 @@ tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 1;
 plotV = 0;
-metricSel = 4; % Type of metric -- BYPASS VARIABLE
+metricSel = 12; % Type of metric -- BYPASS VARIABLE
                         % 1: Profiles
                         % 2: EEF: Encircled Energy Factor
                         % 3: Throughput (arranged EEF)
