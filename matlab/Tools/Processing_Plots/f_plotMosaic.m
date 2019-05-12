@@ -67,6 +67,10 @@ for i=1:subplotsx
     end
 end
 
+%% Square axis
+axesHandles = findobj(get(gcf,'Children'), 'flat','Type','axes');
+axis(axesHandles,'square');
+
 %% Saving eps with matlab and then producing pdf and png with system commands
 if saveEnabled
     filename='test';
