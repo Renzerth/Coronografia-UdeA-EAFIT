@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 0; % Measure: yes (1) or no (0)
+meas = 1; % Measure: yes (1) or no (0)
 %%% For meas = 1: the whole workspace is saved
     measSimulated = 0; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
@@ -14,12 +14,12 @@ meas = 0; % Measure: yes (1) or no (0)
                        % tcvect = [1 2 0]; glvect = [255]; 
     % if measSimulated = 1 -> measDebug will be 0 
     % If meas = 1 -> all the figures will be closed before starting it
-    measDebug = 0; % Debugging before actually measuring. Displays the 
+    measDebug = 1; % Debugging before actually measuring. Displays the 
                    % default phase mask and shots a photo with the camera
                    % Works if  measSimulated = 0. If it is active, the
                    % program will set proc = 0
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 1; % Processes the data
+proc = 0; % Processes the data
                 % Note: measSimulated=1 also applies to proc but with some
                 % loaded images from: Data/0_ExampleData
 %%% For proc = 1 and meas = 0:  the workspace is loaded
@@ -39,7 +39,7 @@ proc = 1; % Processes the data
 
 %% General algorithm parameters: coordinates, plots, screens and mask type
 precision = 3; % Precision of displayed results: significative digits (3)           
-abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
+abs_ang = 0; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. abs_ang=1 is normally used for
              % maskSel=1
              % It doesn't apply for Zernike and LG +
@@ -49,7 +49,7 @@ abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % phase, are noticed in the amplitude if the field is 
              % propagated. Consider using simBool = 1
              % abs_ang = 0 is not valid for FTmask = 1
-maskSel = 0; % Phase mask selection:
+maskSel = 2; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -167,7 +167,7 @@ camera = 'DMK23U445'; % PSF is needed for the 2019's metrics (meanwhile)
 switch camera  
   case 'DMK42BUC03' % Lyot plane % CMOS
     cameraID = 2;
-    exposure = 1/400; % Range: [1/1e4,1]
+    exposure = 1/500; % Range: [1/1e4,1]
     fps = [];
     format = 'Y800 (1280x960)';
     cameraPlane =  'Lyot';
@@ -175,7 +175,7 @@ switch camera
  
   case 'DMK23U445' % PSF plane % CCD 
     cameraID = 1;
-    exposure = 1/90; % Range: [1.0000e-04 300]; DefaultValue: 0.0333
+    exposure = 1/492; % Range: [1.0000e-04 300]; DefaultValue: 0.0333
     %fps = '15'; % Frames per second
     fps = '10.00'; % '15.00', '10.00', ' 7.50', ' 5.00' ' 3.75', 
     format = 'Y800 (1280x960)'; 
@@ -205,7 +205,7 @@ loghist = 0; % (1) logscale; (0): normal scale truncated at 1000 counts
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks (also 
             % used in the data processing)
-tc = 2; % Topological charge (integer bigger or equal to one)
+tc = 1; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
         % Note: only applies when meas and proc are both zero
@@ -237,16 +237,16 @@ WsizeRatio = 20; % Width of the modes; for LG; ref: [0,100] (percentage
          
 %% Parameters: VPL Phase mask, 
 % f_FR: Fresnel lens focal distance or diffractive lens phase focal length
-f_FR = 1.3; % In m [the bigger, the more plane the phase is]
+f_FR = 0.02; % In m [the bigger, the more plane the phase is]
 %%% Fixed parameters for the minimum focal length criteria:
 AreaSLM = maxNumPix*pixSize^2; % SLM's area of the longest dimension [um]
 minf_FRum = AreaSLM/L; % Criterium to determine the MINIMUM f_FR [um]
 scaleFactor = 1e-6; % um to m. Constant factor
 minf_FR = minf_FRum*scaleFactor; % um to m
-if f_FR < minf_FR % f cannot be smaller than the criterium of the smallest
-  error(['VPL criterium not fulfilled, establish f_FR bigger than ' ...
-         num2str(minf_FR)]);
-end
+% if f_FR < minf_FR % f cannot be smaller than the criterium of the smallest
+%   error(['VPL criterium not fulfilled, establish f_FR bigger than ' ...
+%          num2str(minf_FR)]);
+% end
 % From: 2_edgar_2015_Generation_Optical_Vortices_Binary_Vortex_Lenses.pdf
 % minf_FR is used in meters in this paper and uses reasonable scales:
 % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf
@@ -314,6 +314,7 @@ switch discretization % Gray-level discretized azimuthal angle vector
   % levels. Similar to the VPL Edgar's discretization formula on the first
   % page of:
   % 1_edgar_2013_High-quality optical vortex-beam generation_E-Rueda_OL.pdf 
+  phaseValues = GrayLevel;
   
  case 2 % 2: user-defined gl values
  % Custom gl vector: the mask will only have these levels    
