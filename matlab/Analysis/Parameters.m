@@ -37,8 +37,7 @@ proc = 0; % Processes the data
 % is for meas=1 & measSimulated=0 & measDebug=!, so that it can be manually
 % centered on the vortex and tested
 
-%% General algorithm parameters: coordinates, plots, screens and mask type
-precision = 3; % Precision of displayed results: significative digits (3)           
+%% General algorithm parameters: coordinates, plots, screens and mask type     
 abs_ang = 0; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. abs_ang=1 is normally used for
              % maskSel=1

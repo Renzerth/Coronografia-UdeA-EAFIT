@@ -26,7 +26,7 @@ plotsEnabled = True
 #-----------------
         
 Lvor = 1 # Topological Charge
-NG = 3 # Number of gray levels
+NG = 3 # Number of gray levels [1,256]
 spatialSampling = 60.1e-3 # SLM Pixel Pitch (mm)
 apertureRadius = 2.0 # Telescope - Lyot plane (mm)
 #%%-------------------
