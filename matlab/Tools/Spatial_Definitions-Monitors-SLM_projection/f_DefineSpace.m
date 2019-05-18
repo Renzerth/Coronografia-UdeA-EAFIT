@@ -144,7 +144,9 @@ end
 switch shiftMask 
  case 0
   shiftX = 0; shiftY = 0; % Shift deactivated   
-  shiftCart = [shiftX shiftY];    
+  shiftCart = [shiftX shiftY];
+  
+  mainLyotRadius = [];
   
  case 1 % User-given
   % Test if the center of the mask is inside the truncation
@@ -156,6 +158,8 @@ switch shiftMask
   shiftX = shiftCart(1); % Cartesian shift in x
   shiftY = shiftCart(2); % Cartesian shift in y
   shiftCart = [shiftX*AspectRatio, shiftY];
+  
+  mainLyotRadius = [];
   
  case 2 % Self-centering algorithm
   shiftCartfine = shiftCart; % User-given for a fine adjustment

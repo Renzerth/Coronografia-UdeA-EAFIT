@@ -1,9 +1,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 1: the whole workspace is saved
-    measSimulated = 0; % Saves the mask and does not involve the cameras: 
+    % Warning: measSimulated also affects when proc=1
+    measSimulated = 1; % Saves the mask and does not involve the cameras: 
                        % yes (1) or no (0)
                        % The mask saving is usefull for reports. Note: the
                        % figure that says Camera isn't saved but the other
@@ -19,7 +20,7 @@ meas = 1; % Measure: yes (1) or no (0)
                    % Works if  measSimulated = 0. If it is active, the
                    % program will set proc = 0
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 0; % Processes the data
+proc = 1; % Processes the data
                 % Note: measSimulated=1 also applies to proc but with some
                 % loaded images from: Data/0_ExampleData
 %%% For proc = 1 and meas = 0:  the workspace is loaded
@@ -38,7 +39,7 @@ proc = 0; % Processes the data
 % centered on the vortex and tested
 
 %% General algorithm parameters: coordinates, plots, screens and mask type     
-abs_ang = 0; % Custom(0)[str has to be defined for this case], magnitude
+abs_ang = 2; % Custom(0)[str has to be defined for this case], magnitude
              % (1) or phase (2) plot. abs_ang=1 is normally used for
              % maskSel=1
              % It doesn't apply for Zernike and LG +
@@ -48,7 +49,7 @@ abs_ang = 0; % Custom(0)[str has to be defined for this case], magnitude
              % phase, are noticed in the amplitude if the field is 
              % propagated. Consider using simBool = 1
              % abs_ang = 0 is not valid for FTmask = 1
-maskSel = 2; % Phase mask selection:
+maskSel = 0; % Phase mask selection:
              % 0: Helicoidal mask: SPP or DSPP depending on gl
              % 1: Laguerre-Gauss beams: amplitude or phase
              % 2: VPL: Vortex Producing Lens = Helicoidal + Fresnel lens
@@ -79,7 +80,7 @@ plotMask = 2; % Allows to plot the mask:
 %  -Principal screen: MATLAB scrnIdx(1); Windows(2); AnyDesk(2)
 %  -Pluto screen: MATLAB scrnIdx(3); Windows(1); Anydesk(1)
 %  -LC2002 screen: MATLAB scrnIdx(2); Windows(3); Anydesk(0)
-slm = 'Pluto'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
+slm = 'No-SLM'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
@@ -111,13 +112,13 @@ end
 %% SLM positionining calibration, coordinates and type of truncation
 MaskPupil = 1; % Applies a pupil truncation to the mask: (0): no; (1): yes
 % Won't work for maskSel = 5 or 6 (Zernike), as it has z_pupil
-coordType = 2; % Type of calculation of the spatial coordinates. def: 2 
+coordType = 1; % Type of calculation of the spatial coordinates. def: 2 
 % 1: size defined by the user, space support defined by the SLM to use
 % pixel coordinates: [-L/2,L/2]
 % 2: size defined by the resolution of the selected screen on [-1,1] (sign
 %    function coordiantes)   
 %%%% For coordType = 1 (user custom-sized):
-    k = 9; % Bits for grey levels; 2^k is the resolution (size of x and y)
+    k = 10; % Bits for grey levels; 2^k is the resolution (size of x and y)
            % Default: 10. Size is calculated as 2^k - 1 or 2^k in sSize
            % Usually try maximum k = 11
            % Only works when coordType = 1
@@ -134,7 +135,7 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
      % 0: The mask presents an elliptical form when in the full screen
      % 1: The mask presents a circular form when in the full screen
      % On both cases full screen means that plotMask = 2
-    shiftMask = 2; % Shift for all masks
+    shiftMask = 0; % Shift for all masks
      % 0: shift deactivated [for exporting masks]
      % 1: shift activated [SLM displaying]
      % 2: self-centering algorithm: it is executed if the file
@@ -142,6 +143,8 @@ coordType = 2; % Type of calculation of the spatial coordinates. def: 2
      % exist, therefore, delete it in order to perform the self centering 
      % again
      switch shiftMask
+         case 0
+             shiftCart = [0, 0]; % Deactivated
          case 1 % SLM plotting with a manual shift
             shiftCart = [-10, -20]; % shiftCart: [shiftX,shiftY]. 
             % Percentages of movement of the half size of the screen
@@ -338,8 +341,10 @@ end
 % Sweeps all the GL for one tc and then switches to the other ones
 dataformat = '.bmp'; % Default: .bmp (not too heavy)
 % glvect: discretization level in [1,256]
-glvect = [12 16 24 32 64 128 256]; % Gray level to be measured 
-tcvect = 1:10; 
+
+% Report PA2 (section of the measurement)
+glvect = [7 8 9 10]; % Gray level to be measured 
+tcvect = 1:4; 
 
 % For tests:
 % glvect = [2 128 256]; % Gray level to be measured [1,256]

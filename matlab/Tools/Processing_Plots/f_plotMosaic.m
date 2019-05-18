@@ -1,4 +1,4 @@
-function f_plotMosaic(dataArrange,xRefVector,yRefVector,titleSet,xLabelSet,yLabelSet,customMap,fontSize,saveEnabled)
+function f_plotMosaic(dataArrange,xRefVector,yRefVector,titleSet,xLabelSet,yLabelSet,customMap,fontSize,saveEnabled,abs_ang)
 % Patrick Martineau
 % Perfect subplot in Matlab
 % http://p-martineau.com/perfect-subplot-in-matlab/
@@ -34,15 +34,21 @@ for i=1:subplotsx
     for ii=1:subplotsy
         
         ax=axes('position',sub_pos{i,ii},'XGrid','off','XMinorGrid','off','FontSize',fontsizeAx,'Box','on','Layer','top','FontWeight','bold');
-        
         imagesc(xRefVector,yRefVector,dataArrange{i,ii}); colormap(customMap);
-       
         cbarHandler=colorbar; limVals=get(cbarHandler,'Limits');
-        tol2 = 0.2*limVals(2); % Colorbar custom tick adjustment
-        set(cbarHandler,'Ticks',linspace(limVals(1)+tol2,limVals(2)-tol2,2));
-        ticksLabels = cellstr(num2str(limVals', '%1.3f'));
-        % ticksLabels = cellstr(num2str(limVals', '%1.0e')); SCIENTIFIC
-        set(cbarHandler,'XTickLabel',ticksLabels);
+        if abs_ang == 1
+            tol2 = 0.2*limVals(2); % Colorbar custom tick adjustment
+            set(cbarHandler,'Ticks',linspace(limVals(1)+tol2,limVals(2)-tol2,2));
+            % NO: ticksLabels = cellstr(num2str(limVals', '%1.0e')); SCIENTIFIC
+            ticksLabels = cellstr(num2str(limVals', '%1.3f'));
+            set(cbarHandler,'XTickLabel',ticksLabels);
+        else
+            xticks([-1 0 1]);
+            tol2 = 0.1*pi; % Colorbar custom tick adjustment
+            caxis([-pi,pi]);
+            set(cbarHandler,'Ticks',linspace(-pi+tol2,pi-tol2,2));
+            set(cbarHandler,'TickLabels',{'-\pi' '\pi'}); % For the masks
+        end
         
         if ii==subplotsy
             title(titleSet{i},'FontSize',fontSizeTit,'FontWeight','bold');

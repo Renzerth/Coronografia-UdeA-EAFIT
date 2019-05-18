@@ -100,9 +100,9 @@ end
 %%%%%%%%%%%%%%%% Coordinates: Lambda/D, pixels and arcseconds
 %% Find the center of the PSF image (with a binarization)
 if measSimulated == 0
-    Threshold = 0.3; % 70% of Airy's energy
+    Threshold = 0.3;
 else
-    Threshold = 1; % Reference is a binary mask
+    Threshold = 1;
 end
 [~,~,aproxCenter,aproxRadius] = f_approximateSpotSize(refMeas,Threshold);
 
@@ -197,14 +197,12 @@ disp('Done.');
 if measSimulated == 0
     rangeFactor = 1.5; % Ref: 1.5 Number of Airy disks (Lambda/D times from
                        % the center)
-   Diameter = 2*aproxRadius;
 else
     rangeFactor = 1; % The masks ocupy the whole screen
-    Diameter = aproxRadius; % This is a "diameter"
 end
 croppedMeasData = cell(1,totalImgs); % same size as the measured bank
 croppedCoorVect = x(abs(x)<=rangeFactor); % Symmetric range cropping
-
+Diameter = 2*aproxRadius;
 [cropRange] = f_computePSFCropRange(rangeFactor,Diameter,aproxCenter);
 for idxgral = 1:totalImgs
     [croppedMeasData{idxgral}] = f_cropPSFrange(expMeas{idxgral},cropRange);
@@ -326,11 +324,6 @@ yLimRange = [1e-3,1];
 markerSet = [{'o'},{'+'},{'s'},{'>'},{'d'},{'x'},{'p'},{'^'},{'h'},{'v'}]';
 plotSpec = arrayfun(@ (index) strcat(markerSet{index},lineStyle), ...
     1:length(markerSet),'UniformOutput',false); % Joints the line specs strings
-if measSimulated == 0
-    colorM = viridis;
-else
-    colorM = gray;
-end
 
 %% Plot Selection
 switch metricSel
@@ -470,7 +463,7 @@ switch metricSel
             ylabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
             title(sprintf('Coronagraphic PSF: %s',measInfo{idxgral}));
             set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on; axis square;
-            colormap(colorM); colorbar; set(gca,'GridColor',[1,1,1]);
+            colormap(viridis); colorbar; set(gca,'GridColor',[1,1,1]);
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
         
@@ -490,12 +483,8 @@ switch metricSel
                 arrangedCroppedImages{tcIndx,glIndx}  = croppedMeasData{idxgral};
             end
         end
-        if measSimulated == 0
-            abs_ang = 1; % Intensities in the colormap
-        else
-            abs_ang = 2; % Phase in the colormap
-        end
-        f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,colorM,fontSize,saveEnabled,abs_ang)
+        
+        f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,viridis,fontSize,saveEnabled)
         
     case 13 % WON'T BE USED
         %% Analysis Figures Plotting -- Mean Squared Error

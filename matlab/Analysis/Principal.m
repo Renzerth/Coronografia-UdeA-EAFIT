@@ -64,7 +64,7 @@ f_addDirectories(analysFldr,toolsFldr,dataFlrd,outFlrd,pathSep);
 % Adds all the directories to use in the algorithm
 
 %% Self-centering and spatial definition
-if meas == 1 || (meas == 0 && proc == 0 ) || measDebug == 1
+if meas == 1 || (meas == 0 && proc == 0 ) || (measDebug == 1 && meas == 1)
     %% Self centering hardware initialization
     % This is here because the camera is needed for the self-centering
     % algorithm inside "f_DefineSpace"
@@ -80,8 +80,8 @@ if meas == 1 || (meas == 0 && proc == 0 ) || measDebug == 1
     formatLyot = 'Y800 (1280x960)';
     cameraPlaneLyot =  'Lyot';
     PPLyot = 3.75; % Pixel pitch in [um/pixel]
-    widomexist = (exist(SLMcenterWisdom,'file') == 2);
-    if shiftMask == 2 && ~(widomexist)% For self-centering's execution
+    wisdomexist = (exist(SLMcenterWisdom,'file') == 2);
+    if shiftMask == 2 && ~(wisdomexist)% For self-centering's execution
         %% Self centering camera preparation
         % Turns the camera on and create all the needed variables. Remember 
         % to leave the preview open
