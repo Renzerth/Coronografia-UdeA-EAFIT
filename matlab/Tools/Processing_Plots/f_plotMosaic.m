@@ -43,7 +43,8 @@ for i=1:subplotsx
             ticksLabels = cellstr(num2str(limVals', '%1.3f'));
             set(cbarHandler,'XTickLabel',ticksLabels);
         else
-            xticks([-1 0 1]);
+            yticks([-0.8 0 0.8]); xticks([-0.8 0 0.8]);
+            xticklabels({'-1','0','1'});yticklabels({'-1','0','1'});
             tol2 = 0.1*pi; % Colorbar custom tick adjustment
             caxis([-pi,pi]);
             set(cbarHandler,'Ticks',linspace(-pi+tol2,pi-tol2,2));

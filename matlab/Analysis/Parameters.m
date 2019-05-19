@@ -343,7 +343,7 @@ dataformat = '.bmp'; % Default: .bmp (not too heavy)
 % glvect: discretization level in [1,256]
 
 % Report PA2 (section of the measurement)
-glvect = [7 8 9 10]; % Gray level to be measured 
+glvect = [32 64 128 256]; % Gray level to be measured 
 tcvect = 1:4; 
 
 % For tests:
