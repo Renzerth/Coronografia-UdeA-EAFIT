@@ -343,7 +343,7 @@ switch metricSel
         end
         disp('Plotting Profile Lines...');
         titRef = 'Profile of Reference Intensity';
-        [refPoints] = getPlotCenterCoor([ySize, xSize] ,midX,midY,shiftCart);
+        [refPoints] = f_getPlotCenterCoor([ySize, xSize] ,midX,midY,shiftCart);
         f_plotLinearProfiles(refMeas,x,y,cartcoord,cartcoord,titRef,xlab,ylab,plotData, radialIntensityRef, plotH,plotV,tol,refPoints,fontSize,lineWidth);
         
         for idxgral = 1:totalImgs
