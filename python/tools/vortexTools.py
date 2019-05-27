@@ -112,7 +112,7 @@ class vortexProfiler:
         for ax, row in zip(axes[:,0], rowHeader):
             ax.annotate(row, xy=(0, 0.5), xytext=(-ax.yaxis.labelpad - pad, 0),
                         xycoords=ax.yaxis.label, textcoords='offset points',
-                        size=20, ha='right', va='center')
+                        size=20, ha='right', va='center',rotation='vertical')
         
         if plotType in 'angle':
             for index, ax in enumerate(axes.flat,0):
