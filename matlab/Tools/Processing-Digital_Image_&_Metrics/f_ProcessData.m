@@ -301,7 +301,7 @@ tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 1;
 plotV = 0;
-metricSel = 12; % Type of metric -- BYPASS VARIABLE
+metricSel = 5; % Type of metric -- BYPASS VARIABLE
                 % 1: Profiles
                 % 2: EEF: Encircled Energy Factor
                 % 3: Throughput (arranged EEF)
