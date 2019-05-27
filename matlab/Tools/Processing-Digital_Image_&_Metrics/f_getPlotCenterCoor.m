@@ -1,4 +1,4 @@
-function [refPoints] = getPlotCenterCoor(dataSize,midX,midY,shiftCart)
+function [refPoints] = f_getPlotCenterCoor(dataSize,midX,midY,shiftCart)
 %% Shift of the mask scaling
 shiftX = shiftCart(2); % Cartesian shift in x
 shiftY = shiftCart(1); % Cartesian shift in y

@@ -205,9 +205,8 @@ monitorSize,scrnIdx,coordType,abs_ang,MaxMask,plotMaskref,maskSelref);
     snap = getsnapshot(vid); % Real measurements
     wait(vid);
  else % measSimulated = 1
+    refMask(refMask==0)=1
     snap = refMask; % "Simulated" measurements (the mask is saved)
-    snap(snap==0) = 1; % Convert zeros to ones
-    snap(isnan(snap)) = 0; % Converts nan's to zeros
  end
  
 %%% Save the reference:

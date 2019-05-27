@@ -1,8 +1,33 @@
+-----------------------------------
+CORONAGRAPHIC
+-----------------------------------
+MATLAB:
+
 LOW NG:    
 /home/labfisica/Dropbox/Coronógrafo_2018-1_Samuel/7_Results/4_April_23_2019_PSF/1_tcs10_gls9_low/23-Apr-2019-Pluto-Spiral-mask-tcs-10-gls-9
 
 HIGH NG:
 /home/labfisica/Dropbox/Coronógrafo_2018-1_Samuel/7_Results/4_April_23_2019_PSF/2_tcs10_gls7_high/23-Apr-2019-Pluto-Spiral-mask-tcs-10-gls-7
 
-Python
+-----------------------------------
+Python:
 /home/labfisica/Coronografia-UdeA-EAFIT/python/data/Simulations
+
+LOW NG: 
+/home/labfisica/Dropbox/Coronógrafo_2018-1_Samuel/7_Results/0_Post_proc/8_PythonBank/lowng
+
+HIGH NG:
+/home/labfisica/Dropbox/Coronógrafo_2018-1_Samuel/7_Results/0_Post_proc/8_PythonBank/highng
+
+
+-----------------------------------
+MORPHOLOGIC
+-----------------------------------
+MATLAB:
+
+LOW NG:    
+/home/labfisica/Dropbox/Coronógrafo_2018-1_Samuel/7_Results/3_April_22_2019_Lyot-PSF_Morphologic/2_tcs10_glslow_PSF/22-Apr-2019-Pluto-Spiral-mask-tcs-10-gls-9
+
+HIGH NG:
+/home/labfisica/Dropbox/Coronógrafo_2018-1_Samuel/7_Results/3_April_22_2019_Lyot-PSF_Morphologic/3_tcs10_glshigh_PSF/22-Apr-2019-Pluto-Spiral-mask-tcs-10-gls-7
+

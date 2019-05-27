@@ -1,10 +1,10 @@
-function [x, y, radialIntensityRef,radialIntensityMeas,...
-    cartcoord, refEEFcurve, refNormIntensity, measEEFcurves, measNormIntensity,...
-    logSNR, attenuationRatio,EEFattenuationRatio,refIntensityGradient,...
-    measIntensityGradient] = f_ProcessData(measfullpath,refmeasfullpath,...
-    ProcessedDir,dataDir,pathSep,infoDelim,dataformat,imgformat,cameraPlane,...
-    totalImgs,AiryFactor,metricSel,metricProfile, beepSound,L,NA,PP,...
-    mainLyotRadius,measSimulated,glvect,tcvect)
+function [x,y,radialIntensityRef,radialIntensityMeas,cartcoord, ...
+refEEFcurve,refNormIntensity,measEEFcurves,measNormIntensity,logSNR, ...
+attenuationRatio,EEFattenuationRatio,refIntensityGradient, ...
+measIntensityGradient] = f_ProcessData(measfullpath,refmeasfullpath, ...
+ProcessedDir,dataDir,pathSep,infoDelim,dataformat,imgformat,cameraPlane,...
+totalImgs,AiryFactor,metricSel,metricProfile, beepSound,L,NA,PP, ...
+mainLyotRadius,measSimulated,glvect,tcvect)
 
 % Inputs:
 %
@@ -25,54 +25,53 @@ function [x, y, radialIntensityRef,radialIntensityMeas,...
 t1_dt = datetime; % store time
 disp('Processing started:'); disp(t1_dt)
 processedImgname = strcat(ProcessedDir,pathSep,'processed',infoDelim, ...
-    cameraPlane,infoDelim);
+cameraPlane,infoDelim); % Used to save the metrics                            (NOT USED RIGHT NOW)
 
-if measSimulated == 0 % Real measurement
-    %%% Loading all the measurements
-    % Explanation: load(directory+filename,variables)
-    struct = load(measfullpath); % Loads all the measured images & info
-    % Two variables are loaded in the structure:
-    % "expImgs" and "MeasInfo"
+%%% Loading all the measurements
+% Explanation: load(directory+filename,variables)
+struct = load(measfullpath); % Loads all the measured images & info
+% Two variables are loaded in the structure:
+% "expImgs" and "MeasInfo"
+
+%%% Experimental images
+expMeas = struct.expImgs;
+
+%%% Experiment information
+measInfo = struct.MeasInfo;
+
+%%%  Loading the reference measurement
+% The image is read in a uint8 format: integer with values that are
+% normally in [0,255] (8-bit depth or dynamic range)
+refMeas = imread(refmeasfullpath);
+% since refMeas is a bmp image, it is loaded as uint8
     
-    %%% Experimental images
-    expMeas = struct.expImgs;
+%%% UINT8 format to Double for the reference image
+% im2double duplicates the precision of the exponent leaving intact the
+% mantisa. It as floating-point format that normalizes the images and 
+% this operation is made on each RGB channel. rgb2gray does a similar 
+% operation but scaling to a gray scale, where it  converts RGB values 
+% to grayscale values by forming a weighted sum of the R, G, and B 
+% components: 0.2989 * R + 0.5870 * G + 0.1140 * B
+refMeas = im2double(refMeas);
+
+% Lyotimg = refMeas;                                                           % TO BE USED FOR LYOT's METRICS
     
-    %%% Experiment information
-    measInfo = struct.MeasInfo;
-    
-    %%%  Loading the reference measurement
-    % The image is read in a uint8 format: integer with values that are
-    % normally in [0,255] (8-bit depth or dynamic range)
-    refMeas = imread(refmeasfullpath);
-    % since refMeas is a bmp image, it is loaded as uint8
-    
-    %%% UINT8 format to Double for the reference image
-    % im2double duplicates the precision of the exponent leaving intact the
-    % mantisa. It as floating-point format that normalizes the images and this
-    % operation is made on each RGB channel. rgb2gray does a similar operation
-    % but scaling to a gray scale, where it  converts RGB values to grayscale values
-    % by forming a weighted sum of the R, G, and B components:
-    % 0.2989 * R + 0.5870 * G + 0.1140 * B
-    refMeas = im2double(refMeas);
-    
-    % Lyotimg = refMeas;                                                                                                               % TO BE USED FOR LYOT METRICS
-    
-else % Simulated measurement
-    %% Example images to process
-    %     Lyotimg = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_1.bmp')); % Lyot image
-    %     Lyotimg = rgb2gray(Lyotimg);
-    refMeas = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep, ...
-        'data_ref_2.bmp')); % PSF reference
-    expMeas = {0,0}; % Cell initialization
-    expMeas{1} = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep, ...
-        'data_ref_3.png')); % PSF measurement 1
-    expMeas{2} = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep, ...
-        'data_ref_4.png')); % PSF measurement 2
-    measInfo = {'data_ref_3','data_ref_3'};
-    totalImgs = 2; % For the case of the simulated measurement
-    
+%% Debug example measurements (not used right now)
+exampleDataDebug = 0;
+if exampleDataDebug == 1
+  %% Example images to process
+  % Lyotimg = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_1.bmp')); % Lyot image
+  % Lyotimg = rgb2gray(Lyotimg);
+  refMeas = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep, ...
+                                    'data_ref_2.bmp')); % PSF reference
+  expMeas = {0,0}; % Cell initialization
+  expMeas{1} = imread(strcat(dataDir,pathSep,'0_ExampleData', ...
+                        pathSep,'data_ref_3.png')); % PSF measurement 1
+  expMeas{2} = imread(strcat(dataDir,pathSep,'0_ExampleData', ...
+                        pathSep,'data_ref_4.png')); % PSF measurement 2
+  measInfo = {'data_ref_3','data_ref_3'};
+  totalImgs = 2; % For the case of the simulated measurement
 end
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TO UNIFY WITH DEFINE SPACE
@@ -100,18 +99,25 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% Coordinates: Lambda/D, pixels and arcseconds
 %% Find the center of the PSF image (with a binarization)
-[~,~,aproxCenter,aproxRadius] = f_approximateSpotSize(refMeas);
+if measSimulated == 0
+    Threshold = 0.3; % 70% of Airy's energy
+else
+    Threshold = 1; % Reference is a binary mask
+end
+[~,~,aproxCenter,aproxRadius] = f_approximateSpotSize(refMeas,Threshold);
 
 %% Read the approximate center of the PSF reference
-midX = aproxCenter(2);
-midY = aproxCenter(1);
+% The x,y centers are shifted 1 and this is substracted
+midX = aproxCenter(2) - 1; % Centroid of the reference in x
+midY = aproxCenter(1) - 1; % Centroid of the reference in y
+aproxCenter = [midY midX]; % shift of one saved back on aproxCenter
 
 %% Cartesian coordinates with pixel units
 % ORIGINAL
 [ySize, xSize] = size(refMeas); % All images assumed of the same size as
 % the refmeas
-halfX = xSize/2;
-halfY = ySize/2;
+halfX = xSize/2; % Half size of the whole image in x
+halfY = ySize/2; % Half size of the whole image in y
 
 %% Centroid coordinates
 % Centering shifting to the spot location
@@ -119,8 +125,8 @@ centerShiftX = (midX-halfX);
 centerShiftY = (midY-halfY);
 
 % Coordinates' origin set to the spot's center
-xpixcenterd = (-halfX:halfX-1) - (centerShiftX - 1); % The x center is shifted 1
-ypixcenterd = (-halfY:halfY-1) - (centerShiftY - 1); % The y center is shifted 1
+xpixcenterd = (-halfX:halfX-1) - (centerShiftX); 
+ypixcenterd = (-halfY:halfY-1) - (centerShiftY);
 
 %% Lambda over D scaling with the experimental spot size (THIS ONE'S USED)
 % Pixel's size is scalled to the experimental spot's size
@@ -133,7 +139,7 @@ y  = ypixcenterd/(aproxRadius);
 %% Reference Profile
 %%% Metric-specific default parameters for the profile
 oneSideProfile = 1; % Specifically needed for all the metrics. Ref: 1
-shiftCart = [0,0]; % midX,midY already account for the shift
+shiftCart = [0,0]; % midX,midY already account for the shift. Ref: [0,0]
 
 %%% Find the reference profile
 disp('Calculating Profiles...');
@@ -188,10 +194,18 @@ end
 disp('Done.');
 
 %% Data Cropping for view range
-rangeFactor = 2; % Ref: 2 Number of Airy disks (Lambda/D times from center)
-croppedMeasData = cell(1,totalImgs);
-croppedCoorVect = x(abs(x)<=rangeFactor);
-[cropRange] = f_computePSFCropRange(rangeFactor,2*aproxRadius,aproxCenter); 
+if measSimulated == 0
+    rangeFactor = 1.5; % Ref: 1.5 Number of Airy disks (Lambda/D times from
+                       % the center)
+   Diameter = 2*aproxRadius;
+else
+    rangeFactor = 1; % The masks ocupy the whole screen
+    Diameter = aproxRadius; % This is a "diameter"
+end
+croppedMeasData = cell(1,totalImgs); % same size as the measured bank
+croppedCoorVect = x(abs(x)<=rangeFactor); % Symmetric range cropping
+
+[cropRange] = f_computePSFCropRange(rangeFactor,Diameter,aproxCenter);
 for idxgral = 1:totalImgs
     [croppedMeasData{idxgral}] = f_cropPSFrange(expMeas{idxgral},cropRange);
 end
@@ -312,6 +326,11 @@ yLimRange = [1e-3,1];
 markerSet = [{'o'},{'+'},{'s'},{'>'},{'d'},{'x'},{'p'},{'^'},{'h'},{'v'}]';
 plotSpec = arrayfun(@ (index) strcat(markerSet{index},lineStyle), ...
     1:length(markerSet),'UniformOutput',false); % Joints the line specs strings
+if measSimulated == 0
+    colorM = viridis;
+else
+    colorM = gray;
+end
 
 %% Plot Selection
 switch metricSel
@@ -324,7 +343,7 @@ switch metricSel
         end
         disp('Plotting Profile Lines...');
         titRef = 'Profile of Reference Intensity';
-        [refPoints] = getPlotCenterCoor([ySize, xSize] ,midX,midY,shiftCart);
+        [refPoints] = f_getPlotCenterCoor([ySize, xSize] ,midX,midY,shiftCart);
         f_plotLinearProfiles(refMeas,x,y,cartcoord,cartcoord,titRef,xlab,ylab,plotData, radialIntensityRef, plotH,plotV,tol,refPoints,fontSize,lineWidth);
         
         for idxgral = 1:totalImgs
@@ -370,7 +389,7 @@ switch metricSel
         hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:),plotSpec{index},'color',colorSet(index,:),'LineWidth',lineWidth), plotRange); hold off;
         axis fill; % They used to be too squared!
         title('Power supression of TCs at different phase levels','FontSize',fontSize,'FontWeight','bold');
-        xlabel('Discretization level','FontSize',fontSize,'FontWeight','bold');
+        xlabel('Discretization level (NG)','FontSize',fontSize,'FontWeight','bold');
         ylabel('EEF in Airy disk','FontSize',fontSize,'FontWeight','bold'); % OLD:  ylabel('EEF at Airy Range');
         legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d')); legend(legendCell); grid on; axis square;
         set(gca,'FontSize',fontSize,'FontWeight','normal')
@@ -420,9 +439,9 @@ switch metricSel
         
         figure('color', 'white');
         hold on; arrayfun(@(indexGL) plot(tcvect, arrangedLogRMS(indexGL,:), plotSpec{indexGL},'color',colorSet(indexGL,:),'LineWidth',lineWidth),plotRange);hold off
-        title('Coronographic RMS analysis for GL effects','FontSize',fontSize,'FontWeight','bold');
-        xlabel('Vortex Topological Charge','FontSize',fontSize,'FontWeight','bold');
-        ylabel('Root Mean Square of Logarithmic SNR','FontSize',fontSize,'FontWeight','bold');
+        title('Coronagraphic RMS analysis for NG effects','FontSize',fontSize,'FontWeight','bold');
+        xlabel('Vortex Topological Charge (TC)','FontSize',fontSize,'FontWeight','bold');
+        ylabel('Root Mean Square of the Logarithmic SNR','FontSize',fontSize,'FontWeight','bold');
         legend(legendCell); set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on;
         
     case 9
@@ -451,7 +470,7 @@ switch metricSel
             ylabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
             title(sprintf('Coronagraphic PSF: %s',measInfo{idxgral}));
             set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on; axis square;
-            colormap(viridis); colorbar; set(gca,'GridColor',[1,1,1]);
+            colormap(colorM); colorbar; set(gca,'GridColor',[1,1,1]);
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
         
@@ -459,8 +478,9 @@ switch metricSel
         %%  Analysis Figures Plotting -- Plot Images Mosaic
         disp('Plotting Images Mosaic...');
         saveEnabled = false;
+        fontSize = 17;
         titleSet = arrayfun(@(index) sprintf('TC:%d',tcvect(index)),1:totalTC,'UniformOutput',false);
-        yLabelSet = arrayfun(@(index) sprintf('GL:%d',glvect(index)),1:totalGL,'UniformOutput',false);
+        yLabelSet = arrayfun(@(index) sprintf('NG:%d',glvect(index)),1:totalGL,'UniformOutput',false);
         xLabelSet = cell(tcIndx,glIndx);
         
         arrangedCroppedImages = cell(totalTC,totalGL);
@@ -470,8 +490,12 @@ switch metricSel
                 arrangedCroppedImages{tcIndx,glIndx}  = croppedMeasData{idxgral};
             end
         end
-        
-        f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,viridis,fontSize,saveEnabled)
+        if measSimulated == 0
+            abs_ang = 1; % Intensities in the colormap
+        else
+            abs_ang = 2; % Phase in the colormap
+        end
+        f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,colorM,fontSize,saveEnabled,abs_ang)
         
     case 13 % WON'T BE USED
         %% Analysis Figures Plotting -- Mean Squared Error
