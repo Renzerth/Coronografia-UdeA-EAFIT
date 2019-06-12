@@ -2,8 +2,9 @@ function [x,y,radialIntensityRef,radialIntensityMeas,cartcoord, ...
 refEEFcurve,refNormIntensity,measEEFcurves,measNormIntensity,logSNR, ...
 attenuationRatio,EEFattenuationRatio,refIntensityGradient, ...
 measIntensityGradient] = f_ProcessData(measfullpath,refmeasfullpath, ...
-ProcessedDir,dataDir,pathSep,totalImgs,metricProfile, beepSound,L,NA...
-,PP,measSimulated,glvect,tcvect)
+ProcessedDir,dataDir,pathSep,infoDelim,dataformat,imgformat,cameraPlane,...
+totalImgs,AiryFactor,metricSel,metricProfile, beepSound,L,NA,PP, ...
+mainLyotRadius,measSimulated,glvect,tcvect)
 
 % Inputs:
 %
@@ -24,9 +25,7 @@ ProcessedDir,dataDir,pathSep,totalImgs,metricProfile, beepSound,L,NA...
 t1_dt = datetime; % store time
 disp('Processing started:'); disp(t1_dt)
 
-% Saving on DEMAND.
-savingEnabled = false;
-
+% Uncomment saving on DEMAND.
 % processedImgname = strcat(ProcessedDir,pathSep,'processed',infoDelim, ...
 % cameraPlane,infoDelim); % Used to save the metrics                            (NOT USED RIGHT NOW)
 
@@ -509,9 +508,7 @@ disp('Rendering...');
 %   % Explanation: imwrite(variables,directory+filename+extension)
 %   imwrite(expMeas{idxgral}, strcat(processedImgfullpath,dataformat));
 
-if savingEnabled == true
-    save(strcat(ProcessedDir,pathSep,'processedWorkspace.mat'));
-end
+% save(strcat(ProcessedDir,pathSep,'processedWorkspace.mat'));
 
 %% End of the processing
 % Author: PhD student Jens de Pelsmaeker VUB B-PHOT 2018, Brussels, Belgium

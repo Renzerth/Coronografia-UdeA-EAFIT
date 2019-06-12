@@ -32,10 +32,6 @@ else
     initialExposure = []; % Empty, won't be used at all
 end
 
-%% Static exposure
-tc0Exposure  = 1/90; % Used for the reference measurement ans possible inside the measurement
-src.Exposure = tc0Exposure;
-
 %% Measurements
 for idxtc = 1:ltcvect 
   
@@ -43,30 +39,10 @@ for idxtc = 1:ltcvect
   tc = tcvect(idxtc); % Specific tc for this iteration
   
   %% Dynamically change the camera's exposure with a characterization
-%   if measSimulated == 0
-%     if tc == 0
-%       ExposureDynamic = tc0Exposure; % Experimental point for tc=0
-%     elseif tc == 1
-%       ExposureDynamic = 1/500; % Experimental point for tc=1
-%     else
-%       ExposureDynamic = 0.0053*log(tc); % Experimental curve for fps=10 and
-%                                         % with common exposure values
-%       % OLD y = @(x) abs(0.0053*log(x)-0.0008); % in zero, the first number
-%       % of the characterization
-%     end
-%     src.Exposure = ExposureDynamic; % Change camera's exposure due to the 
-%                                     % energy spreading
-%   end
 
   for idxgl = 1:lglvect
     %% Read a value of the gl vector and adjust exposure if needed
      phaseValues = glvect(idxgl); % Specific phase values for this iteration
-     
-     %% Dynamic exposure
-%       if measSimulated == 0 && phaseValues <= 4 && tc <= 3
-%           ExposureDynamic = tc0Exposure; % Experimental point for tc=0
-%           src.Exposure = ExposureDynamic; 
-%       end
       
    %% Generate the phase mask and display it on the SLM
     phaseValues = linspace(0,2*pi,phaseValues);

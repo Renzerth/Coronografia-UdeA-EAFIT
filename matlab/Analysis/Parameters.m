@@ -451,7 +451,7 @@ f = 100; % focal length of the lens before the camera [mm]
 scaleFactor = 1e3; % mm to um. Constant factor
 f = f*scaleFactor; % Focal length in um
 AiryFactor = n*PP*M/f; % Used to convert from pixels to the diffraction 
-                       % angle in Lamda/D units
+                       % angle in Lamda/D units [PIXELS]
 NA = 0.1; % Numerical aperture: here, of the lens
 apRad = 2.54; % Aperture radius [cm]
 

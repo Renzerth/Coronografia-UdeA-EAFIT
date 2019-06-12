@@ -1,4 +1,4 @@
-function f_plotMosaic(dataArrange,xRefVector,yRefVector,titleSet,xLabelSet,yLabelSet,customMap,fontSize,saveEnabled,abs_ang)
+function f_plotMosaic(dataArrange,xRefVector,yRefVector,titleSet,xLabelSet,yLabelSet,customMap,fontSize,saveEnabled,abs_ang,enableAxis)
 % Patrick Martineau
 % Perfect subplot in Matlab
 % http://p-martineau.com/perfect-subplot-in-matlab/
@@ -77,6 +77,10 @@ end
 %% Square axis
 axesHandles = findobj(get(gcf,'Children'), 'flat','Type','axes');
 axis(axesHandles,'square');
+
+if isa(enableAxis,'logical') && ~enableAxis
+  axis(axesHandles,'off')
+end
 
 %% Saving eps with matlab and then producing pdf and png with system commands
 if saveEnabled
