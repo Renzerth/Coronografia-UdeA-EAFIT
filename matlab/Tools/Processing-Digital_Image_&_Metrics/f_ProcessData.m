@@ -28,7 +28,7 @@ disp('Processing started:'); disp(t1_dt)
 savingEnabled = false;
 
 % processedImgname = strcat(ProcessedDir,pathSep,'processed',infoDelim, ...
-% cameraPlane,infoDelim); % Used to save the metrics                            (NOT USED RIGHT NOW)
+% cameraPlane,infoDelim); % Used to save the metrics                       (NOT USED RIGHT NOW)
 
 %%% Loading all the measurements
 % Explanation: load(directory+filename,variables)
@@ -63,7 +63,8 @@ refMeas = im2double(refMeas);
 exampleDataDebug = 0;
 if exampleDataDebug == 1
   %% Example images to process
-  % Lyotimg = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep,'data_ref_1.bmp')); % Lyot image
+  % Lyotimg = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep, ...
+  %                         'data_ref_1.bmp')); % Lyot image
   % Lyotimg = rgb2gray(Lyotimg);
   refMeas = imread(strcat(dataDir,pathSep,'0_ExampleData',pathSep, ...
                                     'data_ref_2.bmp')); % PSF reference
@@ -309,7 +310,7 @@ xLimRange = [0,2];
 yLimRange = [1e-3,1];
 markerSet = [{'o'},{'+'},{'s'},{'>'},{'d'},{'x'},{'p'},{'^'},{'h'},{'v'}]';
 plotSpec = arrayfun(@ (index) strcat(markerSet{index},lineStyle), ...
-    1:length(markerSet),'UniformOutput',false); % Joints the line specs strings
+1:length(markerSet),'UniformOutput',false); % Joints the line specs strings
 if measSimulated == 0
     colorM = viridis;
 else
@@ -327,11 +328,17 @@ switch metricSel
         end
         disp('Plotting Profile Lines...');
         titRef = 'Profile of Reference Intensity';
-        [refPoints] = f_getPlotCenterCoor([ySize, xSize] ,midX,midY,shiftCart);
-        f_plotLinearProfiles(refMeas,x,y,cartcoord,cartcoord,titRef,xlab,ylab,plotData, radialIntensityRef, plotH,plotV,tol,refPoints,fontSize,lineWidth);
+        [refPoints] = f_getPlotCenterCoor([ySize, xSize] ,midX,midY, ...
+                                           shiftCart);
+        f_plotLinearProfiles(refMeas,x,y,cartcoord,cartcoord,titRef, ...
+        xlab,ylab,plotData, radialIntensityRef, plotH,plotV,tol, ...
+        refPoints,fontSize,lineWidth);
         
         for idxgral = 1:totalImgs
-            f_plotLinearProfiles(expMeas{idxgral},x,y,cartcoord,cartcoord,dynamicProfileTitle{idxgral},xlab,ylab,plotData,radialIntensityMeas{idxgral},plotH,plotV,tol,refPoints,fontSize,lineWidth);
+            f_plotLinearProfiles(expMeas{idxgral},x,y,cartcoord, ...
+            cartcoord,dynamicProfileTitle{idxgral},xlab,ylab,plotData, ...
+            radialIntensityMeas{idxgral},plotH,plotV,tol,refPoints, ...
+            fontSize,lineWidth);
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
         
@@ -344,8 +351,8 @@ switch metricSel
         
         for idxgral = 1:totalImgs
             f_plotEEF(cartcoord,measEEFcurves{idxgral}, ...
-                measNormIntensity{idxgral},dynamicProfileTitle{idxgral},xlab, ...
-                fontSize,lineWidth,colorSet,lineStyle,markerSet);
+            measNormIntensity{idxgral},dynamicProfileTitle{idxgral}, ...
+            xlab,fontSize,lineWidth,colorSet,lineStyle,markerSet);
             fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
         
@@ -353,7 +360,9 @@ switch metricSel
         %% Analysis Figures Plotting -- Throughput
         disp('Plotting Throughput...');
         plotRange = 1:totalTC;
-        plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference, Data, plotSpec,'color', color, 'LineWidth', lineWidth);
+        plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) ...
+        plot(reference, Data, plotSpec,'color', color, 'LineWidth', ...
+        lineWidth);
         legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d'));
         for indexGL = 1:totalGL
             figure('color', 'white');

@@ -34,7 +34,7 @@ refMeas = f_ScaleMatrixData(refMeas,0,1);
 
 %%% 'Experimental' images
 expMeas = arrayfun(@(dataIndex) scaleIntensity(getIntensity(foundFiles.PSFoutputFields(:,:,dataIndex)),maxRefVal), 1:totalImgs,'UniformOutput',false);
-expMeas = flipLinearIndexCell(expMeas,totalTC,totalGL);
+expMeas = f_flipLinearIndexCell(expMeas,totalTC,totalGL);
 
 %%% Data tags
 idxgral = 1; % Init of general index that runs % on the range: [1,totalImgs]

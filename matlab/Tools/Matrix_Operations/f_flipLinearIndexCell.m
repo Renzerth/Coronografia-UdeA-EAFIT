@@ -1,4 +1,4 @@
-function [rearranged] = flipLinearIndexCell(cellData, rowWidth, columnWidth)
+function [rearranged] = f_flipLinearIndexCell(cellData, rowWidth, columnWidth)
 rearranged = cell(1,length(cellData));
 
 for rowIndex =1:rowWidth
