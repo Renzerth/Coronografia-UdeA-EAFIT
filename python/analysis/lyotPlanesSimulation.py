@@ -25,7 +25,7 @@ plotsEnabled = True
 #System Parameters
 #-----------------
         
-Lvor = 10 # Topologic Charge
+Lvor = 6 # Topologic Charge
 TCStep = 1
 NGmin = 2
 NGmax = 10
