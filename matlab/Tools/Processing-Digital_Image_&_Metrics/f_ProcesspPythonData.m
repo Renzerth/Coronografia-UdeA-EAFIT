@@ -252,7 +252,7 @@ metricSel = 12; % Type of metric -- BYPASS VARIABLE
                         % 11: Plot Cropped intensity
                         % 12: Plot Images Mosaic
 
-fontSize = 14; %[pts] Ref: 14
+fontSize = 16; %[pts] Ref: 14
 lineWidth = 1.5; %[pts] Ref: 1.5
 colorSet = [1 0 0 ; 0 1 0; 0.8500 0.3250 0.0980; ...
     0 0 1; 0.9290 0.6940 0.1250; 0 1 1; 0.4940 0.1840 0.5560; ...
@@ -308,9 +308,10 @@ switch metricSel
             hold on; arrayfun(@(indexTC) plotAlotFunc(cartcoord,arrangedEEF{indexTC,indexGL},plotSpec{indexTC}, colorSet(indexTC,:),lineWidth),plotRange); hold off;
             xlabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
             ylabel('Throughput (EEF)','FontSize',fontSize,'FontWeight','bold');  %  xlabel('Radial Distance (\lambda/D)')
-            title(sprintf('Throughput of topological charges at NG = %d',glvect(indexGL)));
+            title(sprintf('Throughput of topological charges at GL = %d',glvect(indexGL)));
             set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','southeast'); grid on; axis square;
             fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); xlim(xLimRange);
+            saveFigure(gcf, gca, [0,0,20,20], sprintf('figure_%d',indexGL), 'svg');
         end
         
     case 4
@@ -321,7 +322,7 @@ switch metricSel
         hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:),plotSpec{index},'color',colorSet(index,:),'LineWidth',lineWidth), plotRange); hold off;
         axis fill; % They used to be too squared!
         title('Power supression of TCs at different phase levels','FontSize',fontSize,'FontWeight','bold');
-        xlabel('Discretization level (NG)','FontSize',fontSize,'FontWeight','bold');
+        xlabel('Discretization level (GL)','FontSize',fontSize,'FontWeight','bold');
         ylabel('EEF in Airy disk','FontSize',fontSize,'FontWeight','bold'); % OLD:  ylabel('EEF at Airy Range');
         legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d')); legend(legendCell); grid on; axis auto;
         set(gca,'FontSize',fontSize,'FontWeight','normal')
@@ -340,19 +341,20 @@ switch metricSel
         disp('Plotting Arranged Relative Contrast...');
         plotRange = 1:totalGL;
         plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference,Data,plotSpec,'color', color, 'LineWidth',lineWidth);
-        legendCell = cellstr(num2str(glvect(plotRange)', 'Coronagraphic: NG=%d')); legendCell = [{'Non-Coronagraphic'}; legendCell];
+        legendCell = cellstr(num2str(glvect(plotRange)', 'Coronagraphic: GL=%d')); legendCell = [{'Non-Coronagraphic'}; legendCell];
         
         for indexTC = 1:totalTC
             figure('color', 'white');
             hold on; plot(cartcoord, radialIntensityRef,plotSpec{1},'color',colorSet(1,:),'LineWidth',lineWidth); set(gca,'yscale','log');
             arrayfun(@(indexGL) plotAlotFunc(cartcoord, arrangedProfiles{indexGL,indexTC},plotSpec{indexGL+1},colorSet(indexGL+1,:),lineWidth),plotRange); hold off;
             xlabel('Angular separation [\lambda/D]','FontSize',fontSize,'FontWeight','bold');
-            ylabel('Relative contrast of the radial intensities [logscale]','FontSize',fontSize,'FontWeight','bold');
-            title(sprintf('Raw Contrast NG Comparison with TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
-            set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on;
+            ylabel('Logarithmic Intensity Contrast','FontSize',fontSize,'FontWeight','bold');
+            title(sprintf('Radial PSF with Discretized Masks with TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
+            set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on; axis square;
             fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log');
             xlim(xLimRange); % 2 Airy disks
             ylim(yLimRange); % Maximum attenuation
+            saveFigure(gcf, gca, [0,0,20,20], sprintf('figure_%d',indexTC), 'svg');
         end
         
     case 7
@@ -367,11 +369,11 @@ switch metricSel
         %% Analysis Figures Plotting -- Logarithmic RMS
         disp('Plotting Logarithmic RMS...');
         plotRange = 1:totalGL;
-        legendCell = cellstr(num2str(glvect(plotRange)', 'Coronagraphic: NG=%d'));
+        legendCell = cellstr(num2str(glvect(plotRange)', 'Coronagraphic: GL=%d'));
         
         figure('color', 'white');
         hold on; arrayfun(@(indexGL) plot(tcvect, arrangedLogRMS(indexGL,:), plotSpec{indexGL},'color',colorSet(indexGL,:),'LineWidth',lineWidth),plotRange);hold off
-        title('Coronagraphic RMS analysis for NG effects','FontSize',fontSize,'FontWeight','bold');
+        title('Coronagraphic RMS analysis for GL effects','FontSize',fontSize,'FontWeight','bold');
         xlabel('Vortex Topological Charge (TC)','FontSize',fontSize,'FontWeight','bold');
         ylabel('Root Mean Square of the Logarithmic SNR','FontSize',fontSize,'FontWeight','bold');
         legend(legendCell); set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on;
@@ -412,7 +414,7 @@ switch metricSel
         saveEnabled = false;
         fontSize = 17;
         titleSet = arrayfun(@(index) sprintf('TC:%d',tcvect(index)),1:totalTC,'UniformOutput',false);
-        yLabelSet = arrayfun(@(index) sprintf('NG:%d',glvect(index)),1:totalGL,'UniformOutput',false);
+        yLabelSet = arrayfun(@(index) sprintf('GL:%d',glvect(index)),1:totalGL,'UniformOutput',false);
         xLabelSet = cell(tcIndx,glIndx);
         
         arrangedCroppedImages = cell(totalTC,totalGL);

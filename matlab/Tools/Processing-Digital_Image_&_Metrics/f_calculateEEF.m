@@ -27,7 +27,7 @@ else
 end
 
 %% Enclosed Energy Factor (EEF)
-energy = cumsum(radialIntensity); % Discrete integration
+energy = cumsum(radialIntensity,'omitnan'); % Discrete integration
 energy  = energy/energy(end); % Same as normalizing with the max
 normIntensity = radialIntensity./max(radialIntensity);
 
