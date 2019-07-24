@@ -300,14 +300,14 @@ metricSel = 12; % Type of metric -- BYPASS VARIABLE
                 % 11: Plot Cropped intensity
                 % 12: Plot Images Mosaic
             
-fontSize = 14; %[pts] Ref: 14
+fontSize = 16; %[pts] Ref: 14
 lineWidth = 1.5; %[pts] Ref: 1.5
 colorSet = [1 0 0 ; 0 1 0; 0.8500 0.3250 0.0980; ...
     0 0 1; 0.9290 0.6940 0.1250; 0 1 1; 0.4940 0.1840 0.5560; ...
     1 0 1; 0.6350 0.0780 0.1840; 0 0 0];
 lineStyle = '-.';
-xLimRange = [0,2];
-yLimRange = [1e-3,1];
+xLimRange = [0,3];
+yLimRange = [1e-6,1];
 markerSet = [{'o'},{'+'},{'s'},{'>'},{'d'},{'x'},{'p'},{'^'},{'h'},{'v'}]';
 plotSpec = arrayfun(@ (index) strcat(markerSet{index},lineStyle), ...
 1:length(markerSet),'UniformOutput',false); % Joints the line specs strings
@@ -410,7 +410,7 @@ switch metricSel
             xlabel('Angular separation [\lambda/D]','FontSize',fontSize,'FontWeight','bold');
             ylabel('Relative contrast of the radial intensities [logscale]','FontSize',fontSize,'FontWeight','bold');
             title(sprintf('Raw Contrast NG Comparison with TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
-            set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on;
+            set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on; axis square;
             fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log');
             xlim(xLimRange); % 2 Airy disks
             ylim(yLimRange); % Maximum attenuation
@@ -490,7 +490,23 @@ switch metricSel
         end
         f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,colorM,fontSize,saveEnabled,abs_ang, enableAxis) 
         
-    case 13 % WON'T BE USED
+    case 13
+        %% Analysis Figures Plotting -- Logarithmic RMS GL Improvement
+        disp('Plotting Logarithmic RMS...');
+        plotRange = 1:1:totalTC;
+        legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d'));
+        relativePercentage = @(matrixData) (matrixData(:,:) - matrixData(1,:) )./matrixData(1,:)*100;
+        GLlmprovement = relativePercentage(arrangedLogRMS);
+
+        figure('color', 'white');
+        hold on; arrayfun(@(indexTC) plot(glvect, GLlmprovement(:,indexTC), plotSpec{indexTC},'color',colorSet(indexTC,:),'LineWidth',lineWidth),plotRange);hold off
+        title('Averaged Gray Level Improvement Effect','FontSize',fontSize,'FontWeight','bold');
+        xlabel('Discretization level','FontSize',fontSize,'FontWeight','bold');
+        ylabel('LRMS Improvement [%]','FontSize',fontSize,'FontWeight','bold');
+        legend(legendCell,'Location','northeast'); set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on;
+        saveFigure(gcf, gca, [0,0,20,20], sprintf('Logarithmic_RMS_%d',1), 'svg');
+        
+    case 14 % WON'T BE USED
         %% Analysis Figures Plotting -- Mean Squared Error
         disp('Plotting Mean Squared Error...');
         fprintf('Underconstruction... %d/%d\n\r', 0, 0);

@@ -36,20 +36,20 @@ for i=1:subplotsx
         ax=axes('position',sub_pos{i,ii},'XGrid','off','XMinorGrid','off','FontSize',fontsizeAx,'Box','on','Layer','top','FontWeight','bold');
         imagesc(xRefVector,yRefVector,dataArrange{i,ii}); colormap(customMap);
         cbarHandler=colorbar; limVals=get(cbarHandler,'Limits');
-        if abs_ang == 1
-            tol2 = 0.2*limVals(2); % Colorbar custom tick adjustment
-            set(cbarHandler,'Ticks',linspace(limVals(1)+tol2,limVals(2)-tol2,2));
-            % NO: ticksLabels = cellstr(num2str(limVals', '%1.0e')); SCIENTIFIC
-            ticksLabels = cellstr(num2str(limVals', '%1.3f'));
-            set(cbarHandler,'XTickLabel',ticksLabels);
-        else
-            yticks([-0.8 0 0.8]); xticks([-0.8 0 0.8]);
-            xticklabels({'-1','0','1'});yticklabels({'-1','0','1'});
-            tol2 = 0.1*pi; % Colorbar custom tick adjustment
-            caxis([-pi,pi]);
-            set(cbarHandler,'Ticks',linspace(-pi+tol2,pi-tol2,2));
-            set(cbarHandler,'TickLabels',{'-\pi' '\pi'}); % For the masks
-        end
+        %         if abs_ang == 1
+        tol2 = 0.2*limVals(2); % Colorbar custom tick adjustment
+        set(cbarHandler,'Ticks',linspace(limVals(1)+tol2,limVals(2)-tol2,2));
+        % NO: ticksLabels = cellstr(num2str(limVals', '%1.0e')); SCIENTIFIC
+        ticksLabels = cellstr(num2str(limVals', '%1.3f'));
+        set(cbarHandler,'XTickLabel',ticksLabels);
+        %         else
+        %             yticks([-0.8 0 0.8]); xticks([-0.8 0 0.8]);
+        %             xticklabels({'-1','0','1'});yticklabels({'-1','0','1'});
+        %             tol2 = 0.1*pi; % Colorbar custom tick adjustment
+        %             caxis([-pi,pi]);
+        %             set(cbarHandler,'Ticks',linspace(-pi+tol2,pi-tol2,2));
+        %             set(cbarHandler,'TickLabels',{'-\pi' '\pi'}); % For the masks
+        %         end
         
         if ii==subplotsy
             title(titleSet{i},'FontSize',fontSizeTit,'FontWeight','bold');
@@ -79,7 +79,7 @@ axesHandles = findobj(get(gcf,'Children'), 'flat','Type','axes');
 axis(axesHandles,'square');
 
 if isa(enableAxis,'logical') && ~enableAxis
-  axis(axesHandles,'off')
+    axis(axesHandles,'off')
 end
 
 %% Saving eps with matlab and then producing pdf and png with system commands

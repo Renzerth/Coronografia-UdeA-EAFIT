@@ -4,10 +4,10 @@ tit = 'Log SNR';
 tit1 = strcat(tit,{' '},titprof);
 %% Plot of the Logarithmic SNR
 figure('color','white');
-semilogx(cartcoord,abs(SNR),'LineWidth',lineWidth); hold on
+semilogx(cartcoord,SNR,'LineWidth',lineWidth); hold on
 
 xlabel(xlab,'FontSize',fontSize,'FontWeight','bold');
-ylabel('SNR','FontSize',fontSize,'FontWeight','bold');
+ylabel('Logarithmic SNR','FontSize',fontSize,'FontWeight','bold');
 title(tit1,'FontSize',fontSize,'FontWeight','bold'); grid on;
 set(gca,'FontSize',fontSize,'FontWeight','normal');
 axis square;

@@ -320,12 +320,13 @@ switch metricSel
         plotRange = 1:totalTC;
         figure('color', 'white');
         hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:),plotSpec{index},'color',colorSet(index,:),'LineWidth',lineWidth), plotRange); hold off;
-        axis fill; % They used to be too squared!
+        % axis fill; % They used to be too squared!
         title('Power supression of TCs at different phase levels','FontSize',fontSize,'FontWeight','bold');
         xlabel('Discretization level (GL)','FontSize',fontSize,'FontWeight','bold');
         ylabel('EEF in Airy disk','FontSize',fontSize,'FontWeight','bold'); % OLD:  ylabel('EEF at Airy Range');
         legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d')); legend(legendCell); grid on; axis auto;
-        set(gca,'FontSize',fontSize,'FontWeight','normal')
+        xlim([2,12]); set(gca,'FontSize',fontSize,'FontWeight','normal')
+        saveFigure(gcf, gca, [0,0,20,20], 'EEF_power_suppression', 'svg');
         
     case 5
         %% Analysis Figures Plotting -- Relative Contrast
@@ -376,7 +377,8 @@ switch metricSel
         title('Coronagraphic RMS analysis for GL effects','FontSize',fontSize,'FontWeight','bold');
         xlabel('Vortex Topological Charge (TC)','FontSize',fontSize,'FontWeight','bold');
         ylabel('Root Mean Square of the Logarithmic SNR','FontSize',fontSize,'FontWeight','bold');
-        legend(legendCell); set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on;
+        legend(legendCell,'Location','southeast'); set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on;
+        saveFigure(gcf, gca, [0,0,20,20], sprintf('Logarithmic_RMS_%d',1), 'svg');
         
     case 9
         %% Analysis Figures Plotting -- Attenuation Ratios
@@ -427,7 +429,23 @@ switch metricSel
         
         f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,viridis,fontSize,saveEnabled)
         
-    case 13 % WON'T BE USED
+    case 13
+        %% Analysis Figures Plotting -- Logarithmic RMS
+        disp('Plotting Logarithmic RMS...');
+        plotRange = 1:1:totalTC;
+        legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d'));
+        relativePercentage = @(matrixData) (matrixData(:,:) - matrixData(1,:) )./matrixData(1,:)*100;
+        GLlmprovement = relativePercentage(arrangedLogRMS);
+        
+        figure('color', 'white');
+        hold on; arrayfun(@(indexTC) plot(glvect, GLlmprovement(:,indexTC), plotSpec{indexTC},'color',colorSet(indexTC,:),'LineWidth',lineWidth),plotRange);hold off
+        title('Averaged Gray Level Improvement Effect','FontSize',fontSize,'FontWeight','bold');
+        xlabel('Discretization level','FontSize',fontSize,'FontWeight','bold');
+        ylabel('LRMS Improvement [%]','FontSize',fontSize,'FontWeight','bold');
+        legend(legendCell,'Location','northeast'); set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on;
+        saveFigure(gcf, gca, [0,0,20,20], sprintf('Logarithmic_RMS_%d',1), 'svg');
+        
+    case 14 % WON'T BE USED
         %% Analysis Figures Plotting -- Mean Squared Error
         disp('Plotting Mean Squared Error...');
         fprintf('Underconstruction... %d/%d\n\r', 0, 0);
