@@ -117,13 +117,17 @@ class vortexProfiler:
         if plotType in 'angle':
             for index, ax in enumerate(axes.flat,0):
                 ax.imshow((np.angle(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])),cmap='gray')
+                ax.set_aspect('equal', 'box')
                 
         elif plotType in 'intensity':
             for index, ax in enumerate(axes.flat,0):
                 ax.imshow((np.abs(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])**2),cmap='gray')
+                ax.set_aspect('equal', 'box')
+                
         elif plotType in 'log':
             for index, ax in enumerate(axes.flat,0):
                 ax.imshow((np.log10(np.abs(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])**2)))
+                ax.set_aspect('equal', 'box')
         
         f.tight_layout()
         f.subplots_adjust(left=0.15, top=0.95)

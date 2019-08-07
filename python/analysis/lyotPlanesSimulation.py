@@ -87,7 +87,7 @@ PSFoutputFields = vortexTools.propagateField(allocatedMatrixLyotTrunc,'backward'
 #-----
 
 if plotsEnabled:
-    scaleRange = 0.35 # 1 for no zoom -> 0 for one pixel zoom
+    scaleRange = 0.22 # 1 for no zoom -> 0 for one pixel zoom
     pixelShift = 1-(vortexTools.spaceSamples % 2) # Center graph if even matrix size is used
     viewRangeN = int((1 - scaleRange)*vortexTools.halfSamples) + pixelShift
     viewRangeM = int((1 + scaleRange)*vortexTools.halfSamples) + pixelShift
@@ -96,6 +96,7 @@ if plotsEnabled:
     rows = ['NG: {}'.format(row) for row in GLRanges]
     
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, SLMPMasks, 'angle')
+    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, SLMPlanes, 'angle')
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixLyot, 'intensity')
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixLyotTrunc, 'intensity')
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, PSFoutputFields, 'log')
