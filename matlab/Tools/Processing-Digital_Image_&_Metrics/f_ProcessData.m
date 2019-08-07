@@ -180,7 +180,7 @@ disp('Done.');
 
 %% Data Cropping for view range
 if measSimulated == 0
-    rangeFactor = 1.5; % Ref: 1.5 Number of Airy disks (Lambda/D times from
+    rangeFactor = 2; % Ref: 1.5 Number of Airy disks (Lambda/D times from
                        % the center)
    Diameter = 2*aproxRadius;
 else
@@ -499,7 +499,7 @@ switch metricSel
         %%  Analysis Figures Plotting -- Plot Images Mosaic
         disp('Plotting Images Mosaic...');
         saveEnabled = false;
-        fontSize = 17;
+        fontSize = 15;
         titleSet = arrayfun(@(index) sprintf('TC:%d',tcvect(index)),1:totalTC,'UniformOutput',false);
         yLabelSet = arrayfun(@(index) sprintf('NG:%d',glvect(index)),1:totalGL,'UniformOutput',false);
         xLabelSet = cell(tcIndx,glIndx);
@@ -508,15 +508,14 @@ switch metricSel
         for tcIndx = 1:totalTC
             for glIndx = 1:totalGL
                 idxgral = glIndx + (tcIndx - 1)*totalGL; % Reversed width/index
-                arrangedCroppedImages{tcIndx,glIndx}  = croppedMeasData{idxgral};
+                arrangedCroppedImages{tcIndx,glIndx} = croppedMeasData{idxgral};
             end
         end
         if measSimulated == 0
-            abs_ang = 1; % Intensities in the colormap
+            f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,colorM,fontSize,saveEnabled, enableAxis) 
         else
-            abs_ang = 2; % Phase in the colormap
+            f_plotMosaic_angle(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,colorM,fontSize,saveEnabled,enableAxis) 
         end
-        f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,colorM,fontSize,saveEnabled,abs_ang, enableAxis) 
         
     case 14
         %% Analysis Figures Plotting -- Logarithmic RMS GL Improvement
