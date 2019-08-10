@@ -15,7 +15,7 @@ meas = 1; % Measure: yes (1) or no (0)
                        % tcvect = [1 2 0]; glvect = [255]; 
     % if measSimulated = 1 -> measDebug will be 0 
     % If meas = 1 -> all the figures will be closed before starting it
-    measDebug = 0; % Debugging before actually measuring. Displays the 
+    measDebug = 1; % Debugging before actually measuring. Displays the 
                    % default phase mask and shots a photo with the camera
                    % Works if  measSimulated = 0. If it is active, the
                    % program will set proc = 0
@@ -80,7 +80,7 @@ plotMask = 2; % Allows to plot the mask:
 %  -Principal screen: MATLAB scrnIdx(1); Windows(2); AnyDesk(2)
 %  -Pluto screen: MATLAB scrnIdx(3); Windows(1); Anydesk(1)
 %  -LC2002 screen: MATLAB scrnIdx(2); Windows(3); Anydesk(0)
-slm = 'Pluto'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
+slm = 'LC2002'; % 'Pluto' (reflection); 'LC2002' (transmission); 'No-SLM'
 switch slm
   case 'Pluto'
     %% SLM parameters (reflection)
@@ -169,7 +169,7 @@ camera = 'DMK23U445'; % PSF is needed for the 2019's metrics (meanwhile)
 switch camera  
   case 'DMK42BUC03' % Lyot plane % CMOS
     cameraID = 2;
-    exposure = 1/137; % Range: [1/1e4,1]
+    exposure = 1/500; % Range: [1/1e4,1]
     fps = [];
     format = 'Y800 (1280x960)';
     cameraPlane =  'Lyot';
@@ -177,7 +177,7 @@ switch camera
  
   case 'DMK23U445' % PSF plane % CCD 
     cameraID = 1;
-    exposure = 1/129; % Range: [1.0000e-04 300]; DefaultValue: 0.0333
+    exposure = 1/436; % Range: [1.0000e-04 300]; DefaultValue: 0.0333
     %fps = '15'; % Frames per second
     fps = '10.00'; % '15.00', '10.00', ' 7.50', ' 5.00' ' 3.75', 
     format = 'Y800 (1280x960)'; 
@@ -207,7 +207,7 @@ loghist = 0; % (1) logscale; (0): normal scale truncated at 1000 counts
 %% Parameters: Laguerre-Gauss, spiral phase mask and general masks
 L = 0.6328; % Laser wavelength [um]. Used in Zernike and VPL masks (also 
             % used in the data processing)
-tc = 3; % Topological charge (integer bigger or equal to one)
+tc = 10; % Topological charge (integer bigger or equal to one)
         % tc = Azimuthal index m for LG. Fractional tc result on phase
         % patterns of Hermite-Gauss (maybe just a coincidence)
         % Note: only applies when meas and proc are both zero
@@ -352,13 +352,13 @@ dataformat = '.bmp'; % Default: .bmp (not too heavy)
 
 % Gray level possibilities:
 % glvect = 2:10; % Small gray levels
-% glvect = [12 16 24 32 64 128 256]; % whole span
+glvect = [12 16 24 32 64 128 256]; % whole span
 
 % Always used:
 tcvect = 1:10; % Topological charges to be measured [integers] 
 
 % Old (used on 12/04/2019):
-glvect = round(linspace(2,10,9)); 
+% glvect = round(linspace(2,10,9)); 
 % glvect = [2 16 24 28 36 56 128 256]; % Whole span
 % glvect = round(linspace(2,255,9)); % Whole span also
 
