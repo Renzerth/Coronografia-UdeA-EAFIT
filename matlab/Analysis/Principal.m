@@ -21,6 +21,8 @@
 %  -The Zernike polynomials are always used with a square size and they 
 %   stop being almost-orthogonal if the pupil gets truncated (non-circular 
 %   anymore)
+%  -It is possible to load previous measurements of windows in a linux or
+%  viceversa: with loadMeas = 3
 %
 % Bugs:
 %  -When the ticks of -pi, ..., pi are shown, sometimes the may move
@@ -34,7 +36,6 @@
 %  coherently, restart MATLAB
 %  -For high resolution monitors, sometimes the figure bar may appear but
 %  this presents no problem for the mask projection
-%  -It is not possible to load previous measurements of windows in a linux
 %  MATLAB or vice versa, due to the incompatibility of the "pathSep"
 %  -Errors or warnings may appear when you have for example a folder
 %  "date-meas_2", but you don't have the folder "date-meas_1" and
@@ -48,7 +49,7 @@
 %%% PHASE MASK GENERATION WITH SLMs, VORTEX ACQUISITION VIA CAMERAS AND 
 %%% PROCESSING WITH CORONAGRAPHIC METRICS
 %% Parameters and initialization
-%clc; clear; close all; % Initialization
+%clc; clear; close all; % Initialization (SOMETIMES USED)
 Parameters; % Adds to the algorithm all the needed parameters
 % open Parameters; % Keep open always
 
@@ -294,18 +295,17 @@ end % End of measurements
 % It is possible to measure and then process
 % It is also possible to load a measurement and process it
 if proc == 1% && measSim == 0
- if ~exist('refmeasfullpath','var')
+  if ~exist('refmeasfullpath','var')
      error(['"refmeasfullpath" does not exist, no previous' ...
             ' measurement was found']);
- end
- % Metric of the degree of extintion applied
- [xangL_Dexpairy,yangL_Dexpairy,radialIntensityRef,radialIntensityMeas, ...
- cartcoord,refEEFcurve,resNormIntensity,measEEFcurves,measNormIntensity,...
- logSNR,attenuationRatio,EEFattenuationRatio,refIntensityGradient, ...
- measIntensityGradient] = f_ProcessData(measfullpath,refmeasfullpath, ...
- ProcessedDir,dataDir,pathSep,infoDelim,dataformat,imgformat, ...
- cameraPlane,totalImgs,AiryFactor,metricSel,metricProfile,beepSound,L, ...
- NA,PP,mainLyotRadius,measSimulated,glvect,tcvect);
+  end
+  % Metric of the degree of extintion applied
+  [x,y,radialIntensityRef,radialIntensityMeas,cartcoord,refEEFcurve, ...
+  refNormIntensity,measEEFcurves,measNormIntensity,logSNR, ...
+  attenuationRatio,EEFattenuationRatio,refIntensityGradient, ...
+  measIntensityGradient] = f_ProcessData(measfullpath,refmeasfullpath, ...
+  ProcessedDir,dataDir,pathSep,totalImgs,metricProfile, beepSound,L,NA, ...
+  PP,measSimulated,glvect,tcvect);
 end
 
 
