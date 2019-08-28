@@ -1,4 +1,4 @@
-function [] = f_ProcesspPythonData()
+function [] = f_ProcessPythonData()
 % Inputs:
 
 % Outputs:
