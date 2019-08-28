@@ -39,6 +39,9 @@ binaryData = imopen(binaryData,strel('disk',6)); % Binary shape must fill
 regionInfo = regionprops(binaryData,'Centroid','area', ...
                                     'MajorAxisLength','MinorAxisLength');
 [~, sortIndexes] = sort(cat(1,regionInfo.Area), 'descend');
+if isempty(sortIndexes)
+  error('No circular intensity was registered by the camera.');
+end
 mainIndex = sortIndexes(1);
 blobRadius = mean([regionInfo(mainIndex).MajorAxisLength, ...
                    regionInfo(mainIndex).MinorAxisLength],2)/2;
