@@ -1,7 +1,7 @@
 function f_plotLinearProfiles(dataArray,x,y,cartcoordX,cartcoordY,tit,xlab,ylab,plotData,profileData, plotH,plotV,tol,refPoints,fontSize,lineWidth)
 %% Plot lines reference
-Vy = refPoints(1,:); % Vertical y components: (yi,yf)
-Hx = refPoints(2,:); % Horizontal x components: (xi,xf)
+Hx = refPoints(1,:); % Horizontal x components: (xi,xf)
+Vy = refPoints(2,:);  % Vertical y components: (yi,yf)
 Hy = refPoints(3,:); % Horizontal y components: (yi,yf)
 Vx = refPoints(4,:); % Vertical x components: (xi,xf)
 

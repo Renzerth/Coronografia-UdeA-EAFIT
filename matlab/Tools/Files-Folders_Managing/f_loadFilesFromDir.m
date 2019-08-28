@@ -15,8 +15,8 @@ function [foundFiles] = f_loadFilesFromDir(fileFormat)
 folder_name = uigetdir;
 if ~ischar(folder_name); error('Folder was not specified.'); end
 FolderDataCll = struct2cell(dir(fullfile(folder_name, ['*',fileFormat])));
-FileList = FolderDataCll(1,1:end)';
-Numfiles = length(FileList);
+FileList = FolderDataCll(1:end,1:end)';
+Numfiles = size(FileList,1);
 %% File existance verification
 if Numfiles==0
     error('No files found');
@@ -25,6 +25,6 @@ end
 foundFiles = cell(1,Numfiles);
 for index=1:Numfiles
     file_location = strcat(folder_name,'/',FileList{index,1});
-    foundFiles = load(file_location);
+    foundFiles{1,index} = load(file_location);
 end
 end
