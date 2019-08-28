@@ -24,6 +24,7 @@ class vortexProfiler:
         self.x = []
         self.rho = []
         self.phi = []
+        self.phiB = []
         self.apertureRadius = radius # Apperture and Lyot stop radius
         self.spaceSamples = []
         self.halfSamples = []
@@ -37,13 +38,14 @@ class vortexProfiler:
     def computeSpace(self):
         self.spaceSamples = 2**self.samplingPower #2**12=4096 #number of samples
         self.spaceSize = self.spaceSamples*self.spatialStep #100. # Plane size in mm
-        self.halfSamples = int(np.fix(self.spaceSamples/2))
+        self.halfSamples = int(np.floor((self.spaceSamples+1)/2))
         self.halfSize = (self.spaceSize/2)
         
         self.x = np.arange(-self.halfSize,self.halfSize,self.spatialStep)
         self.X, self.Y = np.meshgrid(self.x,self.x) # Squared space is asumed
         self.rho = np.sqrt(self.X**2 + self.Y**2)
-        self.phi = np.arctan2(self.Y, self.X)
+        self.phiB = np.arctan2(self.Y, self.X)
+        self.generateCSpiral()
         
         return self
             
@@ -59,6 +61,26 @@ class vortexProfiler:
         window = np.exp(-(self.rho/sigma)**2)
         return window
     
+    def generateCSpiral(self):
+        m = self.spaceSamples # Row Size
+        n = self.spaceSamples # Column Size
+        
+        Row = np.arange(0,m,1) - m/2 # All Rows
+        
+        Column1 = np.arange(0,n/2+1,1) - n/2 # First left half
+        Column2 = np.arange(n/2,n,1) - n/2 # Last right half
+        
+        x1,y1 = np.meshgrid(Column1,Row)
+        th1 = np.arctan(y1/x1) + np.pi/2 # First Half Angular transition
+
+        x2,y2 = np.meshgrid(Column2,Row)
+        th2 = np.arctan(y2/x2) + np.pi + np.pi/2 # Last Half Angular transition
+        
+        phaseMask = np.exp(1j*np.concatenate((th1[:,0:(n//2)],th2[:,0:n-1]),axis=1))
+        phaseMask[self.halfSamples,self.halfSamples] = 0
+        self.phi = np.angle(phaseMask)
+        return self
+    
     def analyzeSpectrum(self,field):
         Ef = np.fft.fft2(field)
         Ef = Ef*self.spatialStep**2
@@ -69,13 +91,17 @@ class vortexProfiler:
         Ei = Ei*1.0/self.spaceSize**2
         return Ei
 
-    def SPP(self,Lvor,NG):
-        phi = Lvor*(self.phi + np.pi) # Matrix with entries within [0:2pi-step]
+    def discretizeSPP(self,TC,NG):
+        phi = TC*(self.phi + np.pi) # Matrix with entries within [0:2pi-step]
         phaseVor = np.mod(phi, 2*np.pi) # 256-levels discretization
         
         phi = np.floor(phaseVor/(2*np.pi/NG)) # Matrix with whole-numbers between 0 and NG-1 
         phi = phi/NG #phi3 is phi2 but normalized
-        return np.fft.fftshift(np.exp(1j*(2*np.pi*phi - np.pi)))
+        vortexMask = np.exp(1j*(2*np.pi*phi - np.pi))
+#        rr = np.isnan(np.angle(vortexMask))
+#        np.where(rr == True)
+        
+        return np.fft.fftshift(vortexMask)
     
     def prepareFFTW(self,volumeSize):
         pyfftw.interfaces.cache.disable()

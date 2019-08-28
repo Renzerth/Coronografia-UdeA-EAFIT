@@ -15,6 +15,7 @@ from tools.vortexTools import vortexProfiler
 
 import numpy as np
 from scipy.io import savemat
+np.seterr(divide='ignore', invalid='ignore') # avoid np.arctan(0/0) notification
         
 #%%--------------
 #PROGRAM SETTINGS
@@ -27,8 +28,8 @@ plotsEnabled = True
         
 Lvor = 6 # Topologic Charge
 TCStep = 1
-NGmin = 2
-NGmax = 10
+NGmin = 256
+NGmax = 256
 NG = 4
 
 spatialSampling = 20.1e-3 # SLM Pixel Pitch (mm)
@@ -44,8 +45,9 @@ vortexTools = vortexProfiler(dx=spatialSampling,p=10,radius=apertureRadius)
 
 TCRanges = np.arange(1,Lvor+1,TCStep)
 
-GLRanges = np.fix(np.linspace(NGmin,NGmax,NG)).astype('int')
+#GLRanges = np.fix(np.linspace(NGmin,NGmax,NG)).astype('int')
 #GLRanges = np.array([12,16,24,32,64,128,256])
+GLRanges = np.array([32,64,128,256])
 
 TCSize = len(TCRanges)
 GLSize = len(GLRanges)
@@ -68,8 +70,10 @@ for TCIndex in range(0,TCSize):
     for grayIndex in range(0,GLSize):
 
         singleIndex = TCIndex + grayIndex*(TCSize)
-        SLMPMasks[:,:,singleIndex] = vortexTools.SPP(TCRanges[TCIndex],GLRanges[grayIndex])
-        SLMPlanes[:,:,singleIndex] = SLMInput*SLMPMasks[:,:,singleIndex]
+        SLMPMasks[:,:,singleIndex] = vortexTools.discretizeSPP(TCRanges[TCIndex],GLRanges[grayIndex])
+#        SLMPMasks[:,:,singleIndex] = np.exp(1j*vortexTools.phiB*TCRanges[TCIndex])
+#        SLMPMasks[:,:,singleIndex][vortexTools.halfSamples,vortexTools.halfSamples] = 0
+        SLMPlanes[:,:,singleIndex] = SLMInput*(SLMPMasks[:,:,singleIndex])
 #%%----------------------
 #Generate PSF Reference
 #------------------------
@@ -87,7 +91,7 @@ PSFoutputFields = vortexTools.propagateField(allocatedMatrixLyotTrunc,'backward'
 #-----
 
 if plotsEnabled:
-    scaleRange = 0.22 # 1 for no zoom -> 0 for one pixel zoom
+    scaleRange = 0.05 # 1 for no zoom -> 0 for one pixel zoom
     pixelShift = 1-(vortexTools.spaceSamples % 2) # Center graph if even matrix size is used
     viewRangeN = int((1 - scaleRange)*vortexTools.halfSamples) + pixelShift
     viewRangeM = int((1 + scaleRange)*vortexTools.halfSamples) + pixelShift
@@ -99,15 +103,15 @@ if plotsEnabled:
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, SLMPlanes, 'angle')
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixLyot, 'intensity')
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixLyotTrunc, 'intensity')
-    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, PSFoutputFields, 'log')
+    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, PSFoutputFields, 'intensity')
 #%%-------------
 #Save Data Files
 #---------------
-matlaborpyton = 1 # 1: MATLAB; 2: Python
+matlaborpyton = 0 # 1: MATLAB; 2: Python
 mdict={'PSFoutputFields':PSFoutputFields,'PSFreference':PSFreference,'TCRanges':TCRanges,'GLRanges':GLRanges}
 saveDir = '../data/Simulations/PSFs'
 
 if matlaborpyton == 1:
     savemat(saveDir + '.mat',mdict)
-else:
+elif matlaborpyton == 2:
     np.save(saveDir + '.npy',mdict)
