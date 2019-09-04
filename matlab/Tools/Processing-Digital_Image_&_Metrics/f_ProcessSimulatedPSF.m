@@ -1,10 +1,9 @@
-function [] = f_ProcessPythonData()
+function [] = f_ProcessSimulatedPSF()
 % Inputs:
 
 % Outputs:
 
-% Post-processing of the data (application of the metric of the degree of
-% extintion)
+% Post-processing of the data (application of the metric of the degree of extintion)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% INITIALIZATION
@@ -15,8 +14,8 @@ fileFormat = '.mat';
 % 4 variables are loaded in the structure:
 
 %%% Experiment information
-tcvect = foundFiles.TCRanges;
-glvect = foundFiles.GLRanges;
+tcvect = 1:foundFiles{1}.maxTC;
+glvect = foundFiles{1}.GLRanges;
 
 totalGL = length(glvect);
 totalTC = length(tcvect);
@@ -24,17 +23,15 @@ totalImgs = totalGL*totalTC;
 measInfo = cell(1,totalImgs);
 
 %%% Processing Handlers
-getIntensity = @(complexField) abs(fftshift(complexField)).^2;
 scaleIntensity = @(intensity,maxVal) f_ScaleMatrixData(intensity,0,max(intensity(:))/maxVal);
 
 %%%  Loading the reference measurement
-refMeas = getIntensity(foundFiles.PSFreference);
+refMeas = foundFiles{1}.PSFreference;
 maxRefVal = max(refMeas(:));
 refMeas = f_ScaleMatrixData(refMeas,0,1);
 
-%%% 'Experimental' images
-expMeas = arrayfun(@(dataIndex) scaleIntensity(getIntensity(foundFiles.PSFoutputFields(:,:,dataIndex)),maxRefVal), 1:totalImgs,'UniformOutput',false);
-expMeas = f_flipLinearIndexCell(expMeas,totalTC,totalGL);
+%%% Simulated intensities
+expMeas = cellfun(@(intensities) scaleIntensity(intensities,maxRefVal), foundFiles{1}.PSFplaneIntensities,'UniformOutput', false);
 
 %%% Data tags
 idxgral = 1; % Init of general index that runs % on the range: [1,totalImgs]
@@ -58,9 +55,7 @@ midX = aproxCenter(2);
 midY = aproxCenter(1);
 
 %% Cartesian coordinates with pixel units
-% ORIGINAL
 [ySize, xSize] = size(refMeas); % All images assumed of the same size as
-% the refmeas
 halfX = xSize/2;
 halfY = ySize/2;
 
@@ -69,7 +64,7 @@ halfY = ySize/2;
 centerShiftX = (midX-halfX);
 centerShiftY = (midY-halfY);
 
-% Coordinates' origin set to the spot's center % 
+% Coordinates' origin set to the spot's center %
 xpixcenterd = (-halfX:halfX-1) - (centerShiftX - 1); % The x center is shifted 1
 ypixcenterd = (-halfY:halfY-1) - (centerShiftY - 1); % The y center is shifted 1
 
@@ -77,6 +72,7 @@ ypixcenterd = (-halfY:halfY-1) - (centerShiftY - 1); % The y center is shifted 1
 % Pixel's size is scalled to the experimental spot's size
 x = xpixcenterd/(aproxRadius);
 y = ypixcenterd/(aproxRadius);
+
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,56 +84,25 @@ shiftCart = [0,0]; % midX,midY already account for the shift
 
 %%% Find the reference profile
 disp('Calculating Profiles...');
-[xrefProx,yrefProf,HprofRef,VprofRef,~,~] = f_makeImageProfile(x,y,midX,...
-    midY,refMeas, shiftCart, oneSideProfile);
+[xrefProx,yrefProf,~,~,~,~] = f_makeImageProfile(x,y,midX,midY,refMeas, shiftCart, oneSideProfile);
 flippedAproxCenter = fliplr(aproxCenter); % [X,Y] Format
-[averRefProfile] = f_getAverageRadialProfile(refMeas,[ySize, xSize], ...
-    flippedAproxCenter);
+[radialIntensityRef] = f_getAverageRadialProfile(refMeas,[ySize, xSize],flippedAproxCenter);
 
 %% Profile of the measurements
-Hprofmeas = cell(1,totalImgs);
-Vprofmeas = cell(1,totalImgs);
-averMeasProfile = cell(1,totalImgs);
+radialIntensityMeas = cell(1,totalImgs);
 
 for idxgral = 1:totalImgs
-    [~,~,Hprofmeas{idxgral},Vprofmeas{idxgral},~,~] = ...
-        f_makeImageProfile(x,y,midX,midY,expMeas{idxgral},shiftCart, ...
-        oneSideProfile);
-    [averMeasProfile{idxgral}] = f_getAverageRadialProfile(...
+    [radialIntensityMeas{idxgral}] = f_getAverageRadialProfile(...
         expMeas{idxgral},[ySize, xSize],flippedAproxCenter);
-    averMeasProfile{idxgral}(isnan(averMeasProfile{idxgral})) = 0;
+    radialIntensityMeas{idxgral}(isnan(radialIntensityMeas{idxgral})) = 0;
 end
 
-%% Measurement profile choice
-metricProfile = 3;
-switch metricProfile
-    case 1 % Vertical profile
-        radialIntensityRef = VprofRef;
-        radialIntensityMeas = Vprofmeas; % One-sided
-        cartcoord = yrefProf;
-        titprof = '(vertical profile)';
-        
-    case 2 % Horizontal profile
-        radialIntensityRef = HprofRef;
-        radialIntensityMeas = Hprofmeas; % One-sided
-        cartcoord = xrefProx;
-        titprof = '(horizontal profile)';
-        
-    case 3 % Radial averaged profile (ImageAnalyst)
-        radialIntensityRef = averRefProfile;
-        radialIntensityMeas = averMeasProfile;
-        trimRange = 1:min(numel(xrefProx),numel(yrefProf));
-        radialAverageDist = mean([xrefProx(trimRange);
-            yrefProf(trimRange)]);
-        cartcoord = interp1(trimRange,radialAverageDist,1: ...
-            length(averRefProfile)); % Spatial size interpolation range
-        aproxRadius = find(cartcoord==1); % Airy range (corresponding
-        % pixel) of interpolated data;
-        titprof = '(radial average profile)';
-        
-    otherwise
-        error('"metricProfile" must be either 1 or 2');
-end
+%% Measurement profile choice Radial averaged profile 
+trimRange = 1:min(numel(xrefProx),numel(yrefProf));
+radialAverageDist = mean([xrefProx(trimRange); yrefProf(trimRange)]);
+cartcoord = interp1(trimRange,radialAverageDist,1:length(radialIntensityRef)); % Spatial size interpolation range
+aproxRadius = find(cartcoord==1); % Airy range (corresponding pixel) of interpolated data;
+titleProf = '(radial average profile)';
 disp('Done.');
 
 %% Data Cropping for view range
@@ -149,11 +114,11 @@ for idxgral = 1:totalImgs
     [croppedMeasData{idxgral}] = f_cropPSFrange(expMeas{idxgral},cropRange);
 end
 
+
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% Metric application
-% Here, all the metrics are calculated but on a later stage only some are
-% plotted
+% Here, all the metrics are calculated but on a later stage only some are plotted
 
 %% Processsing of profiles -- Encircled Energy Factor metric
 disp('Calculating Encircled Energy Factor...');
@@ -165,7 +130,7 @@ dynamicProfileTitle = cell(1,totalImgs);
 for idxgral = 1:totalImgs
     [measEEFcurves{idxgral}, measNormIntensity{idxgral}] = ...
         f_calculateEEF(radialIntensityMeas{idxgral});
-    dynamicProfileTitle{idxgral} = sprintf('of %s: %s',titprof, ...
+    dynamicProfileTitle{idxgral} = sprintf('of %s: %s',titleProf, ...
         measInfo{idxgral});
 end
 disp('Done.');
@@ -221,7 +186,7 @@ disp('Done.');
 %% Intensity profile gradient
 disp('Calculating Intensity Gradient...');
 measIntensityGradient = cell(1,totalImgs);
-refIntensityGradient = gradient(radialIntensityRef) ;
+% refIntensityGradient = gradient(radialIntensityRef) ;
 
 for idxgral = 1:totalImgs
     measIntensityGradient{idxgral} = gradient( ...
@@ -242,19 +207,7 @@ plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 1;
 plotV = 0;
 enableAxis = true;
-metricSel = 12; % Type of metric -- BYPASS VARIABLE
-                        % 1: Profiles
-                        % 2: EEF: Encircled Energy Factor
-                        % 3: Throughput (arranged EEF)
-                        % 4: Power Supression
-                        % 5: Relative contrast
-                        % 6: Relative contrast (arranged)
-                        % 7: Logarithmic SNR
-                        % 8: Logarithmic RMS (RMS of logarithmic SNR) [arranged]
-                        % 9: Attenuation Ratios
-                        % 10: Gradient of Intensity
-                        % 11: Plot Cropped intensity
-                        % 12: Plot Images Mosaic
+metricSel = 13; % Type of metric -- BYPASS VARIABLE
 
 fontSize = 16; %[pts] Ref: 14
 lineWidth = 1.5; %[pts] Ref: 1.5
@@ -290,8 +243,8 @@ switch metricSel
     case 2
         %% Analysis Figures Plotting -- Encircled Energy Factor metric
         disp('Plotting Encircled Energy Factor...');
-        titprof = strcat(titprof,':',{' '},'Non-Coronagraphic');
-        f_plotEEF(cartcoord,refEEFcurve,refNormIntensity,titprof,xlab, ...
+        titleProf = strcat(titleProf,':',{' '},'Non-Coronagraphic');
+        f_plotEEF(cartcoord,refEEFcurve,refNormIntensity,titleProf,xlab, ...
             fontSize,lineWidth,colorSet,lineStyle,markerSet); % Reference
         
         for idxgral = 1:totalImgs
@@ -329,7 +282,7 @@ switch metricSel
         xlabel('Discretization level (GL)','FontSize',fontSize,'FontWeight','bold');
         ylabel('EEF in Airy disk','FontSize',fontSize,'FontWeight','bold'); % OLD:  ylabel('EEF at Airy Range');
         legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d')); legend(legendCell); grid on; axis square;
-        set(gca,'FontSize',fontSize,'FontWeight','normal'); xlim([2,12]); 
+        set(gca,'FontSize',fontSize,'FontWeight','normal'); xlim([2,12]);
         saveFigure(gcf, gca, [0,0,20,20], 'EEF_power_suppression', 'svg');
         
     case 5
@@ -338,7 +291,7 @@ switch metricSel
         for idxgral = 1:totalImgs
             f_plotContrast(cartcoord,radialIntensityRef,radialIntensityMeas{idxgral},dynamicProfileTitle{idxgral},fontSize,lineWidth)
             xlim(xLimRange); ylim(yLimRange);
-            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs); 
+            fprintf('Plotting... %d/%d\n\r', idxgral, totalImgs);
         end
         
     case 6
@@ -489,7 +442,7 @@ switch metricSel
         set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on; axis square;
         colormap(viridis); colorbar; set(gca,'GridColor',[1,1,1]);
         saveFigure(gcf, gca, [0,0,20,20], 'Referential_PSF_log_view', 'svg');
-    
+        
     case 16 % WON'T BE USED
         %% Analysis Figures Plotting -- Mean Squared Error
         disp('Plotting Mean Squared Error...');
@@ -502,21 +455,6 @@ switch metricSel
 end
 disp('Rendering...');
 
-
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%  Save and finish the processing
-%  This is not correct YET
-
-%% Saving
-%
-% processedImgfullpath = strcat(processedImgname,measInfo{idxgral});
-% % Explanation: saveas(variable,directory+filename,extension)
-% saveas(gcf,strcat(processedImgfullpath),imgformat); % Saves the last shown figure
-
-% OLD:
-%   % Explanation: imwrite(variables,directory+filename+extension)
-%   imwrite(expMeas{idxgral}, strcat(processedImgfullpath,dataformat));
 
 %% End notification
 N = 4; % Number of beeps for the processing
