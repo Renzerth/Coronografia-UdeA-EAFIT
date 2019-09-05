@@ -1,3 +1,6 @@
+%% path dependencies
+addpath(genpath(fileparts(pwd)));
+
 %% Plane properties
 planeSize = 2*[2.54e-2, 2.54e-2]; % m
 spaceSamples = [1024, 1024];
@@ -12,7 +15,7 @@ insidentEnergy = 1; % [W/m^2]
 mediumElecPermitivity = 8.85e-12; % permittivity of free space [F/m]
 mediumRefracIndex = 1; % refractive index
 propagationSpeed = 3e8; % speed of light [m/s]
-irradianceScaling = (propagationSpeed*mediumRefracIndex*mediumElecPermitivity)/2; % [W/m^2]
+irradianceScaling = insidentEnergy*(propagationSpeed*mediumRefracIndex*mediumElecPermitivity)/2; % [W/m^2]
 
 %% System Properties
 illuminationDiameter = 2e-3; %[m]
@@ -23,8 +26,7 @@ focalLengthA = 2; % [m]
 focalLengthB = 2;
 aberrationIndex = 8;
 aberrationValue = 0*pi*(1.0021)*0.01;
-
-% FresnelNumber = (2*pupilRadius)^2/(propDistance*focalLengthA);
+FresnelNumber = (illuminationDiameter)^2/(focalLengthA*lambda);
 
 %% Spatial coordinates
 xCenter= floor((spaceSamples(1) + 1)/2);
@@ -33,16 +35,15 @@ yCenter = floor((spaceSamples(2) + 1)/2);
 
 %% Spectral coordinates
 samplingFactor = 1;
-[freqVectX, freqVectY,spXperiod,spYperiod,analysisScaling,normNMFactor,synthesisScaling] = computeFreqVector(planeSize, spaceSamples, samplingFactor);
+[freqVectX,freqVectY,spXperiod,spYperiod,analysisScaling,normNMFactor,synthesisScaling] = computeFreqVector(planeSize, spaceSamples, samplingFactor);
 
 %% Vortex Mask properties
-TC = 0;
-grayLevels = 256;
-phaseValues = linspace(-pi,pi,grayLevels);
+TC = 6;
+grayLevels = 10;
 % vortexMask = TOOLS.spiralGen2(spaceSamples,TC);
-vortexMask = exp(1i*TC*theta);
-[discretMap,~] = TOOLS.discretizeMask(phaseValues,angle(vortexMask));
-% vortexMask = exp(1i*discretMap);
+vortexMask = exp(1i*(TC*(theta - pi/2)));
+[discretMap] = discretizeMap(angle(vortexMask),grayLevels);
+vortexMask = exp(1i*discretMap);
 
 %% Lens properties
 lensRadii = rho;
@@ -54,9 +55,10 @@ diverLens = lensAperture.*exp(1i*k/(2*focalLengthA)*(lensRadii).^2);
 
 %% Uniform light definition after first focal lens
 inputPlane = insidentEnergy*double(rho <= illuminationDiameter/2).*lensA;
+% inputPlane = insidentEnergy*BEAMS.evaluateGaussianField(X,Y,illuminationDiameter,[0,0],lambda);
 
 %% Optical Aberrations Zernike Phase
-zernikeCoeffs = zeros(1,15);
+zernikeCoeffs = zeros(1,10);
 zernikeCoeffs(aberrationIndex) = aberrationValue;
 [systemPhase,~] = Zernike_Builder(zernikeCoeffs',aberrationPupilRadius/planeSize(1),min(spaceSamples),false);
 systemPhase(isnan(systemPhase)) = 0;
@@ -94,14 +96,14 @@ truncatedLyotPlane = distanceShiftA*LyotPlaneDistribution.*LyotAperture;
 PSFlensPlaneDistribution = distanceShiftB*truncatedLyotPlane.*lensB;
 
 %% Generate PSF response focal point
-[PSFplaneDistribution] = distanceShiftB*deconvoluteSignal(focalPlanePropagationKernelB, PSFlensPlaneDistribution, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
+[PSFplaneDistribution] = distanceShiftB*convoluteSignal(focalPlanePropagationKernelB, PSFlensPlaneDistribution, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
 
 %% Field Properties
 compIntensity = @(complexField, energyScaling) energyScaling*abs(complexField).^2;
 compAngle = @(complexField) angle(complexField);
 
 outputIntensity = compIntensity(PSFplaneDistribution,irradianceScaling);
-inputIntensity = compIntensity(inputPlane,insidentEnergy);
+inputIntensity = compIntensity(inputPlane,irradianceScaling);
 
 %% PLots
 close all;

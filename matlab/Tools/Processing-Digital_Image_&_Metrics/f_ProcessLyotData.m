@@ -100,7 +100,7 @@ croppedMeasData = cell(1,totalImgs);
 croppedCoorVect = x(abs(x)<=rangeFactor); % Symmetric dual span coordinates cropping
 [cropRange] = f_computePSFCropRange(rangeFactor,aproxRadius,aproxCenter);
 for idxgral = 1:totalImgs
-    [croppedMeasData{idxgral}] = f_cropPSFrange(expMeas{idxgral},cropRange);
+    [croppedMeasData{idxgral}] = f_cropPSFrange(expMeas{idxgral},ceil(cropRange));
 end
 
 %%

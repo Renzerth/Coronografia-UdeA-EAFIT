@@ -95,10 +95,11 @@ class vortexProfiler:
         phi = TC*(self.phi + np.pi) # Matrix with entries within [0:2pi-step]
         phaseVor = np.mod(phi, 2*np.pi) # 256-levels discretization
         
-        phi = np.floor(phaseVor/(2*np.pi/NG)) # Matrix with whole-numbers between 0 and NG-1 
+        phi = np.ceil(phaseVor/(2*np.pi/NG)) # Matrix with whole-numbers between 0 and NG-1 
         phi = phi/NG #phi3 is phi2 but normalized
-        vortexMask = np.exp(1j*(2*np.pi*phi - np.pi))
+        vortexMask = np.exp(1j*(2*np.pi*phi - np.pi + np.pi/2))
 #        rr = np.isnan(np.angle(vortexMask))
+#        vortexMask[self.halfSamples,self.halfSamples] = 0
 #        np.where(rr == True)
         
         return np.fft.fftshift(vortexMask)
@@ -142,7 +143,7 @@ class vortexProfiler:
         
         if plotType in 'angle':
             for index, ax in enumerate(axes.flat,0):
-                ax.imshow((np.angle(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])),cmap='gray')
+                ax.imshow((np.angle((dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])),cmap='gray')
                 ax.set_aspect('equal', 'box')
                 
         elif plotType in 'intensity':

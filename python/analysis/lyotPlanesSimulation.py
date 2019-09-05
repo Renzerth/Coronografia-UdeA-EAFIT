@@ -28,8 +28,8 @@ plotsEnabled = True
         
 Lvor = 6 # Topologic Charge
 TCStep = 1
-NGmin = 256
-NGmax = 256
+NGmin = 2
+NGmax = 10
 NG = 4
 
 spatialSampling = 20.1e-3 # SLM Pixel Pitch (mm)
@@ -46,8 +46,8 @@ vortexTools = vortexProfiler(dx=spatialSampling,p=10,radius=apertureRadius)
 TCRanges = np.arange(1,Lvor+1,TCStep)
 
 #GLRanges = np.fix(np.linspace(NGmin,NGmax,NG)).astype('int')
-#GLRanges = np.array([12,16,24,32,64,128,256])
-GLRanges = np.array([32,64,128,256])
+GLRanges = np.array([12,16,24,32,64,128,256])
+#GLRanges = np.array([32,64,128,256])
 
 TCSize = len(TCRanges)
 GLSize = len(GLRanges)
@@ -60,20 +60,20 @@ allocatedMatrixSLM,allocatedMatrixLyot = vortexTools.prepareFFTW(volumeSize)
 #Compute Field Properties
 #------------------------
 
-aperture = np.fft.fftshift(vortexTools.placeAperture(0.5))
+aperture = np.fft.fftshift(vortexTools.placeAperture(0.1))
 #aperture = np.fft.fftshift(vortexTools.placeGaussianAperture(1.0))
 
-lyotAperture = np.fft.fftshift(vortexTools.placeAperture(0.5))
+lyotAperture = np.fft.fftshift(vortexTools.placeAperture(0.1))
 SLMInput = vortexTools.analyzeSpectrum(aperture)
 
 for TCIndex in range(0,TCSize):
     for grayIndex in range(0,GLSize):
 
         singleIndex = TCIndex + grayIndex*(TCSize)
-        SLMPMasks[:,:,singleIndex] = vortexTools.discretizeSPP(TCRanges[TCIndex],GLRanges[grayIndex])
-#        SLMPMasks[:,:,singleIndex] = np.exp(1j*vortexTools.phiB*TCRanges[TCIndex])
-#        SLMPMasks[:,:,singleIndex][vortexTools.halfSamples,vortexTools.halfSamples] = 0
-        SLMPlanes[:,:,singleIndex] = SLMInput*(SLMPMasks[:,:,singleIndex])
+#        SLMPMasks[:,:,singleIndex] = vortexTools.discretizeSPP(TCRanges[TCIndex],GLRanges[grayIndex])
+        SLMPMasks[:,:,singleIndex] = np.exp(1j*(vortexTools.phiB*TCRanges[TCIndex] + np.pi/2))
+        SLMPMasks[:,:,singleIndex][vortexTools.halfSamples,vortexTools.halfSamples] = 0
+        SLMPlanes[:,:,singleIndex] = SLMInput*np.fft.fftshift(SLMPMasks[:,:,singleIndex])
 #%%----------------------
 #Generate PSF Reference
 #------------------------
@@ -91,7 +91,7 @@ PSFoutputFields = vortexTools.propagateField(allocatedMatrixLyotTrunc,'backward'
 #-----
 
 if plotsEnabled:
-    scaleRange = 0.05 # 1 for no zoom -> 0 for one pixel zoom
+    scaleRange = 0.5 # 1 for no zoom -> 0 for one pixel zoom
     pixelShift = 1-(vortexTools.spaceSamples % 2) # Center graph if even matrix size is used
     viewRangeN = int((1 - scaleRange)*vortexTools.halfSamples) + pixelShift
     viewRangeM = int((1 + scaleRange)*vortexTools.halfSamples) + pixelShift
@@ -100,10 +100,10 @@ if plotsEnabled:
     rows = ['NG: {}'.format(row) for row in GLRanges]
     
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, SLMPMasks, 'angle')
-    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, SLMPlanes, 'angle')
+    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, PSFoutputFields, 'angle')
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixLyot, 'intensity')
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixLyotTrunc, 'intensity')
-    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, PSFoutputFields, 'intensity')
+    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, PSFoutputFields, 'log')
 #%%-------------
 #Save Data Files
 #---------------
