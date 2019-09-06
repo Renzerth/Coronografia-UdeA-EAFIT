@@ -38,12 +38,11 @@ samplingFactor = 1;
 [freqVectX,freqVectY,spXperiod,spYperiod,analysisScaling,normNMFactor,synthesisScaling] = computeFreqVector(planeSize, spaceSamples, samplingFactor);
 
 %% Vortex Mask properties
-TC = 6;
-grayLevels = 10;
-% vortexMask = TOOLS.spiralGen2(spaceSamples,TC);
-vortexMask = exp(1i*(TC*(theta - pi/2)));
-[discretMap] = discretizeMap(angle(vortexMask),grayLevels);
-vortexMask = exp(1i*discretMap);
+TC = 2;
+grayLevels = 2;
+vortexMask = spiralGen2(spaceSamples,TC);
+% vortexMask = exp(1i*(TC*(theta)));
+[vortexMask] = discretizeMap(angle(vortexMask),grayLevels);
 
 %% Lens properties
 lensRadii = rho;

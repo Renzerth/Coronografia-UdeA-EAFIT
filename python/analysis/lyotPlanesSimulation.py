@@ -32,21 +32,23 @@ NGmin = 2
 NGmax = 10
 NG = 4
 
-spatialSampling = 20.1e-3 # SLM Pixel Pitch (mm)
-apertureRadius = 2.0 # Telescope - Lyot plane (mm)
+spaceSize = 50.8 # Simulation window size (mm)
+spaceSamples = 1024
+apertureDiameter = 2.0 # Input Aperture (mm)
+lyotApertureDiameter = 2.0 # Input Aperture (mm)
 #%%-------------------
 #Vortex Analyzer Tools
 #---------------------
 
-vortexTools = vortexProfiler(dx=spatialSampling,p=10,radius=apertureRadius)
+vortexTools = vortexProfiler(spaceSize,spaceSamples)
 #%%---------------
 #Evaluation Ranges
 #-----------------
 
 TCRanges = np.arange(1,Lvor+1,TCStep)
 
-#GLRanges = np.fix(np.linspace(NGmin,NGmax,NG)).astype('int')
-GLRanges = np.array([12,16,24,32,64,128,256])
+GLRanges = np.fix(np.linspace(NGmin,NGmax,NG)).astype('int')
+#GLRanges = np.array([12,16,24,32,64,128,256])
 #GLRanges = np.array([32,64,128,256])
 
 TCSize = len(TCRanges)
@@ -60,10 +62,10 @@ allocatedMatrixSLM,allocatedMatrixLyot = vortexTools.prepareFFTW(volumeSize)
 #Compute Field Properties
 #------------------------
 
-aperture = np.fft.fftshift(vortexTools.placeAperture(0.1))
+aperture = np.fft.fftshift(vortexTools.placeAperture(apertureDiameter))
 #aperture = np.fft.fftshift(vortexTools.placeGaussianAperture(1.0))
 
-lyotAperture = np.fft.fftshift(vortexTools.placeAperture(0.1))
+lyotAperture = np.fft.fftshift(vortexTools.placeAperture(lyotApertureDiameter))
 SLMInput = vortexTools.analyzeSpectrum(aperture)
 
 for TCIndex in range(0,TCSize):
@@ -71,9 +73,10 @@ for TCIndex in range(0,TCSize):
 
         singleIndex = TCIndex + grayIndex*(TCSize)
 #        SLMPMasks[:,:,singleIndex] = vortexTools.discretizeSPP(TCRanges[TCIndex],GLRanges[grayIndex])
-        SLMPMasks[:,:,singleIndex] = np.exp(1j*(vortexTools.phiB*TCRanges[TCIndex] + np.pi/2))
-        SLMPMasks[:,:,singleIndex][vortexTools.halfSamples,vortexTools.halfSamples] = 0
-        SLMPlanes[:,:,singleIndex] = SLMInput*np.fft.fftshift(SLMPMasks[:,:,singleIndex])
+        SLMPMasks[:,:,singleIndex] = (np.exp(1j*(vortexTools.phi*TCRanges[TCIndex])))
+#        SLMPMasks[:,:,singleIndex][vortexTools.halfSamples,vortexTools.halfSamples] = 0
+        SLMPMasks[:,:,singleIndex] = np.fft.fftshift(SLMPMasks[:,:,singleIndex])
+        SLMPlanes[:,:,singleIndex] = SLMInput*(SLMPMasks[:,:,singleIndex])
 #%%----------------------
 #Generate PSF Reference
 #------------------------
@@ -83,15 +86,15 @@ PSFreference = vortexTools.analyzeSpectrum(vortexTools.synthetizeSpectrum(SLMInp
 #----------------
         
 allocatedMatrixSLM[:] = SLMPlanes
-allocatedMatrixLyot[:] = vortexTools.propagateField(allocatedMatrixSLM,'forward') # Lyot's Plane Response
+allocatedMatrixLyot[:] = vortexTools.propagateField(allocatedMatrixSLM,'backward') # Lyot's Plane Response
 allocatedMatrixLyotTrunc = allocatedMatrixLyot*lyotAperture[:,:,np.newaxis]
-PSFoutputFields = vortexTools.propagateField(allocatedMatrixLyotTrunc,'backward') # PSF response
+PSFoutputFields = vortexTools.propagateField(allocatedMatrixLyotTrunc,'forward') # PSF response
 #%%---
 #Plots
 #-----
 
 if plotsEnabled:
-    scaleRange = 0.5 # 1 for no zoom -> 0 for one pixel zoom
+    scaleRange = 0.2 # 1 for no zoom -> 0 for one pixel zoom
     pixelShift = 1-(vortexTools.spaceSamples % 2) # Center graph if even matrix size is used
     viewRangeN = int((1 - scaleRange)*vortexTools.halfSamples) + pixelShift
     viewRangeM = int((1 + scaleRange)*vortexTools.halfSamples) + pixelShift
@@ -103,7 +106,7 @@ if plotsEnabled:
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, PSFoutputFields, 'angle')
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixLyot, 'intensity')
     vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, allocatedMatrixLyotTrunc, 'intensity')
-    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, PSFoutputFields, 'log')
+    vortexTools.plotData([viewRangeN,viewRangeM], cols, rows, PSFoutputFields, 'intensity')
 #%%-------------
 #Save Data Files
 #---------------

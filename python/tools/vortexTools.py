@@ -18,26 +18,22 @@ from multiprocessing import cpu_count
 
 class vortexProfiler:
     
-    def __init__(self, dx = 26.0e-3, p=10, radius=8.0):
+    def __init__(self, spaceSize, spaceSamples):
         self.X = []
         self.Y = []
         self.x = []
         self.rho = []
         self.phi = []
         self.phiB = []
-        self.apertureRadius = radius # Apperture and Lyot stop radius
-        self.spaceSamples = []
+        self.spaceSamples = spaceSamples
         self.halfSamples = []
-        self.spaceSize = []
+        self.spaceSize = spaceSize
         self.halfSize = []
-        self.spatialStep = dx # Modulator's pixel size in mm
-        self.samplingPower = p
+        self.spatialStep = spaceSize/spaceSamples # Space's pixel pitch in mm
         
         self.computeSpace() # Initialize space properties
     
     def computeSpace(self):
-        self.spaceSamples = 2**self.samplingPower #2**12=4096 #number of samples
-        self.spaceSize = self.spaceSamples*self.spatialStep #100. # Plane size in mm
         self.halfSamples = int(np.floor((self.spaceSamples+1)/2))
         self.halfSize = (self.spaceSize/2)
         
@@ -49,12 +45,12 @@ class vortexProfiler:
         
         return self
             
-    def createCircMask(self, w, relSize):
-        circMask = self.rho/np.abs(w) <= relSize # Bool circular shape descrption
+    def createCircMask(self, circWidth, relativeSize):
+        circMask = self.rho/np.abs(circWidth) < relativeSize # Bool circular shape descrption
         return circMask
     
-    def placeAperture(self,radius=0.5):
-        window = self.createCircMask(2*self.apertureRadius,radius).astype('double')
+    def placeAperture(self, apertureDiameter, relativeSize=1):
+        window = self.createCircMask(apertureDiameter,relativeSize).astype('double')
         return window
     
     def placeGaussianAperture(self,sigma=0.5):
@@ -77,7 +73,7 @@ class vortexProfiler:
         th2 = np.arctan(y2/x2) + np.pi + np.pi/2 # Last Half Angular transition
         
         phaseMask = np.exp(1j*np.concatenate((th1[:,0:(n//2)],th2[:,0:n-1]),axis=1))
-        phaseMask[self.halfSamples,self.halfSamples] = 0
+        phaseMask[self.halfSamples,self.halfSamples] = -np.pi
         self.phi = np.angle(phaseMask)
         return self
     
@@ -95,12 +91,9 @@ class vortexProfiler:
         phi = TC*(self.phi + np.pi) # Matrix with entries within [0:2pi-step]
         phaseVor = np.mod(phi, 2*np.pi) # 256-levels discretization
         
-        phi = np.ceil(phaseVor/(2*np.pi/NG)) # Matrix with whole-numbers between 0 and NG-1 
-        phi = phi/NG #phi3 is phi2 but normalized
-        vortexMask = np.exp(1j*(2*np.pi*phi - np.pi + np.pi/2))
-#        rr = np.isnan(np.angle(vortexMask))
-#        vortexMask[self.halfSamples,self.halfSamples] = 0
-#        np.where(rr == True)
+        phi = np.floor(phaseVor/(2*np.pi/NG)) # Matrix with whole-numbers between 0 and NG-1 
+        phi = phi/NG #phi is normalized
+        vortexMask = np.exp(1j*(2*np.pi*phi - np.pi))
         
         return np.fft.fftshift(vortexMask)
     
@@ -129,6 +122,7 @@ class vortexProfiler:
     
     def plotData(self, viewRange, colHeader, rowHeader, dataSet, plotType, pad = 5):
         
+        dataExtend = [-self.halfSize,self.halfSize,-self.halfSize,self.halfSize];
         f, axes = plt.subplots(len(rowHeader), len(colHeader), sharex=True, sharey=True)
         
         for ax, col in zip(axes[0], colHeader):
@@ -143,17 +137,17 @@ class vortexProfiler:
         
         if plotType in 'angle':
             for index, ax in enumerate(axes.flat,0):
-                ax.imshow((np.angle((dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])),cmap='gray')
+                ax.imshow((np.angle(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])), cmap='gray', interpolation='none', extent=dataExtend)
                 ax.set_aspect('equal', 'box')
                 
         elif plotType in 'intensity':
             for index, ax in enumerate(axes.flat,0):
-                ax.imshow((np.abs(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])**2),cmap='gray')
+                ax.imshow((np.abs(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])**2),cmap='gray', interpolation='none', extent=dataExtend)
                 ax.set_aspect('equal', 'box')
                 
         elif plotType in 'log':
             for index, ax in enumerate(axes.flat,0):
-                ax.imshow((np.log10(np.abs(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])**2)))
+                ax.imshow((np.log10(np.abs(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])**2)), interpolation='none', extent=dataExtend)
                 ax.set_aspect('equal', 'box')
         
         f.tight_layout()

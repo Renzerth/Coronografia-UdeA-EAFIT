@@ -14,8 +14,8 @@ fileFormat = '.mat';
 %%% Loading all the measurements
 
 %%% Experiment information
-tcvect = 1:foundFiles{1}.maxTC;
-glvect = foundFiles{1}.GLRanges;
+tcvect = 1:foundFiles{1}.TC;
+glvect = foundFiles{1}.glvect;
 
 totalGL = length(glvect);
 totalTC = length(tcvect);

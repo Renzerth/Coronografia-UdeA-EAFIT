@@ -27,21 +27,23 @@ plotsEnabled = True
 #-----------------
         
 Lvor = 1 # Topological Charge
-NG = 256 # Number of gray levels [1,256]
-spatialSampling = 120.1e-3 # Space sampling size (mm)
-apertureRadius = 1.0 # Telescope - Lyot plane (mm)
-LyotApertureRadius = 1.0
+NG = 2 # Number of gray levels [1,256]
+
+spaceSize = 50.8 # Simulation window size (mm)
+spaceSamples = 1024
+apertureDiameter = 2.0 # Input Aperture (mm)
+lyotApertureDiameter = 2.0 # Input Aperture (mm)
 #%%-------------------
 #Vortex Analyzer Tools
 #---------------------
 
-vortexTools = vortexProfiler(dx=spatialSampling,p=10,radius=apertureRadius)
+vortexTools = vortexProfiler(spaceSize,spaceSamples)
 #%%----------------------
 #Compute Field Properties
 #------------------------
 
-telescopeAperture = vortexTools.placeAperture();
-lyotAperture = vortexTools.placeAperture(LyotApertureRadius)
+telescopeAperture = vortexTools.placeAperture(apertureDiameter);
+lyotAperture = vortexTools.placeAperture(lyotApertureDiameter)
 SLMfilterMask = vortexTools.discretizeSPP(Lvor,NG)
 #SLMfilterMask = np.fft.fftshift(np.exp(1j*vortexTools.phiB*Lvor))
 #%%--------------
@@ -60,7 +62,7 @@ outputField = vortexTools.analyzeSpectrum(lyotAperturePlane)
 if plotsEnabled:
     
     spatialCoords = vortexTools.x
-    dx = spatialSampling
+    dx = vortexTools.spatialStep
     spatialExtent = [spatialCoords[0]-dx, spatialCoords[-1]+dx, spatialCoords[0]-dx, spatialCoords[-1]+dx]
     
     scaleRange = 1 # 1 -> To full field, 0.1 -> To close up, values < 0.1 renders nothing

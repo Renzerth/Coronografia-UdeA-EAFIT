@@ -1,4 +1,11 @@
-function [LyotPlaneIntensities, PSFplaneIntensities, LyotReference, PSFreference] = computePSFVariationsAS(TC, glvect)
+function [LyotPlaneIntensities, PSFplaneIntensities, LyotReference, PSFreference] = computePSFVariationsAS(TC, glvect,varargin)
+%% Program Settings
+if nargin == 3
+    saveEnabled = varargin{1};
+else
+    saveEnabled = true;
+end
+
 %% Field Properties definition
 compIntensity = @(complexField, energyScaling) energyScaling*abs(complexField).^2;
 
@@ -40,7 +47,8 @@ aberrationValue = 0*pi*(1.0021)*0.01;
 %% Spatial coordinates
 xCenter= floor((spaceSamples(1) + 1)/2);
 yCenter = floor((spaceSamples(2) + 1)/2);
-[~, ~, ~, ~, theta, rho] = makeSpaceCoordinates(planeSize(1),planeSize(2),spaceSamples(1),spaceSamples(2),xCenter,yCenter);
+[~, ~, ~, ~, ~, rho] = makeSpaceCoordinates(planeSize(1),planeSize(2),spaceSamples(1),spaceSamples(2),xCenter,yCenter);
+[theta] = compAngTransition(spaceSamples);
 
 %% Spectral coordinates
 samplingFactor = 1;
@@ -91,10 +99,8 @@ for tcIndex = 1:TC
         singleIndex = glIndex + (tcIndex - 1)*grayLevels;
         fprintf('Processing Iteration %d/%d.\n\r', singleIndex, totalFields);
         
-%         vortexMask = exp(1i*(tcvect(tcIndex)*(theta - pi/2)));
-        vortexMask = spiralGen2(spaceSamples,tcvect(tcIndex));
-        [discretMap] = discretizeMap(angle(vortexMask),glvect(glIndex));
-        vortexMask = exp(1i*discretMap);
+        vortexMask = exp(1i*tcvect(tcIndex)*theta);
+%         [vortexMask] = discretizeMap(angle(vortexMask),glvect(glIndex));
         
         SLMfilteredField = focalPlaneDistribution.*vortexMask;
         [ocularPlaneDistribution] = distanceShiftA*deconvoluteSignal(focalPlanePropagationKernelA, SLMfilteredField, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
@@ -119,4 +125,15 @@ PSFlensPlaneDistribution = distanceShiftB*truncatedLyotPlane.*lensB;
 
 PSFreference = compIntensity(PSFplaneDistribution, irradianceScaling);
 LyotReference = compIntensity(LyotPlaneDistribution, irradianceScaling);
+%% Save Coronagraph Intensities
+if saveEnabled
+    saveVars = {'LyotPlaneIntensities', 'PSFplaneIntensities','LyotReference', 'PSFreference', 'TC', 'glvect'};
+    try
+        save(strcat(fileparts(pwd),'/Data/AngularSpectrumSimulations/angular_spectrum_pipeline.mat'),saveVars{:});
+    catch
+        TGTdir = strcat(fileparts(pwd),'/Data/AngularSpectrumSimulations');
+        mkdir(TGTdir)
+        save(strcat(TGTdir,'/angular_spectrum_pipeline.mat'),saveVars{:});
+    end
+end
 end
