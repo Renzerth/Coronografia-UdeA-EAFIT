@@ -122,18 +122,18 @@ class vortexProfiler:
     
     def plotData(self, viewRange, colHeader, rowHeader, dataSet, plotType, pad = 5):
         
-        dataExtend = [-self.halfSize,self.halfSize,-self.halfSize,self.halfSize];
+        dataExtend = [self.x[viewRange[0]], self.x[viewRange[1]],self.x[viewRange[0]], self.x[viewRange[1]]];
         f, axes = plt.subplots(len(rowHeader), len(colHeader), sharex=True, sharey=True)
         
         for ax, col in zip(axes[0], colHeader):
             ax.annotate(col, xy=(0.5, 1), xytext=(0, pad),
                         xycoords='axes fraction', textcoords='offset points',
-                        size=20, ha='center', va='baseline')
+                        size=10, ha='center', va='baseline')
         
         for ax, row in zip(axes[:,0], rowHeader):
             ax.annotate(row, xy=(0, 0.5), xytext=(-ax.yaxis.labelpad - pad, 0),
                         xycoords=ax.yaxis.label, textcoords='offset points',
-                        size=20, ha='right', va='center', rotation='vertical')
+                        size=10, ha='right', va='center', rotation='vertical')
         
         if plotType in 'angle':
             for index, ax in enumerate(axes.flat,0):
@@ -147,7 +147,7 @@ class vortexProfiler:
                 
         elif plotType in 'log':
             for index, ax in enumerate(axes.flat,0):
-                ax.imshow((np.log10(np.abs(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])**2)), interpolation='none', extent=dataExtend)
+                ax.imshow(10*(np.log10(np.abs(np.fft.fftshift(dataSet[:,:,index])[viewRange[0]:viewRange[1],viewRange[0]:viewRange[1]])**2)), interpolation='none', extent=dataExtend)
                 ax.set_aspect('equal', 'box')
         
         f.tight_layout()
