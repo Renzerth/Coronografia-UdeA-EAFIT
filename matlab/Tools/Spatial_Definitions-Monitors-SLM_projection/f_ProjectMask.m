@@ -92,7 +92,8 @@ switch plotMask
   wrapMaskFig = figure('color','white','Name',figtit); 
   % 'units','normalized''position',[0 0 1 1],
   % 'outerposition',[5/10 1/10 1/2 3/4]
-  imagesc(wrapMask); axis square; colormap(customMap);
+  % imagesc(wrapMask); axis square; colormap(customMap);
+  imagesc(wrapMask, [-pi, pi]); axis square; colormap('gray');
   title(tit);
   set(gca,'xtick',[]); set(gca,'ytick',[]) % No axes values
   cbh = colorbar; cbh.Label.String = str;
