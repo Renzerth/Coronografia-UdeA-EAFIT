@@ -38,8 +38,8 @@ for i=1:subplotsx
         cbarHandler=colorbar; limVals=get(cbarHandler,'Limits');
         tol2 = 0.2*limVals(2); % Colorbar custom tick adjustment
         set(cbarHandler,'Ticks',linspace(limVals(1)+tol2,limVals(2)-tol2,2));
-        % NO: ticksLabels = cellstr(num2str(limVals', '%1.0e')); SCIENTIFIC
-        ticksLabels = cellstr(num2str(limVals', '%1.3f'));
+        ticksLabels = cellstr(num2str(limVals', '%1.0e')); %SCIENTIFIC
+        % ticksLabels = cellstr(num2str(limVals', '%2.3f'));
         set(cbarHandler,'XTickLabel',ticksLabels);
         
         if ii==subplotsy
