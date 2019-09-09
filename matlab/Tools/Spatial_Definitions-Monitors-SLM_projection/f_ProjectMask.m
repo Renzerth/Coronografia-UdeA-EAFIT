@@ -167,9 +167,9 @@ switch plotMask
   % [left bottom width height]
   
   %% Figure plotting
-  maskImgHandle = imagesc(wrapMask);  % Plots in SLM screen 
+  maskImgHandle = imagesc(wrapMask,[-pi,pi]);  % Plots in SLM screen 
   wrapMaskFig = {wrapMaskFig,maskImgHandle};
-  axis off; colormap(customMap);
+  axis off; colormap('gray'); % colormap(customMap);
   % axis fill;
   wrapMaskFig{1}.Visible = 'on';
   [~] = f_changeProjectionMonitor('Restore'); % Restore default figure

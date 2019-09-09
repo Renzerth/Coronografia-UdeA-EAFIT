@@ -38,8 +38,8 @@ samplingFactor = 1;
 [freqVectX,freqVectY,spXperiod,spYperiod,analysisScaling,normNMFactor,synthesisScaling] = computeFreqVector(planeSize, spaceSamples, samplingFactor);
 
 %% Vortex Mask properties
-TC = 2;
-grayLevels = 2;
+TC = 1;
+grayLevels = 10;
 vortexMask = spiralGen2(spaceSamples,TC);
 % vortexMask = exp(1i*(TC*(theta)));
 [vortexMask] = discretizeMap(angle(vortexMask),grayLevels);

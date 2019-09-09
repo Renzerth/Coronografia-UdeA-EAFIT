@@ -32,13 +32,7 @@ else
     initialExposure = []; % Empty, won't be used at all
 end
 
-<<<<<<< HEAD
-%% Static exposure
-% tc0Exposure  = 1/90; % Used for the reference measurement ans possible inside the measurement
-% src.Exposure = tc0Exposure;
 
-=======
->>>>>>> b7d37d242dc1cbc76600bf1e0f9c5d61c55e885d
 %% Measurements
 for idxtc = 1:ltcvect 
   

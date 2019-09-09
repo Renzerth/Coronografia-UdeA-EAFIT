@@ -397,7 +397,7 @@ switch metricSel
         for tcIndx = 1:totalTC
             for glIndx = 1:totalGL
                 idxgral = glIndx + (tcIndx - 1)*totalGL; % Reversed width/index
-                arrangedCroppedImages{tcIndx,glIndx}  = croppedMeasData{idxgral};
+                arrangedCroppedImages{tcIndx,glIndx}  = 10*log10(croppedMeasData{idxgral});
             end
         end
         

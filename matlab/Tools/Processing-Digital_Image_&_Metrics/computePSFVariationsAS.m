@@ -100,7 +100,7 @@ for tcIndex = 1:TC
         fprintf('Processing Iteration %d/%d.\n\r', singleIndex, totalFields);
         
         vortexMask = exp(1i*tcvect(tcIndex)*theta);
-%         [vortexMask] = discretizeMap(angle(vortexMask),glvect(glIndex));
+        [vortexMask] = discretizeMap(angle(vortexMask),glvect(glIndex));
         
         SLMfilteredField = focalPlaneDistribution.*vortexMask;
         [ocularPlaneDistribution] = distanceShiftA*deconvoluteSignal(focalPlanePropagationKernelA, SLMfilteredField, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
