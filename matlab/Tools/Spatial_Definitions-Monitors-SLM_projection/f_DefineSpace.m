@@ -99,8 +99,9 @@ end
 
 %% Polar coordinates for the PC (plotMask=1,3)
 Xpc = X; Ypc = Y; % Needed for the PC coordinates later on
-[phiPC,rPC] = cart2pol(Xpc,Ypc); % Without shifts and no scaling: mask is 
+[~,rPC] = cart2pol(Xpc,Ypc); % Without shifts and no scaling: mask is 
                                  % always circular and centered
+[phiPC] = compAngTransition(size(rPC));
 
 %% Aspect ratio application for the scaling for the SLM (plotMask=2)
   % Regarding the drawing of the masks on the SLM screens:
@@ -273,10 +274,11 @@ end
 
 %% Polar coordinates for the SLM
 % X,Y variables redefined for being used in the EGV and Fork masks
-[phiSLM,rSLM] = cart2pol(Xslm,Yslm); % Polar coordinates with an added
+[~,rSLM] = cart2pol(Xslm,Yslm); % Polar coordinates with an added
                                      % shift. The signs compensate the 
                                      % normal cartesian convention for 
                                      % displacing the phase mask
+[phiSLM] = compAngTransition(fieldSize, [shiftY,shiftX]);
 % [Xr,Yr,~,~] = f_MakeScreenCoords(3,false);
 % Xslm = Xr - shiftX;
 % Yslm = (Yr - shiftY)/AspectRatio;
