@@ -24,9 +24,9 @@ GL = length(grayValues); % Computes the quantization level to be used in
 
 %% Applies the modulo operator to phase map within  specified phase values
 % wraps phase map into the defined span range of phase
-wrappedMap = f_wrapToRange(phaseMap, min(phaseValues), max(phaseValues)); 
+% wrappedMap = f_wrapToRange(phaseMap, min(phaseValues), max(phaseValues)); 
 % Discretization of the phase map trough truncation of 2Pi/NG
-discretMap = 2*pi*floor(wrappedMap/(2*pi/GL))/(GL) - pi; 
+discretMap = 2*pi*floor(mod(phaseMap+pi,2*pi)/(2*pi/GL))/(GL) - pi; 
 % It's span range is on [-Pi,+Pi] thanks to the "-pi term"
 % floor(wrappedMap/(2*pi/GL)): discretization
 % (GL-1): normalization factor
