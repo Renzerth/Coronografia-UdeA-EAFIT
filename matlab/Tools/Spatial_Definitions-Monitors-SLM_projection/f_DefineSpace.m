@@ -278,7 +278,7 @@ end
                                      % shift. The signs compensate the 
                                      % normal cartesian convention for 
                                      % displacing the phase mask
-[phiSLM] = compAngTransition(fieldSize, [shiftY,shiftX]);
+[phiSLM] = compAngTransition(size(Xslm), round([shiftY*AspectRatio,shiftX].*fliplr(monitorSize)/2)-1);
 % [Xr,Yr,~,~] = f_MakeScreenCoords(3,false);
 % Xslm = Xr - shiftX;
 % Yslm = (Yr - shiftY)/AspectRatio;
