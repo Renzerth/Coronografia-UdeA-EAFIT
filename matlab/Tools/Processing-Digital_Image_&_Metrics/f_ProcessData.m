@@ -213,6 +213,7 @@ for idxgral = 1:totalImgs
         f_calculateEEF(radialIntensityMeas{idxgral});
     dynamicProfileTitle{idxgral} = sprintf('of %s: %s',titprof, ...
         measInfo{idxgral});
+    measEEFcurves{idxgral}(isnan(measEEFcurves{idxgral})) = 0;
 end
 disp('Done.');
 
@@ -283,13 +284,15 @@ disp('Done.');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% Metric Plotting
 %% Plot Settings
-xlab = 'Angular separation [\lambda/D]';
-ylab = 'Angular separation [\lambda/D]';
+%% Plot Settings
+xlab = 'Radial Distance [a/\rho]';
+ylab = 'Radial Distance [a/\rho]';
 tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
 plotData = 0; % Shows the profile lines. Ref: 1
 plotH = 1;
 plotV = 0;
-metricSel = 12; % Type of metric -- BYPASS VARIABLE
+enableAxis = true;
+metricSel = 13;
                 % 1: Profiles
                 % 2: EEF: Encircled Energy Factor
                 % 3: Throughput (arranged EEF)
@@ -302,19 +305,20 @@ metricSel = 12; % Type of metric -- BYPASS VARIABLE
                 % 10: Gradient of Intensity
                 % 11: Plot Cropped intensity
                 % 12: Plot Images Mosaic
-            
-fontSize = 16; %[pts] Ref: 14
-lineWidth = 1.5; %[pts] Ref: 1.5
+                
+fontSize = 24; %[pts] Ref: 14
+lineWidth = 1.3; %[pts] Ref: 1.5
+markerSize = 4;
 colorSet = [1 0 0 ; 0 1 0; 0.8500 0.3250 0.0980; ...
     0 0 1; 0.9290 0.6940 0.1250; 0 1 1; 0.4940 0.1840 0.5560; ...
-    1 0 1; 0.6350 0.0780 0.1840; 0 0 0];
+    1 0 1; 0.6350 0.0780 0.1840; 0 0 0; 0.7216 0.1725 0.8784]; % lightBlue 0.3686 0.6941 0.7961 || dark green 0.1373 0.3255 0.2784
 lineStyle = '-.';
 xLimRange = [0,3];
-yLimRange = [1e-6,1];
-logSepRange = [0, 10];
-markerSet = [{'o'},{'+'},{'s'},{'>'},{'d'},{'x'},{'p'},{'^'},{'h'},{'v'}]';
+yLimRange = [0,1.4e-3];
+markerSet = [{'o'},{'+'},{'s'},{'>'},{'d'},{'x'},{'p'},{'^'},{'h'},{'v'},{'<'}]';
 plotSpec = arrayfun(@ (index) strcat(markerSet{index},lineStyle), ...
-1:length(markerSet),'UniformOutput',false); % Joints the line specs strings
+    1:length(markerSet),'UniformOutput',false); % Joints the line specs strings
+
 if measSimulated == 0
     colorM = viridis;
 else
@@ -364,19 +368,17 @@ switch metricSel
         %% Analysis Figures Plotting -- Throughput
         disp('Plotting Throughput...');
         plotRange = 1:totalTC;
-        plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) ...
-        plot(reference, Data, plotSpec,'color', color, 'LineWidth', ...
-        lineWidth);
-        legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d'));
+        plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference, Data, plotSpec,'color', color, 'LineWidth', lineWidth,'MarkerSize',markerSize);
+        legendCell = strtrim(cellstr(num2str(tcvect(plotRange)', 'TC=%d')));
         for indexGL = 1:totalGL
             figure('color', 'white');
             hold on; arrayfun(@(indexTC) plotAlotFunc(cartcoord,arrangedEEF{indexTC,indexGL},plotSpec{indexTC}, colorSet(indexTC,:),lineWidth),plotRange); hold off;
             xlabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
             ylabel('Throughput (EEF)','FontSize',fontSize,'FontWeight','bold');  %  xlabel('Radial Distance (\lambda/D)')
-            title(sprintf('Throughput of topological charges at NG = %d',glvect(indexGL)));
+            title(sprintf('Throughput of topological charges at GL = %d',glvect(indexGL)));
             set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','southeast'); grid on; axis square;
             fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); xlim(xLimRange); % set(gca,'yscale','log');
-            saveFigure(gcf, gca, [0,0,20,20], sprintf('figure_%d',indexGL), 'svg');
+            saveFigure(gcf, gca, [0,0,20,20], sprintf('PSF_LC2002_EXP_Throughput_GL_%d',glvect(indexGL)), 'svg');
         end
         
     case 4
@@ -384,14 +386,16 @@ switch metricSel
         disp('Plotting Power Supression...');
         plotRange = 1:totalTC;
         figure('color', 'white');
-        hold on; arrayfun(@(index) plot(glvect,powerSupr(index,:),plotSpec{index},'color',colorSet(index,:),'LineWidth',lineWidth), plotRange); hold off;
+        powerSuprNoNan = powerSupr;
+        powerSuprNoNan(isnan(powerSuprNoNan)) = 0;
+        hold on; arrayfun(@(index) plot(glvect,powerSuprNoNan(index,:),plotSpec{index},'color',colorSet(index,:),'LineWidth',lineWidth,'MarkerSize',markerSize), plotRange); hold off;
         % axis fill; % They used to be too squared!
         title('Power supression of TCs at different phase levels','FontSize',fontSize,'FontWeight','bold');
-        xlabel('Discretization level (NG)','FontSize',fontSize,'FontWeight','bold');
+        xlabel('Discretization level (GL)','FontSize',fontSize,'FontWeight','bold');
         ylabel('EEF in Airy disk','FontSize',fontSize,'FontWeight','bold'); % OLD:  ylabel('EEF at Airy Range');
-        legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d')); legend(legendCell); grid on; axis square;
+        legendCell = strtrim(cellstr(num2str(tcvect(plotRange)', 'TC=%d'))); legend(legendCell,'Location','northeast'); grid on; axis square;
         set(gca,'FontSize',fontSize,'FontWeight','normal'); %xlim([2,12]);
-        saveFigure(gcf, gca, [0,0,20,20], 'EEF_power_suppression', 'svg');
+        saveFigure(gcf, gca, [0,0,20,20], 'PSF_EXP_EEF_power_suppression_GL_high', 'svg');
         
     case 5
         %% Analysis Figures Plotting -- Relative Contrast
@@ -406,21 +410,20 @@ switch metricSel
         %% Analysis Figures Plotting -- Relative Contrast (Arranged) [grouped gl's]
         disp('Plotting Arranged Relative Contrast...');
         plotRange = 1:totalGL;
-        plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference,Data,plotSpec,'color', color, 'LineWidth',lineWidth);
-        legendCell = cellstr(num2str(glvect(plotRange)', 'Coronagraphic: NG=%d')); legendCell = [{'Non-Coronagraphic'}; legendCell];
+        plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference,Data,plotSpec,'color', color, 'LineWidth',lineWidth,'MarkerSize',markerSize);
+        legendCell = strtrim(cellstr(num2str(glvect(plotRange)', 'GL=%d'))); legendCell = [{'GL=0'}; legendCell];
         
         for indexTC = 1:totalTC
             figure('color', 'white');
-            hold on; plot(cartcoord, radialIntensityRef,plotSpec{1},'color',colorSet(1,:),'LineWidth',lineWidth); set(gca,'yscale','log');
+            hold on; plot(cartcoord, radialIntensityRef,plotSpec{1},'color',colorSet(1,:),'LineWidth',lineWidth,'MarkerSize',markerSize); set(gca,'yscale','log');
             arrayfun(@(indexGL) plotAlotFunc(cartcoord, arrangedProfiles{indexGL,indexTC},plotSpec{indexGL+1},colorSet(indexGL+1,:),lineWidth),plotRange); hold off;
             xlabel('Angular separation [\lambda/D]','FontSize',fontSize,'FontWeight','bold');
             ylabel('Relative contrast of the radial intensities [logscale]','FontSize',fontSize,'FontWeight','bold');
-            title(sprintf('Raw Contrast NG Comparison with TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
-            set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); grid on; axis square;
+            title(sprintf('Raw Contrast GL Comparison with TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
+            set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell); legend boxoff; grid on; axis square;
             fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'yscale','log');
-            xlim(xLimRange); % 2 Airy disks
-            ylim(yLimRange); % Maximum attenuation
-            saveFigure(gcf, gca, [0,0,20,20], sprintf('figure_%d',indexTC), 'svg');
+            xlim(xLimRange); % 2 Airy disks % ylim(yLimRange); % Maximum attenuation
+            saveFigure(gcf, gca, [0,0,20,20], sprintf('PSF_LC2002_EXP_intensities_GL_low_TC_%d',tcvect(indexTC)), 'svg');
         end
         
     case 7
@@ -435,8 +438,8 @@ switch metricSel
         %% Analysis Figures Plotting -- logSNR (Arranged) [grouped gl's]
         disp('Plotting Logarithmic SNR...');
         plotRange = 1:totalGL;
-        plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference,Data,plotSpec,'color', color, 'LineWidth',lineWidth);
-        legendCell = cellstr(num2str(glvect(plotRange)', 'Coronagraphic: GL=%d'));
+        plotAlotFunc = @(reference, Data, plotSpec, color,lineWidth) plot(reference,Data,plotSpec,'color', color, 'LineWidth',lineWidth,'MarkerSize',markerSize);
+        legendCell = strtrim(cellstr(num2str(glvect(plotRange)', 'GL=%d')));
         
         for indexTC = 1:totalTC
             figure('color', 'white');
@@ -444,26 +447,26 @@ switch metricSel
             xlabel('Log Scale Angular separation [\lambda/D]','FontSize',fontSize,'FontWeight','bold');
             ylabel('Logarithmic SNR','FontSize',fontSize,'FontWeight','bold');
             title(sprintf('Gray Level LSNR Comparison for TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
-            set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','southwest'); grid on; axis square;
+            set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','northeast'); grid on; axis square;
             fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'xscale','log');
-            xlim(logSepRange); % 2 Airy disks
-            saveFigure(gcf, gca, [0,0,20,20], sprintf('figure_%d',indexTC), 'svg');
+%             xlim(logSepRange); % 2 Airy disks
+%             saveFigure(gcf, gca, [0,0,20,20], sprintf('figure_%d',indexTC), 'svg');
         end
         
     case 9
         %% Analysis Figures Plotting -- Logarithmic RMS
         disp('Plotting Logarithmic RMS...');
         plotRange = 1:totalGL;
-        legendCell = cellstr(num2str(glvect(plotRange)', 'Coronagraphic: NG=%d'));
+        legendCell = strtrim(cellstr(num2str(glvect(plotRange)', 'GL=%d')));
         
         figure('color', 'white');
         hold on; arrayfun(@(indexGL) plot(tcvect, arrangedLogRMS(indexGL,:), plotSpec{indexGL},'color',colorSet(indexGL,:),'LineWidth',lineWidth),plotRange);hold off
-        title('Coronagraphic RMS analysis for NG effects','FontSize',fontSize,'FontWeight','bold');
+        title('Coronagraphic RMS analysis for GL effects','FontSize',fontSize,'FontWeight','bold');
         xlabel('Vortex Topological Charge (TC)','FontSize',fontSize,'FontWeight','bold');
         ylabel('Root Mean Square of the Logarithmic SNR','FontSize',fontSize,'FontWeight','bold');
-        legend(legendCell,'Location','southeast'); set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on; axis square;
+        legend(legendCell,'Location','northwest'); set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on; axis square;
         xlim([tcvect(1),tcvect(end)]);
-        saveFigure(gcf, gca, [0,0,20,20], sprintf('Logarithmic_RMS_%d',1), 'svg');
+        saveFigure(gcf, gca, [0,0,20,20], sprintf('PSF_EXP_Logarithmic_RMS_GL_high%d',1), 'svg');
         
     case 10
         %% Analysis Figures Plotting -- Attenuation Ratios
@@ -499,9 +502,10 @@ switch metricSel
         %%  Analysis Figures Plotting -- Plot Images Mosaic
         disp('Plotting Images Mosaic...');
         saveEnabled = false;
+        logViewEnabled = true;
         fontSize = 15;
         titleSet = arrayfun(@(index) sprintf('TC:%d',tcvect(index)),1:totalTC,'UniformOutput',false);
-        yLabelSet = arrayfun(@(index) sprintf('NG:%d',glvect(index)),1:totalGL,'UniformOutput',false);
+        yLabelSet = arrayfun(@(index) sprintf('GL:%d',glvect(index)),1:totalGL,'UniformOutput',false);
         xLabelSet = cell(tcIndx,glIndx);
         
         arrangedCroppedImages = cell(totalTC,totalGL);
@@ -511,7 +515,13 @@ switch metricSel
                 arrangedCroppedImages{tcIndx,glIndx} = croppedMeasData{idxgral};
             end
         end
+        
         if measSimulated == 0
+            if logViewEnabled == true
+                logIntensity =  @(intensityData) 10*log10(intensityData);
+                arrangedCroppedImages = cellfun(@(cellData) logIntensity(cellData), arrangedCroppedImages, 'UniformOutput', false);
+            end
+
             f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,colorM,fontSize,saveEnabled, enableAxis) 
         else
             f_plotMosaic_angle(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,colorM,fontSize,saveEnabled,enableAxis) 
@@ -521,8 +531,9 @@ switch metricSel
         %% Analysis Figures Plotting -- Logarithmic RMS GL Improvement
         disp('Plotting Logarithmic RMS...');
         plotRange = 1:1:totalTC;
-        legendCell = cellstr(num2str(tcvect(plotRange)', 'TC=%d'));
-        relativePercentage = @(matrixData) (matrixData(:,:) - matrixData(1,:) )./matrixData(1,:)*100;
+        legendCell = strtrim(cellstr(num2str(tcvect(plotRange)', 'TC=%d')));
+        %         relativePercentage = @(matrixData) (matrixData(:,:) - matrixData(1,:) )./matrixData(1,:)*100;
+        relativePercentage = @(matrixData) (matrixData(:,:) - repmat(matrixData(1,:), [size(matrixData,1),1]) )./repmat(matrixData(1,:), [size(matrixData,1),1])*100;
         GLlmprovement = relativePercentage(arrangedLogRMS);
 
         figure('color', 'white');
@@ -531,7 +542,7 @@ switch metricSel
         xlabel('Discretization level','FontSize',fontSize,'FontWeight','bold');
         ylabel('LRMS Improvement [%]','FontSize',fontSize,'FontWeight','bold');
         legend(legendCell,'Location','northeast'); set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on;
-        saveFigure(gcf, gca, [0,0,20,20], sprintf('Logarithmic_RMS_%d',1), 'svg');
+%         saveFigure(gcf, gca, [0,0,20,20], sprintf('Logarithmic_RMS_%d',1), 'svg');
 
     case 15
         %% Cropped Referential PSF View -- LogView
@@ -544,16 +555,16 @@ switch metricSel
         title('Referential Non-Coronagraphic PSF');
         set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on; axis square;
         colormap(viridis); colorbar; set(gca,'GridColor',[1,1,1]);
-        saveFigure(gcf, gca, [0,0,20,20], 'Referential_PSF_normal_view', 'svg');
+        saveFigure(gcf, gca, [0,0,20,20], 'Referential_LC2002_EXP_PSF_normal_view', 'svg');
         
         figure('color','white');
-        imagesc(croppedCoorVect,croppedCoorVect,log10(croppedRefData));
+        imagesc(croppedCoorVect,croppedCoorVect,10*log10(croppedRefData));
         xlabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
         ylabel('Angular separation (\lambda/D)','FontSize',fontSize,'FontWeight','bold');
         title('Log View Referential Non-Coronagraphic PSF');
         set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on; axis square;
         colormap(viridis); colorbar; set(gca,'GridColor',[1,1,1]);
-        saveFigure(gcf, gca, [0,0,20,20], 'Referential_PSF_log_view', 'svg');
+        saveFigure(gcf, gca, [0,0,20,20], 'Referential_LC2002_EXP_PSF_log_view', 'svg');
     
     case 16 % WON'T BE USED
         %% Analysis Figures Plotting -- Mean Squared Error
@@ -640,6 +651,6 @@ disp(strcat('Estimated Airy"s radius in pix:', {' '},  num2str(AiryDiskPixX), ' 
 distances = cartcoord(refEEFcurve<=0.7);
 AiryRadius = distances(end)*aproxRadius;
 fprintf('Estimated EEF Airy"s radius in [Pixels]: %d.\n',AiryRadius);
-% PENDING
+% PENDIGL
 
 end

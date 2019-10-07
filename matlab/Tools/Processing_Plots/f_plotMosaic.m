@@ -34,12 +34,17 @@ for i=1:subplotsx
     for ii=1:subplotsy
         
         ax=axes('position',sub_pos{i,ii},'XGrid','off','XMinorGrid','off','FontSize',fontsizeAx,'Box','on','Layer','top','FontWeight','bold');
-        imagesc(xRefVector,yRefVector,dataArrange{i,ii}); colormap(customMap);
+        imagesc(xRefVector,yRefVector,dataArrange{i,ii}); colormap(customMap); %colorbar;
         cbarHandler=colorbar; limVals=get(cbarHandler,'Limits');
-        tol2 = 0.2*limVals(2); % Colorbar custom tick adjustment
-        set(cbarHandler,'Ticks',linspace(limVals(1)+tol2,limVals(2)-tol2,2));
-        ticksLabels = cellstr(num2str(limVals', '%1.0e')); %SCIENTIFIC
-        % ticksLabels = cellstr(num2str(limVals', '%2.3f'));
+        % tol2 = 0.2*limVals(2); % Colorbar custom tick adjustment
+        if limVals(1) == 1 || limVals(1) == 0
+            range = linspace(limVals(1),limVals(2),2);
+        else
+            range = linspace(limVals(1),limVals(2),4);
+        end
+        set(cbarHandler,'Ticks',range);
+%         ticksLabels = cellstr(num2str(limVals', '%1.0e')); %SCIENTIFIC
+        ticksLabels = strtrim(cellstr(num2str(range', '%2.0f')));
         set(cbarHandler,'XTickLabel',ticksLabels);
         
         if ii==subplotsy

@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PART 1: GENERAL ADJUSTMENTS %%%%%%%%%%%%%%%%%%%%%%%
 %% Algorithm sections
-meas = 1; % Measure: yes (1) or no (0)
+meas = 0; % Measure: yes (1) or no (0)
 %%% For meas = 1: the whole workspace is saved
     % Warning: measSimulated also affects when proc=1
     measSimulated = 0; % Saves the mask and does not involve the cameras: 
@@ -20,7 +20,7 @@ meas = 1; % Measure: yes (1) or no (0)
                    % Works if  measSimulated = 0. If it is active, the
                    % program will set proc = 0
     beepSound = 1; % Beep sound when the measurement finishes.
-proc = 0; % Processes the data
+proc = 1; % Processes the data
                 % Note: measSimulated=1 also applies to proc but with some
                 % loaded images from: Data/0_ExampleData
 %%% For proc = 1 and meas = 0:  the workspace is loaded

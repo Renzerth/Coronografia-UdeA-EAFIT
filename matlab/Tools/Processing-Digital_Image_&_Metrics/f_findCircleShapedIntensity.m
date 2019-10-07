@@ -24,14 +24,15 @@ luminanceThresh = 0.1; %0.1
 radiusRangePerce = 0.15; %0.25
 
 %% Process Reference
-shapeData = rawData-mean(rawData(:)); % Background filtering
+distributionMean = mean(rawData(:));
+shapeData = rawData - distributionMean; % Background filtering
 enhancedRange = mat2gray(log10(im2double(shapeData + 1))); % avoid -Inf log
                                                 % and turn it back to uint8
 
 %% Detect data regions
 totalCounts = numel(enhancedRange);
 % binaryData = imbinarize(enhancedRange,luminanceThresh);
-binaryData = double(enhancedRange>luminanceThresh);
+binaryData = double(enhancedRange>distributionMean + luminanceThresh);
 binaryData = imfill(binaryData,4,'holes');
 binaryData = imopen(binaryData,strel('disk',6)); % Binary shape must fill
                          % circle to increase enclosed area approximation
@@ -76,7 +77,7 @@ end
 %% Visualize detected data
 if plotsOn
     imagesc(rawData);
-    viscircles(mainDataCenter,mainDataRadius,'color','b');
+    viscircles(mainDataCenter,mainDataRadius);
 end
 
 end

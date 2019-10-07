@@ -27,7 +27,8 @@ else
 end
 
 %% Enclosed Energy Factor (EEF)
-energy = cumsum(radialIntensity,'omitnan'); % Discrete integration
+if isnan(radialIntensity(end)); radialIntensity(end) = 0; end; % Remove nans after averaged 0/0 values located at the end
+energy = cumsum(radialIntensity); % Discrete integration
 energy  = energy/energy(end); % Same as normalizing with the max
 normIntensity = radialIntensity./max(radialIntensity);
 

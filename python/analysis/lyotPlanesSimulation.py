@@ -26,11 +26,11 @@ plotsEnabled = True
 #System Parameters
 #-----------------
         
-Lvor = 10 # Topologic Charge
+Lvor = 2 # Topologic Charge
 TCStep = 1
 NGmin = 2
-NGmax = 10
-NG = 6
+NGmax = 256
+NG = 2
 
 spaceSize = 50.8 # Simulation window size (mm)
 spaceSamples = 1024
@@ -47,8 +47,8 @@ vortexTools = vortexProfiler(spaceSize,spaceSamples)
 
 TCRanges = np.arange(1,Lvor+1,TCStep)
 
-#GLRanges = np.fix(np.linspace(NGmin,NGmax,NG)).astype('int')
-GLRanges = np.array([12,16,24,32,64,128,256])
+GLRanges = np.fix(np.linspace(NGmin,NGmax,NG)).astype('int')
+#GLRanges = np.array([12,16,24,32,64,128,256])
 #GLRanges = np.array([32,64,128,256])
 
 TCSize = len(TCRanges)
@@ -110,8 +110,8 @@ if plotsEnabled:
 #%%-------------
 #Save Data Files
 #---------------
-matlaborpyton = 0 # 1: MATLAB; 2: Python
-mdict={'PSFoutputFields':PSFoutputFields,'PSFreference':PSFreference,'TCRanges':TCRanges,'GLRanges':GLRanges}
+matlaborpyton = 1 # 1: MATLAB; 2: Python
+mdict={'PSFoutputFields':allocatedMatrixLyot,'PSFreference':aperture,'TCRanges':TCRanges,'GLRanges':GLRanges}
 saveDir = '../data/Simulations/PSFs'
 
 if matlaborpyton == 1:

@@ -25,6 +25,7 @@ else
 end
 
 %% Logarithmic SNR
+Measurement(Measurement == 0) = 1e-3/255; % remove zeros by a 1000th of a single value over the overall saturated range
 SNR = log10(Measurement) - 0.5*log10(RefMeasurement);
 
 %% Plotting

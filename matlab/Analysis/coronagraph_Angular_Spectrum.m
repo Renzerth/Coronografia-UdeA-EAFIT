@@ -3,7 +3,7 @@ addpath(genpath(fileparts(pwd)));
 
 %% Plane properties
 planeSize = 2*[2.54e-2, 2.54e-2]; % m
-spaceSamples = [1024, 1024];
+spaceSamples = 2*[1024, 1024];
 halfSize = floor((spaceSamples+1)/2);
 shiftDistance = 0;
 
@@ -18,7 +18,7 @@ propagationSpeed = 3e8; % speed of light [m/s]
 irradianceScaling = insidentEnergy*(propagationSpeed*mediumRefracIndex*mediumElecPermitivity)/2; % [W/m^2]
 
 %% System Properties
-illuminationDiameter = 2e-3; %[m]
+illuminationDiameter = 3e-3; %[m]
 LyotApertureDiameter = illuminationDiameter; % [m]
 aberrationPupilRadius = max(planeSize); %[m]
 
@@ -38,8 +38,8 @@ samplingFactor = 1;
 [freqVectX,freqVectY,spXperiod,spYperiod,analysisScaling,normNMFactor,synthesisScaling] = computeFreqVector(planeSize, spaceSamples, samplingFactor);
 
 %% Vortex Mask properties
-TC = 1;
-grayLevels = 10;
+TC = 4;
+grayLevels = 64;
 vortexMask = spiralGen2(spaceSamples,TC);
 % vortexMask = exp(1i*(TC*(theta)));
 [vortexMask] = discretizeMap(angle(vortexMask),grayLevels);
@@ -53,8 +53,9 @@ lensB = lensAperture.*exp(-1i*k/(2*focalLengthB)*(lensRadii).^2);
 diverLens = lensAperture.*exp(1i*k/(2*focalLengthA)*(lensRadii).^2);
 
 %% Uniform light definition after first focal lens
-inputPlane = insidentEnergy*double(rho <= illuminationDiameter/2).*lensA;
-% inputPlane = insidentEnergy*BEAMS.evaluateGaussianField(X,Y,illuminationDiameter,[0,0],lambda);
+aperture = double(rho <= illuminationDiameter/2);
+% inputPlane =  insidentEnergy*aperture.*lensA;
+inputPlane = insidentEnergy*aperture.*evaluateGaussianField(X,Y,illuminationDiameter/3,[0,0],lambda).*lensA;
 
 %% Optical Aberrations Zernike Phase
 zernikeCoeffs = zeros(1,10);
@@ -104,37 +105,46 @@ compAngle = @(complexField) angle(complexField);
 outputIntensity = compIntensity(PSFplaneDistribution,irradianceScaling);
 inputIntensity = compIntensity(inputPlane,irradianceScaling);
 
-%% PLots
+%% PLots Settings
 close all;
+fontSize = 16;
 apertureDisplayRatio = 1.5;
-PSFdisplayRatio = 0.25;
+PSFdisplayRatio = 0.1;
+
+plotGaps = [0.1, 0.01];
+heighMargins = [0.1, 0.05];
+widthMargins = [.02, 0.0];
+
 dispRngA = {abs(xCoords) <= illuminationDiameter*apertureDisplayRatio; abs(yCoords) <= illuminationDiameter*apertureDisplayRatio};
 dispRngB =  {abs(xCoords) <= planeSize(1)*PSFdisplayRatio; abs(yCoords) <= planeSize(2)*PSFdisplayRatio};
 
+%% Plots
 figureHandleA = figure('Color', 'white');
-subplot(2,3,1); imagesc(xCoords,yCoords,inputIntensity); title('Input Plane'); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square;
-subplot(2,3,2); imagesc(xCoords,yCoords,outputIntensity); title('Output Plane'); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square;
-subplot(2,3,3); imagesc(xCoords,yCoords,angle(inputPlane)); title(sprintf('L1 Lens Phase: f=%1.1fm',focalLengthA)); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'rad'; axis square;
-subplot(2,3,4); imagesc(xCoords,yCoords,10*log10(inputIntensity)); title('Input Log10 view'); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'dB'; axis square;
-subplot(2,3,5); imagesc(xCoords,yCoords,10*log10(outputIntensity)); title('Output Log10 view'); xlabel('[m]'); ylabel('[m]');CH = colorbar; CH.Label.String = 'dB'; axis square;
-subplot(2,3,6); imagesc(freqVectX,freqVectY,angle(focalPlanePropagationKernelA)); title(sprintf('Vaccum Transfer Function - D=%1.1fm', propDistance)); xlabel('fx [1/m]'); ylabel('fy [1/m]'); CH = colorbar; CH.Label.String = 'rad'; axis square;
-set(gcf,'units','normalized','position',[0,0,1,1]);
-% TOOLS.tightfigadv(figureHandle);
+[ha, ~] = tight_subplot(2,3,plotGaps,heighMargins,widthMargins);
+axes(ha(1)); imagesc(xCoords,yCoords,inputIntensity); title('Input Plane'); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(2)); imagesc(xCoords,yCoords,outputIntensity); title('Output Plane'); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(3)); imagesc(xCoords,yCoords,angle(inputPlane)); title(sprintf('L1 Lens Phase: f=%1.1fm',focalLengthA)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(4)); imagesc(xCoords,yCoords,10*log10(inputIntensity)); title('Input Log10 view'); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'dB'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(5)); imagesc(xCoords,yCoords,10*log10(outputIntensity)); title('Output Log10 view'); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold');CH = colorbar; CH.Label.String = 'dB'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(6)); imagesc(freqVectX,freqVectY,angle(focalPlanePropagationKernelA)); title(sprintf('Vaccum Transfer Function: D=%1.1fm', propDistance)); xlabel('fx [1/m]','FontSize',fontSize,'FontWeight','bold'); ylabel('fy [1/m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+set(figureHandleA,'units','normalized','position',[0,0,1,1]);
 
 figureHandleB = figure('Color', 'white');
-subplot(2,3,1); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),inputIntensity(dispRngA{1},dispRngA{2})); title('Input Plane'); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square;
-subplot(2,3,2); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compIntensity(focalPlaneDistribution(dispRngA{1},dispRngA{2}),irradianceScaling)); title(sprintf('Focal Plane after L1 - EFL:%1.1fm.',focalLengthA)); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square;
-subplot(2,3,3); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compIntensity(ocularPlaneDistribution(dispRngA{1},dispRngA{2}),irradianceScaling)); title(sprintf('Plane at L2 at entrance - z = %1.1fm',2*focalLengthA)); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square;
-subplot(2,3,4); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compIntensity(truncatedLyotPlane(dispRngA{1},dispRngA{2}),irradianceScaling)); title(sprintf('Truncated Lyot Distribution - %1.1fmm.', LyotApertureDiameter*10^abs(ceil(log10(LyotApertureDiameter)-1)))); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square;
-subplot(2,3,5); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compIntensity(PSFlensPlaneDistribution(dispRngA{1},dispRngA{2}),irradianceScaling)); title(sprintf('Plane at L3 entrance - EFL:%1.1fm.',focalLengthB)); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square;
-subplot(2,3,6); imagesc(xCoords(dispRngB{1}),yCoords(dispRngB{2}),outputIntensity(dispRngB{1},dispRngB{2})); title(sprintf('PSF Distribution - z=%1.1fm.',3*focalLengthA + 2*focalLengthB)); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square;
-set(gcf,'units','normalized','position',[0,0,1,1]);
+[ha, ~] = tight_subplot(2,3,plotGaps,heighMargins,widthMargins);
+axes(ha(1)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),inputIntensity(dispRngA{1},dispRngA{2})); title('Input Plane','FontSize',fontSize,'FontWeight','bold'); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(2)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compIntensity(focalPlaneDistribution(dispRngA{1},dispRngA{2}),irradianceScaling)); title(sprintf('Focal Plane: EFL=%1.1fm',focalLengthA)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(3)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compIntensity(ocularPlaneDistribution(dispRngA{1},dispRngA{2}),irradianceScaling)); title(sprintf('Plane at L2: z=%1.1fm',2*focalLengthA)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(4)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compIntensity(truncatedLyotPlane(dispRngA{1},dispRngA{2}),irradianceScaling)); title(sprintf('Truncated Lyot: %1.1fmm', LyotApertureDiameter*10^abs(ceil(log10(LyotApertureDiameter)-1)))); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(5)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compIntensity(PSFlensPlaneDistribution(dispRngA{1},dispRngA{2}),irradianceScaling)); title(sprintf('Plane at L3: EFL=%1.1fm',focalLengthB)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(6)); imagesc(xCoords(dispRngB{1}),yCoords(dispRngB{2}),outputIntensity(dispRngB{1},dispRngB{2})); title(sprintf('PSF Distribution: z=%1.1fm',3*focalLengthA + 2*focalLengthB)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+set(figureHandleB,'units','normalized','position',[0,0,1,1]);
 
 figureHandleC = figure('Color', 'white');
-subplot(2,3,1); imagesc(xCoords,yCoords,compAngle(inputPlane)); title('Input Plane'); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'rad'; axis square;
-subplot(2,3,2); imagesc(xCoords,yCoords,compAngle(focalPlaneDistribution)); title(sprintf('Focal Plane after L1 - EFL:%1.1fm.',focalLengthA)); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'rad'; axis square;
-subplot(2,3,3); imagesc(xCoords,yCoords,compAngle(ocularPlaneDistribution)); title(sprintf('Plane at L2 at entrance - z = %1.1fm.',2*focalLengthA)); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'rad'; axis square;
-subplot(2,3,4); imagesc(xCoords,yCoords,compAngle(truncatedLyotPlane)); title(sprintf('Truncated Lyot Distribution - %1.1fmm.', LyotApertureDiameter*10^abs(ceil(log10(LyotApertureDiameter)-1)))); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'rad'; axis square;
-subplot(2,3,5); imagesc(xCoords,yCoords,compAngle(PSFlensPlaneDistribution)); title(sprintf('Plane at L3 entrance - EFL:%1.1fm.',focalLengthB)); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'rad'; axis square;
-subplot(2,3,6); imagesc(xCoords,yCoords,compAngle(PSFplaneDistribution)); title(sprintf('PSF Distribution - z=%1.1fm.',3*focalLengthA + 2*focalLengthB)); xlabel('[m]'); ylabel('[m]'); CH = colorbar; CH.Label.String = 'rad'; axis square;
-set(gcf,'units','normalized','position',[0,0,1,1]);
+[ha, ~] = tight_subplot(2,3,plotGaps,heighMargins,widthMargins);
+axes(ha(1)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(inputPlane(dispRngA{1},dispRngA{2}))); title('Input Plane','FontSize',fontSize,'FontWeight','bold'); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(2)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(focalPlaneDistribution(dispRngA{1},dispRngA{2}))); title(sprintf('Focal Plane: EFL=%1.1fm',focalLengthA)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(3)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(ocularPlaneDistribution(dispRngA{1},dispRngA{2}))); title(sprintf('Plane at L2: z=%1.1fm',2*focalLengthA)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(4)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(truncatedLyotPlane(dispRngA{1},dispRngA{2}))); title(sprintf('Truncated Lyot: %1.1fmm', LyotApertureDiameter*10^abs(ceil(log10(LyotApertureDiameter)-1)))); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(5)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(PSFlensPlaneDistribution(dispRngA{1},dispRngA{2}))); title(sprintf('Plane at L3: EFL=%1.1fm',focalLengthB)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(6)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(PSFplaneDistribution(dispRngA{1},dispRngA{2}))); title(sprintf('PSF Distribution: z=%1.1fm',3*focalLengthA + 2*focalLengthB)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+set(figureHandleC,'units','normalized','position',[0,0,1,1]);

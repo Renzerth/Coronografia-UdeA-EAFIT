@@ -1,12 +1,5 @@
-function [gaussianBeam,x,y,k] = computeGaussianBeam(sizeRatio,spaceSize,beamCenter,lambda)
-%% Space definition
-xLength = spaceSize(1,1);
-yLength = spaceSize(1,2);
-xCoordinate = -xLength/2:xLength/2-1 + mod(xLength,2)/2;
-yCoordinate = -yLength/2:yLength/2-1 + mod(yLength,2)/2;
-[x,y]= meshgrid(xCoordinate,yCoordinate);
+function [gaussianBeam] = evaluateGaussianField(x,y,w0,beamCenter,lambda)
 %% Gaussian Parameters % e.g. Orazio Svelto, Principles of Lasers, 4th ed. page 152, Eqn's 4.715a-4.717c / OSLO Ref
-w0 = sizeRatio*xLength/2;      %Beam field width at waist
 z = 1e-20;                      %Distance from beam axis
 xC = beamCenter(1,1);           %x Gaussian center
 yC = beamCenter(1,2);           %y Gaussian center

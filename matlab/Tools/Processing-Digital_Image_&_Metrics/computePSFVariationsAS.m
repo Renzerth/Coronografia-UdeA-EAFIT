@@ -35,7 +35,7 @@ propagationSpeed = 3e8; % speed of light [m/s]
 irradianceScaling = (propagationSpeed*mediumRefracIndex*mediumElecPermitivity)/2; % [W/m^2]
 
 %% System Properties
-illuminationDiameter = 2e-3; %[m]
+illuminationDiameter = 3e-3; %[m]
 LyotApertureDiameter = illuminationDiameter; % [m]
 aberrationPupilRadius = max(planeSize); %[m]
 
@@ -47,7 +47,7 @@ aberrationValue = 0*pi*(1.0021)*0.01;
 %% Spatial coordinates
 xCenter= floor((spaceSamples(1) + 1)/2);
 yCenter = floor((spaceSamples(2) + 1)/2);
-[~, ~, ~, ~, ~, rho] = makeSpaceCoordinates(planeSize(1),planeSize(2),spaceSamples(1),spaceSamples(2),xCenter,yCenter);
+[~, ~, X, Y, ~, rho] = makeSpaceCoordinates(planeSize(1),planeSize(2),spaceSamples(1),spaceSamples(2),xCenter,yCenter);
 [theta] = compAngTransition(spaceSamples);
 
 %% Spectral coordinates
@@ -63,7 +63,9 @@ lensB = lensAperture.*exp(-1i*k/(2*focalLengthB)*(lensRadii).^2);
 diverLens = lensAperture.*exp(1i*k/(2*focalLengthA)*(lensRadii).^2);
 
 %% Uniform light definition after first focal lens
-inputPlane = insidentEnergy*double(rho <= illuminationDiameter/2).*lensA;
+aperture = double(rho <= illuminationDiameter/2);
+% inputPlane =  insidentEnergy*aperture.*lensA;
+inputPlane = insidentEnergy*aperture.*evaluateGaussianField(X,Y,illuminationDiameter,[0,0],lambda).*lensA;
 
 %% Optical Aberrations Zernike Phase
 zernikeCoeffs = zeros(1,10);
@@ -128,12 +130,21 @@ LyotReference = compIntensity(LyotPlaneDistribution, irradianceScaling);
 %% Save Coronagraph Intensities
 if saveEnabled
     saveVars = {'LyotPlaneIntensities', 'PSFplaneIntensities','LyotReference', 'PSFreference', 'TC', 'glvect'};
+    dataByteSize = prod(spaceSamples)*totalFields*8e-9; %[GB] | 8 -> 8bytes in double
     try
-        save(strcat(fileparts(pwd),'/Data/AngularSpectrumSimulations/angular_spectrum_pipeline.mat'),saveVars{:});
+        if dataByteSize < 2 % Use save switch 7.3 if data exeeds or is equal to 2GB
+            save(strcat(fileparts(pwd),'/Data/AngularSpectrumSimulations/angular_spectrum_pipeline.mat'),saveVars{:});
+        else
+            save(strcat(fileparts(pwd),'/Data/AngularSpectrumSimulations/angular_spectrum_pipeline.mat'),saveVars{:},'-v7.3');
+        end
     catch
         TGTdir = strcat(fileparts(pwd),'/Data/AngularSpectrumSimulations');
         mkdir(TGTdir)
-        save(strcat(TGTdir,'/angular_spectrum_pipeline.mat'),saveVars{:});
+        if dataByteSize < 2
+            save(strcat(TGTdir,'/angular_spectrum_pipeline.mat'),saveVars{:});
+        else
+            save(strcat(TGTdir,'/angular_spectrum_pipeline.mat'),saveVars{:},'-v7.3');
+        end
     end
 end
 end
