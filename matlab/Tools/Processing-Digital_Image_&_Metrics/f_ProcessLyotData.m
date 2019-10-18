@@ -102,15 +102,17 @@ oneSideProfile = 1; % Specifically needed for all the metrics. Ref: 1
 disp('Calculating Profiles...');
 [xrefProx,yrefProf,~,~,~,~] = f_makeImageProfile(x,y,midX,midY,refMeas, shiftCart, oneSideProfile);
 flippedAproxCenter = fliplr(aproxCenter); % [X,Y] Format
-[radialIntensityRef] = f_getAverageRadialProfile(refMeas,[ySize, xSize], flippedAproxCenter);
 
+[radialIntensityRef] = f_getAverageRadialProfile(refMeas-mean(refMeas(:)),[ySize, xSize], flippedAproxCenter);
+radialIntensityRef(radialIntensityRef<0) = 0;
 %% Profile of the measurements
 radialIntensityMeas = cell(1,totalImgs);
 
 for idxgral = 1:totalImgs
     [radialIntensityMeas{idxgral}] = f_getAverageRadialProfile(...
-        expMeas{idxgral},[ySize, xSize],flippedAproxCenter);
+        expMeas{idxgral}-mean(expMeas{idxgral}(:)),[ySize, xSize],flippedAproxCenter);
     radialIntensityMeas{idxgral}(isnan(radialIntensityMeas{idxgral})) = 0;
+    radialIntensityMeas{idxgral}(radialIntensityMeas{idxgral}<0) = 0;
 end
 
 %% Measurement radial averaged profile
@@ -122,9 +124,9 @@ profileTitle = '(radial average profile)';
 disp('Done.');
 
 %% Data Cropping for view range
-rangeFactor = 1.15; % Ref: 1 Number of Radii proportion from center
+rangeFactor = 1.08; % Ref: 1 Number of Radii proportion from center
 if 2*aproxRadius*rangeFactor > ySize
-    rangeFactor = 1 - (2*(aproxRadius/ySize-0.5)-(min(aproxCenter)-aproxRadius)/aproxRadius); % Use minimum radius size with a .05 of margin when factor leads to a larger size than matrix
+    rangeFactor = (1 - 2*(aproxRadius/ySize-0.5)) - (min(aproxCenter)-aproxRadius)/aproxRadius; % Use minimum radius size with a .05 of margin when factor leads to a larger size than matrix
 end
 croppedMeasData = cell(1,totalImgs);
 croppedCoorVect = x(abs(x)<=rangeFactor); % Symmetric dual span coordinates cropping
@@ -234,7 +236,7 @@ colorSet = [1 0 0 ; 0 1 0; 0.8500 0.3250 0.0980; ...
     0 0 1; 0.9290 0.6940 0.1250; 0 1 1; 0.4940 0.1840 0.5560; ...
     1 0 1; 0.6350 0.0780 0.1840; 0 0 0; 0.7216 0.1725 0.8784]; % lightBlue 0.3686 0.6941 0.7961 || dark green 0.1373 0.3255 0.2784
 lineStyle = '-.';
-xLimRange = [0,1];
+xLimRange = [0,1.5];
 yLimRange = [0,0.6];
 markerSet = [{'o'},{'+'},{'s'},{'>'},{'d'},{'x'},{'p'},{'^'},{'h'},{'v'},{'<'}]';
 plotSpec = arrayfun(@ (index) strcat(markerSet{index},lineStyle), ...
@@ -286,7 +288,7 @@ switch metricSel
             ylabel('Throughput (EEF)','FontSize',fontSize,'FontWeight','bold');  %  xlabel('Radial Distance (\lambda/D)')
             title(sprintf('Throughput of topological charges at GL = %d',glvect(indexGL)));
             set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','northwest'); grid on; axis square;
-            fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); % xlim(xLimRange);
+            fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); xlim(xLimRange);
             saveFigure(gcf, gca, [0,0,20,20], sprintf('Lyot_LC2002_EXP_Throughput_GL_%d', glvect(indexGL)), 'svg');
         end
         
@@ -349,8 +351,8 @@ switch metricSel
             ylabel('Relative Intensity Profile [A.U]','FontSize',fontSize,'FontWeight','bold');
             title(sprintf('Lyot plane with GL = %d', glvect(indexGL)),'FontSize',fontSize,'FontWeight','bold');
             set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','northeast'); legend boxon; grid on; axis square;
-            fprintf('Plotting group... %d/%d\n\r',  indexGL, totalGL); %xlim(xLimRange); ylim(yLimRange); % set(gca,'yscale','log');
-            xtickData = 0:0.2:1.4; set(gca, 'XTick', xtickData, 'XTickLabel', strtrim(cellstr(num2str(xtickData','%1.1f'))));
+            fprintf('Plotting group... %d/%d\n\r',  indexGL, totalGL); xlim(xLimRange); %ylim(yLimRange); % set(gca,'yscale','log');
+%             xtickData = 0:0.2:1.4; set(gca, 'XTick', xtickData, 'XTickLabel', strtrim(cellstr(num2str(xtickData','%1.1f'))));
             saveFigure(gcf, gca, [0,0,20,20], sprintf('Lyot_LC2002_EXP_intensities_NG_%d', glvect(indexGL)), 'svg');
         end
         
@@ -434,7 +436,8 @@ switch metricSel
         fontSize = 17;
         titleSet = arrayfun(@(index) sprintf('TC:%d',tcvect(index)),1:totalTC,'UniformOutput',false);
         yLabelSet = arrayfun(@(index) sprintf('GL:%d',glvect(index)),1:totalGL,'UniformOutput',false);
-        xLabelSet = cell(tcIndx,glIndx);
+        xLabelSet = cell(totalTC,totalGL);
+        [croppedRefData] = f_cropPSFrange(refMeas,cropRange);
         
         arrangedCroppedImages = cell(totalTC,totalGL);
         for tcIndx = 1:totalTC
@@ -446,10 +449,13 @@ switch metricSel
         
         if logViewEnabled == true
             logIntensity =  @(intensityData) 10*log10(intensityData);
+            logCroppedRefData = logIntensity(croppedRefData);
+            scalingLimits = computeScaleRange(logCroppedRefData,[1,1],[0,0]);
             arrangedCroppedImages = cellfun(@(cellData) logIntensity(cellData), arrangedCroppedImages, 'UniformOutput', false);
+        else
+            scalingLimits = computeScaleRange(croppedRefData,[1,1]);
         end
-        
-        f_plotMosaic(arrangedCroppedImages,round(croppedCoorVect),round(croppedCoorVect),titleSet,xLabelSet,yLabelSet,viridis,fontSize,saveEnabled,enableAxis)
+        f_plotMosaic(arrangedCroppedImages,round(croppedCoorVect),round(croppedCoorVect),titleSet,xLabelSet,yLabelSet,viridis,fontSize,saveEnabled,enableAxis,scalingLimits)
         
     case 15
         %% Analysis Figures Plotting -- Gray level improvement

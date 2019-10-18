@@ -284,7 +284,6 @@ disp('Done.');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% Metric Plotting
 %% Plot Settings
-%% Plot Settings
 xlab = 'Radial Distance [a/\rho]';
 ylab = 'Radial Distance [a/\rho]';
 tol = 0; % 0: no need to symmetrically truncate the profile. Ref: 0
@@ -506,7 +505,8 @@ switch metricSel
         fontSize = 15;
         titleSet = arrayfun(@(index) sprintf('TC:%d',tcvect(index)),1:totalTC,'UniformOutput',false);
         yLabelSet = arrayfun(@(index) sprintf('GL:%d',glvect(index)),1:totalGL,'UniformOutput',false);
-        xLabelSet = cell(tcIndx,glIndx);
+        xLabelSet = cell(totalTC,totalGL);
+        [croppedRefData] = f_cropPSFrange(refMeas,cropRange);
         
         arrangedCroppedImages = cell(totalTC,totalGL);
         for tcIndx = 1:totalTC
@@ -519,10 +519,13 @@ switch metricSel
         if measSimulated == 0
             if logViewEnabled == true
                 logIntensity =  @(intensityData) 10*log10(intensityData);
+                logCroppedRefData = logIntensity(croppedRefData);
+                scalingLimits = computeScaleRange(logCroppedRefData,[1,1],[-8,0]);
                 arrangedCroppedImages = cellfun(@(cellData) logIntensity(cellData), arrangedCroppedImages, 'UniformOutput', false);
+            else
+                scalingLimits = computeScaleRange(croppedRefData,[1,1]);
             end
-
-            f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,colorM,fontSize,saveEnabled, enableAxis) 
+            f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,colorM,fontSize,saveEnabled, enableAxis,scalingLimits) 
         else
             f_plotMosaic_angle(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,colorM,fontSize,saveEnabled,enableAxis) 
         end

@@ -1,4 +1,4 @@
-function f_plotMosaic(dataArrange,xRefVector,yRefVector,titleSet,xLabelSet,yLabelSet,customMap,fontSize,saveEnabled,enableAxis)
+function f_plotMosaic(dataArrange,xRefVector,yRefVector,titleSet,xLabelSet,yLabelSet,customMap,fontSize,saveEnabled,enableAxis,scalingLimits)
 % Patrick Martineau
 % Perfect subplot in Matlab
 % http://p-martineau.com/perfect-subplot-in-matlab/
@@ -29,22 +29,23 @@ set(gcf, 'PaperSize', [plotwidth plotheight]);
 set(gcf, 'PaperPositionMode', 'manual');
 set(gcf, 'PaperPosition', [0 0 plotwidth plotheight]);
 
+%% Colorbar format
+range = linspace(scalingLimits(1),scalingLimits(2),4);
+
+if scalingLimits(1) <=0 && scalingLimits(2) <=0
+    ticksLabels = strtrim(cellstr(num2str(range', '%2.0f'))); % Logarithmic Scale Format
+else
+    ticksLabels = strtrim(cellstr(num2str(range', '%1.0e'))); % Linear Scale Format
+end
+
 %% Loop to create axes
 for i=1:subplotsx
     for ii=1:subplotsy
         
         ax=axes('position',sub_pos{i,ii},'XGrid','off','XMinorGrid','off','FontSize',fontsizeAx,'Box','on','Layer','top','FontWeight','bold');
-        imagesc(xRefVector,yRefVector,dataArrange{i,ii}); colormap(customMap); %colorbar;
-        cbarHandler=colorbar; limVals=get(cbarHandler,'Limits');
-        % tol2 = 0.2*limVals(2); % Colorbar custom tick adjustment
-        if limVals(1) == 1 || limVals(1) == 0
-            range = linspace(limVals(1),limVals(2),2);
-        else
-            range = linspace(limVals(1),limVals(2),4);
-        end
+        imagesc(xRefVector,yRefVector,dataArrange{i,ii},scalingLimits); colormap(customMap);
+        cbarHandler=colorbar; %limVals=get(cbarHandler,'Limits');
         set(cbarHandler,'Ticks',range);
-%         ticksLabels = cellstr(num2str(limVals', '%1.0e')); %SCIENTIFIC
-        ticksLabels = strtrim(cellstr(num2str(range', '%2.0f')));
         set(cbarHandler,'XTickLabel',ticksLabels);
         
         if ii==subplotsy

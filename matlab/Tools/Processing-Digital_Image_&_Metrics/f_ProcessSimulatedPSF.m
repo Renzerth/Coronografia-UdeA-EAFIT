@@ -91,11 +91,11 @@ flippedAproxCenter = fliplr(aproxCenter); % [X,Y] Format
 %% Profile of the measurements
 radialIntensityMeas = cell(1,totalImgs);
 
-for idxgral = 1:totalImgs
-    [radialIntensityMeas{idxgral}] = f_getAverageRadialProfile(...
-        expMeas{idxgral},[ySize, xSize],flippedAproxCenter);
-    radialIntensityMeas{idxgral}(isnan(radialIntensityMeas{idxgral})) = 0;
-end
+% for idxgral = 1:totalImgs
+%     [radialIntensityMeas{idxgral}] = f_getAverageRadialProfile(...
+%         expMeas{idxgral},[ySize, xSize],flippedAproxCenter);
+%     radialIntensityMeas{idxgral}(isnan(radialIntensityMeas{idxgral})) = 0;
+% end
 
 %% Measurement profile choice Radial averaged profile 
 trimRange = 1:min(numel(xrefProx),numel(yrefProf));
@@ -400,7 +400,8 @@ switch metricSel
         fontSize = 17;
         titleSet = arrayfun(@(index) sprintf('TC:%d',tcvect(index)),1:totalTC,'UniformOutput',false);
         yLabelSet = arrayfun(@(index) sprintf('GL:%d',glvect(index)),1:totalGL,'UniformOutput',false);
-        xLabelSet = cell(tcIndx,glIndx);
+        xLabelSet = cell(totalTC,totalGL);
+        [croppedRefData] = f_cropPSFrange(refMeas,cropRange);
         
         arrangedCroppedImages = cell(totalTC,totalGL);
         for tcIndx = 1:totalTC
@@ -412,9 +413,13 @@ switch metricSel
         
         if logViewEnabled == true
             logIntensity =  @(intensityData) 10*log10(intensityData);
+            logCroppedRefData = logIntensity(croppedRefData);
+            scalingLimits = computeScaleRange(logCroppedRefData,[0.2,1],[-15,0]);
             arrangedCroppedImages = cellfun(@(cellData) logIntensity(cellData), arrangedCroppedImages, 'UniformOutput', false);
+        else
+            scalingLimits = computeScaleRange(croppedRefData,[1,1]);
         end
-        f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,viridis,fontSize,saveEnabled,enableAxis)
+        f_plotMosaic(arrangedCroppedImages,croppedCoorVect,croppedCoorVect,titleSet,xLabelSet,yLabelSet,viridis,fontSize,saveEnabled,enableAxis,scalingLimits)
         
     case 14
         %% Analysis Figures Plotting -- Gray level improvement 
