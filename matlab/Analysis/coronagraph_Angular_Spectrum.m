@@ -18,7 +18,7 @@ propagationSpeed = 3e8; % speed of light [m/s]
 irradianceScaling = insidentEnergy*(propagationSpeed*mediumRefracIndex*mediumElecPermitivity)/2; % [W/m^2]
 
 %% System Properties
-illuminationDiameter = 3e-3; %[m]
+illuminationDiameter = 6e-3; %[m]
 LyotApertureDiameter = illuminationDiameter; % [m]
 aberrationPupilRadius = max(planeSize); %[m]
 
@@ -53,9 +53,10 @@ lensB = lensAperture.*exp(-1i*k/(2*focalLengthB)*(lensRadii).^2);
 diverLens = lensAperture.*exp(1i*k/(2*focalLengthA)*(lensRadii).^2);
 
 %% Uniform light definition after first focal lens
-aperture = double(rho <= illuminationDiameter/2);
-% inputPlane =  insidentEnergy*aperture.*lensA;
-inputPlane = insidentEnergy*aperture.*evaluateGaussianField(X,Y,illuminationDiameter/3,[0,0],lambda).*lensA;
+obstruction = 3e-3;
+aperture = double(rho <= illuminationDiameter/2).*double(rho >= obstruction/2);
+inputPlane =  insidentEnergy*aperture.*lensA;
+% inputPlane = insidentEnergy*aperture.*evaluateGaussianField(X,Y,illuminationDiameter/3,[0,0],lambda).*lensA;
 
 %% Optical Aberrations Zernike Phase
 zernikeCoeffs = zeros(1,10);
