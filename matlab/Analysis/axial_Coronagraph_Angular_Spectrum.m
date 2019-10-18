@@ -59,8 +59,8 @@ diverLens = lensAperture.*exp(1i*k/(2*focalLengthA)*(lensRadii).^2);
 obstruction = 3e-3;
 % aperture = double(rho <= illuminationDiameter/2).*double(rho >= obstruction/2);
 aperture = double(rho <= illuminationDiameter/2);
-inputPlane =  insidentEnergy*aperture;
-% inputPlane = insidentEnergy*aperture.*evaluateGaussianField(X,Y,illuminationDiameter/3,[0,0],lambda).*lensA;
+% inputPlane =  insidentEnergy*aperture;
+inputPlane = insidentEnergy*aperture.*evaluateGaussianField(X,Y,illuminationDiameter/3,[0,0],lambda);
 
 %% Optical Aberrations Zernike Phase
 zernikeCoeffs = zeros(1,10);
@@ -82,6 +82,7 @@ propagationKernel = @ (freqLowPass, k, angularSpectrum, z) freqLowPass.*exp(1i*k
 midPlanesNumber = 20;
 propagationDistancesA = linspace(1e-5,focalLengthA,midPlanesNumber);
 propagationDistancesB = linspace(1e-5,focalLengthB,midPlanesNumber);
+extendedAxialDistance = linspace(0,6*focalLengthB,6*midPlanesNumber);
 
 %% Axial analysis
 windowFraction = 5;
@@ -96,6 +97,9 @@ interpRangeY = 1:1/interpFactor^2:cutDataLength;
 
 interpDIstanceA = interp1(propagationDistancesA,interpRangeX);
 interpTransverseCoords = interp1(yCoords(transverseCutRange),interpRangeY);
+
+interpRangeExtendedX = 1:1/interpFactor^2:6*midPlanesNumber;
+interpExtendedDIstanceA = interp1(extendedAxialDistance,interpRangeExtendedX);
 
 %% Entrance Propagation
 targetPlane = inputPlane;
@@ -120,7 +124,7 @@ targetPlane = planeL2Propagation(:,:,end).*LyotAperture;
 
 %% PSF Propagation
 targetPlane = planeLyotPropagation(:,:,end).*lensB;
-[focalizingL3Propagation,focalizingL3Cut] = propagatePerPlane(targetPlane, k, angularSpectrum, propagationKernel, spaceSamples, halfSize,transverseCutRange,cutDataLength, propagationDistancesA,midPlanesNumber,normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, freqCirc);
+[focalizingL3Propagation,focalizingL3Cut] = propagatePerPlane(targetPlane, k, angularSpectrum, propagationKernel, spaceSamples, halfSize,transverseCutRange,cutDataLength, propagationDistancesB,midPlanesNumber,normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, freqCirc);
 
 %% PLots Settings
 close all;
@@ -195,16 +199,16 @@ set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on
 colorbar; grid on; axis tight; set(gca,'GridColor',[1,1,1]);
 
 %% Comple Axial Plots
-completeSetNorm = [entranceCut./max(entranceCut),focalizingL1Cut./max(focalizingL1Cut),divergingL1Cut./max(divergingL1Cut),planeL2Cut./max(planeL2Cut),planeLyotCut./max(planeLyotCut),focalizingL3Cut./max(focalizingL3Cut)];
-figure('color','white'); imagesc(0:6*focalLengthA,yCoords(transverseCutRange),(completeSetNorm));
+completeSetNorm = interp2([entranceCut./max(entranceCut),focalizingL1Cut./max(focalizingL1Cut),divergingL1Cut./max(divergingL1Cut),planeL2Cut./max(planeL2Cut),planeLyotCut./max(planeLyotCut),focalizingL3Cut./max(focalizingL3Cut)], interpFactor);
+figure('color','white'); imagesc(interpExtendedDIstanceA, interpTransverseCoords, completeSetNorm);
 title('Complete Axial propagation 1F - 6F: Normalized','FontSize',fontSize,'FontWeight','bold')
 xlabel('Axial Distance [m]','FontSize',fontSize,'FontWeight','bold');
 ylabel('Transverse Cut [m]','FontSize',fontSize,'FontWeight','bold');
 set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on
 colorbar; grid on; axis tight; set(gca,'GridColor',[1,1,1]);
 
-completeSet = [entranceCut,focalizingL1Cut,divergingL1Cut,planeL2Cut,planeLyotCut,focalizingL3Cut];
-figure('color','white'); imagesc(0:6*focalLengthA,yCoords(transverseCutRange),10*log10(completeSet));
+completeSet = interp2([entranceCut,focalizingL1Cut,divergingL1Cut,planeL2Cut,planeLyotCut,focalizingL3Cut], interpFactor);
+figure('color','white'); imagesc(interpExtendedDIstanceA, interpTransverseCoords,10*log10(completeSet));
 title('Complete Axial propagation 1F - 6F: LogView ','FontSize',fontSize,'FontWeight','bold')
 xlabel('Axial Distance [m]','FontSize',fontSize,'FontWeight','bold');
 ylabel('Transverse Cut [m]','FontSize',fontSize,'FontWeight','bold');
@@ -212,7 +216,7 @@ set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on
 colorbar; grid on; axis tight; set(gca,'GridColor',[0,0,0]);
 
 %% Relevant Planes
-focalPlanePropagationKernelA = localKernel;
+focalPlanePropagationKernelA = propagationKernel(freqCirc, k, angularSpectrum, propagationDistancesA(midPlanesNumber));
 
 inputIntensity = fieldIntensity(entrancePropagation(:,:,1),irradianceScaling);
 focalPlaneDistribution = focalizingL1Propagation(:,:,end);
@@ -221,6 +225,7 @@ truncatedLyotPlane = planeL2Propagation(:,:,end).*LyotAperture;
 PSFlensPlaneDistribution = planeLyotPropagation(:,:,end).*lensB;
 PSFplaneDistribution = focalizingL3Propagation(:,:,end);
 outputIntensity = fieldIntensity(PSFplaneDistribution,irradianceScaling);
+
 %% Plots
 
 figureHandleA = figure('Color', 'white');
