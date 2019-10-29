@@ -135,21 +135,36 @@ widthMargins = [.02, 0.0];
 dispRngA = {abs(xCoords) <= illuminationDiameter*apertureDisplayRatio; abs(yCoords) <= illuminationDiameter*apertureDisplayRatio};
 dispRngB =  {abs(xCoords) <= planeSize(1)*PSFdisplayRatio; abs(yCoords) <= planeSize(2)*PSFdisplayRatio};
 
-%% Visualize Coronagraphic Sequence
+%% Visualize Coronagraphic Sequence -- Intensities
 timeDelay = 0.2;
 figure('Color', 'white');
-updateDisplayHandler = imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),fieldIntensity(entrancePropagation(dispRngA{1},dispRngA{2},1),1)); 
+updateDisplayHandler = imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),fieldAngle(entrancePropagation(dispRngA{1},dispRngA{2},1))); 
 xlabel('[m]','FontSize',fontSize,'FontWeight','bold');
 ylabel('[m]','FontSize',fontSize,'FontWeight','bold');
 set(gca,'FontSize',fontSize,'FontWeight','normal');
 grid on; colorbar; grid on; axis square; set(gca,'GridColor',[1,1,1]);
 
-for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',propagationDistancesA(imageIndex))); set(updateDisplayHandler,'CData',fieldIntensity(entrancePropagation(dispRngA{1},dispRngA{2},imageIndex),1)); colorbar; axis square; pause(timeDelay); end
-for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',1*focalLengthA + propagationDistancesA(imageIndex)));set(updateDisplayHandler,'CData',fieldIntensity(focalizingL1Propagation(dispRngA{1},dispRngA{2},imageIndex),1)); colorbar; axis square; pause(timeDelay); end
-for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',2*focalLengthA + propagationDistancesA(imageIndex)));set(updateDisplayHandler,'CData',fieldIntensity(divergingL1Propagation(dispRngA{1},dispRngA{2},imageIndex),1)); colorbar; axis square; pause(timeDelay); end
-for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',3*focalLengthA + propagationDistancesA(imageIndex)));set(updateDisplayHandler,'CData',fieldIntensity(planeL2Propagation(dispRngA{1},dispRngA{2},imageIndex),1)); colorbar; axis square;  pause(timeDelay); end
-for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',4*focalLengthA + propagationDistancesA(imageIndex)));set(updateDisplayHandler,'CData',fieldIntensity(planeLyotPropagation(dispRngA{1},dispRngA{2},imageIndex),1)); colorbar; axis square; pause(timeDelay); end
-for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',5*focalLengthB + propagationDistancesB(imageIndex)));set(updateDisplayHandler,'CData',fieldIntensity(focalizingL3Propagation(dispRngA{1},dispRngA{2},imageIndex),1)); colorbar; axis square; pause(timeDelay); end
+for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',propagationDistancesA(imageIndex))); set(updateDisplayHandler,'CData',fieldIntensity(entrancePropagation(dispRngA{1},dispRngA{2},imageIndex),1)); colorbar; axis square; Make_Gif('Vortex.gif',imageIndex,0.2); pause(timeDelay); end
+for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',1*focalLengthA + propagationDistancesA(imageIndex)));set(updateDisplayHandler,'CData',fieldIntensity(focalizingL1Propagation(dispRngA{1},dispRngA{2},imageIndex),1)); Make_Gif('Vortex.gif',midPlanesNumber+imageIndex,0.2); colorbar; axis square; pause(timeDelay); end
+for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',2*focalLengthA + propagationDistancesA(imageIndex)));set(updateDisplayHandler,'CData',fieldIntensity(divergingL1Propagation(dispRngA{1},dispRngA{2},imageIndex),1)); Make_Gif('Vortex.gif',2*midPlanesNumber+imageIndex,0.2); colorbar; axis square; pause(timeDelay); end
+for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',3*focalLengthA + propagationDistancesA(imageIndex)));set(updateDisplayHandler,'CData',fieldIntensity(planeL2Propagation(dispRngA{1},dispRngA{2},imageIndex),1)); Make_Gif('Vortex.gif',3*midPlanesNumber+imageIndex,0.2); colorbar; axis square;  pause(timeDelay); end
+for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',4*focalLengthA + propagationDistancesA(imageIndex)));set(updateDisplayHandler,'CData',fieldIntensity(planeLyotPropagation(dispRngA{1},dispRngA{2},imageIndex),1)); Make_Gif('Vortex.gif',4*midPlanesNumber+imageIndex,0.2); colorbar; axis square; pause(timeDelay); end
+for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',5*focalLengthB + propagationDistancesB(imageIndex)));set(updateDisplayHandler,'CData',fieldIntensity(focalizingL3Propagation(dispRngA{1},dispRngA{2},imageIndex),1)); Make_Gif('Vortex.gif',5*midPlanesNumber+imageIndex,0.2); colorbar; axis square; pause(timeDelay); end
+
+%% Visualize Coronagraphic Sequence -- Phases
+figure('Color', 'white');
+updateDisplayHandler = imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),fieldAngle(entrancePropagation(dispRngA{1},dispRngA{2},1))); 
+xlabel('[m]','FontSize',fontSize,'FontWeight','bold');
+ylabel('[m]','FontSize',fontSize,'FontWeight','bold');
+set(gca,'FontSize',fontSize,'FontWeight','normal');
+grid on; colorbar; grid on; axis square; set(gca,'GridColor',[1,1,1]);
+
+for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',propagationDistancesA(imageIndex))); set(updateDisplayHandler,'CData',fieldAngle(entrancePropagation(dispRngA{1},dispRngA{2},imageIndex))); colorbar; axis square; Make_Gif('Vortex.gif',imageIndex,0.2); pause(timeDelay); end
+for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',1*focalLengthA + propagationDistancesA(imageIndex)));set(updateDisplayHandler,'CData',fieldAngle(focalizingL1Propagation(dispRngA{1},dispRngA{2},imageIndex))); Make_Gif('Vortex.gif',midPlanesNumber+imageIndex,0.2); colorbar; axis square; pause(timeDelay); end
+for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',2*focalLengthA + propagationDistancesA(imageIndex)));set(updateDisplayHandler,'CData',fieldAngle(divergingL1Propagation(dispRngA{1},dispRngA{2},imageIndex))); Make_Gif('Vortex.gif',2*midPlanesNumber+imageIndex,0.2); colorbar; axis square; pause(timeDelay); end
+for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',3*focalLengthA + propagationDistancesA(imageIndex)));set(updateDisplayHandler,'CData',fieldAngle(planeL2Propagation(dispRngA{1},dispRngA{2},imageIndex))); Make_Gif('Vortex.gif',3*midPlanesNumber+imageIndex,0.2); colorbar; axis square;  pause(timeDelay); end
+for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',4*focalLengthA + propagationDistancesA(imageIndex)));set(updateDisplayHandler,'CData',fieldAngle(planeLyotPropagation(dispRngA{1},dispRngA{2},imageIndex))); Make_Gif('Vortex.gif',4*midPlanesNumber+imageIndex,0.2); colorbar; axis square; pause(timeDelay); end
+for imageIndex = 1:midPlanesNumber ; title(sprintf('z=%1.1fm',5*focalLengthB + propagationDistancesB(imageIndex)));set(updateDisplayHandler,'CData',fieldAngle(focalizingL3Propagation(dispRngA{1},dispRngA{2},imageIndex))); Make_Gif('Vortex.gif',5*midPlanesNumber+imageIndex,0.2); colorbar; axis square; pause(timeDelay); end
 
 %% Axial Distribution Behavior
 figure('color','white'); imagesc(interpDIstanceA,interpTransverseCoords,interp2(entranceCut,interpFactor))
@@ -195,9 +210,10 @@ set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on
 colorbar; grid on; axis tight; set(gca,'GridColor',[1,1,1]);
 
 %% Comple Axial Plots
-completeSetNorm = [entranceCut./max(entranceCut),focalizingL1Cut./max(focalizingL1Cut),divergingL1Cut./max(divergingL1Cut),planeL2Cut./max(planeL2Cut),planeLyotCut./max(planeLyotCut),focalizingL3Cut./max(focalizingL3Cut)];
+completeSetNorm = [bsxfun(@rdivide,entranceCut,max(entranceCut)),bsxfun(@rdivide,focalizingL1Cut,max(focalizingL1Cut)),bsxfun(@rdivide,divergingL1Cut,max(divergingL1Cut)),bsxfun(@rdivide,planeL2Cut,max(planeL2Cut)),bsxfun(@rdivide,planeLyotCut,max(planeLyotCut)),bsxfun(@rdivide,focalizingL3Cut,max(focalizingL3Cut))];
+
 figure('color','white'); imagesc(0:6*focalLengthA,yCoords(transverseCutRange),(completeSetNorm));
-title('Complete Axial propagation 1F - 6F: Normalized','FontSize',fontSize,'FontWeight','bold')
+title('Complete Axial propagation 1F - 6F: Relative Normalization','FontSize',fontSize,'FontWeight','bold')
 xlabel('Axial Distance [m]','FontSize',fontSize,'FontWeight','bold');
 ylabel('Transverse Cut [m]','FontSize',fontSize,'FontWeight','bold');
 set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on
@@ -212,7 +228,7 @@ set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on
 colorbar; grid on; axis tight; set(gca,'GridColor',[0,0,0]);
 
 %% Relevant Planes
-focalPlanePropagationKernelA = localKernel;
+focalPlanePropagationKernelA = propagationKernel(freqCirc, k, angularSpectrum, propagationDistancesA(end));
 
 inputIntensity = fieldIntensity(entrancePropagation(:,:,1),irradianceScaling);
 focalPlaneDistribution = focalizingL1Propagation(:,:,end);
@@ -227,7 +243,7 @@ figureHandleA = figure('Color', 'white');
 [ha, ~] = tight_subplot(2,3,plotGaps,heighMargins,widthMargins);
 axes(ha(1)); imagesc(xCoords,yCoords,inputIntensity); title('Input Plane'); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
 axes(ha(2)); imagesc(xCoords,yCoords,outputIntensity); title('Output Plane'); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
-axes(ha(3)); imagesc(xCoords,yCoords,angle(inputPlane)); title(sprintf('L1 Lens Phase: f=%1.1fm',focalLengthA)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(3)); imagesc(xCoords,yCoords,angle(lensA)); title(sprintf('L1 Lens Phase: f=%1.1fm',focalLengthA)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
 axes(ha(4)); imagesc(xCoords,yCoords,10*log10(inputIntensity)); title('Input Log10 view'); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'dB'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
 axes(ha(5)); imagesc(xCoords,yCoords,10*log10(outputIntensity)); title('Output Log10 view'); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold');CH = colorbar; CH.Label.String = 'dB'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
 axes(ha(6)); imagesc(freqVectX,freqVectY,angle(focalPlanePropagationKernelA)); title(sprintf('Vaccum Transfer Function: D=%1.1fm', propDistance)); xlabel('fx [1/m]','FontSize',fontSize,'FontWeight','bold'); ylabel('fy [1/m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
