@@ -107,12 +107,20 @@ flippedAproxCenter = fliplr(aproxCenter); % [X,Y] Format
 radialIntensityRef(radialIntensityRef<0) = 0;
 %% Profile of the measurements
 radialIntensityMeas = cell(1,totalImgs);
+backgrounfFilterEnabled = false;
 
-for idxgral = 1:totalImgs
-    [radialIntensityMeas{idxgral}] = f_getAverageRadialProfile(...
-        expMeas{idxgral}-mean(expMeas{idxgral}(:)),[ySize, xSize],flippedAproxCenter);
-    radialIntensityMeas{idxgral}(isnan(radialIntensityMeas{idxgral})) = 0;
-    radialIntensityMeas{idxgral}(radialIntensityMeas{idxgral}<0) = 0;
+if backgrounfFilterEnabled == true
+    for idxgral = 1:totalImgs
+        [radialIntensityMeas{idxgral}] = f_getAverageRadialProfile(...
+            expMeas{idxgral}-mean(expMeas{idxgral}(:)),[ySize, xSize],flippedAproxCenter);
+        radialIntensityMeas{idxgral}(isnan(radialIntensityMeas{idxgral})) = 0;
+        radialIntensityMeas{idxgral}(radialIntensityMeas{idxgral}<0) = 0;
+    end
+else
+    for idxgral = 1:totalImgs
+        [radialIntensityMeas{idxgral}] = f_getAverageRadialProfile(...
+            expMeas{idxgral},[ySize, xSize],flippedAproxCenter);
+    end
 end
 
 %% Measurement radial averaged profile
@@ -288,7 +296,7 @@ switch metricSel
             ylabel('Throughput (EEF)','FontSize',fontSize,'FontWeight','bold');  %  xlabel('Radial Distance (\lambda/D)')
             title(sprintf('Throughput of topological charges at GL = %d',glvect(indexGL)));
             set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','northwest'); grid on; axis square;
-            fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); xlim(xLimRange);
+            fprintf('Plotting group... %d/%d\n\r', indexGL, totalGL); % xlim(xLimRange);
             saveFigure(gcf, gca, [0,0,20,20], sprintf('Lyot_LC2002_EXP_Throughput_GL_%d', glvect(indexGL)), 'svg');
         end
         
@@ -377,7 +385,7 @@ switch metricSel
             xlabel('Log Scale Radial Distance [a/\rho]','FontSize',fontSize,'FontWeight','bold');
             ylabel('Logarithmic SNR','FontSize',fontSize,'FontWeight','bold');
             title(sprintf('Gray Level LSNR Comparison for TC = %d',tcvect(indexTC)),'FontSize',fontSize,'FontWeight','bold');
-            set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','southwest'); grid on; axis square;
+            set(gca,'FontSize',fontSize,'FontWeight','normal'); legend(legendCell,'Location','northwest'); grid on; axis square;
             fprintf('Plotting group... %d/%d\n\r', indexTC, totalTC); set(gca,'xscale','log');
             %             saveFigure(gcf, gca, [0,0,20,20], sprintf('figure_%d',indexTC), 'svg');
         end
@@ -393,7 +401,7 @@ switch metricSel
         title('Coronagraphic RMS analysis for GL effects','FontSize',fontSize,'FontWeight','bold');
         xlabel('Vortex Topological Charge (TC)','FontSize',fontSize,'FontWeight','bold');
         ylabel('Root Mean Square of the Logarithmic SNR','FontSize',fontSize,'FontWeight','bold');
-        legend(legendCell,'Location','southeast'); set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on; axis square;
+        legend(legendCell,'Location','northwest'); set(gca,'FontSize',fontSize,'FontWeight','normal'); grid on; axis square;
         xlim([tcvect(1),tcvect(end)]);
         saveFigure(gcf, gca, [0,0,20,20], sprintf('Lyot_LC2002_EXP_Logarithmic_RMS_GL_high%d',1), 'svg');
         

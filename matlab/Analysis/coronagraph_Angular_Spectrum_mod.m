@@ -3,7 +3,7 @@ addpath(genpath(fileparts(pwd)));
 
 %% Plane properties
 planeSize = 2*[2.54e-2, 2.54e-2]; % m
-spaceSamples = 2*[1024, 1024];
+spaceSamples = [1024, 1024];
 halfSize = floor((spaceSamples+1)/2);
 shiftDistance = 0;
 
@@ -38,7 +38,7 @@ samplingFactor = 1;
 [freqVectX,freqVectY,spXperiod,spYperiod,analysisScaling,normNMFactor,synthesisScaling] = computeFreqVector(planeSize, spaceSamples, samplingFactor);
 
 %% Vortex Mask properties
-TC = 4;
+TC = 2;
 grayLevels = 64;
 vortexMask = spiralGen2(spaceSamples,TC);
 [vortexMask] = discretizeMap(angle(vortexMask),grayLevels);
@@ -76,7 +76,7 @@ propDistance = focalLengthA - shiftDistance;
 [shiftDistanceKernel] = freqCirc.*exp(1i*k*propDistance*sqrt(1 - (lambda*freqMeshX).^2 - (lambda*freqMeshY).^2));
 
 %% Entrance distribution
-[entrancePlane] = convoluteSignal(systemTransFunct, inputPlane, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
+[entrancePlane] = convoluteSignal(focalPlanePropagationKernelA, inputPlane, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
 
 %% Generate shifted focal distribution - SLM Input
 systemTransFunct = pupilTransferFunct.*shiftDistanceKernel;
@@ -130,20 +130,20 @@ set(figureHandleA,'units','normalized','position',[0,0,1,1]);
 
 figureHandleB = figure('Color', 'white');
 [ha, ~] = tight_subplot(2,3,plotGaps,heighMargins,widthMargins);
-axes(ha(1)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),inputIntensity(dispRngA{1},dispRngA{2})); title('Input Plane','FontSize',fontSize,'FontWeight','bold'); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(1)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),inputIntensity(dispRngA{1},dispRngA{2})); title('Aperture Plane','FontSize',fontSize,'FontWeight','bold'); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
 axes(ha(2)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compIntensity(focalPlaneDistribution(dispRngA{1},dispRngA{2}),irradianceScaling)); title(sprintf('Focal Plane: EFL=%1.1fm',focalLengthA)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
-axes(ha(3)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compIntensity(ocularPlaneDistribution(dispRngA{1},dispRngA{2}),irradianceScaling)); title(sprintf('Plane at L2: z=%1.1fm',2*focalLengthA)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(3)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compIntensity(ocularPlaneDistribution(dispRngA{1},dispRngA{2}),irradianceScaling)); title(sprintf('Plane at L2: z=%1.1fm',3*focalLengthA)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
 axes(ha(4)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compIntensity(truncatedLyotPlane(dispRngA{1},dispRngA{2}),irradianceScaling)); title(sprintf('Truncated Lyot: %1.1fmm', LyotApertureDiameter*10^abs(ceil(log10(LyotApertureDiameter)-1)))); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
 axes(ha(5)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compIntensity(divergingLyot(dispRngA{1},dispRngA{2}),irradianceScaling)); title(sprintf('Plane at L3: EFL=%1.1fm',focalLengthB)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
-axes(ha(6)); imagesc(xCoords(dispRngB{1}),yCoords(dispRngB{2}),outputIntensity(dispRngB{1},dispRngB{2})); title(sprintf('PSF Distribution: z=%1.1fm',3*focalLengthA + 2*focalLengthB)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(6)); imagesc(xCoords(dispRngB{1}),yCoords(dispRngB{2}),outputIntensity(dispRngB{1},dispRngB{2})); title(sprintf('PSF Distribution: z=%1.1fm',4*focalLengthA + 2*focalLengthB)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'W/m^{2}'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
 set(figureHandleB,'units','normalized','position',[0,0,1,1]);
 
 figureHandleC = figure('Color', 'white');
 [ha, ~] = tight_subplot(2,3,plotGaps,heighMargins,widthMargins);
-axes(ha(1)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(inputPlane(dispRngA{1},dispRngA{2}))); title('Input Plane','FontSize',fontSize,'FontWeight','bold'); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(1)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(inputPlane(dispRngA{1},dispRngA{2}))); title('Aperture Plane','FontSize',fontSize,'FontWeight','bold'); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
 axes(ha(2)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(focalPlaneDistribution(dispRngA{1},dispRngA{2}))); title(sprintf('Focal Plane: EFL=%1.1fm',focalLengthA)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
-axes(ha(3)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(ocularPlaneDistribution(dispRngA{1},dispRngA{2}))); title(sprintf('Plane at L2: z=%1.1fm',2*focalLengthA)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(3)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(ocularPlaneDistribution(dispRngA{1},dispRngA{2}))); title(sprintf('Plane at L2: z=%1.1fm',3*focalLengthA)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
 axes(ha(4)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(truncatedLyotPlane(dispRngA{1},dispRngA{2}))); title(sprintf('Truncated Lyot: %1.1fmm', LyotApertureDiameter*10^abs(ceil(log10(LyotApertureDiameter)-1)))); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
 axes(ha(5)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(divergingLyot(dispRngA{1},dispRngA{2}))); title(sprintf('Plane at L3: EFL=%1.1fm',focalLengthB)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
-axes(ha(6)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(PSFplaneDistribution(dispRngA{1},dispRngA{2}))); title(sprintf('PSF Distribution: z=%1.1fm',3*focalLengthA + 2*focalLengthB)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
+axes(ha(6)); imagesc(xCoords(dispRngA{1}),yCoords(dispRngA{2}),compAngle(PSFplaneDistribution(dispRngA{1},dispRngA{2}))); title(sprintf('PSF Distribution: z=%1.1fm',4*focalLengthA + 2*focalLengthB)); xlabel('[m]','FontSize',fontSize,'FontWeight','bold'); ylabel('[m]','FontSize',fontSize,'FontWeight','bold'); CH = colorbar; CH.Label.String = 'rad'; axis square; set(gca,'FontSize',fontSize,'FontWeight','normal');
 set(figureHandleC,'units','normalized','position',[0,0,1,1]);

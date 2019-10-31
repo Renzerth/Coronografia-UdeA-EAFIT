@@ -91,11 +91,11 @@ flippedAproxCenter = fliplr(aproxCenter); % [X,Y] Format
 %% Profile of the measurements
 radialIntensityMeas = cell(1,totalImgs);
 
-% for idxgral = 1:totalImgs
-%     [radialIntensityMeas{idxgral}] = f_getAverageRadialProfile(...
-%         expMeas{idxgral},[ySize, xSize],flippedAproxCenter);
-%     radialIntensityMeas{idxgral}(isnan(radialIntensityMeas{idxgral})) = 0;
-% end
+for idxgral = 1:totalImgs
+    [radialIntensityMeas{idxgral}] = f_getAverageRadialProfile(...
+        expMeas{idxgral},[ySize, xSize],flippedAproxCenter);
+    radialIntensityMeas{idxgral}(isnan(radialIntensityMeas{idxgral})) = 0;
+end
 
 %% Measurement profile choice Radial averaged profile 
 trimRange = 1:min(numel(xrefProx),numel(yrefProf));
