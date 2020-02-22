@@ -3,7 +3,7 @@ addpath(genpath(fileparts(pwd)));
 
 %% Plane properties
 planeSize = 2*[2.54e-2, 2.54e-2]; % m
-spaceSamples = [1024, 1024];
+spaceSamples = 2*[1024, 1024];
 halfSize = floor((spaceSamples+1)/2);
 shiftDistance = 0;
 
@@ -18,14 +18,14 @@ propagationSpeed = 3e8; % speed of light [m/s]
 irradianceScaling = insidentEnergy*(propagationSpeed*mediumRefracIndex*mediumElecPermitivity)/2; % [W/m^2]
 
 %% System Properties
-illuminationDiameter = 3e-3; %[m]
+illuminationDiameter = 2e-3; %[m]
 LyotApertureDiameter = illuminationDiameter; % [m]
 aberrationPupilRadius = max(planeSize); %[m]
 
 focalLengthA = 2; % [m]
 focalLengthB = 2;
 aberrationIndex = 8;
-aberrationValue = 0*pi*(1.0021)*0.01;
+aberrationValue = 0;
 FresnelNumber = (illuminationDiameter)^2/(focalLengthA*lambda);
 
 %% Spatial coordinates
@@ -38,8 +38,8 @@ samplingFactor = 1;
 [freqVectX,freqVectY,spXperiod,spYperiod,analysisScaling,normNMFactor,synthesisScaling] = computeFreqVector(planeSize, spaceSamples, samplingFactor);
 
 %% Vortex Mask properties
-TC = 2;
-grayLevels = 64;
+TC = 5;
+grayLevels = 6;
 vortexMask = spiralGen2(spaceSamples,TC);
 [vortexMask] = discretizeMap(angle(vortexMask),grayLevels);
 
@@ -51,7 +51,7 @@ lensA = lensAperture.*exp(-1i*k/(2*focalLengthA)*(lensRadii).^2);
 lensB = lensAperture.*exp(-1i*k/(2*focalLengthB)*(lensRadii).^2);
 
 %% Uniform light definition after first focal lens
-obstruction = 3e-3;
+% obstruction = 3e-3;
 % aperture = double(rho <= illuminationDiameter/2).*double(rho >= obstruction/2);
 aperture = double(rho <= illuminationDiameter/2);
 inputPlane =  insidentEnergy*aperture;

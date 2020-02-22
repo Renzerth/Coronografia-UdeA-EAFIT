@@ -1,4 +1,4 @@
-function [LyotPlaneIntensities, PSFplaneIntensities, LyotReference, PSFreference] = computePSFVariationsAS(TC, glvect,varargin)
+function [LyotPlaneIntensities, PSFplaneIntensities, LyotReference, PSFreference] = computePSFVariationsAS_mod(TC, glvect,varargin)
 %% Program Settings
 if nargin == 3
     saveEnabled = varargin{1};
@@ -13,7 +13,6 @@ compIntensity = @(complexField, energyScaling) energyScaling*abs(complexField).^
 planeSize = 2*[2.54e-2, 2.54e-2]; % m
 spaceSamples = [1024, 1024];
 halfSize = floor((spaceSamples+1)/2);
-shiftDistance = 0;
 
 %% Filter Properties
 tcvect = 1:TC;
@@ -60,12 +59,11 @@ lensDiameter = 2.54e-2;
 lensAperture = double(rho <= lensDiameter/2);
 lensA = lensAperture.*exp(-1i*k/(2*focalLengthA)*(lensRadii).^2);
 lensB = lensAperture.*exp(-1i*k/(2*focalLengthB)*(lensRadii).^2);
-diverLens = lensAperture.*exp(1i*k/(2*focalLengthA)*(lensRadii).^2);
 
 %% Uniform light definition after first focal lens
 aperture = double(rho <= illuminationDiameter/2);
-% inputPlane =  insidentEnergy*aperture.*lensA;
-inputPlane = insidentEnergy*aperture.*evaluateGaussianField(X,Y,illuminationDiameter,[0,0],lambda).*lensA;
+% inputPlane =  insidentEnergy*aperture;
+inputPlane = insidentEnergy*aperture.*evaluateGaussianField(X,Y,illuminationDiameter,[0,0],lambda);
 
 %% Optical Aberrations Zernike Phase
 zernikeCoeffs = zeros(1,10);
@@ -78,18 +76,17 @@ Pupil = double(rho <= aberrationPupilRadius);
 pupilTransferFunct = Pupil.*exp(1i*systemPhase);
 
 %% Compute Propagators
-propDistance = focalLengthA - shiftDistance;
 [dataCoordX, dataCoordY, freqMeshX, freqMeshY, ~, freqCirc] = prepareSpectralProp_mod(spaceSamples, freqVectX, freqVectY, lambda);
-distanceShiftA = exp(-1i*k*focalLengthA);
-distanceShiftB = exp(-1i*k*focalLengthB);
 
 [focalPlanePropagationKernelA] = freqCirc.*exp(1i*k*focalLengthA*sqrt(1 - (lambda*freqMeshX).^2 - (lambda*freqMeshY).^2));
 [focalPlanePropagationKernelB] = freqCirc.*exp(1i*k*focalLengthB*sqrt(1 - (lambda*freqMeshX).^2 - (lambda*freqMeshY).^2));
-[shiftDistanceKernel] = freqCirc.*exp(1i*k*propDistance*sqrt(1 - (lambda*freqMeshX).^2 - (lambda*freqMeshY).^2));
+
+%% Entrance distribution
+entrancePlane = convoluteSignal(focalPlanePropagationKernelA, inputPlane, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
 
 %% Generate Focal Distribution
-systemTransFunct = pupilTransferFunct.*shiftDistanceKernel;
-[focalPlaneDistribution] = distanceShiftA*convoluteSignal(systemTransFunct, inputPlane, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
+systemTransFunct = pupilTransferFunct.*focalPlanePropagationKernelA;
+[focalPlaneDistribution] = convoluteSignal(systemTransFunct, entrancePlane.*lensA, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
 
 %% Lyot Aperture Definition
 LyotAperture = double(rho < LyotApertureDiameter/2);
@@ -105,12 +102,12 @@ for tcIndex = 1:TC
         [vortexMask] = discretizeMap(angle(vortexMask),glvect(glIndex));
         
         SLMfilteredField = focalPlaneDistribution.*vortexMask;
-        [ocularPlaneDistribution] = distanceShiftA*deconvoluteSignal(focalPlanePropagationKernelA, SLMfilteredField, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
-        LyotPlaneDistribution = ocularPlaneDistribution.*diverLens;
+        [ocularPlaneDistribution] = convoluteSignal(focalPlanePropagationKernelA, SLMfilteredField, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
+        LyotPlaneDistribution = convoluteSignal(focalPlanePropagationKernelA, ocularPlaneDistribution.*lensA, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
         
-        truncatedLyotPlane = distanceShiftA*LyotPlaneDistribution.*LyotAperture;
-        PSFlensPlaneDistribution = distanceShiftB*truncatedLyotPlane.*lensB;
-        [PSFplaneDistribution] = distanceShiftB*convoluteSignal(focalPlanePropagationKernelB, PSFlensPlaneDistribution, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
+        truncatedLyotPlane = LyotPlaneDistribution.*LyotAperture;
+        divergingLyot = convoluteSignal(focalPlanePropagationKernelA, truncatedLyotPlane, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
+        [PSFplaneDistribution] = convoluteSignal(focalPlanePropagationKernelB, divergingLyot.*lensB, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
         
         LyotPlaneIntensities{1, singleIndex} = compIntensity(LyotPlaneDistribution, irradianceScaling);
         PSFplaneIntensities{1, singleIndex} = compIntensity(PSFplaneDistribution, irradianceScaling);
@@ -118,12 +115,11 @@ for tcIndex = 1:TC
     end
 end
 %% Compute PSF and Lyot References
-[ocularPlaneDistribution] = distanceShiftA*deconvoluteSignal(focalPlanePropagationKernelA, focalPlaneDistribution, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
-LyotPlaneDistribution = ocularPlaneDistribution.*diverLens;
-
-truncatedLyotPlane = distanceShiftA*LyotPlaneDistribution.*LyotAperture;
-PSFlensPlaneDistribution = distanceShiftB*truncatedLyotPlane.*lensB;
-[PSFplaneDistribution] = distanceShiftB*convoluteSignal(focalPlanePropagationKernelB, PSFlensPlaneDistribution, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
+[ocularPlaneDistribution] = convoluteSignal(focalPlanePropagationKernelA, focalPlaneDistribution, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
+LyotPlaneDistribution = convoluteSignal(focalPlanePropagationKernelA, ocularPlaneDistribution.*lensA, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
+truncatedLyotPlane = LyotPlaneDistribution.*LyotAperture;
+divergingLyot =convoluteSignal(focalPlanePropagationKernelA, truncatedLyotPlane, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
+[PSFplaneDistribution] = convoluteSignal(focalPlanePropagationKernelB, divergingLyot.*lensB, normNMFactor, analysisScaling, synthesisScaling, dataCoordX, dataCoordY, halfSize);
 
 PSFreference = compIntensity(PSFplaneDistribution, irradianceScaling);
 LyotReference = compIntensity(LyotPlaneDistribution, irradianceScaling);

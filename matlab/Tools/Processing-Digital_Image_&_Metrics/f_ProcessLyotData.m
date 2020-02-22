@@ -132,7 +132,7 @@ profileTitle = '(radial average profile)';
 disp('Done.');
 
 %% Data Cropping for view range
-rangeFactor = 1.08; % Ref: 1 Number of Radii proportion from center
+rangeFactor = 1.2; % Ref: 1 Number of Radii proportion from center
 if 2*aproxRadius*rangeFactor > ySize
     rangeFactor = (1 - 2*(aproxRadius/ySize-0.5)) - (min(aproxCenter)-aproxRadius)/aproxRadius; % Use minimum radius size with a .05 of margin when factor leads to a larger size than matrix
 end
