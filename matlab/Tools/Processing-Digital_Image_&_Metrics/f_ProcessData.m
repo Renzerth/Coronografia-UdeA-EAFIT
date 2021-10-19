@@ -180,7 +180,7 @@ disp('Done.');
 
 %% Data Cropping for view range
 if measSimulated == 0
-    rangeFactor = 2; % Ref: 1.5 Number of Airy disks (Lambda/D times from
+    rangeFactor = 0.5; % Ref: 1.5 Number of Airy disks (Lambda/D times from
                        % the center)
    Diameter = 2*aproxRadius;
 else
@@ -520,7 +520,7 @@ switch metricSel
             if logViewEnabled == true
                 logIntensity =  @(intensityData) 10*log10(intensityData);
                 logCroppedRefData = logIntensity(croppedRefData);
-                scalingLimits = computeScaleRange(logCroppedRefData,[1,1],[-8,0]);
+                scalingLimits = computeScaleRange(logCroppedRefData,[1,1],[0,0]);
                 arrangedCroppedImages = cellfun(@(cellData) logIntensity(cellData), arrangedCroppedImages, 'UniformOutput', false);
             else
                 scalingLimits = computeScaleRange(croppedRefData,[1,1]);
